@@ -360,7 +360,7 @@ export function RewardExplanation() {
             `Hold at least 250,000 $${SOURCE_SYMBOL}`,
             "50% routes to $ANSEM reward buys",
             "$ANSEM distributes every epoch",
-            "50% is reserved for the SOL-long flywheel",
+            "50% is sent to the Hyperliquid SOL wallet",
             "Smaller holders and lower SOL wallets receive a modest boost",
             "Long profits target $BULLSTR buyback and burn"
           ].map((item) => (

@@ -7,7 +7,7 @@ Bull Strategy is a fork of the airdrop engine rebranded around a 50/50 strategic
 
 - 50% of usable SOL is routed through Jupiter to buy `$ANSEM`.
 - `$ANSEM` is airdropped to eligible `$BULLSTR` holders every 5 minutes.
-- 50% is reserved for the SOL-long flywheel.
+- 50% is sent to the configured Hyperliquid SOL wallet for the SOL-long flywheel.
 - Profits from the SOL-long strategy are intended to buy back and burn `$BULLSTR`.
 
 The site is a Next.js dashboard with a Railway-compatible worker and Supabase proof tables.
@@ -21,10 +21,11 @@ The token reward leg is implemented:
 3. Apply permanent holder-state rules.
 4. Score selected holders by `$BULLSTR` balance with capped holder and SOL-balance boosts.
 5. Use `SWAP_BALANCE_BPS=5000` to buy `$ANSEM` with 50% of usable SOL.
-6. Airdrop the bought `$ANSEM` to eligible holders.
-7. Store epochs, snapshots, bonus fields, reward pools, and payouts in Supabase.
+6. Send `LONG_SOL_BPS=5000` to `LONG_SOL_WALLET` when `LONG_SOL_ENABLED=true`.
+7. Airdrop the bought `$ANSEM` to eligible holders.
+8. Store epochs, snapshots, bonus fields, reward pools, and payouts in Supabase.
 
-The SOL-long leg is reserved in config and product copy as `LONG_SOL_BPS=5000`. Automated long execution still needs a specific trading venue/API before it should be enabled live.
+The SOL-long leg is a treasury transfer, not an in-repo perp executor. Point `LONG_SOL_WALLET` at the Hyperliquid SOL wallet and run the trading leg from there.
 
 ## Weighting
 
@@ -84,6 +85,7 @@ TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET>
 CLAIM_ENABLED=false
 BUY_ENABLED=false
 AIRDROP_ENABLED=false
+LONG_SOL_ENABLED=false
 
 EPOCH_MINUTES=5
 ELIGIBILITY_MIN=250000
@@ -94,6 +96,8 @@ EXCLUDE_WALLETS=
 SWAP_BALANCE_BPS=5000
 SWAP_SLIPPAGE_BPS=300
 LONG_SOL_BPS=5000
+LONG_SOL_WALLET=<HYPERLIQUID_SOL_WALLET>
+MIN_LONG_SOL_LAMPORTS=5000
 
 MIN_SOL_RESERVE=0.3
 AIRDROP_SOL_RESERVE=0.05
@@ -103,7 +107,7 @@ PRIORITY_FEE_SOL=0.000001
 MIN_REWARD_RAW_TO_AIRDROP=1
 ```
 
-Keep `CLAIM_ENABLED`, `BUY_ENABLED`, and `AIRDROP_ENABLED` false until the live treasury, mints, Supabase tables, and worker dry runs are verified.
+Keep `CLAIM_ENABLED`, `BUY_ENABLED`, `AIRDROP_ENABLED`, and `LONG_SOL_ENABLED` false until the live treasury, mints, Hyperliquid wallet, Supabase tables, and worker dry runs are verified.
 
 ## Logo
 

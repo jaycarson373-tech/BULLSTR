@@ -47,20 +47,30 @@ async function postBuyReserveLamports() {
   return minReserveLamports + payoutReserveLamports;
 }
 
-export async function treasurySwapAmount(explicitReserveLamports?: bigint) {
+export async function treasurySolBudget(explicitReserveLamports?: bigint) {
   const treasury = treasuryKeypair();
   const balance = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
   const defaultReserveLamports = await postBuyReserveLamports();
   const reserveLamports =
     explicitReserveLamports === undefined ? defaultReserveLamports : maxBigInt(explicitReserveLamports, defaultReserveLamports);
-  const bpsAmount = (balance * BigInt(config.swapBalanceBps)) / 10_000n;
-  const reserveAmount = balance > reserveLamports ? balance - reserveLamports : 0n;
-  const amount = bpsAmount < reserveAmount ? bpsAmount : reserveAmount;
+  const usableLamports = balance > reserveLamports ? balance - reserveLamports : 0n;
 
   return {
     balance,
-    amount: amount > 0n ? amount : 0n,
-    reserveLamports
+    reserveLamports,
+    usableLamports
+  };
+}
+
+export async function treasurySwapAmount(explicitReserveLamports?: bigint, maxSwapLamports?: bigint) {
+  const budget = await treasurySolBudget(explicitReserveLamports);
+  const bpsAmount = (budget.usableLamports * BigInt(config.swapBalanceBps)) / 10_000n;
+  const plannedAmount = maxSwapLamports === undefined ? bpsAmount : maxSwapLamports;
+  const amount = plannedAmount < budget.usableLamports ? plannedAmount : budget.usableLamports;
+
+  return {
+    ...budget,
+    amount: amount > 0n ? amount : 0n
   };
 }
 
@@ -92,7 +102,7 @@ async function jupiterSwap(baseAmount: bigint, treasuryPublicKey: string) {
   return { quote, swap: (await swapResponse.json()) as { swapTransaction: string } };
 }
 
-export async function buyReward(epochId: string, explicitReserveLamports?: bigint): Promise<BuyResult> {
+export async function buyReward(epochId: string, explicitReserveLamports?: bigint, maxSwapLamports?: bigint): Promise<BuyResult> {
   if (config.rewardMode === "sol") {
     console.log(`[${epochId}] REWARD_MODE=sol, buy path disabled`);
     return { baseSpentLamports: 0n, rewardReceivedRaw: 0n, rewardReceivedUi: 0, txSig: null };

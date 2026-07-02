@@ -69,7 +69,7 @@ export default function Page() {
                 A stronger bull engine for $BULLSTR holders.
               </p>
               <p className="hero-lead">
-                Bull Strategy routes the system into a 50/50 engine: $ANSEM airdrops every 5 minutes for eligible $BULLSTR holders, plus a SOL-long flywheel that aims to feed buybacks and burns.
+                Bull Strategy routes the system into a 50/50 engine: $ANSEM airdrops every 5 minutes for eligible $BULLSTR holders, plus SOL sent to the Hyperliquid long wallet.
               </p>
               <div className="hero-actions">
                 <a className="cta" href="#strategy">
@@ -100,7 +100,7 @@ export default function Page() {
             <div className="faq-grid">
               <FaqItem title="How do I qualify?" body="Hold at least 250,000 $BULLSTR and stay above that threshold." />
               <FaqItem title="How often are rewards sent?" body="$ANSEM rewards run every 5 minutes when live conditions are met." />
-              <FaqItem title="What is the split?" body="The target model routes 50% to $ANSEM holder airdrops and reserves 50% for the SOL-long flywheel." />
+              <FaqItem title="What is the split?" body="The target model routes 50% to $ANSEM holder airdrops and sends 50% to the Hyperliquid SOL wallet." />
               <FaqItem title="Does supply still matter?" body="Yes. The $BULLSTR balance is the base weight, so larger holders can still earn more." />
               <FaqItem title="Is there claiming?" body="No. The backend handles airdrops automatically. No wallet connection is required to receive rewards." />
             </div>
@@ -173,14 +173,14 @@ function StrategySection() {
           <h2>AIRDROPS MEET A STRATEGIC LONG FLYWHEEL.</h2>
           <div className="lore-copy">
             <p>Bull Strategy turns holder rewards and SOL conviction into one loop for eligible $BULLSTR wallets.</p>
-            <p>Half the engine targets $ANSEM airdrops every 5 minutes. The other half is reserved for the SOL-long flywheel.</p>
+            <p>Half the engine targets $ANSEM airdrops every 5 minutes. The other half is sent to the Hyperliquid SOL wallet.</p>
             <p>Profits from the long strategy are intended to buy back and burn $BULLSTR, tightening the loop around holders.</p>
             <p>No claiming. No wallet connection. Just a public strategy dashboard backed by live reward data.</p>
           </div>
         </div>
       </div>
       <div className="container black-bull-timeline" aria-label="Bull Strategy reward model">
-        {["Creator fees", "50% $ANSEM rewards", "50% SOL-long reserve", "Buyback profits", "$BULLSTR burn"].map((item) => (
+        {["Creator fees", "50% $ANSEM rewards", "50% Hyperliquid wallet", "Buyback profits", "$BULLSTR burn"].map((item) => (
           <span key={item}>{item}</span>
         ))}
       </div>

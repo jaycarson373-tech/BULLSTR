@@ -11,6 +11,7 @@ import {
 } from "./airdrop.js";
 import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, startEpoch } from "./db.js";
 import { applyHolderState } from "./holder-state.js";
+import { planTreasurySplit, sendLongSolLeg } from "./long-sol.js";
 import { currentEpochId } from "./time.js";
 import { eligibleHoldersFromSnapshot, selectRewardRecipients, snapshotSourceHolders } from "./snapshot.js";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
@@ -60,6 +61,12 @@ export async function runEpoch(date = new Date()) {
     console.log(`[${epochId}] selected reward recipients: ${holders.length}`);
 
     if (!holders.length) {
+      const payoutReserveLamports = await estimatePayoutReserveLamports([]);
+      const splitPlan = await planTreasurySplit(payoutReserveLamports);
+      console.log(
+        `[${epochId}] split plan: usable=${lamportsToSol(splitPlan.usableLamports)} SOL, rewardBuy=${lamportsToSol(splitPlan.rewardBuyLamports)} SOL, longSol=${lamportsToSol(splitPlan.longSolLamports)} SOL`
+      );
+      await sendLongSolLeg(epochId, splitPlan.longSolLamports, splitPlan.reserveLamports);
       await recordBuy(epochId, "0", "0", "0", null);
       await completeEpoch(epochId, {
         eligible_count: eligibleHolders.length,
@@ -72,6 +79,10 @@ export async function runEpoch(date = new Date()) {
     }
 
     const payoutReserveLamports = await estimatePayoutReserveLamports(holders.map((holder) => holder.wallet));
+    const splitPlan = await planTreasurySplit(payoutReserveLamports);
+    console.log(
+      `[${epochId}] split plan: usable=${lamportsToSol(splitPlan.usableLamports)} SOL, rewardBuy=${lamportsToSol(splitPlan.rewardBuyLamports)} SOL, longSol=${lamportsToSol(splitPlan.longSolLamports)} SOL`
+    );
     let buy = {
       baseSpentLamports: 0n,
       rewardReceivedRaw: 0n,
@@ -80,7 +91,7 @@ export async function runEpoch(date = new Date()) {
     };
 
     if (config.rewardMode === "token") {
-      buy = await buyReward(epochId, payoutReserveLamports);
+      buy = await buyReward(epochId, payoutReserveLamports, splitPlan.rewardBuyLamports);
       await recordBuy(
         epochId,
         buy.baseSpentLamports.toString(),
@@ -91,6 +102,7 @@ export async function runEpoch(date = new Date()) {
     } else {
       console.log(`[${epochId}] REWARD_MODE=sol, skipping buy; creator fees remain SOL for direct airdrop`);
     }
+    await sendLongSolLeg(epochId, splitPlan.longSolLamports, splitPlan.reserveLamports);
 
     const availableRewardRaw = await treasuryRewardBalanceRaw(payoutReserveLamports);
     const rewardPoolRaw = (availableRewardRaw * BigInt(config.airdropRewardBps)) / 10_000n;
