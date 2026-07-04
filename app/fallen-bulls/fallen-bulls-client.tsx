@@ -71,7 +71,7 @@ export function FallenBullsClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <span className="brand-mark" aria-hidden="true">B</span>
+            <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt="Bull Strategy logo" />
             <span>
               Bull Strategy
               <small>Ineligible Wallets</small>

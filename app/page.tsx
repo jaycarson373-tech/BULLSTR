@@ -21,7 +21,7 @@ function Navbar() {
     <header className="nav">
       <div className="container nav-inner">
         <a className="brand" href="/">
-          <span className="brand-mark" aria-hidden="true">B</span>
+          <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
           <span>
             Bull Strategy
             <small>ANSEM + SOL Rewards</small>
@@ -121,7 +121,7 @@ export default function Page() {
       <footer className="footer">
         <div className="container footer-grid">
           <div className="footer-brand">
-            <span className="brand-mark" aria-hidden="true">B</span>
+            <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
             <strong>Bull Strategy</strong>
           </div>
           <p>$ANSEM and SOL rewards for $BULLSTR holders.</p>
@@ -154,7 +154,7 @@ function StrategySection() {
       <div className="container black-bull-grid">
         <aside className="black-bull-card">
           <div className="black-bull-portrait">
-            <span>Bull Strategy</span>
+            <img src="/brand/bull-strategy-logo.png" alt="Bull Strategy mark" />
           </div>
           <div className="black-bull-card-head">
             <span>Strategy stack</span>

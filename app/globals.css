@@ -7,21 +7,21 @@
   --charcoal-2: #0b180e;
   --stone: #111a12;
   --stone-2: #172416;
-  --bronze: #8b5a2b;
-  --bronze-soft: #5b3b21;
-  --gold: #c99a54;
-  --gold-soft: #9e6c34;
+  --deep-green: #0f7c24;
+  --deep-green-soft: #0a3f17;
+  --accent: #39ff14;
+  --accent-soft: #12a31d;
   --green: #5a8f3d;
   --green-soft: #264b2a;
-  --red-glow: #8c351f;
-  --ivory: #f0ead8;
-  --muted: #aaa78f;
-  --faint: rgba(240, 234, 216, 0.66);
+  --red-glow: #1f8c35;
+  --ivory: #ecfff0;
+  --muted: #8fa995;
+  --faint: rgba(236, 255, 240, 0.66);
   --border: rgba(114, 155, 68, 0.28);
-  --border-soft: rgba(240, 234, 216, 0.11);
+  --border-soft: rgba(236, 255, 240, 0.11);
   --panel: rgba(7, 15, 9, 0.94);
   --panel-2: rgba(13, 24, 14, 0.94);
-  --danger: #d88461;
+  --danger: #39ff14;
   --success: #9bd46b;
   --scroll-y: 0px;
 }
@@ -81,7 +81,7 @@ h1 {
   letter-spacing: 0.12em;
   line-height: 0.86;
   text-transform: uppercase;
-  text-shadow: 0 28px 90px rgba(0, 0, 0, 0.72), 0 0 42px rgba(202, 164, 106, 0.12);
+  text-shadow: 0 28px 90px rgba(0, 0, 0, 0.72), 0 0 42px rgba(57, 255, 20, 0.12);
 }
 
 h1 span:first-child {
@@ -118,8 +118,8 @@ h3 {
   content: "";
   background-color: #050505;
   background-image:
-    linear-gradient(rgba(202, 164, 106, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(202, 164, 106, 0.025) 1px, transparent 1px);
+    linear-gradient(rgba(57, 255, 20, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57, 255, 20, 0.025) 1px, transparent 1px);
   background-size: 80px 80px;
   opacity: 0.42;
 }
@@ -131,7 +131,7 @@ h3 {
   pointer-events: none;
   content: "";
   background-image:
-    radial-gradient(circle, rgba(202, 164, 106, 0.22) 0 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(57, 255, 20, 0.22) 0 1px, transparent 1.8px),
     radial-gradient(circle, rgba(111, 139, 82, 0.18) 0 1px, transparent 1.8px);
   background-position: 0 0, 88px 130px;
   background-size: 220px 220px, 310px 310px;
@@ -168,8 +168,8 @@ h3 {
 .bg-fog {
   opacity: 0.36;
   background:
-    radial-gradient(ellipse at 18% 24%, rgba(202, 164, 106, 0.13), transparent 38%),
-    radial-gradient(ellipse at 80% 44%, rgba(237, 229, 212, 0.07), transparent 42%);
+    radial-gradient(ellipse at 18% 24%, rgba(57, 255, 20, 0.13), transparent 38%),
+    radial-gradient(ellipse at 80% 44%, rgba(236, 255, 240, 0.07), transparent 42%);
   transform: translate3d(0, calc(var(--scroll-y) * -0.02), 0);
 }
 
@@ -185,14 +185,14 @@ h3 {
   right: 0;
   left: 0;
   z-index: 20;
-  border-bottom: 1px solid rgba(202, 164, 106, 0.16);
+  border-bottom: 1px solid rgba(57, 255, 20, 0.16);
   background: rgba(5, 5, 5, 0.88);
   transition: background 180ms ease, border-color 180ms ease;
 }
 
 .is-scrolled .nav {
   background: rgba(3, 3, 3, 0.97);
-  border-color: rgba(202, 164, 106, 0.28);
+  border-color: rgba(57, 255, 20, 0.28);
 }
 
 .nav-inner {
@@ -215,16 +215,18 @@ h3 {
   width: 58px;
   height: 58px;
   flex: 0 0 auto;
-  border: 1px solid rgba(202, 164, 106, 0.32);
-  border-radius: 50%;
+  border: 1px solid rgba(57, 255, 20, 0.32);
+  border-radius: 16px;
   object-fit: cover;
+  background: #020403;
+  box-shadow: 0 0 22px rgba(57, 255, 20, 0.16);
 }
 
 .brand-mark {
   display: grid;
   place-items: center;
   color: var(--black);
-  background: var(--gold);
+  background: var(--accent);
   font-size: 1.15rem;
   font-weight: 950;
   letter-spacing: 0;
@@ -268,7 +270,7 @@ h3 {
 
 .nav-links a:hover,
 .footer-links a:hover {
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .cta,
@@ -280,13 +282,13 @@ h3 {
   justify-content: center;
   gap: 10px;
   min-height: 48px;
-  border: 1px solid rgba(202, 164, 106, 0.48);
+  border: 1px solid rgba(57, 255, 20, 0.48);
   border-radius: 0;
-  background: linear-gradient(180deg, #e2c383, var(--gold));
+  background: linear-gradient(180deg, #67ff4d, var(--accent));
   color: #090806;
   padding: 0 20px;
   font-weight: 800;
-  box-shadow: 0 18px 50px rgba(202, 164, 106, 0.18);
+  box-shadow: 0 18px 50px rgba(57, 255, 20, 0.18);
   transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
 }
 
@@ -295,7 +297,7 @@ h3 {
 .lookup-card button:hover,
 .details-button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 34px rgba(202, 164, 106, 0.18);
+  box-shadow: 0 0 34px rgba(57, 255, 20, 0.18);
 }
 
 .cta.secondary,
@@ -334,27 +336,27 @@ h3 {
 }
 
 .hero-mountains {
-  background-image: url("/brand/backgrounds/bull-mountain-1.jpg");
-  background-position: center 42%;
+  background-image: url("/brand/bull-strategy-logo.png");
+  background-position: right 8vw center;
   background-repeat: no-repeat;
-  background-size: cover;
-  transform: translate3d(0, calc(var(--scroll-y) * 0.026), 0) scale(1.08);
+  background-size: min(58vw, 720px) auto;
+  transform: translate3d(0, calc(var(--scroll-y) * 0.018), 0);
   will-change: transform;
 }
 
 .hero-clouds {
   opacity: 0.42;
   background:
-    radial-gradient(ellipse at 20% 16%, rgba(237, 229, 212, 0.18), transparent 36%),
-    radial-gradient(ellipse at 66% 20%, rgba(202, 164, 106, 0.12), transparent 42%);
+    radial-gradient(ellipse at 20% 16%, rgba(236, 255, 240, 0.18), transparent 36%),
+    radial-gradient(ellipse at 66% 20%, rgba(57, 255, 20, 0.12), transparent 42%);
   animation: cloudDrift 28s ease-in-out infinite alternate;
 }
 
 .hero-fog {
   opacity: 0.38;
   background:
-    radial-gradient(ellipse at 22% 76%, rgba(237, 229, 212, 0.14), transparent 34%),
-    radial-gradient(ellipse at 72% 80%, rgba(237, 229, 212, 0.1), transparent 30%);
+    radial-gradient(ellipse at 22% 76%, rgba(236, 255, 240, 0.14), transparent 34%),
+    radial-gradient(ellipse at 72% 80%, rgba(236, 255, 240, 0.1), transparent 30%);
   animation: fogDrift 22s ease-in-out infinite alternate;
 }
 
@@ -367,7 +369,7 @@ h3 {
 
 .hero-lead {
   max-width: 700px;
-  color: rgba(240, 234, 216, 0.78);
+  color: rgba(236, 255, 240, 0.78);
   font-size: clamp(1rem, 1.7vw, 1.16rem);
   line-height: 1.72;
 }
@@ -388,7 +390,7 @@ h3 {
 }
 
 .section-kicker {
-  color: var(--gold);
+  color: var(--accent);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.22em;
@@ -427,7 +429,7 @@ h3 {
   border: 1px solid var(--border);
   background: rgba(8, 8, 7, 0.9);
   padding: 28px;
-  box-shadow: inset 0 0 0 1px rgba(237, 229, 212, 0.04), 0 30px 70px rgba(0, 0, 0, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(236, 255, 240, 0.04), 0 30px 70px rgba(0, 0, 0, 0.42);
 }
 
 .hero-countdown span {
@@ -439,7 +441,7 @@ h3 {
 }
 
 .hero-countdown strong {
-  color: var(--gold);
+  color: var(--accent);
   font-family: Cinzel, Georgia, serif;
   font-size: clamp(3.6rem, 7vw, 6rem);
   font-weight: 700;
@@ -449,7 +451,7 @@ h3 {
 .hero-total-distributed {
   display: grid;
   gap: 8px;
-  border-top: 1px solid rgba(202, 164, 106, 0.22);
+  border-top: 1px solid rgba(57, 255, 20, 0.22);
   padding-top: 18px;
 }
 
@@ -470,7 +472,7 @@ h3 {
   padding: 110px 0;
   background:
     radial-gradient(ellipse at 12% 0%, rgba(111, 139, 82, 0.07), transparent 34%),
-    radial-gradient(ellipse at 90% 12%, rgba(202, 164, 106, 0.08), transparent 34%),
+    radial-gradient(ellipse at 90% 12%, rgba(57, 255, 20, 0.08), transparent 34%),
     linear-gradient(180deg, rgba(3, 3, 3, 0.88), rgba(10, 9, 8, 0.96)),
     var(--black);
 }
@@ -484,8 +486,8 @@ h3 {
   background-image:
     linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.7)),
     var(--section-art, linear-gradient(transparent, transparent)),
-    linear-gradient(rgba(202, 164, 106, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(202, 164, 106, 0.025) 1px, transparent 1px);
+    linear-gradient(rgba(57, 255, 20, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57, 255, 20, 0.025) 1px, transparent 1px);
   background-position:
     center,
     var(--section-art-position, center),
@@ -534,11 +536,11 @@ h3 {
 
 .feeding-section,
 .airdrop-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art: url("/brand/bull-strategy-logo.png");
   --section-art-position: center 45%;
   --section-art-speed: -0.01;
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(202, 164, 106, 0.12), transparent 42%),
+    radial-gradient(ellipse at 50% 0%, rgba(57, 255, 20, 0.12), transparent 42%),
     linear-gradient(180deg, rgba(7, 8, 6, 0.96), rgba(3, 3, 3, 0.96));
 }
 
@@ -563,14 +565,14 @@ h3 {
 .status-item {
   border: 1px solid var(--border-soft);
   background: var(--panel);
-  box-shadow: inset 0 0 0 1px rgba(237, 229, 212, 0.035), 0 24px 64px rgba(0, 0, 0, 0.32);
+  box-shadow: inset 0 0 0 1px rgba(236, 255, 240, 0.035), 0 24px 64px rgba(0, 0, 0, 0.32);
 }
 
 .metric-card {
   display: grid;
   min-height: 154px;
   align-content: space-between;
-  border-color: rgba(237, 229, 212, 0.12);
+  border-color: rgba(236, 255, 240, 0.12);
   background: rgba(18, 17, 15, 0.68);
   padding: 22px;
   backdrop-filter: blur(18px);
@@ -601,11 +603,11 @@ h3 {
 }
 
 .metric-card-strong {
-  border-color: rgba(202, 164, 106, 0.38);
+  border-color: rgba(57, 255, 20, 0.38);
 }
 
 .metric-card-strong strong {
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .metric-card-muted strong {
@@ -615,12 +617,12 @@ h3 {
 }
 
 .reward-explainer-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art: url("/brand/bull-strategy-logo.png");
   --section-art-position: center 48%;
   --section-art-speed: -0.014;
   background:
     radial-gradient(ellipse at 14% 12%, rgba(111, 139, 82, 0.12), transparent 38%),
-    radial-gradient(ellipse at 86% 10%, rgba(202, 164, 106, 0.12), transparent 36%),
+    radial-gradient(ellipse at 86% 10%, rgba(57, 255, 20, 0.12), transparent 36%),
     linear-gradient(180deg, rgba(5, 5, 4, 0.98), rgba(10, 9, 8, 0.98));
 }
 
@@ -636,9 +638,9 @@ h3 {
   display: grid;
   min-height: 168px;
   align-content: end;
-  border-color: rgba(202, 164, 106, 0.22);
+  border-color: rgba(57, 255, 20, 0.22);
   background:
-    linear-gradient(180deg, rgba(237, 229, 212, 0.035), transparent),
+    linear-gradient(180deg, rgba(236, 255, 240, 0.035), transparent),
     rgba(15, 14, 12, 0.86);
   padding: 22px;
 }
@@ -649,7 +651,7 @@ h3 {
   position: absolute;
   top: 18px;
   left: 20px;
-  color: var(--gold);
+  color: var(--accent);
   font-family: Cinzel, Georgia, serif;
   font-size: 0.86rem;
   letter-spacing: 0.18em;
@@ -691,7 +693,7 @@ h3 {
 .share-card strong {
   display: block;
   margin-top: 18px;
-  color: var(--gold);
+  color: var(--accent);
   font-family: Cinzel, Georgia, serif;
   font-size: clamp(2.4rem, 4vw, 4.4rem);
   line-height: 0.9;
@@ -714,7 +716,7 @@ h3 {
   min-height: 156px;
   align-content: space-between;
   padding: 20px;
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .flow-step span {
@@ -724,7 +726,7 @@ h3 {
 }
 
 .path-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art: url("/brand/bull-strategy-logo.png");
   --section-art-position: center 45%;
   --section-art-speed: -0.018;
   overflow: hidden;
@@ -739,7 +741,7 @@ h3 {
   pointer-events: none;
   background:
     radial-gradient(ellipse at 8% 42%, rgba(111, 139, 82, 0.12), transparent 34%),
-    radial-gradient(ellipse at 78% 24%, rgba(202, 164, 106, 0.13), transparent 36%),
+    radial-gradient(ellipse at 78% 24%, rgba(57, 255, 20, 0.13), transparent 36%),
     linear-gradient(180deg, rgba(3, 3, 3, 0.86), #030303);
 }
 
@@ -749,7 +751,7 @@ h3 {
   z-index: 1;
   pointer-events: none;
   background:
-    linear-gradient(115deg, transparent 0 34%, rgba(202, 164, 106, 0.08) 34% 35%, transparent 35% 100%),
+    linear-gradient(115deg, transparent 0 34%, rgba(57, 255, 20, 0.08) 34% 35%, transparent 35% 100%),
     linear-gradient(65deg, transparent 0 58%, rgba(111, 139, 82, 0.08) 58% 59%, transparent 59% 100%);
   opacity: 0.7;
   transform: translate3d(0, calc(var(--scroll-y) * -0.035), 0);
@@ -766,7 +768,7 @@ h3 {
   overscroll-behavior-inline: contain;
   padding: 56px 4px 12px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(202, 164, 106, 0.34) transparent;
+  scrollbar-color: rgba(57, 255, 20, 0.34) transparent;
 }
 
 .bull-path::before {
@@ -776,8 +778,8 @@ h3 {
   width: max(100%, 2590px);
   height: 1px;
   content: "";
-  background: linear-gradient(90deg, rgba(202, 164, 106, 0.12), rgba(202, 164, 106, 0.84), rgba(111, 139, 82, 0.42));
-  box-shadow: 0 0 28px rgba(202, 164, 106, 0.2);
+  background: linear-gradient(90deg, rgba(57, 255, 20, 0.12), rgba(57, 255, 20, 0.84), rgba(111, 139, 82, 0.42));
+  box-shadow: 0 0 28px rgba(57, 255, 20, 0.2);
 }
 
 .path-card {
@@ -786,10 +788,10 @@ h3 {
   min-height: 220px;
   align-content: start;
   gap: 14px;
-  border: 1px solid rgba(202, 164, 106, 0.18);
+  border: 1px solid rgba(57, 255, 20, 0.18);
   background: rgba(12, 11, 10, 0.96);
   padding: 24px;
-  box-shadow: inset 0 0 0 1px rgba(237, 229, 212, 0.03), 0 26px 70px rgba(0, 0, 0, 0.34);
+  box-shadow: inset 0 0 0 1px rgba(236, 255, 240, 0.03), 0 26px 70px rgba(0, 0, 0, 0.34);
 }
 
 .path-card::before {
@@ -798,15 +800,15 @@ h3 {
   left: 24px;
   width: 13px;
   height: 13px;
-  border: 1px solid rgba(202, 164, 106, 0.82);
+  border: 1px solid rgba(57, 255, 20, 0.82);
   border-radius: 50%;
   content: "";
   background: var(--green-soft);
-  box-shadow: 0 0 0 6px rgba(111, 139, 82, 0.08), 0 0 26px rgba(202, 164, 106, 0.28);
+  box-shadow: 0 0 0 6px rgba(111, 139, 82, 0.08), 0 0 26px rgba(57, 255, 20, 0.28);
 }
 
 .path-card span {
-  color: var(--gold);
+  color: var(--accent);
   font-family: Cinzel, Georgia, serif;
   font-size: 0.9rem;
   font-weight: 700;
@@ -828,35 +830,35 @@ h3 {
 
 .path-card-final {
   min-width: 340px;
-  border-color: rgba(202, 164, 106, 0.44);
+  border-color: rgba(57, 255, 20, 0.44);
   background:
-    linear-gradient(135deg, rgba(202, 164, 106, 0.12), rgba(111, 139, 82, 0.08)),
+    linear-gradient(135deg, rgba(57, 255, 20, 0.12), rgba(111, 139, 82, 0.08)),
     rgba(14, 12, 10, 0.98);
 }
 
 .path-card-final h3 {
-  color: var(--gold);
+  color: var(--accent);
   font-size: 1.6rem;
 }
 
 .black-bull-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art: url("/brand/bull-strategy-logo.png");
   --section-art-position: center 50%;
   --section-art-speed: -0.016;
   overflow: hidden;
   background:
-    radial-gradient(ellipse at 18% 36%, rgba(127, 47, 36, 0.24), transparent 34%),
+    radial-gradient(ellipse at 18% 36%, rgba(20, 92, 36, 0.24), transparent 34%),
     radial-gradient(ellipse at 84% 48%, rgba(64, 82, 51, 0.2), transparent 38%),
     #020202;
 }
 
 .ansem-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art: url("/brand/bull-strategy-logo.png");
   --section-art-position: center 48%;
   --section-art-speed: -0.014;
   overflow: hidden;
   background:
-    radial-gradient(ellipse at 18% 36%, rgba(202, 164, 106, 0.18), transparent 36%),
+    radial-gradient(ellipse at 18% 36%, rgba(57, 255, 20, 0.18), transparent 36%),
     radial-gradient(ellipse at 84% 48%, rgba(111, 139, 82, 0.18), transparent 40%),
     #020202;
 }
@@ -867,8 +869,8 @@ h3 {
   z-index: 1;
   pointer-events: none;
   background:
-    linear-gradient(115deg, rgba(202, 164, 106, 0.05), transparent 34%),
-    radial-gradient(ellipse at 50% 100%, rgba(127, 47, 36, 0.14), transparent 46%);
+    linear-gradient(115deg, rgba(57, 255, 20, 0.05), transparent 34%),
+    radial-gradient(ellipse at 50% 100%, rgba(20, 92, 36, 0.14), transparent 46%);
   opacity: 0.9;
   transform: translate3d(0, calc(var(--scroll-y) * -0.025), 0);
 }
@@ -906,12 +908,12 @@ h3 {
 
 .black-bull-card {
   position: relative;
-  border: 1px solid rgba(202, 164, 106, 0.28);
+  border: 1px solid rgba(57, 255, 20, 0.28);
   background:
     linear-gradient(180deg, rgba(12, 10, 9, 0.98), rgba(5, 5, 4, 0.98)),
     #050504;
   padding: 18px;
-  box-shadow: inset 0 0 0 1px rgba(237, 229, 212, 0.035), 0 36px 90px rgba(0, 0, 0, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(236, 255, 240, 0.035), 0 36px 90px rgba(0, 0, 0, 0.42);
 }
 
 .black-bull-card::before {
@@ -920,7 +922,7 @@ h3 {
   z-index: -1;
   content: "";
   background:
-    radial-gradient(ellipse at 18% 12%, rgba(127, 47, 36, 0.42), transparent 36%),
+    radial-gradient(ellipse at 18% 12%, rgba(20, 92, 36, 0.42), transparent 36%),
     radial-gradient(ellipse at 90% 72%, rgba(111, 139, 82, 0.34), transparent 36%);
   filter: blur(20px);
   opacity: 0.58;
@@ -929,7 +931,7 @@ h3 {
 .black-bull-portrait {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(237, 229, 212, 0.1);
+  border: 1px solid rgba(236, 255, 240, 0.1);
   background: #010101;
   aspect-ratio: 0.9;
 }
@@ -974,12 +976,12 @@ h3 {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  border-bottom: 1px solid rgba(237, 229, 212, 0.08);
+  border-bottom: 1px solid rgba(236, 255, 240, 0.08);
   padding: 22px 2px 18px;
 }
 
 .black-bull-card-head span {
-  color: var(--gold);
+  color: var(--accent);
   font-family: Cinzel, Georgia, serif;
   font-size: 0.92rem;
   font-weight: 700;
@@ -1016,8 +1018,8 @@ h3 {
 }
 
 .bull-signal-list span {
-  border: 1px solid rgba(237, 229, 212, 0.08);
-  background: rgba(237, 229, 212, 0.035);
+  border: 1px solid rgba(236, 255, 240, 0.08);
+  background: rgba(236, 255, 240, 0.035);
   color: var(--faint);
   padding: 12px;
   font-size: 0.78rem;
@@ -1031,7 +1033,7 @@ h3 {
 }
 
 .bull-signal-list span:nth-child(even) {
-  border-color: rgba(127, 47, 36, 0.24);
+  border-color: rgba(20, 92, 36, 0.24);
 }
 
 .black-bull-timeline {
@@ -1050,13 +1052,13 @@ h3 {
   left: 0;
   height: 1px;
   content: "";
-  background: linear-gradient(90deg, rgba(127, 47, 36, 0.32), rgba(202, 164, 106, 0.8), rgba(111, 139, 82, 0.36));
-  box-shadow: 0 0 26px rgba(202, 164, 106, 0.2);
+  background: linear-gradient(90deg, rgba(20, 92, 36, 0.32), rgba(57, 255, 20, 0.8), rgba(111, 139, 82, 0.36));
+  box-shadow: 0 0 26px rgba(57, 255, 20, 0.2);
 }
 
 .black-bull-timeline span {
   position: relative;
-  border: 1px solid rgba(237, 229, 212, 0.08);
+  border: 1px solid rgba(236, 255, 240, 0.08);
   background: rgba(10, 9, 8, 0.82);
   color: var(--ivory);
   padding: 16px;
@@ -1075,7 +1077,7 @@ h3 {
   border-radius: 50%;
   content: "";
   background: var(--red-glow);
-  box-shadow: 0 0 18px rgba(202, 164, 106, 0.28);
+  box-shadow: 0 0 18px rgba(57, 255, 20, 0.28);
 }
 
 .conviction-scale {
@@ -1085,7 +1087,7 @@ h3 {
 }
 
 .conviction-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art: url("/brand/bull-strategy-logo.png");
   --section-art-position: center 48%;
   --section-art-speed: -0.013;
 }
@@ -1101,9 +1103,9 @@ h3 {
   display: grid;
   min-height: 228px;
   align-content: space-between;
-  border-color: rgba(202, 164, 106, 0.22);
+  border-color: rgba(57, 255, 20, 0.22);
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(202, 164, 106, 0.12), transparent 48%),
+    radial-gradient(ellipse at 50% 0%, rgba(57, 255, 20, 0.12), transparent 48%),
     rgba(15, 14, 12, 0.9);
   padding: 24px;
 }
@@ -1113,7 +1115,7 @@ h3 {
   inset: 0;
   pointer-events: none;
   content: "";
-  background: linear-gradient(180deg, rgba(237, 229, 212, 0.04), transparent 42%);
+  background: linear-gradient(180deg, rgba(236, 255, 240, 0.04), transparent 42%);
 }
 
 .multiplier-card > span {
@@ -1138,7 +1140,7 @@ h3 {
 .multiplier-card strong {
   display: block;
   margin-top: 22px;
-  color: var(--gold);
+  color: var(--accent);
   font-family: Cinzel, Georgia, serif;
   font-size: clamp(1.95rem, 3.1vw, 3.9rem);
   line-height: 0.92;
@@ -1146,12 +1148,12 @@ h3 {
 
 .reset-warning-card {
   margin-top: 16px;
-  border-color: rgba(201, 136, 114, 0.46);
+  border-color: rgba(69, 217, 95, 0.46);
   background:
-    radial-gradient(ellipse at 0% 0%, rgba(127, 47, 36, 0.36), transparent 44%),
+    radial-gradient(ellipse at 0% 0%, rgba(20, 92, 36, 0.36), transparent 44%),
     linear-gradient(180deg, rgba(20, 9, 7, 0.92), rgba(10, 8, 7, 0.92));
   padding: 26px;
-  box-shadow: inset 0 0 0 1px rgba(237, 229, 212, 0.035), 0 26px 70px rgba(0, 0, 0, 0.36);
+  box-shadow: inset 0 0 0 1px rgba(236, 255, 240, 0.035), 0 26px 70px rgba(0, 0, 0, 0.36);
 }
 
 .reset-warning-card span {
@@ -1192,15 +1194,15 @@ h3 {
   left: 0;
   height: 1px;
   content: "";
-  background: linear-gradient(90deg, rgba(202, 164, 106, 0.1), rgba(202, 164, 106, 0.86), rgba(111, 139, 82, 0.46));
-  box-shadow: 0 0 22px rgba(202, 164, 106, 0.18);
+  background: linear-gradient(90deg, rgba(57, 255, 20, 0.1), rgba(57, 255, 20, 0.86), rgba(111, 139, 82, 0.46));
+  box-shadow: 0 0 22px rgba(57, 255, 20, 0.18);
 }
 
 .streak-node {
   position: relative;
   display: grid;
   gap: 8px;
-  border: 1px solid rgba(202, 164, 106, 0.16);
+  border: 1px solid rgba(57, 255, 20, 0.16);
   background: rgba(15, 14, 12, 0.76);
   padding: 16px 12px;
   min-height: 108px;
@@ -1212,11 +1214,11 @@ h3 {
   left: 14px;
   width: 11px;
   height: 11px;
-  border: 1px solid rgba(202, 164, 106, 0.78);
+  border: 1px solid rgba(57, 255, 20, 0.78);
   border-radius: 50%;
   content: "";
   background: var(--green-soft);
-  box-shadow: 0 0 20px rgba(202, 164, 106, 0.28);
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.28);
 }
 
 .streak-node span {
@@ -1228,7 +1230,7 @@ h3 {
 }
 
 .streak-node strong {
-  color: var(--gold);
+  color: var(--accent);
   font-family: Cinzel, Georgia, serif;
   font-size: 1.15rem;
 }
@@ -1246,7 +1248,7 @@ h3 {
 }
 
 .scale-row strong {
-  color: var(--gold);
+  color: var(--accent);
   font-family: Cinzel, Georgia, serif;
   letter-spacing: 0.08em;
 }
@@ -1256,7 +1258,7 @@ h3 {
   margin-top: 16px;
   padding: 32px;
   overflow: hidden;
-  border-color: rgba(202, 164, 106, 0.34);
+  border-color: rgba(57, 255, 20, 0.34);
 }
 
 .conviction-card h3 {
@@ -1275,8 +1277,8 @@ h3 {
 }
 
 .streak-readout > div {
-  border: 1px solid rgba(237, 229, 212, 0.08);
-  background: rgba(237, 229, 212, 0.035);
+  border: 1px solid rgba(236, 255, 240, 0.08);
+  background: rgba(236, 255, 240, 0.035);
   padding: 16px;
 }
 
@@ -1297,7 +1299,7 @@ h3 {
 .conviction-progress {
   height: 18px;
   margin-top: 28px;
-  border: 1px solid rgba(202, 164, 106, 0.28);
+  border: 1px solid rgba(57, 255, 20, 0.28);
   background: #080806;
 }
 
@@ -1305,7 +1307,7 @@ h3 {
   display: block;
   width: 0;
   height: 100%;
-  background: var(--gold-soft);
+  background: var(--accent-soft);
 }
 
 .max-row {
@@ -1318,7 +1320,7 @@ h3 {
 }
 
 .max-row b {
-  color: var(--gold);
+  color: var(--accent);
   font-family: Cinzel, Georgia, serif;
 }
 
@@ -1330,8 +1332,8 @@ h3 {
 }
 
 .rank-strip span {
-  border: 1px solid rgba(202, 164, 106, 0.28);
-  background: rgba(202, 164, 106, 0.06);
+  border: 1px solid rgba(57, 255, 20, 0.28);
+  background: rgba(57, 255, 20, 0.06);
   color: var(--ivory);
   padding: 10px 14px;
   font-size: 0.78rem;
@@ -1341,14 +1343,14 @@ h3 {
 }
 
 .warning-card {
-  border-color: rgba(202, 164, 106, 0.42);
+  border-color: rgba(57, 255, 20, 0.42);
   padding: 34px;
 }
 
 .warning-card strong {
   display: block;
   margin-top: 12px;
-  color: var(--gold);
+  color: var(--accent);
   font-family: Cinzel, Georgia, serif;
   font-size: clamp(1.6rem, 3vw, 2.8rem);
   letter-spacing: 0.08em;
@@ -1361,7 +1363,7 @@ h3 {
 }
 
 .eligibility-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art: url("/brand/bull-strategy-logo.png");
   --section-art-position: center 50%;
   --section-art-speed: -0.012;
 }
@@ -1377,17 +1379,17 @@ h3 {
   display: grid;
   min-height: 168px;
   align-content: space-between;
-  border: 1px solid rgba(202, 164, 106, 0.22);
+  border: 1px solid rgba(57, 255, 20, 0.22);
   background: rgba(16, 15, 13, 0.82);
   padding: 22px;
-  box-shadow: inset 0 0 0 1px rgba(237, 229, 212, 0.03), 0 28px 70px rgba(0, 0, 0, 0.34);
+  box-shadow: inset 0 0 0 1px rgba(236, 255, 240, 0.03), 0 28px 70px rgba(0, 0, 0, 0.34);
 }
 
 .eligibility-card:not(:last-child)::after {
   position: absolute;
   top: 50%;
   right: -13px;
-  color: var(--gold);
+  color: var(--accent);
   content: "↓";
   transform: translateY(-50%) rotate(-90deg);
 }
@@ -1415,7 +1417,7 @@ h3 {
 
 .eligibility-rules li {
   position: relative;
-  border-top: 1px solid rgba(237, 229, 212, 0.08);
+  border-top: 1px solid rgba(236, 255, 240, 0.08);
   color: var(--faint);
   padding: 14px 0 0 22px;
   line-height: 1.55;
@@ -1440,7 +1442,7 @@ h3 {
 }
 
 .lookup-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art: url("/brand/bull-strategy-logo.png");
   --section-art-position: center 48%;
   --section-art-speed: -0.01;
 }
@@ -1454,7 +1456,7 @@ h3 {
 .lookup-card input {
   width: 100%;
   min-height: 52px;
-  border: 1px solid rgba(237, 229, 212, 0.14);
+  border: 1px solid rgba(236, 255, 240, 0.14);
   background: #070706;
   color: var(--ivory);
   padding: 0 16px;
@@ -1462,7 +1464,7 @@ h3 {
 }
 
 .lookup-card input:focus {
-  border-color: rgba(202, 164, 106, 0.54);
+  border-color: rgba(57, 255, 20, 0.54);
 }
 
 .lookup-result {
@@ -1473,7 +1475,7 @@ h3 {
 }
 
 .lookup-result strong {
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .history-card {
@@ -1481,28 +1483,28 @@ h3 {
 }
 
 .history-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art: url("/brand/bull-strategy-logo.png");
   --section-art-position: center 46%;
   --section-art-speed: -0.012;
 }
 
 .bull-board-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art: url("/brand/bull-strategy-logo.png");
   --section-art-position: center 46%;
   --section-art-speed: -0.01;
   background:
-    radial-gradient(ellipse at 18% 8%, rgba(202, 164, 106, 0.1), transparent 38%),
+    radial-gradient(ellipse at 18% 8%, rgba(57, 255, 20, 0.1), transparent 38%),
     radial-gradient(ellipse at 78% 42%, rgba(111, 139, 82, 0.1), transparent 36%),
     linear-gradient(180deg, rgba(4, 4, 3, 0.97), rgba(9, 8, 7, 0.98));
 }
 
 .recent-feedings-section,
 .recent-airdrops-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art: url("/brand/bull-strategy-logo.png");
   --section-art-position: center 42%;
   --section-art-speed: -0.012;
   background:
-    radial-gradient(ellipse at 72% 0%, rgba(202, 164, 106, 0.11), transparent 40%),
+    radial-gradient(ellipse at 72% 0%, rgba(57, 255, 20, 0.11), transparent 40%),
     linear-gradient(180deg, rgba(10, 9, 8, 0.98), rgba(3, 3, 3, 0.98));
 }
 
@@ -1522,7 +1524,7 @@ table {
 
 th,
 td {
-  border-bottom: 1px solid rgba(237, 229, 212, 0.08);
+  border-bottom: 1px solid rgba(236, 255, 240, 0.08);
   padding: 18px;
   text-align: left;
   vertical-align: middle;
@@ -1543,7 +1545,7 @@ td {
 
 td a,
 .details-button {
-  color: var(--gold);
+  color: var(--accent);
   font-weight: 800;
 }
 
@@ -1560,11 +1562,11 @@ td a,
 }
 
 .philosophy-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art: url("/brand/bull-strategy-logo.png");
   --section-art-position: center 50%;
   --section-art-speed: -0.014;
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(202, 164, 106, 0.12), transparent 44%),
+    radial-gradient(ellipse at 50% 0%, rgba(57, 255, 20, 0.12), transparent 44%),
     linear-gradient(180deg, rgba(4, 4, 3, 0.96), rgba(8, 7, 6, 0.96));
 }
 
@@ -1578,12 +1580,12 @@ td a,
   display: grid;
   min-height: 220px;
   align-items: end;
-  border: 1px solid rgba(202, 164, 106, 0.18);
+  border: 1px solid rgba(57, 255, 20, 0.18);
   background:
     radial-gradient(ellipse at 50% 0%, rgba(111, 139, 82, 0.12), transparent 48%),
     rgba(14, 13, 11, 0.88);
   padding: 24px;
-  box-shadow: inset 0 0 0 1px rgba(237, 229, 212, 0.03), 0 30px 74px rgba(0, 0, 0, 0.34);
+  box-shadow: inset 0 0 0 1px rgba(236, 255, 240, 0.03), 0 30px 74px rgba(0, 0, 0, 0.34);
 }
 
 .philosophy-card span {
@@ -1594,13 +1596,13 @@ td a,
 }
 
 .faq-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-2.jpg");
+  --section-art: url("/brand/bull-strategy-logo.png");
   --section-art-position: center 46%;
   --section-art-speed: -0.01;
 }
 
 .final-bull-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-3.jpg");
+  --section-art: url("/brand/bull-strategy-logo.png");
   --section-art-position: center 48%;
   --section-art-speed: -0.014;
   min-height: 82vh;
@@ -1618,7 +1620,7 @@ td a,
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.22) 56%, rgba(0, 0, 0, 0.82)),
     linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.86)),
-    url("/brand/backgrounds/bull-mountain-3.jpg") center / cover no-repeat;
+    url("/brand/bull-strategy-logo.png") right 8vw center / min(56vw, 720px) auto no-repeat;
   filter: saturate(0.88) contrast(1.1);
   transform: translate3d(0, calc(var(--scroll-y) * -0.018), 0);
 }
@@ -1642,7 +1644,7 @@ td a,
 }
 
 .final-bull-copy strong {
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .faq-grid {
@@ -1663,7 +1665,7 @@ td a,
 }
 
 .footer {
-  border-top: 1px solid rgba(202, 164, 106, 0.18);
+  border-top: 1px solid rgba(57, 255, 20, 0.18);
   background: #050504;
   padding: 40px 0;
 }
@@ -1702,7 +1704,7 @@ td a,
 
 .footer-ca a {
   overflow-wrap: anywhere;
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .loading-screen {
@@ -1729,7 +1731,7 @@ td a,
   width: 94px;
   height: 94px;
   overflow: hidden;
-  border: 1px solid rgba(202, 164, 106, 0.34);
+  border: 1px solid rgba(57, 255, 20, 0.34);
   border-radius: 50%;
   background: #080806;
 }
@@ -1740,8 +1742,14 @@ td a,
   font-weight: 950;
 }
 
+.loader-mascot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .loader-text {
-  color: var(--gold);
+  color: var(--accent);
   font-family: Cinzel, Georgia, serif;
   font-size: 0.86rem;
   letter-spacing: 0.18em;
@@ -1751,14 +1759,14 @@ td a,
 .loader-line {
   width: 180px;
   height: 1px;
-  background: rgba(202, 164, 106, 0.2);
+  background: rgba(57, 255, 20, 0.2);
 }
 
 .loader-line span {
   display: block;
   width: 42%;
   height: 100%;
-  background: var(--gold);
+  background: var(--accent);
   animation: loaderLine 1.4s ease-in-out infinite;
 }
 
@@ -1799,19 +1807,19 @@ td a,
 }
 
 .live-stat strong {
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .round-progress {
   margin-top: 18px;
   height: 4px;
-  background: rgba(237, 229, 212, 0.1);
+  background: rgba(236, 255, 240, 0.1);
 }
 
 .round-progress span {
   display: block;
   height: 100%;
-  background: var(--gold-soft);
+  background: var(--accent-soft);
 }
 
 .dash-grid {
@@ -1833,7 +1841,7 @@ td a,
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 16px;
   align-items: center;
-  border-bottom: 1px solid rgba(237, 229, 212, 0.08);
+  border-bottom: 1px solid rgba(236, 255, 240, 0.08);
   padding: 14px 0;
 }
 
@@ -1855,7 +1863,7 @@ td a,
   display: inline-flex;
   align-items: center;
   min-height: 28px;
-  border: 1px solid rgba(237, 229, 212, 0.14);
+  border: 1px solid rgba(236, 255, 240, 0.14);
   padding: 0 10px;
   color: var(--muted);
   font-size: 0.72rem;
@@ -1864,19 +1872,19 @@ td a,
 }
 
 .status-pill.completed {
-  border-color: rgba(202, 164, 106, 0.36);
-  color: var(--gold);
+  border-color: rgba(57, 255, 20, 0.36);
+  color: var(--accent);
 }
 
 .status-pill.failed {
-  border-color: rgba(201, 136, 114, 0.38);
+  border-color: rgba(69, 217, 95, 0.38);
   color: var(--danger);
 }
 
 .golden-badge,
 .golden-bonus,
 .golden-link {
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .empty-state,
@@ -1888,7 +1896,7 @@ td a,
 .skeleton-line,
 .skeleton-row span {
   height: 12px;
-  background: rgba(237, 229, 212, 0.08);
+  background: rgba(236, 255, 240, 0.08);
 }
 
 .skeleton-card,
@@ -1958,7 +1966,7 @@ td a,
 .warning-card:hover,
 .lookup-card:hover,
 .faq-item:hover {
-  border-color: rgba(202, 164, 106, 0.36);
+  border-color: rgba(57, 255, 20, 0.36);
 }
 
 @keyframes cloudDrift {
@@ -2185,7 +2193,7 @@ td a,
   .final-bull-art {
     background:
       linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.9)),
-      url("/brand/backgrounds/bull-mountain-3.jpg") center / cover no-repeat;
+      url("/brand/bull-strategy-logo.png") center 18% / min(86vw, 460px) auto no-repeat;
   }
 
   .activity-row,
@@ -2205,17 +2213,17 @@ td a,
   --charcoal-2: #0b1510;
   --stone: #111816;
   --stone-2: #151f1a;
-  --bronze: #7f8a35;
-  --bronze-soft: #344018;
-  --gold: #e7ff00;
-  --gold-soft: #b7d400;
+  --deep-green: #188f2f;
+  --deep-green-soft: #0b3d17;
+  --accent: #39ff14;
+  --accent-soft: #18b80f;
   --green: #00c805;
   --green-soft: #123f22;
-  --ivory: #f7faf5;
+  --ivory: #ecfff0;
   --muted: #8c958d;
-  --faint: rgba(247, 250, 245, 0.68);
-  --border: rgba(231, 255, 0, 0.24);
-  --border-soft: rgba(247, 250, 245, 0.1);
+  --faint: rgba(236, 255, 240, 0.68);
+  --border: rgba(57, 255, 20, 0.24);
+  --border-soft: rgba(236, 255, 240, 0.1);
   --panel: rgba(9, 16, 12, 0.9);
   --panel-2: rgba(13, 24, 17, 0.92);
   --success: #00c805;
@@ -2225,7 +2233,7 @@ td a,
 .dashboard,
 .fallen-bulls-page {
   background:
-    radial-gradient(circle at 82% 8%, rgba(231, 255, 0, 0.16), transparent 26%),
+    radial-gradient(circle at 82% 8%, rgba(57, 255, 20, 0.16), transparent 26%),
     radial-gradient(circle at 14% 18%, rgba(0, 200, 5, 0.14), transparent 22%),
     linear-gradient(180deg, #020403, #060907 48%, #020403);
 }
@@ -2269,24 +2277,24 @@ td a,
 }
 
 .nav {
-  border-bottom-color: rgba(231, 255, 0, 0.16);
+  border-bottom-color: rgba(57, 255, 20, 0.16);
   background: rgba(2, 4, 3, 0.84);
   backdrop-filter: blur(18px);
 }
 
 .is-scrolled .nav {
   background: rgba(2, 4, 3, 0.96);
-  border-color: rgba(231, 255, 0, 0.28);
+  border-color: rgba(57, 255, 20, 0.28);
 }
 
 .brand-logo,
 .brand-mark,
 .loader-mascot {
-  border-color: rgba(231, 255, 0, 0.38);
+  border-color: rgba(57, 255, 20, 0.38);
   border-radius: 16px;
-  background: #e7ff00;
+  background: #020403;
   object-fit: cover;
-  box-shadow: 0 0 34px rgba(231, 255, 0, 0.12);
+  box-shadow: 0 0 34px rgba(57, 255, 20, 0.12);
 }
 
 .brand small,
@@ -2305,16 +2313,16 @@ td a,
 .mini-button,
 .details-button,
 .lookup-card button {
-  border-color: rgba(231, 255, 0, 0.55);
+  border-color: rgba(57, 255, 20, 0.55);
   border-radius: 14px;
-  background: #e7ff00;
+  background: #39ff14;
   color: #020403;
-  box-shadow: 0 16px 48px rgba(231, 255, 0, 0.16);
+  box-shadow: 0 16px 48px rgba(57, 255, 20, 0.16);
 }
 
 .cta.secondary,
 .mini-button {
-  background: rgba(247, 250, 245, 0.04);
+  background: rgba(236, 255, 240, 0.04);
   color: var(--ivory);
 }
 
@@ -2324,8 +2332,8 @@ td a,
   align-items: end;
   padding: 152px 0 78px;
   background:
-    linear-gradient(rgba(231, 255, 0, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(231, 255, 0, 0.035) 1px, transparent 1px),
+    linear-gradient(rgba(57, 255, 20, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57, 255, 20, 0.035) 1px, transparent 1px),
     #020403;
   background-size: 72px 72px;
 }
@@ -2341,34 +2349,34 @@ td a,
 
 .hood-hero .hero-mountains {
   background:
-    linear-gradient(135deg, transparent 0 48%, rgba(231, 255, 0, 0.2) 48% 48.25%, transparent 48.25%),
+    linear-gradient(135deg, transparent 0 48%, rgba(57, 255, 20, 0.2) 48% 48.25%, transparent 48.25%),
     linear-gradient(160deg, transparent 0 62%, rgba(0, 200, 5, 0.22) 62% 62.3%, transparent 62.3%),
-    url("/brand/backgrounds/bull-mountain-1.jpg") center / cover no-repeat;
+    url("/brand/bull-strategy-logo.png") right 7vw center / min(48vw, 660px) auto no-repeat;
   opacity: 0.92;
   transform: translate3d(0, calc(var(--scroll-y) * 0.012), 0);
 }
 
 .hood-hero .hero-shade {
   background:
-    radial-gradient(circle at 75% 36%, rgba(231, 255, 0, 0.2), transparent 28%),
+    radial-gradient(circle at 75% 36%, rgba(57, 255, 20, 0.2), transparent 28%),
     linear-gradient(90deg, rgba(2, 4, 3, 0.96), rgba(2, 4, 3, 0.74) 46%, rgba(2, 4, 3, 0.3) 74%, rgba(2, 4, 3, 0.78)),
     linear-gradient(180deg, rgba(2, 4, 3, 0.12), rgba(2, 4, 3, 0.86));
 }
 
 .hero-subtitle {
-  color: var(--gold);
+  color: var(--accent);
   font-weight: 700;
 }
 
 .hero-lead {
-  color: rgba(247, 250, 245, 0.76);
+  color: rgba(236, 255, 240, 0.76);
 }
 
 .hero-countdown {
   border-radius: 22px;
-  border-color: rgba(231, 255, 0, 0.2);
+  border-color: rgba(57, 255, 20, 0.2);
   background:
-    linear-gradient(180deg, rgba(247, 250, 245, 0.05), transparent),
+    linear-gradient(180deg, rgba(236, 255, 240, 0.05), transparent),
     rgba(5, 10, 7, 0.86);
   backdrop-filter: blur(18px);
 }
@@ -2379,21 +2387,21 @@ td a,
 .share-card strong,
 .max-row b,
 .live-stat strong {
-  color: var(--gold);
+  color: var(--accent);
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   letter-spacing: -0.04em;
 }
 
 .section {
   background:
-    radial-gradient(circle at 84% 8%, rgba(231, 255, 0, 0.08), transparent 24%),
+    radial-gradient(circle at 84% 8%, rgba(57, 255, 20, 0.08), transparent 24%),
     linear-gradient(180deg, rgba(2, 4, 3, 0.98), rgba(6, 9, 7, 0.98));
 }
 
 .section::before {
   background-image:
-    linear-gradient(rgba(231, 255, 0, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(231, 255, 0, 0.025) 1px, transparent 1px);
+    linear-gradient(rgba(57, 255, 20, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57, 255, 20, 0.025) 1px, transparent 1px);
   background-size: 96px 96px, 96px 96px;
   opacity: 0.36;
   filter: none;
@@ -2417,9 +2425,9 @@ td a,
 .black-bull-card,
 .eligibility-card {
   border-radius: 18px;
-  border-color: rgba(247, 250, 245, 0.1);
+  border-color: rgba(236, 255, 240, 0.1);
   background:
-    linear-gradient(180deg, rgba(247, 250, 245, 0.055), rgba(247, 250, 245, 0.015)),
+    linear-gradient(180deg, rgba(236, 255, 240, 0.055), rgba(236, 255, 240, 0.015)),
     rgba(7, 13, 9, 0.88);
   box-shadow: 0 20px 70px rgba(0, 0, 0, 0.28);
 }
@@ -2458,14 +2466,14 @@ td a,
 
 .multiplier-card > span,
 .multiplier-card strong {
-  color: var(--gold);
+  color: var(--accent);
 }
 
 .boost-strip span,
 .rank-strip span {
   border-radius: 999px;
-  border-color: rgba(231, 255, 0, 0.24);
-  background: rgba(231, 255, 0, 0.055);
+  border-color: rgba(57, 255, 20, 0.24);
+  background: rgba(57, 255, 20, 0.055);
 }
 
 .strategy-thesis-section .black-bull-portrait {
@@ -2473,7 +2481,7 @@ td a,
   display: grid;
   place-items: center;
   border-radius: 18px;
-  background: #e7ff00;
+  background: #020403;
 }
 
 .strategy-thesis-section .black-bull-portrait span {
@@ -2491,8 +2499,8 @@ td a,
 
 .bull-signal-list span {
   border-radius: 12px;
-  border-color: rgba(231, 255, 0, 0.18);
-  background: rgba(231, 255, 0, 0.04);
+  border-color: rgba(57, 255, 20, 0.18);
+  background: rgba(57, 255, 20, 0.04);
 }
 
 .black-bull-timeline {
@@ -2500,7 +2508,7 @@ td a,
 }
 
 .black-bull-timeline::before {
-  background: linear-gradient(90deg, transparent, rgba(231, 255, 0, 0.8), transparent);
+  background: linear-gradient(90deg, transparent, rgba(57, 255, 20, 0.8), transparent);
 }
 
 .black-bull-timeline span::before {
@@ -2517,7 +2525,7 @@ th {
 }
 
 td {
-  color: rgba(247, 250, 245, 0.9);
+  color: rgba(236, 255, 240, 0.9);
 }
 
 td a,
@@ -2527,8 +2535,8 @@ td a,
 
 .final-bull-art {
   background:
-    radial-gradient(circle at 76% 44%, rgba(231, 255, 0, 0.18), transparent 24%),
-    url("/brand/backgrounds/bull-mountain-3.jpg") center / cover no-repeat;
+    radial-gradient(circle at 76% 44%, rgba(57, 255, 20, 0.18), transparent 24%),
+    url("/brand/bull-strategy-logo.png") right 8vw center / min(52vw, 720px) auto no-repeat;
   filter: none;
 }
 
@@ -2537,12 +2545,12 @@ td a,
 }
 
 .footer {
-  border-top-color: rgba(231, 255, 0, 0.16);
+  border-top-color: rgba(57, 255, 20, 0.16);
   background: #020403;
 }
 
 .loader-text {
-  color: var(--gold);
+  color: var(--accent);
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -2569,8 +2577,8 @@ td a,
 
   .hood-hero .hero-mountains {
     background:
-      radial-gradient(circle at 50% 24%, rgba(231, 255, 0, 0.18), transparent 32%),
-      url("/brand/backgrounds/bull-mountain-1.jpg") center / cover no-repeat;
+      radial-gradient(circle at 50% 24%, rgba(57, 255, 20, 0.18), transparent 32%),
+      url("/brand/bull-strategy-logo.png") center 18% / min(86vw, 420px) auto no-repeat;
     opacity: 0.42;
   }
 

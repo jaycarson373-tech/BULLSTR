@@ -308,7 +308,7 @@ export function DashboardClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <span className="brand-mark" aria-hidden="true">B</span>
+            <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
             <span>
               Bull Strategy
               <small>ANSEM + SOL Rewards</small>

@@ -11,12 +11,30 @@ export const metadata: Metadata = {
     description: "$ANSEM and SOL rewards for $BULLSTR holders every 5 minutes.",
     url: "https://bullstrategy.fun",
     siteName: "Bull Strategy",
+    images: [
+      {
+        url: "/brand/bull-strategy-logo.png",
+        width: 1200,
+        height: 1200,
+        alt: "Bull Strategy"
+      }
+    ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
     title: "Bull Strategy",
-    description: "$ANSEM and SOL rewards for $BULLSTR holders every 5 minutes."
+    description: "$ANSEM and SOL rewards for $BULLSTR holders every 5 minutes.",
+    images: ["/brand/bull-strategy-logo.png"]
+  },
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+      { url: "/logo.png", type: "image/png" }
+    ],
+    apple: "/apple-touch-icon.png"
   }
 };
 
