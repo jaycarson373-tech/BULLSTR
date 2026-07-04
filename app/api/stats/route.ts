@@ -62,12 +62,6 @@ type RewardAssetTotal = {
   latestTxSig: string | null;
 };
 
-type HolderStateRow = {
-  current_multiplier_bps: number | null;
-  source_balance: string | number | null;
-  permanently_ineligible: boolean | null;
-};
-
 type EpochPayoutSummary = {
   rewardAmount: number;
   normalRewardAmount: number;
@@ -117,14 +111,6 @@ async function getSupabaseJson<T>(config: SupabaseConfig, path: string, extraHea
   });
   if (!response.ok) throw new Error(`Supabase ${path} error ${response.status}`);
   return (await response.json()) as T;
-}
-
-async function getOptionalSupabaseJson<T>(config: SupabaseConfig, path: string) {
-  try {
-    return await getSupabaseJson<T>(config, path);
-  } catch {
-    return null;
-  }
 }
 
 function countFromContentRange(contentRange: string | null) {
@@ -184,20 +170,6 @@ function numberEnv(name: string, fallback: number) {
 function toNumber(value: unknown) {
   const number = Number(value ?? 0);
   return Number.isFinite(number) ? number : 0;
-}
-
-function holderBoostBps(balance: number) {
-  if (balance < 500_000) return 13500;
-  if (balance < 1_000_000) return 12000;
-  if (balance < 3_000_000) return 11000;
-  return 10000;
-}
-
-function averageBoost(holderStates: HolderStateRow[] | null) {
-  const active = (holderStates ?? []).filter((row) => !row.permanently_ineligible);
-  if (!active.length) return null;
-  const totalBps = active.reduce((sum, row) => sum + holderBoostBps(toNumber(row.source_balance)), 0);
-  return totalBps / active.length / 10000;
 }
 
 function sourceTokenMint() {
@@ -450,11 +422,6 @@ export async function GET() {
     const buyRows = buys?.ok ? ((await buys.json()) as BuyRow[]) : [];
     const buysByEpoch = new Map(buyRows.map((buy) => [buy.epoch_id, buy]));
     const payoutRows = await getSettledPayouts(config);
-    const holderStates = await getOptionalSupabaseJson<HolderStateRow[]>(
-      config,
-      "holder_states?select=current_multiplier_bps,source_balance,permanently_ineligible&permanently_ineligible=eq.false&limit=10000"
-    );
-    const avgMultiplier = averageBoost(holderStates);
     const payoutsByEpoch = new Map<string, EpochPayoutSummary>();
 
     for (const payout of payoutRows) {
@@ -618,7 +585,6 @@ export async function GET() {
       lastRewardTotals: epochHistory[0]?.rewardTotals ?? [],
       totalRewardTotals,
       latestEligibleHolders,
-      averageMultiplier: avgMultiplier,
       nextDropTime: nextDropTime(),
       epochHistory,
       roundHistory,

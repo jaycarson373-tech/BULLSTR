@@ -63,10 +63,6 @@ type PreparedAllocation = Allocation & {
 type WeightedHolder = {
   holder: Holder;
   weight: bigint;
-  holderBoostBps: number;
-  solBoostBps: number;
-  finalBoostBps: number;
-  solLamports: bigint;
 };
 
 type PayoutReserve = {
@@ -111,57 +107,17 @@ function rewardAtaForOwner(owner: PublicKey, tokenProgram: PublicKey) {
   );
 }
 
-function boostLabel(bps: number) {
-  return `${(bps / 10_000).toFixed(2)}x`;
-}
-
-function holderBoostBps(holder: Holder) {
-  if (holder.uiBalance < 500_000) return 13_500;
-  if (holder.uiBalance < 1_000_000) return 12_000;
-  if (holder.uiBalance < 3_000_000) return 11_000;
-  return 10_000;
-}
-
-function solBalanceBoostBps(solLamports: bigint) {
-  if (solLamports < 1n * BigInt(LAMPORTS_PER_SOL)) return 13_500;
-  if (solLamports < 5n * BigInt(LAMPORTS_PER_SOL)) return 12_000;
-  if (solLamports < 20n * BigInt(LAMPORTS_PER_SOL)) return 11_000;
-  return 10_000;
-}
-
-async function holderSolBalances(holders: Holder[]) {
-  const balances = new Map<string, bigint>();
-  for (const batch of chunk(holders, 100)) {
-    const owners = batch.map((holder) => new PublicKey(holder.wallet));
-    const accounts = await connection.getMultipleAccountsInfo(owners, "confirmed");
-    accounts.forEach((account, index) => {
-      balances.set(batch[index].wallet, BigInt(account?.lamports ?? 0));
-    });
-  }
-  return balances;
-}
-
 async function computeStrategyWeights(holders: Holder[]): Promise<WeightedHolder[]> {
-  const solBalances = await holderSolBalances(holders);
-
   return holders.map((holder) => {
-    const solLamports = solBalances.get(holder.wallet) ?? 0n;
-    const holderBps = holderBoostBps(holder);
-    const solBps = solBalanceBoostBps(solLamports);
-    const finalBoostBps = Math.round((holderBps * solBps) / 10_000);
-    const weight = holder.rawBalance * BigInt(finalBoostBps);
+    const weight = holder.rawBalance;
 
     console.log(
-      `[WEIGHT] wallet=${holder.wallet} hood=${holder.uiBalance} sol=${Number(solLamports) / LAMPORTS_PER_SOL} holderBoost=${boostLabel(holderBps)} solBoost=${boostLabel(solBps)} finalBoost=${boostLabel(finalBoostBps)} finalWeight=${weight.toString()}`
+      `[WEIGHT] wallet=${holder.wallet} source=${holder.uiBalance} weight=${weight.toString()}`
     );
 
     return {
       holder,
-      weight,
-      holderBoostBps: holderBps,
-      solBoostBps: solBps,
-      finalBoostBps,
-      solLamports
+      weight
     };
   });
 }
@@ -220,10 +176,7 @@ export async function computeSolAllocations(holders: Holder[], solLamports: bigi
 
 function snapshotHash(holders: WeightedHolder[]) {
   const canonical = holders
-    .map(
-      ({ holder, holderBoostBps, solBoostBps, finalBoostBps, solLamports }) =>
-        `${holder.wallet}:${holder.rawBalance.toString()}:${holderBoostBps}:${solBoostBps}:${finalBoostBps}:${solLamports.toString()}`
-    )
+    .map(({ holder }) => `${holder.wallet}:${holder.rawBalance.toString()}`)
     .join("|");
   return createHash("sha256").update(canonical).digest("hex");
 }

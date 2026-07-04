@@ -18,26 +18,17 @@ The token reward leg is implemented:
 1. Claim creator fees into the treasury.
 2. Snapshot `$BULLSTR` holders with at least `ELIGIBILITY_MIN`.
 3. Apply permanent holder-state rules.
-4. Score selected holders by `$BULLSTR` balance with capped holder and SOL-balance boosts.
+4. Weight selected holders by raw `$BULLSTR` balance.
 5. Use `SWAP_BALANCE_BPS=5000` to buy `$ANSEM` with 50% of usable SOL.
 6. Use `SOL_AIRDROP_BPS=5000` to reserve 50% of usable SOL for native SOL holder airdrops.
 7. Airdrop the bought `$ANSEM` and native SOL to eligible holders.
 8. Store epochs, snapshots, bonus fields, reward pools, and payouts in Supabase.
 
-The two reward legs share the same 5-minute epoch and holder weighting model.
+The two reward legs share the same 5-minute epoch and proportional holder weighting model.
 
 ## Weighting
 
-Reward weight starts from `$BULLSTR` held:
-
-- 250K-500K `$BULLSTR`: 1.35x holder boost.
-- 500K-1M `$BULLSTR`: 1.20x holder boost.
-- 1M-3M `$BULLSTR`: 1.10x holder boost.
-- 3M+ `$BULLSTR`: 1.00x holder boost.
-- Wallets with less than 1 SOL: 1.35x SOL boost.
-- Wallets with 1-5 SOL: 1.20x SOL boost.
-- Wallets with 5-20 SOL: 1.10x SOL boost.
-- Wallets with 20+ SOL: 1.00x SOL boost.
+Reward weight is proportional to `$BULLSTR` held.
 
 Every epoch is 5 minutes by default. Default eligibility is 250,000 `$BULLSTR`. Selling any amount of `$BULLSTR`, or falling below `ELIGIBILITY_MIN`, permanently removes that wallet from future tracked distributions.
 

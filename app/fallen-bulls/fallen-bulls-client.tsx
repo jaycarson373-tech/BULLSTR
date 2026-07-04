@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 type FallenBull = {
   address: string;
   balance: number;
-  currentMultiplier: string | null;
   currentStreak: number | null;
   totalRewardEarned: number;
   lastAirdropAt: string | null;

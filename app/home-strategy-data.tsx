@@ -42,7 +42,6 @@ type StatsResponse = {
   lastRewardTotals: RewardTotal[];
   totalRewardTotals: RewardTotal[];
   latestEligibleHolders: number;
-  averageMultiplier: number | null;
   nextDropTime: string;
   roundHistory: Round[];
   recentRewards: Reward[];
@@ -54,14 +53,8 @@ type HoldersResponse = {
     address: string;
     balance: number;
     percentage: string;
-    currentMultiplier: string | null;
-    currentMultiplierBps: number | null;
     currentHoldTime: string | null;
     currentStreak: number | null;
-    holderBoost: string;
-    solBalanceTier: string;
-    solBoost: string;
-    finalWeight: number | null;
     totalRewardEarned: number;
     lastAirdropAt: string | null;
     permanentlyIneligible: boolean;
@@ -70,8 +63,6 @@ type HoldersResponse = {
   fallenBulls?: Array<{
     address: string;
     balance: number;
-    currentMultiplier: string | null;
-    currentMultiplierBps: number | null;
     currentStreak: number | null;
     totalRewardEarned: number;
     lastAirdropAt: string | null;
@@ -89,7 +80,6 @@ const emptyStats: StatsResponse = {
   lastRewardTotals: [],
   totalRewardTotals: [],
   latestEligibleHolders: 0,
-  averageMultiplier: null,
   nextDropTime: new Date().toISOString(),
   roundHistory: [],
   recentRewards: []
@@ -141,11 +131,6 @@ function formatRewardTotals(totals: RewardTotal[] | undefined, empty = "Awaiting
   return liveTotals
     .map((total) => `${formatNumber(total.rewardAmount, rewardDecimals(total.rewardAsset))} ${total.rewardAsset}`)
     .join(" / ");
-}
-
-function formatMultiplier(value: number | null | undefined) {
-  if (!Number.isFinite(value ?? NaN) || !value) return "Awaiting live state";
-  return `${value.toFixed(2)}x`;
 }
 
 function formatDate(value: string) {
@@ -222,7 +207,6 @@ export function HeroCountdown() {
 export function LiveProtocolDashboard() {
   const { stats, now } = useProtocolData();
   const rounds = stats?.roundHistory ?? [];
-  const todaysAirdrops = countToday(rounds);
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
   const latestRound = rounds[0];
@@ -240,21 +224,11 @@ export function LiveProtocolDashboard() {
           <MetricCard label="Eligible Holders" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} />
           <MetricCard label="ANSEM Bought" value={latestRound ? formatAmount(latestRound.rewardBought, "ANSEM", 4) : "Awaiting live distribution"} />
           <MetricCard label="Next Distribution" value={countdown} />
-          <MetricCard label="Average Boost" value={stats?.averageMultiplier ? formatMultiplier(stats.averageMultiplier) : "Live epoch score"} muted />
           <MetricCard label="Last Drop TX" value={latestRound?.txSig ? compactAddress(latestRound.txSig) : "Awaiting tx"} muted />
         </div>
       </div>
     </section>
   );
-}
-
-function countToday(rounds: Round[]) {
-  const today = new Date().toDateString();
-  return rounds.filter((round) => new Date(round.startedAt).toDateString() === today).length;
-}
-
-function sumRounds(rounds: Round[], key: "rewardBought" | "distributedPump") {
-  return rounds.reduce((sum, round) => sum + (Number.isFinite(round[key]) ? round[key] : 0), 0);
 }
 
 function MetricCard({
@@ -276,80 +250,6 @@ function MetricCard({
   );
 }
 
-const bullModelCards = [
-  ["250K-500K", "1.35x", "Holder boost for eligible smaller wallets."],
-  ["500K-1M", "1.20x", "Moderate holder boost above the minimum."],
-  ["1M-3M", "1.10x", "Light holder boost while supply still dominates."],
-  ["3M+", "1.00x", "Base holder weight for larger wallets."]
-];
-
-const solBoostCards = [
-  ["<1 SOL", "1.35x"],
-  ["1-5 SOL", "1.20x"],
-  ["5-20 SOL", "1.10x"],
-  ["20+ SOL", "1.00x"]
-];
-
-export function BullBonusSection() {
-  return (
-    <section className="section conviction-section" id="bull-bonus">
-      <div className="container">
-        <div className="section-kicker">Boost model</div>
-        <div className="section-head split-head">
-          <h2>Mostly supply weighted. Slightly trench tilted.</h2>
-          <p>Rewards are mostly based on how much $BULLSTR a wallet holds. The boost only helps balance the game slightly, with capped tiers for smaller holders and lower SOL balances.</p>
-        </div>
-        <div className="multiplier-grid">
-          {bullModelCards.map(([value, title, copy]) => (
-            <article className="multiplier-card" key={title}>
-              <span>{value}</span>
-              <h3>{title}</h3>
-              <p>{copy}</p>
-              <strong>{title}</strong>
-            </article>
-          ))}
-        </div>
-        <div className="rank-strip boost-strip" aria-label="SOL balance boost model">
-          {solBoostCards.map(([tier, boost]) => (
-            <span key={tier}>{tier}: {boost}</span>
-          ))}
-        </div>
-        <div className="conviction-card streak-card">
-          <span>Transparent reward weight</span>
-          <h3>Final Weight</h3>
-          <div className="streak-readout">
-            <div>
-              <span>Base</span>
-              <strong>$BULLSTR held</strong>
-            </div>
-            <div>
-              <span>Boost</span>
-              <strong>Holder tier</strong>
-            </div>
-            <div>
-              <span>Balance</span>
-              <strong>SOL tier</strong>
-            </div>
-          </div>
-          <div className="conviction-progress" aria-hidden="true">
-            <i />
-          </div>
-          <p>Final weight = $BULLSTR balance x holder boost x SOL balance boost. Bigger $BULLSTR balances still win more, but smaller and lower-balance wallets get a modest capped edge.</p>
-          <div className="max-row">
-            <span>Max combined boost</span>
-            <b>1.82×</b>
-          </div>
-        </div>
-      </div>
-      <div className="container rank-strip" aria-label="Reward model">
-        {["Supply weighting dominates", "Boosts are capped", "No infinite multipliers", "Every epoch recalculates"].map((rank) => (
-          <span key={rank}>{rank}</span>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 export function PermanentEligibility() {
   return (
     <section className="section eligibility-section" id="eligibility">
@@ -359,7 +259,7 @@ export function PermanentEligibility() {
           <h2>Hold 250K+ $BULLSTR.</h2>
         </div>
         <div className="eligibility-flow">
-          {[`250K+ $${SOURCE_SYMBOL}`, "Creator Fees", "Every Epoch", "Boost Score", "On-chain Tracking"].map((item, index) => (
+          {[`250K+ $${SOURCE_SYMBOL}`, "Creator Fees", "Every Epoch", "Holder Snapshot", "On-chain Tracking"].map((item, index) => (
             <article className="eligibility-card" key={item}>
               <span>{index + 1}</span>
               <strong>{item}</strong>
@@ -386,7 +286,7 @@ export function RewardExplanation() {
             "50% routes to $ANSEM reward buys",
             "$ANSEM distributes every epoch",
             "50% distributes as native SOL",
-            "Smaller holders and lower SOL wallets receive a modest boost",
+            "$BULLSTR balance sets reward share",
             "Everything is tracked on-chain"
           ].map((item) => (
             <article className="reward-flow-card" key={item}>
@@ -396,9 +296,9 @@ export function RewardExplanation() {
         </div>
         <div className="share-example">
           {[
-            ["Core", "$BULLSTR held", "base weight"],
-            ["Tilt", "Holder tier", "capped boost"],
-            ["Balance", "SOL tier", "capped boost"]
+            ["Weight", "$BULLSTR held", "proportional share"],
+            ["Split", "$ANSEM + SOL", "two reward legs"],
+            ["Ledger", "On-chain transfers", "tracked every epoch"]
           ].map(([holder, multiplier, copy]) => (
             <article className="share-card" key={holder}>
               <span>{holder}</span>
@@ -432,7 +332,7 @@ export function BullBoard() {
         <div className="section-kicker">Strategy board</div>
         <div className="section-head split-head">
           <h2>STRATEGY BOARD</h2>
-          <p>Clean holder table showing balance, boost tiers, final weight, earned rewards, and latest reward activity.</p>
+          <p>Clean holder table showing balance, share, earned rewards, and latest reward activity.</p>
           <a className="cta secondary" href="/fallen-bulls">
             Ineligible Wallets
           </a>
@@ -444,10 +344,7 @@ export function BullBoard() {
                 <tr>
                   <th>Wallet</th>
                   <th>$BULLSTR Held</th>
-                  <th>SOL Balance Tier</th>
-                  <th>Holder Boost</th>
-                  <th>SOL Boost</th>
-                  <th>Final Weight</th>
+                  <th>Share</th>
                   <th>Total {REWARD_SYMBOL} Earned</th>
                   <th>Last Airdrop</th>
                 </tr>
@@ -461,10 +358,7 @@ export function BullBoard() {
                       <tr key={holder.address}>
                         <td>{compactAddress(holder.address)}</td>
                         <td>{formatNumber(holder.balance, 0)}</td>
-                        <td>{holder.solBalanceTier}</td>
-                        <td>{holder.holderBoost}</td>
-                        <td>{holder.solBoost}</td>
-                        <td>{holder.finalWeight ? formatNumber(holder.finalWeight, 0) : "Scored live"}</td>
+                        <td>{holder.percentage}%</td>
                         <td>{recentEarned > 0 ? formatAmount(recentEarned, REWARD_SYMBOL) : "Awaiting holder totals"}</td>
                         <td>{holder.lastAirdropAt ? formatDate(holder.lastAirdropAt) : lastReward ? formatDate(lastReward.time) : "Awaiting airdrop"}</td>
                       </tr>
@@ -472,7 +366,7 @@ export function BullBoard() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={8}>Awaiting Strategy Board.</td>
+                    <td colSpan={5}>Awaiting Strategy Board.</td>
                   </tr>
                 )}
               </tbody>

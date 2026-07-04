@@ -2,7 +2,6 @@ import { ArrowRight } from "lucide-react";
 import { CopyCaButton } from "./copy-ca-button";
 import {
   BullBoard,
-  BullBonusSection,
   HeroCountdown,
   HolderLookup,
   LiveProtocolDashboard,
@@ -31,7 +30,6 @@ function Navbar() {
           <a href="#dashboard">Live Data</a>
           <a href="#strategy">Strategy</a>
           <a href="#how">Rewards</a>
-          <a href="#bull-bonus">Boost Model</a>
           <a href="#bull-board">Board</a>
           <a href="#airdrops">Airdrops</a>
         </nav>
@@ -87,7 +85,6 @@ export default function Page() {
         <LiveProtocolDashboard />
         <StrategySection />
         <RewardExplanation />
-        <BullBonusSection />
         <PermanentEligibility />
         <BullBoard />
         <RecentAirdrops />
@@ -128,7 +125,6 @@ export default function Page() {
           <div className="footer-links">
             <a href="#dashboard">Live Data</a>
             <a href="#strategy">Strategy</a>
-            <a href="#bull-bonus">Boost Model</a>
             <a href="#bull-board">Board</a>
             <a href="#airdrops">Airdrops</a>
             <a href={process.env.NEXT_PUBLIC_X_URL ?? "https://x.com"} target="_blank" rel="noreferrer">

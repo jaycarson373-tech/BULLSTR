@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 
 type EpochRow = { epoch_id: string };
 type SnapshotRow = {
@@ -10,7 +9,6 @@ type HolderStateRow = {
   wallet: string;
   source_balance: string | number | null;
   current_streak_epochs: number | null;
-  current_multiplier_bps: number | null;
   eligible_since: string | null;
   permanently_ineligible: boolean | null;
   ineligible_reason: string | null;
@@ -37,53 +35,6 @@ function supabaseConfig() {
 function toNumber(value: unknown) {
   const number = Number(value ?? 0);
   return Number.isFinite(number) ? number : 0;
-}
-
-function boostLabel(bps: number) {
-  return `${(bps / 10000).toFixed(2)}x`;
-}
-
-function holderBoostBps(balance: number) {
-  if (balance < 500_000) return 13500;
-  if (balance < 1_000_000) return 12000;
-  if (balance < 3_000_000) return 11000;
-  return 10000;
-}
-
-function solBoostBps(solBalance: number) {
-  if (solBalance < 1) return 13500;
-  if (solBalance < 5) return 12000;
-  if (solBalance < 20) return 11000;
-  return 10000;
-}
-
-function solTierLabel(solBalance: number | null) {
-  if (solBalance === null) return "Scored live";
-  if (solBalance < 1) return "<1 SOL";
-  if (solBalance < 5) return "1-5 SOL";
-  if (solBalance < 20) return "5-20 SOL";
-  return "20+ SOL";
-}
-
-async function solBalances(wallets: string[]) {
-  const rpcUrl = process.env.HELIUS_RPC_URL ?? process.env.NEXT_PUBLIC_HELIUS_RPC_URL ?? "https://api.mainnet-beta.solana.com";
-  const balances = new Map<string, number | null>();
-  wallets.forEach((wallet) => balances.set(wallet, null));
-
-  try {
-    const connection = new Connection(rpcUrl, "confirmed");
-    for (let index = 0; index < wallets.length; index += 100) {
-      const batch = wallets.slice(index, index + 100);
-      const accounts = await connection.getMultipleAccountsInfo(batch.map((wallet) => new PublicKey(wallet)), "confirmed");
-      accounts.forEach((account, accountIndex) => {
-        balances.set(batch[accountIndex], (account?.lamports ?? 0) / LAMPORTS_PER_SOL);
-      });
-    }
-  } catch (error) {
-    console.warn("optional SOL balance lookup failed", error);
-  }
-
-  return balances;
 }
 
 async function getJson<T>(url: string, key: string, extraHeaders?: HeadersInit) {
@@ -125,10 +76,6 @@ async function getSettledPayouts(config: { url: string; key: string }) {
   return rows;
 }
 
-function multiplierLabel(bps: number | null | undefined) {
-  return `${((bps ?? 10000) / 10000).toFixed(2)}x`;
-}
-
 function holdTimeLabel(streakEpochs: number | null | undefined) {
   const minutes = Math.max(0, Number(streakEpochs ?? 0) * 5);
   if (minutes < 60) return `${minutes} min`;
@@ -150,7 +97,7 @@ export async function GET() {
 
   try {
     const holderStates = await getJsonOrNull<HolderStateRow[]>(
-      `${config.url}/rest/v1/holder_states?select=wallet,source_balance,current_streak_epochs,current_multiplier_bps,eligible_since,permanently_ineligible,ineligible_reason,ineligible_at,last_seen_at&limit=10000`,
+      `${config.url}/rest/v1/holder_states?select=wallet,source_balance,current_streak_epochs,eligible_since,permanently_ineligible,ineligible_reason,ineligible_at,last_seen_at&limit=10000`,
       config.key
     );
     const activeStates = (holderStates ?? []).filter((row) => !row.permanently_ineligible);
@@ -172,23 +119,13 @@ export async function GET() {
       const mappedHolders = activeStates.map((row) => {
         const balance = toNumber(row.source_balance);
         const payout = payoutsByWallet.get(row.wallet);
-        const holderBoost = holderBoostBps(balance);
         return {
           rank: 0,
           address: row.wallet,
           balance,
           percentage: totalSupply > 0 ? ((balance / totalSupply) * 100).toFixed(2) : "0.00",
-          currentMultiplier: multiplierLabel(row.current_multiplier_bps),
-          currentMultiplierBps: row.current_multiplier_bps ?? 10000,
           currentHoldTime: holdTimeLabel(row.current_streak_epochs),
           currentStreak: row.current_streak_epochs ?? 0,
-          holderBoost: boostLabel(holderBoost),
-          holderBoostBps: holderBoost,
-          solBalance: null as number | null,
-          solBalanceTier: "Scored live",
-          solBoost: "Scored live",
-          solBoostBps: null as number | null,
-          finalWeight: null as number | null,
           totalRewardEarned: payout?.total ?? 0,
           lastAirdropAt: payout?.lastRewardAt ?? null,
           permanentlyIneligible: false,
@@ -201,21 +138,7 @@ export async function GET() {
           return b.balance - a.balance;
         })
         .slice(0, 50);
-      const solBalanceByWallet = await solBalances(mappedHolders.map((row) => row.address));
-      const topHolders = mappedHolders.map((row, index) => {
-        const solBalance = solBalanceByWallet.get(row.address) ?? null;
-        const solBoost = solBalance === null ? null : solBoostBps(solBalance);
-        const finalBoostBps = solBoost === null ? null : Math.round((row.holderBoostBps * solBoost) / 10000);
-        return {
-          ...row,
-          rank: index + 1,
-          solBalance,
-          solBalanceTier: solTierLabel(solBalance),
-          solBoost: solBoost === null ? "Scored live" : boostLabel(solBoost),
-          solBoostBps: solBoost,
-          finalWeight: finalBoostBps === null ? null : row.balance * (finalBoostBps / 10000)
-        };
-      });
+      const topHolders = mappedHolders.map((row, index) => ({ ...row, rank: index + 1 }));
 
       const fallenBulls = fallenStates
         .map((row) => {
@@ -223,8 +146,6 @@ export async function GET() {
           return {
             address: row.wallet,
             balance: toNumber(row.source_balance),
-            currentMultiplier: multiplierLabel(row.current_multiplier_bps),
-            currentMultiplierBps: row.current_multiplier_bps ?? 10000,
             currentStreak: row.current_streak_epochs ?? 0,
             totalRewardEarned: payout?.total ?? 0,
             lastAirdropAt: payout?.lastRewardAt ?? null,
@@ -252,31 +173,21 @@ export async function GET() {
     );
 
     const totalSupply = snapshots.reduce((sum, row) => sum + toNumber(row.source_balance), 0);
-      const topHolders = snapshots.map((row) => {
+    const topHolders = snapshots.map((row) => {
         const balance = toNumber(row.source_balance);
-        const holderBoost = holderBoostBps(balance);
         return {
           rank: 0,
           address: row.wallet,
           balance,
           percentage: totalSupply > 0 ? ((balance / totalSupply) * 100).toFixed(2) : "0.00",
-        currentMultiplier: null,
-        currentMultiplierBps: null,
           currentHoldTime: null,
           currentStreak: null,
-          holderBoost: boostLabel(holderBoost),
-          holderBoostBps: holderBoost,
-          solBalance: null,
-          solBalanceTier: "Scored live",
-          solBoost: "Scored live",
-          solBoostBps: null,
-          finalWeight: null,
           totalRewardEarned: payoutsByWallet.get(row.wallet)?.total ?? 0,
           lastAirdropAt: payoutsByWallet.get(row.wallet)?.lastRewardAt ?? null,
-        permanentlyIneligible: false,
-        ineligibleReason: null
-      };
-    })
+          permanentlyIneligible: false,
+          ineligibleReason: null
+        };
+      })
       .sort((a, b) => b.totalRewardEarned - a.totalRewardEarned || b.balance - a.balance)
       .map((row, index) => ({ ...row, rank: index + 1 }));
 
