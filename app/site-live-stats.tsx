@@ -5,16 +5,20 @@ import { useEffect, useState } from "react";
 type StatsResponse = {
   totalEpochs: number;
   totalRewardAirdropped: number;
+  totalRewardTotals: Array<{
+    rewardAsset: string;
+    rewardAmount: number;
+  }>;
   latestEligibleHolders: number;
 };
 
 const fallbackStats: StatsResponse = {
   totalEpochs: 0,
   totalRewardAirdropped: 0,
+  totalRewardTotals: [],
   latestEligibleHolders: 0
 };
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLSTR";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 
 async function getStats() {
   try {
@@ -34,6 +38,18 @@ function displayNumber(value: number, empty = "–") {
 function displayCount(value: number) {
   if (!Number.isFinite(value) || value < 0) return "–";
   return value.toLocaleString(undefined, { maximumFractionDigits: 0 });
+}
+
+function rewardDecimals(asset: string) {
+  return asset.toUpperCase() === "SOL" ? 4 : 2;
+}
+
+function displayRewardTotals(stats: StatsResponse | null) {
+  const liveTotals = (stats?.totalRewardTotals ?? []).filter((total) => total.rewardAmount > 0);
+  if (!liveTotals.length) return "Awaiting first drop";
+  return liveTotals
+    .map((total) => `${total.rewardAmount.toLocaleString(undefined, { maximumFractionDigits: rewardDecimals(total.rewardAsset) })} ${total.rewardAsset}`)
+    .join(" / ");
 }
 
 export function SiteLiveStats() {
@@ -61,8 +77,8 @@ export function SiteLiveStats() {
         <span>Total epochs</span>
       </div>
       <div className="stat">
-        <strong>{stats ? displayNumber(stats.totalRewardAirdropped, "Awaiting first drop") : "–"}</strong>
-        <span>Total {REWARD_SYMBOL} Airdropped</span>
+        <strong>{stats ? displayRewardTotals(stats) : "–"}</strong>
+        <span>Total Rewards Airdropped</span>
       </div>
       <div className="stat">
         <strong>{stats ? displayCount(stats.latestEligibleHolders) : "–"}</strong>

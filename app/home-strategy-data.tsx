@@ -2,6 +2,16 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
+type RewardTotal = {
+  rewardAsset: string;
+  rewardAmount: number;
+  normalRewardAmount: number;
+  goldenBonusReward: number;
+  recipients: number;
+  latestTime: string | null;
+  latestTxSig: string | null;
+};
+
 type Round = {
   epoch: number;
   status: string;
@@ -9,11 +19,13 @@ type Round = {
   duration: string;
   rewardBought: number;
   distributedPump: number;
+  rewardTotals: RewardTotal[];
   txSig: string | null;
 };
 
 type Reward = {
   epoch: number;
+  rewardAsset?: string;
   wallet: string;
   rewardAmount: number;
   goldenMultiplier: number;
@@ -27,6 +39,8 @@ type StatsResponse = {
   totalEpochs: number;
   lastRewardAirdropped: number;
   totalRewardAirdropped: number;
+  lastRewardTotals: RewardTotal[];
+  totalRewardTotals: RewardTotal[];
   latestEligibleHolders: number;
   averageMultiplier: number | null;
   nextDropTime: string;
@@ -72,6 +86,8 @@ const emptyStats: StatsResponse = {
   totalEpochs: 0,
   lastRewardAirdropped: 0,
   totalRewardAirdropped: 0,
+  lastRewardTotals: [],
+  totalRewardTotals: [],
   latestEligibleHolders: 0,
   averageMultiplier: null,
   nextDropTime: new Date().toISOString(),
@@ -82,7 +98,7 @@ const emptyStats: StatsResponse = {
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12_000;
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLSTR";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM + SOL";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -113,6 +129,18 @@ function formatCount(value: number) {
 function formatAmount(value: number, symbol: string, maximumFractionDigits = 2) {
   if (!Number.isFinite(value) || value <= 0) return "Awaiting live distribution";
   return `${formatNumber(value, maximumFractionDigits)} ${symbol}`;
+}
+
+function rewardDecimals(asset: string) {
+  return asset.toUpperCase() === "SOL" ? 4 : 2;
+}
+
+function formatRewardTotals(totals: RewardTotal[] | undefined, empty = "Awaiting live distribution") {
+  const liveTotals = (totals ?? []).filter((total) => total.rewardAmount > 0);
+  if (!liveTotals.length) return empty;
+  return liveTotals
+    .map((total) => `${formatNumber(total.rewardAmount, rewardDecimals(total.rewardAsset))} ${total.rewardAsset}`)
+    .join(" / ");
 }
 
 function formatMultiplier(value: number | null | undefined) {
@@ -177,10 +205,7 @@ export function HeroCountdown() {
   const { stats, now } = useProtocolData();
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
-  const totalDistributed =
-    stats && stats.totalRewardAirdropped > 0
-      ? `${stats.totalRewardAirdropped.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${REWARD_SYMBOL}`
-      : "Awaiting first drop";
+  const totalDistributed = stats ? formatRewardTotals(stats.totalRewardTotals, "Awaiting first drop") : "Awaiting first drop";
 
   return (
     <div className="hero-countdown" aria-live="polite">
@@ -211,9 +236,9 @@ export function LiveProtocolDashboard() {
           <p>Live values come from the existing reward backend. Total distributions, holder count, reward pool, and transactions update from Supabase.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
-          <MetricCard label="Total Rewards Distributed" value={stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"} strong />
+          <MetricCard label="Total Rewards Distributed" value={stats ? formatRewardTotals(stats.totalRewardTotals) : "Loading"} strong />
           <MetricCard label="Eligible Holders" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} />
-          <MetricCard label="Current Reward Pool" value={latestRound ? formatAmount(latestRound.rewardBought, REWARD_SYMBOL, 4) : "Awaiting live distribution"} />
+          <MetricCard label="ANSEM Bought" value={latestRound ? formatAmount(latestRound.rewardBought, "ANSEM", 4) : "Awaiting live distribution"} />
           <MetricCard label="Next Distribution" value={countdown} />
           <MetricCard label="Average Boost" value={stats?.averageMultiplier ? formatMultiplier(stats.averageMultiplier) : "Live epoch score"} muted />
           <MetricCard label="Last Drop TX" value={latestRound?.txSig ? compactAddress(latestRound.txSig) : "Awaiting tx"} muted />
@@ -352,17 +377,17 @@ export function RewardExplanation() {
       <div className="container">
           <div className="section-kicker">How rewards work</div>
         <div className="section-head split-head">
-          <h2>50% rewards. 50% SOL-long flywheel.</h2>
-          <p>Bull Strategy turns creator fees into a live reward engine for eligible $BULLSTR holders.</p>
+          <h2>50% $ANSEM. 50% SOL.</h2>
+          <p>Bull Strategy turns creator fees into two live reward streams for eligible $BULLSTR holders.</p>
         </div>
         <div className="reward-flow">
           {[
             `Hold at least 250,000 $${SOURCE_SYMBOL}`,
             "50% routes to $ANSEM reward buys",
             "$ANSEM distributes every epoch",
-            "50% is sent to the Hyperliquid SOL wallet",
+            "50% distributes as native SOL",
             "Smaller holders and lower SOL wallets receive a modest boost",
-            "Long profits target $BULLSTR buyback and burn"
+            "Everything is tracked on-chain"
           ].map((item) => (
             <article className="reward-flow-card" key={item}>
               <strong>{item}</strong>
@@ -488,8 +513,8 @@ export function RecentAirdrops() {
                   rewards.slice(0, 50).map((reward) => (
                     <tr key={`${reward.wallet}-${reward.time}-${reward.rewardAmount}`}>
                       <td>{compactAddress(reward.wallet)}</td>
-                      <td>{reward.goldenMultiplier > 1 ? `${reward.goldenMultiplier.toFixed(2)}x Strategy Bonus` : "Base"}</td>
-                      <td>{formatAmount(reward.rewardAmount, REWARD_SYMBOL)}</td>
+                      <td>{reward.goldenMultiplier > 1 ? `${reward.rewardAsset ?? REWARD_SYMBOL} / ${reward.goldenMultiplier.toFixed(2)}x Strategy Bonus` : reward.rewardAsset ?? "Base"}</td>
+                      <td>{formatAmount(reward.rewardAmount, reward.rewardAsset ?? REWARD_SYMBOL)}</td>
                       <td>{formatDate(reward.time)}</td>
                       <td>
                         {reward.txSig ? (
@@ -571,7 +596,7 @@ export function AirdropHistory() {
       <div className="container">
         <div className="section-kicker">Airdrop history</div>
         <div className="section-head split-head">
-          <h2>{REWARD_SYMBOL} Distributions</h2>
+          <h2>ANSEM + SOL Distributions</h2>
           <p>Settled airdrops only. Failed or skipped worker attempts are not counted.</p>
         </div>
         <div className="history-card">
@@ -580,7 +605,7 @@ export function AirdropHistory() {
               <thead>
                 <tr>
                   <th>Epoch</th>
-                  <th>{REWARD_SYMBOL} Reward Pool</th>
+                  <th>ANSEM Bought</th>
                   <th>Recipients</th>
                   <th>Bull Weight</th>
                   <th>Total Distributed</th>
@@ -592,10 +617,10 @@ export function AirdropHistory() {
                   rounds.map((round) => (
                     <tr key={`${round.epoch}-${round.startedAt}`}>
                       <td>#{round.epoch}</td>
-                      <td>{formatAmount(round.rewardBought, REWARD_SYMBOL)}</td>
-                      <td>{round.distributedPump > 0 ? "Settled" : statusLabel(round.status)}</td>
+                      <td>{formatAmount(round.rewardBought, "ANSEM")}</td>
+                      <td>{round.rewardTotals.some((total) => total.rewardAmount > 0) ? "Settled" : statusLabel(round.status)}</td>
                       <td>Bull Score</td>
-                      <td>{formatAmount(round.distributedPump, REWARD_SYMBOL)}</td>
+                      <td>{formatRewardTotals(round.rewardTotals)}</td>
                       <td>
                         {round.txSig ? (
                           <a href={`https://solscan.io/tx/${round.txSig}`} target="_blank" rel="noreferrer">

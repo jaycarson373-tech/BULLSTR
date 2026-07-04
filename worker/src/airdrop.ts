@@ -186,6 +186,10 @@ export async function treasuryRewardBalanceRaw(reserveLamports = 0n) {
 export async function computeAllocations(holders: Holder[], rewardRaw: bigint): Promise<Allocation[]> {
   if (!holders.length || rewardRaw <= config.minRewardRawToAirdrop) return [];
   const decimals = await rewardDecimals();
+  return computeAllocationsWithDecimals(holders, rewardRaw, decimals);
+}
+
+async function computeAllocationsWithDecimals(holders: Holder[], rewardRaw: bigint, decimals: number): Promise<Allocation[]> {
   const weightedHolders = await computeStrategyWeights(holders);
   const totalWeight = weightedHolders.reduce((sum, holder) => sum + holder.weight, 0n);
   if (totalWeight <= 0n) return [];
@@ -207,6 +211,11 @@ export async function computeAllocations(holders: Holder[], rewardRaw: bigint): 
       };
     })
     .filter((allocation) => allocation.amount > 0n);
+}
+
+export async function computeSolAllocations(holders: Holder[], solLamports: bigint): Promise<Allocation[]> {
+  if (!holders.length || solLamports <= config.minSolRewardLamportsToAirdrop) return [];
+  return computeAllocationsWithDecimals(holders, solLamports, 9);
 }
 
 function snapshotHash(holders: WeightedHolder[]) {
@@ -352,9 +361,39 @@ export async function estimatePayoutReserveLamports(wallets: string[]) {
   return totalLamports;
 }
 
+function estimateSolPayoutReserveLamports(walletCount: number) {
+  if (walletCount <= 0) return 0n;
+  const reserveLamports = BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
+  const batchCount = BigInt(Math.max(1, Math.ceil(walletCount / config.airdropBatchSize)));
+  return reserveLamports + batchCount * AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS;
+}
+
+export async function estimateDualPayoutReserveLamports(wallets: string[]) {
+  const permanentReserveLamports = BigInt(Math.floor(config.minSolReserve * LAMPORTS_PER_SOL));
+  if (!wallets.length) return permanentReserveLamports + BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
+
+  const tokenProgram = await tokenProgramForMint();
+  const atas = wallets.map((wallet) => rewardAtaForOwner(new PublicKey(wallet), tokenProgram));
+  const tokenReserve = await payoutReserveForAtas(atas);
+  const solReserveLamports = estimateSolPayoutReserveLamports(wallets.length);
+  const totalLamports = permanentReserveLamports + tokenReserve.totalLamports + solReserveLamports;
+
+  console.log(
+    `[RESERVE] dual payout reserve for ${wallets.length} wallets: total=${totalLamports}, permanent=${permanentReserveLamports}, tokenReserve=${tokenReserve.totalLamports}, solReserve=${solReserveLamports}`
+  );
+  return totalLamports;
+}
+
 export async function airdropRewards(epochId: string, allocations: Allocation[]): Promise<AirdropResult> {
   if (config.rewardMode === "sol") return airdropSolRewards(epochId, allocations);
+  return airdropTokenRewards(epochId, allocations);
+}
 
+export async function airdropTokenRewards(
+  epochId: string,
+  allocations: Allocation[],
+  rewardAsset = "ANSEM"
+): Promise<AirdropResult> {
   const treasury = treasuryKeypair();
   const tokenProgram = await tokenProgramForMint();
   const mintInfo = await getMint(connection, config.rewardTokenMint, "confirmed", tokenProgram);
@@ -379,7 +418,8 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
         goldenBonusReward: allocation.goldenBonusUiAmount.toString(),
         goldenMultiplier: allocation.goldenMultiplier,
         isGolden: allocation.isGolden,
-        goldenCapped: allocation.goldenCapped
+        goldenCapped: allocation.goldenCapped,
+        rewardAsset
       });
     }
     return {
@@ -409,7 +449,8 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
       goldenBonusReward: allocation.goldenBonusUiAmount.toString(),
       goldenMultiplier: allocation.goldenMultiplier,
       isGolden: allocation.isGolden,
-      goldenCapped: allocation.goldenCapped
+      goldenCapped: allocation.goldenCapped,
+      rewardAsset
     });
   }
 
@@ -429,7 +470,7 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
       console.error(`[${epochId}] stopping airdrop batch: ${error.message}`);
       const remaining = batches.slice(batchIndex).flat();
       for (const allocation of remaining) {
-        await failPayout(epochId, allocation.wallet, error);
+        await failPayout(epochId, allocation.wallet, error, rewardAsset);
       }
       break;
     }
@@ -476,7 +517,7 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
       const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
       await connection.confirmTransaction(txSig, "confirmed");
       for (const allocation of batch) {
-        await settlePayout(epochId, allocation.wallet, txSig);
+        await settlePayout(epochId, allocation.wallet, txSig, rewardAsset);
         settledRaw += allocation.amount;
         settledUi += allocation.uiAmount;
         settledCount += 1;
@@ -488,7 +529,7 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
       signatures.push(txSig);
     } catch (error) {
       for (const allocation of batch) {
-        await failPayout(epochId, allocation.wallet, error);
+        await failPayout(epochId, allocation.wallet, error, rewardAsset);
         console.error(`[${epochId}] payout failed for ${allocation.wallet}:`, error);
       }
     }
@@ -503,7 +544,11 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
   };
 }
 
-async function airdropSolRewards(epochId: string, allocations: Allocation[]): Promise<AirdropResult> {
+export async function airdropSolRewards(
+  epochId: string,
+  allocations: Allocation[],
+  rewardAsset = "SOL"
+): Promise<AirdropResult> {
   const treasury = treasuryKeypair();
   let settledRaw = 0n;
   let settledUi = 0;
@@ -525,7 +570,8 @@ async function airdropSolRewards(epochId: string, allocations: Allocation[]): Pr
         goldenBonusReward: allocation.goldenBonusUiAmount.toString(),
         goldenMultiplier: allocation.goldenMultiplier,
         isGolden: allocation.isGolden,
-        goldenCapped: allocation.goldenCapped
+        goldenCapped: allocation.goldenCapped,
+        rewardAsset
       });
     }
     return {
@@ -551,7 +597,8 @@ async function airdropSolRewards(epochId: string, allocations: Allocation[]): Pr
       goldenBonusReward: allocation.goldenBonusUiAmount.toString(),
       goldenMultiplier: allocation.goldenMultiplier,
       isGolden: allocation.isGolden,
-      goldenCapped: allocation.goldenCapped
+      goldenCapped: allocation.goldenCapped,
+      rewardAsset
     });
   }
 
@@ -572,7 +619,7 @@ async function airdropSolRewards(epochId: string, allocations: Allocation[]): Pr
       console.error(`[${epochId}] stopping SOL airdrop batch: ${error.message}`);
       const remaining = batches.slice(batchIndex).flat();
       for (const allocation of remaining) {
-        await failPayout(epochId, allocation.wallet, error);
+        await failPayout(epochId, allocation.wallet, error, rewardAsset);
       }
       break;
     }
@@ -601,7 +648,7 @@ async function airdropSolRewards(epochId: string, allocations: Allocation[]): Pr
       const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
       await connection.confirmTransaction(txSig, "confirmed");
       for (const allocation of batch) {
-        await settlePayout(epochId, allocation.wallet, txSig);
+        await settlePayout(epochId, allocation.wallet, txSig, rewardAsset);
         settledRaw += allocation.amount;
         settledUi += allocation.uiAmount;
         settledCount += 1;
@@ -613,7 +660,7 @@ async function airdropSolRewards(epochId: string, allocations: Allocation[]): Pr
       signatures.push(txSig);
     } catch (error) {
       for (const allocation of batch) {
-        await failPayout(epochId, allocation.wallet, error);
+        await failPayout(epochId, allocation.wallet, error, rewardAsset);
         console.error(`[${epochId}] SOL payout failed for ${allocation.wallet}:`, error);
       }
     }

@@ -71,7 +71,7 @@ export function FallenBullsClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt="Bull Strategy logo" />
+            <span className="brand-mark" aria-hidden="true">B</span>
             <span>
               Bull Strategy
               <small>Ineligible Wallets</small>
@@ -114,7 +114,7 @@ export function FallenBullsClient() {
                         <tr key={`${wallet.address}-${wallet.ineligibleAt ?? wallet.lastSeenAt ?? "fallen"}`}>
                           <td>{compactAddress(wallet.address)}</td>
                           <td>{wallet.ineligibleReason}</td>
-                          <td>{formatNumber(wallet.totalRewardEarned)} ANSEM</td>
+                          <td>{formatNumber(wallet.totalRewardEarned)} Rewards</td>
                           <td>Ineligible</td>
                           <td>{wallet.currentStreak ?? 0} epochs</td>
                           <td>{formatDate(wallet.lastAirdropAt)}</td>

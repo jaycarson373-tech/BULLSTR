@@ -7,7 +7,7 @@ console.log(
   `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
 );
 console.log(
-  `Reward split: ${config.swapBalanceBps / 100}% token buy/airdrop leg, ${config.longSolBps / 100}% SOL transfer leg. LONG_SOL_ENABLED=${config.longSolEnabled}`
+  `Reward split: ${config.swapBalanceBps / 100}% ANSEM buy/airdrop leg, ${config.solAirdropBps / 100}% native SOL airdrop leg.`
 );
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
 console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} source tokens`);

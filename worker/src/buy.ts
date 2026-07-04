@@ -109,7 +109,7 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
   }
 
   const treasury = treasuryKeypair();
-  const { amount, balance, reserveLamports } = await treasurySwapAmount(explicitReserveLamports);
+  const { amount, balance, reserveLamports } = await treasurySwapAmount(explicitReserveLamports, maxSwapLamports);
   const decimals = await rewardDecimals();
 
   if (amount <= 0n) {

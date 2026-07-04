@@ -1,17 +1,18 @@
 import { claimFees } from "./claim.js";
-import { buyReward } from "./buy.js";
+import { buyReward, treasurySolBudget } from "./buy.js";
 import { config } from "./config.js";
 import {
-  airdropRewards,
+  airdropSolRewards,
+  airdropTokenRewards,
   applyGoldenAirdrop,
   computeAllocations,
   computeGoldenRewardPool,
-  estimatePayoutReserveLamports,
+  computeSolAllocations,
+  estimateDualPayoutReserveLamports,
   treasuryRewardBalanceRaw
 } from "./airdrop.js";
 import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, startEpoch } from "./db.js";
 import { applyHolderState } from "./holder-state.js";
-import { planTreasurySplit, sendLongSolLeg } from "./long-sol.js";
 import { currentEpochId } from "./time.js";
 import { eligibleHoldersFromSnapshot, selectRewardRecipients, snapshotSourceHolders } from "./snapshot.js";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
@@ -61,12 +62,6 @@ export async function runEpoch(date = new Date()) {
     console.log(`[${epochId}] selected reward recipients: ${holders.length}`);
 
     if (!holders.length) {
-      const payoutReserveLamports = await estimatePayoutReserveLamports([]);
-      const splitPlan = await planTreasurySplit(payoutReserveLamports);
-      console.log(
-        `[${epochId}] split plan: usable=${lamportsToSol(splitPlan.usableLamports)} SOL, rewardBuy=${lamportsToSol(splitPlan.rewardBuyLamports)} SOL, longSol=${lamportsToSol(splitPlan.longSolLamports)} SOL`
-      );
-      await sendLongSolLeg(epochId, splitPlan.longSolLamports, splitPlan.reserveLamports);
       await recordBuy(epochId, "0", "0", "0", null);
       await completeEpoch(epochId, {
         eligible_count: eligibleHolders.length,
@@ -78,10 +73,12 @@ export async function runEpoch(date = new Date()) {
       return;
     }
 
-    const payoutReserveLamports = await estimatePayoutReserveLamports(holders.map((holder) => holder.wallet));
-    const splitPlan = await planTreasurySplit(payoutReserveLamports);
+    const payoutReserveLamports = await estimateDualPayoutReserveLamports(holders.map((holder) => holder.wallet));
+    const splitPlan = await treasurySolBudget(payoutReserveLamports);
+    const rewardBuyLamports = (splitPlan.usableLamports * BigInt(config.swapBalanceBps)) / 10_000n;
+    const solAirdropLamports = (splitPlan.usableLamports * BigInt(config.solAirdropBps)) / 10_000n;
     console.log(
-      `[${epochId}] split plan: usable=${lamportsToSol(splitPlan.usableLamports)} SOL, rewardBuy=${lamportsToSol(splitPlan.rewardBuyLamports)} SOL, longSol=${lamportsToSol(splitPlan.longSolLamports)} SOL`
+      `[${epochId}] split plan: usable=${lamportsToSol(splitPlan.usableLamports)} SOL, ansemBuy=${lamportsToSol(rewardBuyLamports)} SOL, solAirdrop=${lamportsToSol(solAirdropLamports)} SOL`
     );
     let buy = {
       baseSpentLamports: 0n,
@@ -91,7 +88,7 @@ export async function runEpoch(date = new Date()) {
     };
 
     if (config.rewardMode === "token") {
-      buy = await buyReward(epochId, payoutReserveLamports, splitPlan.rewardBuyLamports);
+      buy = await buyReward(epochId, payoutReserveLamports, rewardBuyLamports);
       await recordBuy(
         epochId,
         buy.baseSpentLamports.toString(),
@@ -102,7 +99,6 @@ export async function runEpoch(date = new Date()) {
     } else {
       console.log(`[${epochId}] REWARD_MODE=sol, skipping buy; creator fees remain SOL for direct airdrop`);
     }
-    await sendLongSolLeg(epochId, splitPlan.longSolLamports, splitPlan.reserveLamports);
 
     const availableRewardRaw = await treasuryRewardBalanceRaw(payoutReserveLamports);
     const rewardPoolRaw = (availableRewardRaw * BigInt(config.airdropRewardBps)) / 10_000n;
@@ -118,35 +114,49 @@ export async function runEpoch(date = new Date()) {
     console.log(
       `[${epochId}] reward pool: ${rewardPoolRaw.toString()} raw of ${availableRewardRaw.toString()} raw treasury balance (${config.airdropRewardBps} bps)`
     );
-    if (rewardPoolRaw <= config.minRewardRawToAirdrop) {
+    const goldenPool =
+      rewardPoolRaw > config.minRewardRawToAirdrop
+        ? await computeGoldenRewardPool(epochId, holders, rewardPoolRaw)
+        : { rewardPoolRaw: 0n, snapshotHash: null };
+    const allocations = goldenPool.rewardPoolRaw > 0n ? await computeAllocations(holders, goldenPool.rewardPoolRaw) : [];
+    const solAllocations = await computeSolAllocations(holders, solAirdropLamports);
+
+    if (!allocations.length && !solAllocations.length) {
       await completeEpoch(epochId, {
         eligible_count: eligibleHolders.length,
         reward_bought: buy.rewardReceivedUi.toString(),
         reward_distributed: "0",
         status: "skipped"
       });
-      console.log(`[${epochId}] insufficient usable SOL after 0.30 reserve and 0.05 buffer, skipped epoch`);
-      return;
-    }
-    const goldenPool = await computeGoldenRewardPool(epochId, holders, rewardPoolRaw);
-    const allocations = await computeAllocations(holders, goldenPool.rewardPoolRaw);
-    if (!allocations.length) {
-      await completeEpoch(epochId, {
-        eligible_count: eligibleHolders.length,
-        reward_bought: buy.rewardReceivedUi.toString(),
-        reward_distributed: "0",
-        status: "skipped"
-      });
-      console.log(`[${epochId}] no reward balance or eligible holders, skipped airdrop`);
+      console.log(`[${epochId}] no ANSEM or SOL reward balance, skipped airdrop`);
       return;
     }
 
-    const golden = await applyGoldenAirdrop(epochId, holders, allocations, rewardPoolRaw, goldenPool.snapshotHash);
-    const airdrop = await airdropRewards(epochId, allocations);
-    if (airdrop.stoppedForReserve && airdrop.settledCount === 0) {
-      throw new Error("Airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
+    const golden = allocations.length
+      ? await applyGoldenAirdrop(epochId, holders, allocations, rewardPoolRaw, goldenPool.snapshotHash)
+      : {
+          wallet: null,
+          baseRewardRaw: 0n,
+          baseRewardUi: 0,
+          bonusRewardRaw: 0n,
+          bonusRewardUi: 0,
+          multiplier: 1,
+          capped: false,
+          snapshotHash: null
+        };
+    const tokenAirdrop = allocations.length
+      ? await airdropTokenRewards(epochId, allocations, "ANSEM")
+      : { settledUi: 0, settledCount: 0, stoppedForReserve: false };
+    if (tokenAirdrop.stoppedForReserve && tokenAirdrop.settledCount === 0) {
+      throw new Error("ANSEM airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
     }
-    const distributed = airdrop.settledUi;
+    const solAirdrop = solAllocations.length
+      ? await airdropSolRewards(epochId, solAllocations, "SOL")
+      : { settledUi: 0, settledCount: 0, stoppedForReserve: false };
+    if (solAirdrop.stoppedForReserve && solAirdrop.settledCount === 0) {
+      throw new Error("SOL airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
+    }
+    const distributed = tokenAirdrop.settledUi;
     await completeEpoch(epochId, {
       eligible_count: eligibleHolders.length,
       reward_bought: buy.rewardReceivedUi.toString(),
@@ -161,7 +171,7 @@ export async function runEpoch(date = new Date()) {
       golden_snapshot_hash: golden.snapshotHash
     });
     console.log(
-      `[${epochId}] summary: eligible=${eligibleHolders.length}, recipients=${airdrop.settledCount}/${allocations.length}, bought=${buy.rewardReceivedUi}, distributed=${distributed}, golden=${golden.wallet ?? "none"}`
+      `[${epochId}] summary: eligible=${eligibleHolders.length}, ansemRecipients=${tokenAirdrop.settledCount}/${allocations.length}, solRecipients=${solAirdrop.settledCount}/${solAllocations.length}, bought=${buy.rewardReceivedUi}, ansemDistributed=${distributed}, solDistributed=${solAirdrop.settledUi}, golden=${golden.wallet ?? "none"}`
     );
   } catch (error) {
     await failEpoch(epochId, error).catch((dbError) => {

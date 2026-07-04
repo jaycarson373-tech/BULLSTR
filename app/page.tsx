@@ -21,10 +21,10 @@ function Navbar() {
     <header className="nav">
       <div className="container nav-inner">
         <a className="brand" href="/">
-          <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
+          <span className="brand-mark" aria-hidden="true">B</span>
           <span>
             Bull Strategy
-            <small>ANSEM Rewards</small>
+            <small>ANSEM + SOL Rewards</small>
           </span>
         </a>
         <nav className="nav-links" aria-label="Main navigation">
@@ -60,16 +60,16 @@ export default function Page() {
 
           <div className="container hero-inner">
             <div className="hero-copy-stack">
-              <div className="section-kicker">Strategic long flywheel</div>
+              <div className="section-kicker">Dual reward flywheel</div>
               <h1>
                 <span>Bull</span>
                 <span>Strategy</span>
               </h1>
               <p className="hero-subtitle">
-                A stronger bull engine for $BULLSTR holders.
+                $ANSEM and SOL rewards for $BULLSTR holders.
               </p>
               <p className="hero-lead">
-                Bull Strategy routes the system into a 50/50 engine: $ANSEM airdrops every 5 minutes for eligible $BULLSTR holders, plus SOL sent to the Hyperliquid long wallet.
+                Bull Strategy routes the system into a 50/50 engine: half buys and airdrops $ANSEM, half airdrops native SOL to eligible $BULLSTR holders every 5 minutes.
               </p>
               <div className="hero-actions">
                 <a className="cta" href="#strategy">
@@ -99,8 +99,8 @@ export default function Page() {
             <h2>Strategy notes.</h2>
             <div className="faq-grid">
               <FaqItem title="How do I qualify?" body="Hold at least 250,000 $BULLSTR and stay above that threshold." />
-              <FaqItem title="How often are rewards sent?" body="$ANSEM rewards run every 5 minutes when live conditions are met." />
-              <FaqItem title="What is the split?" body="The target model routes 50% to $ANSEM holder airdrops and sends 50% to the Hyperliquid SOL wallet." />
+              <FaqItem title="How often are rewards sent?" body="$ANSEM and SOL rewards run every 5 minutes when live conditions are met." />
+              <FaqItem title="What is the split?" body="The target model routes 50% to $ANSEM holder airdrops and 50% to native SOL holder airdrops." />
               <FaqItem title="Does supply still matter?" body="Yes. The $BULLSTR balance is the base weight, so larger holders can still earn more." />
               <FaqItem title="Is there claiming?" body="No. The backend handles airdrops automatically. No wallet connection is required to receive rewards." />
             </div>
@@ -121,10 +121,10 @@ export default function Page() {
       <footer className="footer">
         <div className="container footer-grid">
           <div className="footer-brand">
-            <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
+            <span className="brand-mark" aria-hidden="true">B</span>
             <strong>Bull Strategy</strong>
           </div>
-          <p>A strategic SOL-long flywheel for $BULLSTR holders.</p>
+          <p>$ANSEM and SOL rewards for $BULLSTR holders.</p>
           <div className="footer-links">
             <a href="#dashboard">Live Data</a>
             <a href="#strategy">Strategy</a>
@@ -154,7 +154,7 @@ function StrategySection() {
       <div className="container black-bull-grid">
         <aside className="black-bull-card">
           <div className="black-bull-portrait">
-            <img src="/brand/bull-strategy-logo.png" alt="Bull Strategy mark" />
+            <span>Bull Strategy</span>
           </div>
           <div className="black-bull-card-head">
             <span>Strategy stack</span>
@@ -163,24 +163,24 @@ function StrategySection() {
           <div className="bull-signal-list">
             <span>Airdrop tech</span>
             <span>$ANSEM rewards</span>
-            <span>SOL long thesis</span>
-            <span>Buyback and burn</span>
+            <span>SOL rewards</span>
+            <span>5-minute epochs</span>
           </div>
         </aside>
 
         <div className="black-bull-copy">
           <div className="section-kicker">The strategy</div>
-          <h2>AIRDROPS MEET A STRATEGIC LONG FLYWHEEL.</h2>
+          <h2>THE TWO REWARDS HE IS BULLISH ON.</h2>
           <div className="lore-copy">
             <p>Bull Strategy turns holder rewards and SOL conviction into one loop for eligible $BULLSTR wallets.</p>
-            <p>Half the engine targets $ANSEM airdrops every 5 minutes. The other half is sent to the Hyperliquid SOL wallet.</p>
-            <p>Profits from the long strategy are intended to buy back and burn $BULLSTR, tightening the loop around holders.</p>
+            <p>Half the engine targets $ANSEM airdrops every 5 minutes. The other half airdrops native SOL.</p>
+            <p>Both reward legs use the same holder scan and weighting model.</p>
             <p>No claiming. No wallet connection. Just a public strategy dashboard backed by live reward data.</p>
           </div>
         </div>
       </div>
       <div className="container black-bull-timeline" aria-label="Bull Strategy reward model">
-        {["Creator fees", "50% $ANSEM rewards", "50% Hyperliquid wallet", "Buyback profits", "$BULLSTR burn"].map((item) => (
+        {["Creator fees", "50% $ANSEM", "50% SOL", "Holder scan", "Airdrop ledger"].map((item) => (
           <span key={item}>{item}</span>
         ))}
       </div>

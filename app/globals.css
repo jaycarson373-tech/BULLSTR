@@ -67,7 +67,7 @@ p {
 
 h1,
 h2,
-.brand span,
+.brand > span:not(.brand-mark),
 .section-kicker {
   font-family: Cinzel, Georgia, serif;
 }
@@ -150,9 +150,7 @@ h3 {
   inset: 0;
   z-index: -4;
   pointer-events: none;
-  background:
-    url("/brand/bull-strategy-logo.png") 92% 14% / 360px auto no-repeat,
-    var(--black);
+  background: var(--black);
   opacity: 0.12;
   filter: grayscale(1);
 }
@@ -212,7 +210,8 @@ h3 {
   gap: 14px;
 }
 
-.brand-logo {
+.brand-logo,
+.brand-mark {
   width: 58px;
   height: 58px;
   flex: 0 0 auto;
@@ -221,7 +220,17 @@ h3 {
   object-fit: cover;
 }
 
-.brand span {
+.brand-mark {
+  display: grid;
+  place-items: center;
+  color: var(--black);
+  background: var(--gold);
+  font-size: 1.15rem;
+  font-weight: 950;
+  letter-spacing: 0;
+}
+
+.brand > span:not(.brand-mark) {
   display: grid;
   color: var(--ivory);
   font-size: 0.92rem;
@@ -934,11 +943,30 @@ h3 {
     linear-gradient(180deg, transparent 62%, rgba(0, 0, 0, 0.72));
 }
 
-.black-bull-portrait img {
+.black-bull-portrait img,
+.black-bull-portrait span {
   width: 100%;
   height: 100%;
+}
+
+.black-bull-portrait img {
   object-fit: cover;
   filter: contrast(1.06) saturate(0.86);
+}
+
+.black-bull-portrait span {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: var(--black);
+  font-family: Cinzel, Georgia, serif;
+  font-size: clamp(1.5rem, 4vw, 2.8rem);
+  font-weight: 950;
+  line-height: 0.95;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .black-bull-card-head {
@@ -1590,7 +1618,7 @@ td a,
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.22) 56%, rgba(0, 0, 0, 0.82)),
     linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.86)),
-    url("/brand/bull-strategy-logo.png") 72% center / min(64vw, 760px) auto no-repeat;
+    url("/brand/backgrounds/bull-mountain-3.jpg") center / cover no-repeat;
   filter: saturate(0.88) contrast(1.1);
   transform: translate3d(0, calc(var(--scroll-y) * -0.018), 0);
 }
@@ -1706,10 +1734,10 @@ td a,
   background: #080806;
 }
 
-.loader-mascot img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.loader-mascot span {
+  color: #030303;
+  font-size: 2rem;
+  font-weight: 950;
 }
 
 .loader-text {
@@ -2028,12 +2056,13 @@ td a,
     min-height: 74px;
   }
 
-  .brand-logo {
+  .brand-logo,
+  .brand-mark {
     width: 44px;
     height: 44px;
   }
 
-  .brand span {
+  .brand > span:not(.brand-mark) {
     font-size: 0.72rem;
   }
 
@@ -2156,7 +2185,7 @@ td a,
   .final-bull-art {
     background:
       linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.9)),
-      url("/brand/bull-strategy-logo.png") center 16% / min(108vw, 620px) auto no-repeat;
+      url("/brand/backgrounds/bull-mountain-3.jpg") center / cover no-repeat;
   }
 
   .activity-row,
@@ -2204,12 +2233,12 @@ td a,
 .hood-strategy-page h1,
 .hood-strategy-page h2,
 .hood-strategy-page h3,
-.hood-strategy-page .brand span,
+.hood-strategy-page .brand > span:not(.brand-mark),
 .hood-strategy-page .section-kicker,
 .dashboard h1,
 .dashboard h2,
 .dashboard h3,
-.dashboard .brand span {
+.dashboard .brand > span:not(.brand-mark) {
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -2251,6 +2280,7 @@ td a,
 }
 
 .brand-logo,
+.brand-mark,
 .loader-mascot {
   border-color: rgba(231, 255, 0, 0.38);
   border-radius: 16px;
@@ -2313,7 +2343,7 @@ td a,
   background:
     linear-gradient(135deg, transparent 0 48%, rgba(231, 255, 0, 0.2) 48% 48.25%, transparent 48.25%),
     linear-gradient(160deg, transparent 0 62%, rgba(0, 200, 5, 0.22) 62% 62.3%, transparent 62.3%),
-    url("/brand/bull-strategy-logo.png") right 7vw center / min(42vw, 520px) auto no-repeat;
+    url("/brand/backgrounds/bull-mountain-1.jpg") center / cover no-repeat;
   opacity: 0.92;
   transform: translate3d(0, calc(var(--scroll-y) * 0.012), 0);
 }
@@ -2446,11 +2476,8 @@ td a,
   background: #e7ff00;
 }
 
-.strategy-thesis-section .black-bull-portrait img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: none;
+.strategy-thesis-section .black-bull-portrait span {
+  color: #030303;
 }
 
 .black-bull-card-head span,
@@ -2501,7 +2528,7 @@ td a,
 .final-bull-art {
   background:
     radial-gradient(circle at 76% 44%, rgba(231, 255, 0, 0.18), transparent 24%),
-    url("/brand/bull-strategy-logo.png") 78% center / min(48vw, 640px) auto no-repeat;
+    url("/brand/backgrounds/bull-mountain-3.jpg") center / cover no-repeat;
   filter: none;
 }
 
@@ -2543,7 +2570,7 @@ td a,
   .hood-hero .hero-mountains {
     background:
       radial-gradient(circle at 50% 24%, rgba(231, 255, 0, 0.18), transparent 32%),
-      url("/brand/bull-strategy-logo.png") center 12% / min(86vw, 420px) auto no-repeat;
+      url("/brand/backgrounds/bull-mountain-1.jpg") center / cover no-repeat;
     opacity: 0.42;
   }
 

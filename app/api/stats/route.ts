@@ -39,6 +39,7 @@ type SupabaseConfig = {
 type PayoutRow = {
   epoch_id: string;
   wallet: string;
+  reward_asset: string | null;
   reward_amount: string | number | null;
   normal_reward_amount: string | number | null;
   golden_bonus_reward: string | number | null;
@@ -49,6 +50,16 @@ type PayoutRow = {
   tx_sig: string | null;
   updated_at: string | null;
   created_at: string | null;
+};
+
+type RewardAssetTotal = {
+  rewardAsset: string;
+  rewardAmount: number;
+  normalRewardAmount: number;
+  goldenBonusReward: number;
+  recipients: number;
+  latestTime: string | null;
+  latestTxSig: string | null;
 };
 
 type HolderStateRow = {
@@ -65,6 +76,7 @@ type EpochPayoutSummary = {
   latestTime: string | null;
   latestTxSig: string | null;
   golden: PayoutRow | null;
+  rewardTotals: Map<string, RewardAssetTotal>;
 };
 
 type ParsedTokenAccountInfo = {
@@ -140,7 +152,7 @@ async function getSettledPayouts(config: SupabaseConfig) {
   for (let offset = 0; ; offset += pageSize) {
     const page = await getSupabaseJson<PayoutRow[]>(
       config,
-      "payouts?select=epoch_id,wallet,reward_amount,normal_reward_amount,golden_bonus_reward,is_golden,golden_multiplier,golden_capped,status,tx_sig,updated_at,created_at&status=eq.settled&order=updated_at.desc",
+      "payouts?select=epoch_id,wallet,reward_asset,reward_amount,normal_reward_amount,golden_bonus_reward,is_golden,golden_multiplier,golden_capped,status,tx_sig,updated_at,created_at&status=eq.settled&order=updated_at.desc",
       {
         Range: `${offset}-${offset + pageSize - 1}`
       }
@@ -210,6 +222,36 @@ function rowTime(row: Pick<EpochRow, "epoch_id" | "started_at">) {
 
 function payoutTime(row: Pick<PayoutRow, "updated_at" | "created_at" | "epoch_id">) {
   return Date.parse(row.updated_at ?? row.created_at ?? row.epoch_id) || 0;
+}
+
+function rewardAsset(row: Pick<PayoutRow, "reward_asset">) {
+  return row.reward_asset?.trim() || "ANSEM";
+}
+
+function rewardAssetRank(asset: string) {
+  const upper = asset.toUpperCase();
+  if (upper === "ANSEM") return 0;
+  if (upper === "SOL") return 1;
+  return 2;
+}
+
+function emptyRewardAssetTotal(rewardAsset: string): RewardAssetTotal {
+  return {
+    rewardAsset,
+    rewardAmount: 0,
+    normalRewardAmount: 0,
+    goldenBonusReward: 0,
+    recipients: 0,
+    latestTime: null,
+    latestTxSig: null
+  };
+}
+
+function serializeRewardTotals(totals: Map<string, RewardAssetTotal> | undefined) {
+  const values = totals ? Array.from(totals.values()) : [];
+  return values
+    .sort((a, b) => rewardAssetRank(a.rewardAsset) - rewardAssetRank(b.rewardAsset) || a.rewardAsset.localeCompare(b.rewardAsset))
+    .map((total) => ({ ...total }));
 }
 
 function nextDropTime() {
@@ -371,6 +413,8 @@ export async function GET() {
       totalEpochs: 0,
       lastRewardAirdropped: 0,
       totalRewardAirdropped: 0,
+      lastRewardTotals: [],
+      totalRewardTotals: [],
       latestEligibleHolders: latestEligibleHolders ?? 0,
       nextDropTime: nextDropTime(),
       epochHistory: [],
@@ -423,22 +467,38 @@ export async function GET() {
           recipients: 0,
           latestTime: null,
           latestTxSig: null,
-          golden: null
+          golden: null,
+          rewardTotals: new Map<string, RewardAssetTotal>()
         } satisfies EpochPayoutSummary);
       const currentTime = payoutTime(payout);
       const latestTime = Date.parse(summary.latestTime ?? "") || 0;
+      const asset = rewardAsset(payout);
+      const assetSummary = summary.rewardTotals.get(asset) ?? emptyRewardAssetTotal(asset);
+      const latestAssetTime = Date.parse(assetSummary.latestTime ?? "") || 0;
+      const rewardAmount = toNumber(payout.reward_amount);
+      const normalRewardAmount = toNumber(payout.normal_reward_amount);
+      const goldenBonusReward = toNumber(payout.golden_bonus_reward);
 
-      summary.rewardAmount += toNumber(payout.reward_amount);
-      summary.normalRewardAmount += toNumber(payout.normal_reward_amount);
-      summary.goldenBonusReward += toNumber(payout.golden_bonus_reward);
+      summary.rewardAmount += rewardAmount;
+      summary.normalRewardAmount += normalRewardAmount;
+      summary.goldenBonusReward += goldenBonusReward;
       summary.recipients += 1;
+      assetSummary.rewardAmount += rewardAmount;
+      assetSummary.normalRewardAmount += normalRewardAmount;
+      assetSummary.goldenBonusReward += goldenBonusReward;
+      assetSummary.recipients += 1;
       if (currentTime >= latestTime) {
         summary.latestTime = payout.updated_at ?? payout.created_at ?? payout.epoch_id;
         summary.latestTxSig = payout.tx_sig;
       }
+      if (currentTime >= latestAssetTime) {
+        assetSummary.latestTime = payout.updated_at ?? payout.created_at ?? payout.epoch_id;
+        assetSummary.latestTxSig = payout.tx_sig;
+      }
       if (payout.is_golden && (!summary.golden || currentTime >= payoutTime(summary.golden))) {
         summary.golden = payout;
       }
+      summary.rewardTotals.set(asset, assetSummary);
       payoutsByEpoch.set(payout.epoch_id, summary);
     }
 
@@ -463,6 +523,7 @@ export async function GET() {
         return {
           epoch: displayEpochById.get(epochId) ?? realEpochCount - index,
           rewardAmount: payoutSummary?.rewardAmount ?? 0,
+          rewardTotals: serializeRewardTotals(payoutSummary?.rewardTotals),
           recipients: payoutSummary?.recipients ?? 0,
           timestamp: payoutSummary?.latestTime ?? row?.completed_at ?? row?.started_at ?? epochId,
           status: row?.status === "completed" ? "completed" : "settled"
@@ -475,6 +536,7 @@ export async function GET() {
       const buy = buysByEpoch.get(epochId);
       const payoutSummary = payoutsByEpoch.get(epochId);
       const goldenPayout = payoutSummary?.golden;
+      const ansemSummary = payoutSummary?.rewardTotals.get("ANSEM");
       return {
         epoch: displayEpochById.get(epochId) ?? realEpochCount - index,
         status: row?.status === "completed" ? "completed" : "settled",
@@ -482,8 +544,9 @@ export async function GET() {
         duration: durationLabel(row?.started_at ?? null, row?.completed_at ?? payoutSummary?.latestTime ?? null),
         claimedSol: toNumber(claim?.amount_claimed),
         rewardBought: toNumber(row?.reward_bought),
-        normalRewardsSent: payoutSummary?.normalRewardAmount ?? 0,
-        distributedPump: payoutSummary?.rewardAmount ?? 0,
+        normalRewardsSent: ansemSummary?.normalRewardAmount ?? 0,
+        distributedPump: ansemSummary?.rewardAmount ?? 0,
+        rewardTotals: serializeRewardTotals(payoutSummary?.rewardTotals),
         goldenWinnerWallet: goldenPayout?.wallet ?? null,
         goldenBaseReward: toNumber(goldenPayout?.normal_reward_amount),
         goldenBonusReward: toNumber(goldenPayout?.golden_bonus_reward),
@@ -497,6 +560,7 @@ export async function GET() {
 
     const recentRewards = payoutRows.slice(0, 50).map((row) => ({
       epoch: displayEpochById.get(row.epoch_id) ?? epochNumber(row.epoch_id, 0),
+      rewardAsset: row.reward_asset ?? "ANSEM",
       wallet: row.wallet,
       rewardAmount: toNumber(row.reward_amount),
       normalRewardAmount: toNumber(row.normal_reward_amount),
@@ -524,6 +588,24 @@ export async function GET() {
       (sum, summary) => sum + summary.rewardAmount,
       0
     );
+    const totalRewardTotalsMap = new Map<string, RewardAssetTotal>();
+    for (const summary of payoutsByEpoch.values()) {
+      for (const rewardTotal of summary.rewardTotals.values()) {
+        const total = totalRewardTotalsMap.get(rewardTotal.rewardAsset) ?? emptyRewardAssetTotal(rewardTotal.rewardAsset);
+        const latestTime = Date.parse(total.latestTime ?? "") || 0;
+        const currentTime = Date.parse(rewardTotal.latestTime ?? "") || 0;
+        total.rewardAmount += rewardTotal.rewardAmount;
+        total.normalRewardAmount += rewardTotal.normalRewardAmount;
+        total.goldenBonusReward += rewardTotal.goldenBonusReward;
+        total.recipients += rewardTotal.recipients;
+        if (currentTime >= latestTime) {
+          total.latestTime = rewardTotal.latestTime;
+          total.latestTxSig = rewardTotal.latestTxSig;
+        }
+        totalRewardTotalsMap.set(rewardTotal.rewardAsset, total);
+      }
+    }
+    const totalRewardTotals = serializeRewardTotals(totalRewardTotalsMap);
     const storedEligibleHolders = toNumber(latestRealRow?.eligible_count);
     const latestEligibleHolders =
       storedEligibleHolders > 0 ? storedEligibleHolders : (await liveEligibleHolderCountOrNull()) ?? storedEligibleHolders;
@@ -533,6 +615,8 @@ export async function GET() {
       totalEpochs: realEpochCount,
       lastRewardAirdropped: epochHistory[0]?.rewardAmount ?? 0,
       totalRewardAirdropped,
+      lastRewardTotals: epochHistory[0]?.rewardTotals ?? [],
+      totalRewardTotals,
       latestEligibleHolders,
       averageMultiplier: avgMultiplier,
       nextDropTime: nextDropTime(),
@@ -549,6 +633,8 @@ export async function GET() {
       totalEpochs: 0,
       lastRewardAirdropped: 0,
       totalRewardAirdropped: 0,
+      lastRewardTotals: [],
+      totalRewardTotals: [],
       latestEligibleHolders: latestEligibleHolders ?? 0,
       nextDropTime: nextDropTime(),
       epochHistory: [],

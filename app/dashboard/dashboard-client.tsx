@@ -4,16 +4,29 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ParallaxBackground } from "../parallax-background";
 
+type RewardTotal = {
+  rewardAsset: string;
+  rewardAmount: number;
+  normalRewardAmount: number;
+  goldenBonusReward: number;
+  recipients: number;
+  latestTime: string | null;
+  latestTxSig: string | null;
+};
+
 type StatsResponse = {
   currentEpoch: number;
   totalEpochs: number;
   lastRewardAirdropped: number;
   totalRewardAirdropped: number;
+  lastRewardTotals: RewardTotal[];
+  totalRewardTotals: RewardTotal[];
   latestEligibleHolders: number;
   nextDropTime: string;
   epochHistory: Array<{
     epoch: number;
     rewardAmount: number;
+    rewardTotals: RewardTotal[];
     recipients: number;
     timestamp: string;
     status: string;
@@ -27,6 +40,7 @@ type StatsResponse = {
     rewardBought: number;
     normalRewardsSent: number;
     distributedPump: number;
+    rewardTotals: RewardTotal[];
     goldenWinnerWallet: string | null;
     goldenBaseReward: number;
     goldenBonusReward: number;
@@ -38,6 +52,7 @@ type StatsResponse = {
   }>;
   recentRewards: Array<{
     epoch: number;
+    rewardAsset?: string;
     wallet: string;
     rewardAmount: number;
     normalRewardAmount: number;
@@ -74,6 +89,8 @@ const emptyStats: StatsResponse = {
   totalEpochs: 0,
   lastRewardAirdropped: 0,
   totalRewardAirdropped: 0,
+  lastRewardTotals: [],
+  totalRewardTotals: [],
   latestEligibleHolders: 0,
   nextDropTime: new Date().toISOString(),
   epochHistory: [],
@@ -87,7 +104,7 @@ const REFRESH_MS = 12000;
 const EPOCH_MS = 5 * 60 * 1000;
 const PROJECT_NAME = "Bull Strategy";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLSTR";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM + SOL";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -128,6 +145,18 @@ function fallbackNextDropMs() {
 
 function formatNumber(value: number, maximumFractionDigits = 2) {
   return value.toLocaleString(undefined, { maximumFractionDigits });
+}
+
+function rewardDecimals(asset: string) {
+  return asset.toUpperCase() === "SOL" ? 4 : 2;
+}
+
+function formatRewardTotals(totals: RewardTotal[] | undefined, empty = "Awaiting first drop") {
+  const liveTotals = (totals ?? []).filter((total) => total.rewardAmount > 0);
+  if (!liveTotals.length) return empty;
+  return liveTotals
+    .map((total) => `${formatNumber(total.rewardAmount, rewardDecimals(total.rewardAsset))} ${total.rewardAsset}`)
+    .join(" / ");
 }
 
 function formatTime(value: string) {
@@ -261,7 +290,10 @@ export function DashboardClient() {
 
   const liveStats = stats ?? emptyStats;
   const liveHolders = holders ?? emptyHolders;
-  const hasRewards = liveStats.recentRewards.length > 0 || liveStats.totalRewardAirdropped > 0;
+  const hasRewards =
+    liveStats.recentRewards.length > 0 ||
+    liveStats.totalRewardTotals.some((total) => total.rewardAmount > 0) ||
+    liveStats.totalRewardAirdropped > 0;
   const latestGolden = liveStats.latestGolden;
   const nextDropMs = Math.max(Date.parse(liveStats.nextDropTime) || 0, fallbackNextDropMs());
   const countdown = formatCountdown(nextDropMs - now);
@@ -276,10 +308,10 @@ export function DashboardClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
+            <span className="brand-mark" aria-hidden="true">B</span>
             <span>
               Bull Strategy
-              <small>ANSEM Rewards</small>
+              <small>ANSEM + SOL Rewards</small>
             </span>
           </Link>
           <div className="nav-links">
@@ -316,9 +348,9 @@ export function DashboardClient() {
                 </div>
                 <div className="stat">
                   <strong className={hasRewards ? "" : "empty-value"}>
-                    <AnimatedValue value={hasRewards ? liveStats.lastRewardAirdropped : null} empty="Awaiting first drop" suffix={` ${REWARD_SYMBOL}`} />
+                    {hasRewards ? formatRewardTotals(liveStats.lastRewardTotals) : "Awaiting first drop"}
                   </strong>
-                  <span>Last {REWARD_SYMBOL} Drop</span>
+                  <span>Last Drop</span>
                 </div>
                 <div className="stat">
                   <strong className={latestGolden?.wallet ? "mono" : "empty-value"}>
@@ -334,9 +366,9 @@ export function DashboardClient() {
                 </div>
                 <div className="stat">
                   <strong className={hasRewards ? "" : "empty-value"}>
-                    <AnimatedValue value={hasRewards ? liveStats.totalRewardAirdropped : null} empty="Awaiting first drop" suffix={` ${REWARD_SYMBOL}`} />
+                    {hasRewards ? formatRewardTotals(liveStats.totalRewardTotals) : "Awaiting first drop"}
                   </strong>
-                  <span>Total {REWARD_SYMBOL} Distributed</span>
+                  <span>Total Rewards Distributed</span>
                 </div>
               </div>
 
@@ -354,12 +386,12 @@ export function DashboardClient() {
                         <th>Started</th>
                         <th>Duration</th>
                         <th className="right">Fees Collected</th>
-                          <th className="right">{REWARD_SYMBOL} Pool</th>
-                        <th className="right">Rewards Sent</th>
+                        <th className="right">ANSEM Bought</th>
+                        <th className="right">ANSEM Sent</th>
                         <th>Lucky Winner</th>
                         <th className="right">Bonus Amount</th>
                         <th className="right">Bonus Tx</th>
-                          <th className="right">{REWARD_SYMBOL} Distributed</th>
+                        <th className="right">Rewards Distributed</th>
                         <th className="right">Action</th>
                       </tr>
                     </thead>
@@ -382,14 +414,14 @@ export function DashboardClient() {
                             </td>
                             <td className="right mono">
                               {round.rewardBought ? (
-                                <AnimatedValue value={round.rewardBought} maximumFractionDigits={2} suffix={` ${REWARD_SYMBOL}`} />
+                                <AnimatedValue value={round.rewardBought} maximumFractionDigits={2} suffix=" ANSEM" />
                               ) : (
                                 "–"
                               )}
                             </td>
                             <td className="right mono">
                               {round.normalRewardsSent ? (
-                                <AnimatedValue value={round.normalRewardsSent} maximumFractionDigits={2} suffix={` ${REWARD_SYMBOL}`} />
+                                <AnimatedValue value={round.normalRewardsSent} maximumFractionDigits={2} suffix=" ANSEM" />
                               ) : (
                                 "–"
                               )}
@@ -406,7 +438,7 @@ export function DashboardClient() {
                             </td>
                             <td className="right mono">
                               {round.goldenBonusReward ? (
-                                <AnimatedValue value={round.goldenBonusReward} maximumFractionDigits={2} suffix={` ${REWARD_SYMBOL}`} />
+                                <AnimatedValue value={round.goldenBonusReward} maximumFractionDigits={2} suffix=" ANSEM" />
                               ) : (
                                 "–"
                               )}
@@ -426,8 +458,8 @@ export function DashboardClient() {
                               )}
                             </td>
                             <td className="right mono">
-                              {round.distributedPump ? (
-                                <AnimatedValue value={round.distributedPump} maximumFractionDigits={2} suffix={` ${REWARD_SYMBOL}`} />
+                              {round.rewardTotals.some((total) => total.rewardAmount > 0) ? (
+                                formatRewardTotals(round.rewardTotals, "–")
                               ) : (
                                 "–"
                               )}
@@ -475,7 +507,7 @@ export function DashboardClient() {
                           <div className="activity-meta">
                             <span className="mono">
                               {reward.rewardAmount ? (
-                                <AnimatedValue value={reward.rewardAmount} maximumFractionDigits={4} suffix={` ${REWARD_SYMBOL}`} />
+                                <AnimatedValue value={reward.rewardAmount} maximumFractionDigits={4} suffix={` ${reward.rewardAsset ?? REWARD_SYMBOL}`} />
                               ) : (
                                 "–"
                               )}

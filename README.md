@@ -1,14 +1,13 @@
 # Bull Strategy
 
 Source token: `$BULLSTR`  
-Reward asset: `$ANSEM`
+Reward assets: `$ANSEM` and `SOL`
 
 Bull Strategy is a fork of the airdrop engine rebranded around a 50/50 strategic flywheel:
 
 - 50% of usable SOL is routed through Jupiter to buy `$ANSEM`.
 - `$ANSEM` is airdropped to eligible `$BULLSTR` holders every 5 minutes.
-- 50% is sent to the configured Hyperliquid SOL wallet for the SOL-long flywheel.
-- Profits from the SOL-long strategy are intended to buy back and burn `$BULLSTR`.
+- 50% of usable SOL is airdropped directly as native SOL to eligible `$BULLSTR` holders.
 
 The site is a Next.js dashboard with a Railway-compatible worker and Supabase proof tables.
 
@@ -21,11 +20,11 @@ The token reward leg is implemented:
 3. Apply permanent holder-state rules.
 4. Score selected holders by `$BULLSTR` balance with capped holder and SOL-balance boosts.
 5. Use `SWAP_BALANCE_BPS=5000` to buy `$ANSEM` with 50% of usable SOL.
-6. Send `LONG_SOL_BPS=5000` to `LONG_SOL_WALLET` when `LONG_SOL_ENABLED=true`.
-7. Airdrop the bought `$ANSEM` to eligible holders.
+6. Use `SOL_AIRDROP_BPS=5000` to reserve 50% of usable SOL for native SOL holder airdrops.
+7. Airdrop the bought `$ANSEM` and native SOL to eligible holders.
 8. Store epochs, snapshots, bonus fields, reward pools, and payouts in Supabase.
 
-The SOL-long leg is a treasury transfer, not an in-repo perp executor. Point `LONG_SOL_WALLET` at the Hyperliquid SOL wallet and run the trading leg from there.
+The two reward legs share the same 5-minute epoch and holder weighting model.
 
 ## Weighting
 
@@ -64,7 +63,7 @@ Copy `.env.example` and fill in the live mints and keys.
 ```bash
 NEXT_PUBLIC_PROJECT_NAME="Bull Strategy"
 NEXT_PUBLIC_SOURCE_SYMBOL=BULLSTR
-NEXT_PUBLIC_REWARD_SYMBOL=ANSEM
+NEXT_PUBLIC_REWARD_SYMBOL="ANSEM + SOL"
 NEXT_PUBLIC_CA=<BULLSTR_MINT>
 NEXT_PUBLIC_SOURCE_TOKEN_MINT=<BULLSTR_MINT>
 NEXT_PUBLIC_X_URL=https://x.com
@@ -85,7 +84,6 @@ TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET>
 CLAIM_ENABLED=false
 BUY_ENABLED=false
 AIRDROP_ENABLED=false
-LONG_SOL_ENABLED=false
 
 EPOCH_MINUTES=5
 ELIGIBILITY_MIN=250000
@@ -95,9 +93,8 @@ EXCLUDE_WALLETS=
 
 SWAP_BALANCE_BPS=5000
 SWAP_SLIPPAGE_BPS=300
-LONG_SOL_BPS=5000
-LONG_SOL_WALLET=<HYPERLIQUID_SOL_WALLET>
-MIN_LONG_SOL_LAMPORTS=5000
+SOL_AIRDROP_BPS=5000
+MIN_SOL_REWARD_LAMPORTS_TO_AIRDROP=5000
 
 MIN_SOL_RESERVE=0.3
 AIRDROP_SOL_RESERVE=0.05
@@ -107,8 +104,8 @@ PRIORITY_FEE_SOL=0.000001
 MIN_REWARD_RAW_TO_AIRDROP=1
 ```
 
-Keep `CLAIM_ENABLED`, `BUY_ENABLED`, `AIRDROP_ENABLED`, and `LONG_SOL_ENABLED` false until the live treasury, mints, Hyperliquid wallet, Supabase tables, and worker dry runs are verified.
+Keep `CLAIM_ENABLED`, `BUY_ENABLED`, and `AIRDROP_ENABLED` false until the live treasury, mints, Supabase tables, and worker dry runs are verified.
 
 ## Logo
 
-The app currently references `public/brand/bull-strategy-logo.png`. Replace that file with the final black bull logo when ready.
+The old placeholder logo has been removed. Add the final logo asset when ready.

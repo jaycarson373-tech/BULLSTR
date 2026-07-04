@@ -20,6 +20,7 @@ export type GoldenEpochFields = {
 };
 
 export type PayoutMetadata = {
+  rewardAsset?: string;
   normalRewardAmountRaw?: string;
   normalRewardAmount?: string;
   goldenBonusRewardRaw?: string;
@@ -140,13 +141,15 @@ export async function planPayout(
   rewardAmount: string,
   metadata?: PayoutMetadata
 ) {
-  const idempotencyKey = `${epochId}:${wallet}`;
+  const rewardAsset = metadata?.rewardAsset ?? "ANSEM";
+  const idempotencyKey = `${epochId}:${wallet}:${rewardAsset}`;
   const result = await supabase
     .from("payouts")
     .upsert(
       {
         epoch_id: epochId,
         wallet,
+        reward_asset: rewardAsset,
         reward_amount_raw: rewardAmountRaw,
         reward_amount: rewardAmount,
         ...payoutMetadataFields(metadata, rewardAmountRaw, rewardAmount),
@@ -168,25 +171,28 @@ export async function dryRunPayout(
   rewardAmount: string,
   metadata?: PayoutMetadata
 ) {
+  const rewardAsset = metadata?.rewardAsset ?? "ANSEM";
   const result = await supabase.from("payouts").upsert({
     epoch_id: epochId,
     wallet,
+    reward_asset: rewardAsset,
     reward_amount_raw: rewardAmountRaw,
     reward_amount: rewardAmount,
     ...payoutMetadataFields(metadata, rewardAmountRaw, rewardAmount),
-    idempotency_key: `${epochId}:${wallet}`,
+    idempotency_key: `${epochId}:${wallet}:${rewardAsset}`,
     status: "dry_run",
     updated_at: new Date().toISOString()
   });
   assertNoError(result, "dry-run payout");
 }
 
-export async function settlePayout(epochId: string, wallet: string, txSig: string) {
+export async function settlePayout(epochId: string, wallet: string, txSig: string, rewardAsset = "ANSEM") {
   const result = await supabase
     .from("payouts")
     .update({ status: "settled", tx_sig: txSig, updated_at: new Date().toISOString() })
     .eq("epoch_id", epochId)
-    .eq("wallet", wallet);
+    .eq("wallet", wallet)
+    .eq("reward_asset", rewardAsset);
   assertNoError(result, "settle payout");
 }
 
@@ -195,7 +201,7 @@ export async function recordGoldenPayoutTx(epochId: string, txSig: string) {
   assertNoError(result, "record golden payout tx");
 }
 
-export async function failPayout(epochId: string, wallet: string, error: unknown) {
+export async function failPayout(epochId: string, wallet: string, error: unknown, rewardAsset = "ANSEM") {
   const result = await supabase
     .from("payouts")
     .update({
@@ -204,6 +210,7 @@ export async function failPayout(epochId: string, wallet: string, error: unknown
       updated_at: new Date().toISOString()
     })
     .eq("epoch_id", epochId)
-    .eq("wallet", wallet);
+    .eq("wallet", wallet)
+    .eq("reward_asset", rewardAsset);
   assertNoError(result, "fail payout");
 }
