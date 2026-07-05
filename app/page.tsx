@@ -16,6 +16,9 @@ const DEFAULT_CA = "";
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "https://pump.fun";
 const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/BullStrategySol";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CA;
+const DEXSCREENER_URL =
+  process.env.NEXT_PUBLIC_DEXSCREENER_URL ??
+  (CONTRACT_ADDRESS ? `https://dexscreener.com/solana/${CONTRACT_ADDRESS}` : "https://dexscreener.com/solana");
 
 function Navbar() {
   return (
@@ -56,6 +59,9 @@ export default function Page() {
   return (
     <div className="page hood-strategy-page">
       <Navbar />
+      <a className="floating-buy-button" href={DEXSCREENER_URL} target="_blank" rel="noreferrer">
+        BUY $BULLSTR
+      </a>
 
       <main>
         <section className="hero hood-hero" id="top">

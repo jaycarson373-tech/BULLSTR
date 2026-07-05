@@ -336,6 +336,33 @@ h3 {
   cursor: pointer;
 }
 
+.floating-buy-button {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 60;
+  display: inline-flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(57, 255, 20, 0.7);
+  border-radius: 14px;
+  background: var(--accent);
+  color: #020403;
+  padding: 0 20px;
+  font-size: 0.9rem;
+  font-weight: 950;
+  letter-spacing: 0.04em;
+  box-shadow: 0 18px 48px rgba(57, 255, 20, 0.2), 0 0 24px rgba(57, 255, 20, 0.14);
+  text-transform: uppercase;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.floating-buy-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 58px rgba(57, 255, 20, 0.26), 0 0 34px rgba(57, 255, 20, 0.2);
+}
+
 .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 }
