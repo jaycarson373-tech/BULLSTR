@@ -73,13 +73,13 @@ export function FallenBullsClient() {
             <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt="Bull Strategy logo" />
             <span>
               Bull Strategy
-              <small>BlackBull List</small>
+              <small className="blackbull-link">BlackBull List</small>
             </span>
           </Link>
           <div className="nav-links">
             <Link href="/">Landing</Link>
             <Link href="/dashboard">Dashboard</Link>
-            <Link href="/blackbull-list">BlackBull List</Link>
+            <Link className="blackbull-link" href="/blackbull-list">BlackBull List</Link>
           </div>
         </div>
       </header>
@@ -89,7 +89,7 @@ export function FallenBullsClient() {
           <div className="container">
             <div className="section-kicker">Fallen Bulls</div>
             <div className="section-head split-head">
-              <h1 className="dashboard-title">BlackBull List</h1>
+              <h1 className="dashboard-title blackbull-title">BlackBull List</h1>
               <p>Wallets that qualified with 250,000+ $BULLSTR, then sold and lost future $ANSEM and $BULLSTR rewards.</p>
             </div>
 

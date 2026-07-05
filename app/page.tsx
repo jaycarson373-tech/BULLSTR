@@ -37,7 +37,7 @@ function Navbar() {
           <a href="#how">Rewards</a>
           <a href="#bull-board">Board</a>
           <a href="#airdrops">Airdrops</a>
-          <a href="/blackbull-list">BlackBull List</a>
+          <a className="blackbull-link" href="/blackbull-list">BlackBull List</a>
         </nav>
         <div className="nav-actions">
           {CONTRACT_ADDRESS ? (

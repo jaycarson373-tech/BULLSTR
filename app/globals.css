@@ -286,6 +286,38 @@ h3 {
   color: var(--accent);
 }
 
+.blackbull-link,
+.nav-links .blackbull-link,
+.brand small.blackbull-link {
+  color: #ff3030;
+  text-decoration-line: line-through;
+  text-decoration-color: #ff3030;
+  text-decoration-thickness: 2px;
+  text-shadow: 0 0 16px rgba(255, 48, 48, 0.26);
+}
+
+.nav-links .blackbull-link:hover {
+  color: #ff5c5c;
+}
+
+.blackbull-title {
+  position: relative;
+  display: inline-block;
+}
+
+.blackbull-title::after {
+  position: absolute;
+  right: -0.05em;
+  left: -0.05em;
+  top: 52%;
+  height: 0.09em;
+  content: "";
+  background: #ff3030;
+  box-shadow: 0 0 24px rgba(255, 48, 48, 0.34);
+  transform: rotate(-3deg);
+  transform-origin: center;
+}
+
 .cta,
 .mini-button,
 .details-button,
