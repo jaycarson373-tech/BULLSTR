@@ -272,6 +272,11 @@ h3 {
   gap: 18px;
 }
 
+.nav-actions {
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+}
+
 .nav-links a,
 .footer-links a,
 .footer-trade-links a,
@@ -368,7 +373,13 @@ h3 {
 }
 
 .ca-copy-button {
+  min-width: 154px;
   cursor: pointer;
+}
+
+.nav-actions .cta {
+  min-width: 168px;
+  white-space: nowrap;
 }
 
 .mono {
@@ -2174,14 +2185,24 @@ td a,
     font-size: 0.72rem;
   }
 
-  .nav-actions .mini-button {
+  .nav-actions .x-button {
     display: none;
+  }
+
+  .nav-actions {
+    gap: 8px;
+  }
+
+  .nav-actions .ca-copy-button {
+    display: inline-flex;
+    min-width: 124px;
   }
 
   .nav-actions .cta {
     min-height: 40px;
-    padding: 0 12px;
-    font-size: 0.78rem;
+    min-width: 138px;
+    padding: 0 14px;
+    font-size: 0.72rem;
   }
 
   .hero-shade {
