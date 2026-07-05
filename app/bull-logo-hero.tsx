@@ -2,9 +2,9 @@
 
 import { useEffect, useRef } from "react";
 
-const MAX_ROTATE_Y = 8;
-const MAX_ROTATE_X = 6;
-const MAX_TRANSLATE = 8;
+const MAX_ROTATE_Y = 15;
+const MAX_ROTATE_X = 11;
+const MAX_TRANSLATE = 10;
 
 function clamp(value: number) {
   return Math.max(-1, Math.min(1, value));
@@ -28,10 +28,10 @@ export function BullLogoHero() {
         ? { rotateX: 0, rotateY: 0, translateX: 0, translateY: 0 }
         : targetRef.current;
 
-      current.rotateX += (target.rotateX - current.rotateX) * 0.085;
-      current.rotateY += (target.rotateY - current.rotateY) * 0.085;
-      current.translateX += (target.translateX - current.translateX) * 0.085;
-      current.translateY += (target.translateY - current.translateY) * 0.085;
+      current.rotateX += (target.rotateX - current.rotateX) * 0.1;
+      current.rotateY += (target.rotateY - current.rotateY) * 0.1;
+      current.translateX += (target.translateX - current.translateX) * 0.1;
+      current.translateY += (target.translateY - current.translateY) * 0.1;
 
       bull.style.transform = `translate3d(${current.translateX}px, ${current.translateY}px, 0) rotateX(${current.rotateX}deg) rotateY(${current.rotateY}deg)`;
       frameRef.current = window.requestAnimationFrame(applyTransform);

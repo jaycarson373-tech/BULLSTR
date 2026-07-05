@@ -2426,15 +2426,7 @@ td a,
 }
 
 .bull-logo-hero::before {
-  position: absolute;
-  width: min(72vw, 780px);
-  aspect-ratio: 1;
-  content: "";
-  border-radius: 999px;
-  background:
-    radial-gradient(circle, rgba(57, 255, 20, 0.22), rgba(57, 255, 20, 0.08) 35%, transparent 68%);
-  filter: blur(16px);
-  opacity: 0.78;
+  display: none;
 }
 
 .bull-logo-orbit {
@@ -2451,12 +2443,13 @@ td a,
   width: 100%;
   height: 100%;
   object-fit: contain;
+  opacity: 0.65;
   transform: translate3d(0, 0, 0);
   transform-origin: 50% 50%;
   filter:
-    drop-shadow(0 0 22px rgba(57, 255, 20, 0.42))
-    drop-shadow(0 0 58px rgba(57, 255, 20, 0.24))
-    drop-shadow(0 36px 90px rgba(0, 0, 0, 0.56));
+    drop-shadow(0 0 12px rgba(57, 255, 20, 0.78))
+    drop-shadow(0 0 34px rgba(57, 255, 20, 0.58))
+    drop-shadow(0 0 72px rgba(57, 255, 20, 0.28));
   transition: filter 220ms ease;
   will-change: transform;
 }
