@@ -59,9 +59,14 @@ export default function Page() {
   return (
     <div className="page hood-strategy-page">
       <Navbar />
-      <a className="floating-buy-button" href={DEXSCREENER_URL} target="_blank" rel="noreferrer">
-        BUY $BULLSTR
-      </a>
+      <div className="floating-bottom-links" aria-label="Trading links">
+        <a href={BUY_URL} target="_blank" rel="noreferrer">
+          BUY $BULLSTR
+        </a>
+        <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">
+          DEXSCREENER
+        </a>
+      </div>
 
       <main>
         <section className="hero hood-hero" id="top">
