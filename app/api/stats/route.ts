@@ -10,12 +10,6 @@ type EpochRow = {
   eligible_count: number | null;
   reward_bought: string | number | null;
   reward_distributed: string | number | null;
-  golden_winner_wallet: string | null;
-  golden_base_reward: string | number | null;
-  golden_bonus_reward: string | number | null;
-  golden_multiplier: number | null;
-  golden_capped: boolean | null;
-  golden_tx_sig: string | null;
   started_at: string | null;
   completed_at: string | null;
 };
@@ -42,10 +36,6 @@ type PayoutRow = {
   reward_asset: string | null;
   reward_amount: string | number | null;
   normal_reward_amount: string | number | null;
-  golden_bonus_reward: string | number | null;
-  is_golden: boolean | null;
-  golden_multiplier: number | null;
-  golden_capped: boolean | null;
   status: string | null;
   tx_sig: string | null;
   updated_at: string | null;
@@ -56,7 +46,6 @@ type RewardAssetTotal = {
   rewardAsset: string;
   rewardAmount: number;
   normalRewardAmount: number;
-  goldenBonusReward: number;
   recipients: number;
   latestTime: string | null;
   latestTxSig: string | null;
@@ -65,11 +54,9 @@ type RewardAssetTotal = {
 type EpochPayoutSummary = {
   rewardAmount: number;
   normalRewardAmount: number;
-  goldenBonusReward: number;
   recipients: number;
   latestTime: string | null;
   latestTxSig: string | null;
-  golden: PayoutRow | null;
   rewardTotals: Map<string, RewardAssetTotal>;
 };
 
@@ -138,7 +125,7 @@ async function getSettledPayouts(config: SupabaseConfig) {
   for (let offset = 0; ; offset += pageSize) {
     const page = await getSupabaseJson<PayoutRow[]>(
       config,
-      "payouts?select=epoch_id,wallet,reward_asset,reward_amount,normal_reward_amount,golden_bonus_reward,is_golden,golden_multiplier,golden_capped,status,tx_sig,updated_at,created_at&status=eq.settled&order=updated_at.desc",
+      "payouts?select=epoch_id,wallet,reward_asset,reward_amount,normal_reward_amount,status,tx_sig,updated_at,created_at&status=eq.settled&order=updated_at.desc",
       {
         Range: `${offset}-${offset + pageSize - 1}`
       }
@@ -212,7 +199,6 @@ function emptyRewardAssetTotal(rewardAsset: string): RewardAssetTotal {
     rewardAsset,
     rewardAmount: 0,
     normalRewardAmount: 0,
-    goldenBonusReward: 0,
     recipients: 0,
     latestTime: null,
     latestTxSig: null
@@ -391,15 +377,14 @@ export async function GET() {
       nextDropTime: nextDropTime(),
       epochHistory: [],
       roundHistory: [],
-      recentRewards: [],
-      latestGolden: null
+      recentRewards: []
     });
   }
 
   try {
     const rows = await getSupabaseJson<EpochRow[]>(
       config,
-      "epochs?select=epoch_id,status,eligible_count,reward_bought,reward_distributed,golden_winner_wallet,golden_base_reward,golden_bonus_reward,golden_multiplier,golden_capped,golden_tx_sig,started_at,completed_at&order=started_at.desc&limit=50"
+      "epochs?select=epoch_id,status,eligible_count,reward_bought,reward_distributed,started_at,completed_at&order=started_at.desc&limit=50"
     );
     const epochIds = rows.map((row) => row.epoch_id);
     const claims = epochIds.length
@@ -430,11 +415,9 @@ export async function GET() {
         ({
           rewardAmount: 0,
           normalRewardAmount: 0,
-          goldenBonusReward: 0,
           recipients: 0,
           latestTime: null,
           latestTxSig: null,
-          golden: null,
           rewardTotals: new Map<string, RewardAssetTotal>()
         } satisfies EpochPayoutSummary);
       const currentTime = payoutTime(payout);
@@ -444,15 +427,12 @@ export async function GET() {
       const latestAssetTime = Date.parse(assetSummary.latestTime ?? "") || 0;
       const rewardAmount = toNumber(payout.reward_amount);
       const normalRewardAmount = toNumber(payout.normal_reward_amount);
-      const goldenBonusReward = toNumber(payout.golden_bonus_reward);
 
       summary.rewardAmount += rewardAmount;
       summary.normalRewardAmount += normalRewardAmount;
-      summary.goldenBonusReward += goldenBonusReward;
       summary.recipients += 1;
       assetSummary.rewardAmount += rewardAmount;
       assetSummary.normalRewardAmount += normalRewardAmount;
-      assetSummary.goldenBonusReward += goldenBonusReward;
       assetSummary.recipients += 1;
       if (currentTime >= latestTime) {
         summary.latestTime = payout.updated_at ?? payout.created_at ?? payout.epoch_id;
@@ -461,9 +441,6 @@ export async function GET() {
       if (currentTime >= latestAssetTime) {
         assetSummary.latestTime = payout.updated_at ?? payout.created_at ?? payout.epoch_id;
         assetSummary.latestTxSig = payout.tx_sig;
-      }
-      if (payout.is_golden && (!summary.golden || currentTime >= payoutTime(summary.golden))) {
-        summary.golden = payout;
       }
       summary.rewardTotals.set(asset, assetSummary);
       payoutsByEpoch.set(payout.epoch_id, summary);
@@ -502,7 +479,6 @@ export async function GET() {
       const claim = claimsByEpoch.get(epochId);
       const buy = buysByEpoch.get(epochId);
       const payoutSummary = payoutsByEpoch.get(epochId);
-      const goldenPayout = payoutSummary?.golden;
       const ansemSummary = payoutSummary?.rewardTotals.get("ANSEM");
       return {
         epoch: displayEpochById.get(epochId) ?? realEpochCount - index,
@@ -514,13 +490,6 @@ export async function GET() {
         normalRewardsSent: ansemSummary?.normalRewardAmount ?? 0,
         distributedPump: ansemSummary?.rewardAmount ?? 0,
         rewardTotals: serializeRewardTotals(payoutSummary?.rewardTotals),
-        goldenWinnerWallet: goldenPayout?.wallet ?? null,
-        goldenBaseReward: toNumber(goldenPayout?.normal_reward_amount),
-        goldenBonusReward: toNumber(goldenPayout?.golden_bonus_reward),
-        goldenTotalReward: toNumber(goldenPayout?.reward_amount),
-        goldenMultiplier: goldenPayout?.golden_multiplier ?? row?.golden_multiplier ?? 5,
-        goldenCapped: goldenPayout?.golden_capped ?? false,
-        goldenTxSig: goldenPayout?.tx_sig ?? null,
         txSig: payoutSummary?.latestTxSig ?? claim?.tx_sig ?? buy?.tx_sig ?? null
       };
     });
@@ -531,26 +500,10 @@ export async function GET() {
       wallet: row.wallet,
       rewardAmount: toNumber(row.reward_amount),
       normalRewardAmount: toNumber(row.normal_reward_amount),
-      goldenBonusReward: toNumber(row.golden_bonus_reward),
-      isGolden: row.is_golden ?? false,
-      goldenMultiplier: row.golden_multiplier ?? 1,
-      goldenCapped: row.golden_capped ?? false,
       time: row.updated_at ?? row.created_at ?? row.epoch_id,
       status: row.status ?? "unknown",
       txSig: row.tx_sig
     }));
-    const latestGoldenRow = payoutRows.find((row) => row.is_golden);
-    const latestGolden = latestGoldenRow
-      ? {
-          wallet: latestGoldenRow.wallet,
-          baseReward: toNumber(latestGoldenRow.normal_reward_amount),
-          bonusReward: toNumber(latestGoldenRow.golden_bonus_reward),
-          totalReward: toNumber(latestGoldenRow.reward_amount),
-          multiplier: latestGoldenRow.golden_multiplier ?? 5,
-          capped: latestGoldenRow.golden_capped ?? false,
-          txSig: latestGoldenRow.tx_sig
-        }
-      : null;
     const totalRewardAirdropped = Array.from(payoutsByEpoch.values()).reduce(
       (sum, summary) => sum + summary.rewardAmount,
       0
@@ -563,7 +516,6 @@ export async function GET() {
         const currentTime = Date.parse(rewardTotal.latestTime ?? "") || 0;
         total.rewardAmount += rewardTotal.rewardAmount;
         total.normalRewardAmount += rewardTotal.normalRewardAmount;
-        total.goldenBonusReward += rewardTotal.goldenBonusReward;
         total.recipients += rewardTotal.recipients;
         if (currentTime >= latestTime) {
           total.latestTime = rewardTotal.latestTime;
@@ -588,8 +540,7 @@ export async function GET() {
       nextDropTime: nextDropTime(),
       epochHistory,
       roundHistory,
-      recentRewards,
-      latestGolden
+      recentRewards
     });
   } catch (error) {
     console.error("stats route failed", error);
@@ -605,8 +556,7 @@ export async function GET() {
       nextDropTime: nextDropTime(),
       epochHistory: [],
       roundHistory: [],
-      recentRewards: [],
-      latestGolden: null
+      recentRewards: []
     });
   }
 }

@@ -22,7 +22,7 @@ The token reward leg is implemented:
 5. Use `SWAP_BALANCE_BPS=5000` to buy `$ANSEM` with 50% of usable SOL.
 6. Use `SOL_AIRDROP_BPS=5000` to reserve 50% of usable SOL for native SOL holder airdrops.
 7. Airdrop the bought `$ANSEM` and native SOL to eligible holders.
-8. Store epochs, snapshots, bonus fields, reward pools, and payouts in Supabase.
+8. Store epochs, snapshots, reward pools, and payouts in Supabase.
 
 The two reward legs share the same 5-minute epoch and proportional holder weighting model.
 

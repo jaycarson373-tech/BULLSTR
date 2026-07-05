@@ -8,7 +8,6 @@ type RewardTotal = {
   rewardAsset: string;
   rewardAmount: number;
   normalRewardAmount: number;
-  goldenBonusReward: number;
   recipients: number;
   latestTime: string | null;
   latestTxSig: string | null;
@@ -41,13 +40,6 @@ type StatsResponse = {
     normalRewardsSent: number;
     distributedPump: number;
     rewardTotals: RewardTotal[];
-    goldenWinnerWallet: string | null;
-    goldenBaseReward: number;
-    goldenBonusReward: number;
-    goldenTotalReward: number;
-    goldenMultiplier: number;
-    goldenCapped: boolean;
-    goldenTxSig: string | null;
     txSig: string | null;
   }>;
   recentRewards: Array<{
@@ -56,23 +48,10 @@ type StatsResponse = {
     wallet: string;
     rewardAmount: number;
     normalRewardAmount: number;
-    goldenBonusReward: number;
-    isGolden: boolean;
-    goldenMultiplier: number;
-    goldenCapped: boolean;
     time: string;
     status: string;
     txSig: string | null;
   }>;
-  latestGolden: {
-    wallet: string | null;
-    baseReward: number;
-    bonusReward: number;
-    totalReward: number;
-    multiplier: number;
-    capped: boolean;
-    txSig: string | null;
-  } | null;
 };
 
 type HoldersResponse = {
@@ -95,8 +74,7 @@ const emptyStats: StatsResponse = {
   nextDropTime: new Date().toISOString(),
   epochHistory: [],
   roundHistory: [],
-  recentRewards: [],
-  latestGolden: null
+  recentRewards: []
 };
 
 const emptyHolders: HoldersResponse = { topHolders: [] };
@@ -294,7 +272,6 @@ export function DashboardClient() {
     liveStats.recentRewards.length > 0 ||
     liveStats.totalRewardTotals.some((total) => total.rewardAmount > 0) ||
     liveStats.totalRewardAirdropped > 0;
-  const latestGolden = liveStats.latestGolden;
   const nextDropMs = Math.max(Date.parse(liveStats.nextDropTime) || 0, fallbackNextDropMs());
   const countdown = formatCountdown(nextDropMs - now);
   const progress = useMemo(() => {
@@ -353,12 +330,6 @@ export function DashboardClient() {
                   <span>Last Drop</span>
                 </div>
                 <div className="stat">
-                  <strong className={latestGolden?.wallet ? "mono" : "empty-value"}>
-                    {latestGolden?.wallet ? compactAddress(latestGolden.wallet) : "Awaiting first winner"}
-                  </strong>
-                  <span>Lucky Bonus Winner</span>
-                </div>
-                <div className="stat">
                   <strong>
                     <AnimatedValue value={liveStats.latestEligibleHolders} maximumFractionDigits={0} />
                   </strong>
@@ -388,9 +359,6 @@ export function DashboardClient() {
                         <th className="right">Fees Collected</th>
                         <th className="right">ANSEM Bought</th>
                         <th className="right">ANSEM Sent</th>
-                        <th>Lucky Winner</th>
-                        <th className="right">Bonus Amount</th>
-                        <th className="right">Bonus Tx</th>
                         <th className="right">Rewards Distributed</th>
                         <th className="right">Action</th>
                       </tr>
@@ -426,37 +394,6 @@ export function DashboardClient() {
                                 "–"
                               )}
                             </td>
-                            <td className="mono">
-                              {round.goldenWinnerWallet ? (
-                                <>
-                                  {compactAddress(round.goldenWinnerWallet)}
-                                  {round.goldenCapped ? <span className="capped-note"> capped</span> : null}
-                                </>
-                              ) : (
-                                "–"
-                              )}
-                            </td>
-                            <td className="right mono">
-                              {round.goldenBonusReward ? (
-                                <AnimatedValue value={round.goldenBonusReward} maximumFractionDigits={2} suffix=" ANSEM" />
-                              ) : (
-                                "–"
-                              )}
-                            </td>
-                            <td className="right">
-                              {round.goldenTxSig ? (
-                                <a
-                                  className="details-button golden-link"
-                                  href={`https://solscan.io/tx/${round.goldenTxSig}`}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                >
-                                  Bonus
-                                </a>
-                              ) : (
-                                <span className="details-button disabled">Awaiting tx</span>
-                              )}
-                            </td>
                             <td className="right mono">
                               {round.rewardTotals.some((total) => total.rewardAmount > 0) ? (
                                 formatRewardTotals(round.rewardTotals, "–")
@@ -482,7 +419,7 @@ export function DashboardClient() {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={12}>Awaiting first reward distribution.</td>
+                          <td colSpan={9}>Awaiting first reward distribution.</td>
                         </tr>
                       )}
                     </tbody>
@@ -498,10 +435,7 @@ export function DashboardClient() {
                       liveStats.recentRewards.map((reward) => (
                         <div className="activity-row" key={`${reward.epoch}-${reward.wallet}-${reward.time}`}>
                           <div>
-                            <strong className="mono">
-                              {compactAddress(reward.wallet)}
-                              {reward.isGolden ? <span className="golden-badge">Strategy Bonus {reward.goldenMultiplier}x</span> : null}
-                            </strong>
+                            <strong className="mono">{compactAddress(reward.wallet)}</strong>
                             <span>{formatTime(reward.time)}</span>
                           </div>
                           <div className="activity-meta">
@@ -512,11 +446,6 @@ export function DashboardClient() {
                                 "–"
                               )}
                             </span>
-                            {reward.isGolden && reward.goldenBonusReward ? (
-                              <span className="mono golden-bonus">
-                                +<AnimatedValue value={reward.goldenBonusReward} maximumFractionDigits={4} suffix=" bonus" />
-                              </span>
-                            ) : null}
                             <span className={statusClass(reward.status)}>{statusLabel(reward.status)}</span>
                             {reward.txSig ? (
                               <a

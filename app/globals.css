@@ -1883,12 +1883,6 @@ td a,
   color: var(--danger);
 }
 
-.golden-badge,
-.golden-bonus,
-.golden-link {
-  color: var(--accent);
-}
-
 .empty-state,
 .empty-value,
 .details-button.disabled {

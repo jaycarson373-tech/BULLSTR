@@ -7,27 +7,10 @@ export const supabase = createClient(config.supabaseUrl, config.supabaseServiceR
 
 export type EpochStatus = "running" | "completed" | "failed" | "skipped";
 
-export type GoldenEpochFields = {
-  golden_winner_wallet?: string | null;
-  golden_base_reward?: string;
-  golden_base_reward_raw?: string;
-  golden_bonus_reward?: string;
-  golden_bonus_reward_raw?: string;
-  golden_multiplier?: number;
-  golden_capped?: boolean;
-  golden_snapshot_hash?: string | null;
-  golden_tx_sig?: string | null;
-};
-
 export type PayoutMetadata = {
   rewardAsset?: string;
   normalRewardAmountRaw?: string;
   normalRewardAmount?: string;
-  goldenBonusRewardRaw?: string;
-  goldenBonusReward?: string;
-  goldenMultiplier?: number;
-  isGolden?: boolean;
-  goldenCapped?: boolean;
 };
 
 function assertNoError<T>(result: { data: T; error: unknown }, label: string): T {
@@ -56,7 +39,7 @@ export async function completeEpoch(
     reward_bought: string;
     reward_distributed: string;
     status?: EpochStatus;
-  } & GoldenEpochFields
+  }
 ) {
   const result = await supabase
     .from("epochs")
@@ -126,11 +109,11 @@ function payoutMetadataFields(metadata: PayoutMetadata | undefined, rewardAmount
   return {
     normal_reward_amount_raw: metadata?.normalRewardAmountRaw ?? rewardAmountRaw,
     normal_reward_amount: metadata?.normalRewardAmount ?? rewardAmount,
-    golden_bonus_reward_raw: metadata?.goldenBonusRewardRaw ?? "0",
-    golden_bonus_reward: metadata?.goldenBonusReward ?? "0",
-    golden_multiplier: metadata?.goldenMultiplier ?? 1,
-    is_golden: metadata?.isGolden ?? false,
-    golden_capped: metadata?.goldenCapped ?? false
+    golden_bonus_reward_raw: "0",
+    golden_bonus_reward: "0",
+    golden_multiplier: 1,
+    is_golden: false,
+    golden_capped: false
   };
 }
 
@@ -194,11 +177,6 @@ export async function settlePayout(epochId: string, wallet: string, txSig: strin
     .eq("wallet", wallet)
     .eq("reward_asset", rewardAsset);
   assertNoError(result, "settle payout");
-}
-
-export async function recordGoldenPayoutTx(epochId: string, txSig: string) {
-  const result = await supabase.from("epochs").update({ golden_tx_sig: txSig }).eq("epoch_id", epochId);
-  assertNoError(result, "record golden payout tx");
 }
 
 export async function failPayout(epochId: string, wallet: string, error: unknown, rewardAsset = "ANSEM") {

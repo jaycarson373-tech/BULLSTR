@@ -4,9 +4,7 @@ import { config } from "./config.js";
 import {
   airdropSolRewards,
   airdropTokenRewards,
-  applyGoldenAirdrop,
   computeAllocations,
-  computeGoldenRewardPool,
   computeSolAllocations,
   estimateDualPayoutReserveLamports,
   treasuryRewardBalanceRaw
@@ -114,11 +112,7 @@ export async function runEpoch(date = new Date()) {
     console.log(
       `[${epochId}] reward pool: ${rewardPoolRaw.toString()} raw of ${availableRewardRaw.toString()} raw treasury balance (${config.airdropRewardBps} bps)`
     );
-    const goldenPool =
-      rewardPoolRaw > config.minRewardRawToAirdrop
-        ? await computeGoldenRewardPool(epochId, holders, rewardPoolRaw)
-        : { rewardPoolRaw: 0n, snapshotHash: null };
-    const allocations = goldenPool.rewardPoolRaw > 0n ? await computeAllocations(holders, goldenPool.rewardPoolRaw) : [];
+    const allocations = rewardPoolRaw > config.minRewardRawToAirdrop ? await computeAllocations(holders, rewardPoolRaw) : [];
     const solAllocations = await computeSolAllocations(holders, solAirdropLamports);
 
     if (!allocations.length && !solAllocations.length) {
@@ -132,18 +126,6 @@ export async function runEpoch(date = new Date()) {
       return;
     }
 
-    const golden = allocations.length
-      ? await applyGoldenAirdrop(epochId, holders, allocations, rewardPoolRaw, goldenPool.snapshotHash)
-      : {
-          wallet: null,
-          baseRewardRaw: 0n,
-          baseRewardUi: 0,
-          bonusRewardRaw: 0n,
-          bonusRewardUi: 0,
-          multiplier: 1,
-          capped: false,
-          snapshotHash: null
-        };
     const tokenAirdrop = allocations.length
       ? await airdropTokenRewards(epochId, allocations, "ANSEM")
       : { settledUi: 0, settledCount: 0, stoppedForReserve: false };
@@ -160,18 +142,10 @@ export async function runEpoch(date = new Date()) {
     await completeEpoch(epochId, {
       eligible_count: eligibleHolders.length,
       reward_bought: buy.rewardReceivedUi.toString(),
-      reward_distributed: distributed.toString(),
-      golden_winner_wallet: golden.wallet,
-      golden_base_reward: golden.baseRewardUi.toString(),
-      golden_base_reward_raw: golden.baseRewardRaw.toString(),
-      golden_bonus_reward: golden.bonusRewardUi.toString(),
-      golden_bonus_reward_raw: golden.bonusRewardRaw.toString(),
-      golden_multiplier: golden.multiplier,
-      golden_capped: golden.capped,
-      golden_snapshot_hash: golden.snapshotHash
+      reward_distributed: distributed.toString()
     });
     console.log(
-      `[${epochId}] summary: eligible=${eligibleHolders.length}, ansemRecipients=${tokenAirdrop.settledCount}/${allocations.length}, solRecipients=${solAirdrop.settledCount}/${solAllocations.length}, bought=${buy.rewardReceivedUi}, ansemDistributed=${distributed}, solDistributed=${solAirdrop.settledUi}, golden=${golden.wallet ?? "none"}`
+      `[${epochId}] summary: eligible=${eligibleHolders.length}, ansemRecipients=${tokenAirdrop.settledCount}/${allocations.length}, solRecipients=${solAirdrop.settledCount}/${solAllocations.length}, bought=${buy.rewardReceivedUi}, ansemDistributed=${distributed}, solDistributed=${solAirdrop.settledUi}`
     );
   } catch (error) {
     await failEpoch(epochId, error).catch((dbError) => {

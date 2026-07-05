@@ -6,7 +6,6 @@ type RewardTotal = {
   rewardAsset: string;
   rewardAmount: number;
   normalRewardAmount: number;
-  goldenBonusReward: number;
   recipients: number;
   latestTime: string | null;
   latestTxSig: string | null;
@@ -28,7 +27,6 @@ type Reward = {
   rewardAsset?: string;
   wallet: string;
   rewardAmount: number;
-  goldenMultiplier: number;
   time: string;
   status: string;
   txSig: string | null;
@@ -407,7 +405,7 @@ export function RecentAirdrops() {
                   rewards.slice(0, 50).map((reward) => (
                     <tr key={`${reward.wallet}-${reward.time}-${reward.rewardAmount}`}>
                       <td>{compactAddress(reward.wallet)}</td>
-                      <td>{reward.goldenMultiplier > 1 ? `${reward.rewardAsset ?? REWARD_SYMBOL} / ${reward.goldenMultiplier.toFixed(2)}x Strategy Bonus` : reward.rewardAsset ?? "Base"}</td>
+                      <td>{reward.rewardAsset ?? "Base"}</td>
                       <td>{formatAmount(reward.rewardAmount, reward.rewardAsset ?? REWARD_SYMBOL)}</td>
                       <td>{formatDate(reward.time)}</td>
                       <td>
