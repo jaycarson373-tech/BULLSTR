@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { BullLogoHero } from "./bull-logo-hero";
 import { CopyCaButton } from "./copy-ca-button";
 import {
   BullBoard,
@@ -58,7 +59,7 @@ export default function Page() {
 
       <main>
         <section className="hero hood-hero" id="top">
-          <div className="hero-art hero-mountains" aria-hidden="true" />
+          <BullLogoHero />
           <div className="hero-shade" aria-hidden="true" />
 
           <div className="container hero-inner">
