@@ -5,10 +5,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://bullstrategy.fun"),
   title: "Bull Strategy",
-  description: "$ANSEM and SOL rewards for $BULLSTR holders every 5 minutes.",
+  description: "$ANSEM and $BULLSTR rewards for $BULLSTR holders every 5 minutes.",
   openGraph: {
     title: "Bull Strategy",
-    description: "$ANSEM and SOL rewards for $BULLSTR holders every 5 minutes.",
+    description: "$ANSEM and $BULLSTR rewards for $BULLSTR holders every 5 minutes.",
     url: "https://bullstrategy.fun",
     siteName: "Bull Strategy",
     images: [
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Bull Strategy",
-    description: "$ANSEM and SOL rewards for $BULLSTR holders every 5 minutes.",
+    description: "$ANSEM and $BULLSTR rewards for $BULLSTR holders every 5 minutes.",
     images: ["/brand/bull-strategy-logo.png"]
   },
   icons: {

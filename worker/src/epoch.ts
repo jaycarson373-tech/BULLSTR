@@ -1,11 +1,9 @@
 import { claimFees } from "./claim.js";
-import { buyReward, treasurySolBudget } from "./buy.js";
+import { buyBullstr, buyReward, treasurySolBudget } from "./buy.js";
 import { config } from "./config.js";
 import {
-  airdropSolRewards,
   airdropTokenRewards,
   computeAllocations,
-  computeSolAllocations,
   estimateDualPayoutReserveLamports,
   treasuryRewardBalanceRaw
 } from "./airdrop.js";
@@ -113,10 +111,10 @@ export async function runEpoch(date = new Date()) {
     const payoutReserveLamports = await estimateDualPayoutReserveLamports(holders.map((holder) => holder.wallet));
     const splitPlan = await treasurySolBudget(payoutReserveLamports);
     const rewardBuyLamports = (splitPlan.usableLamports * BigInt(config.swapBalanceBps)) / 10_000n;
-    const solAirdropLamports = (splitPlan.usableLamports * BigInt(config.solAirdropBps)) / 10_000n;
+    const bullstrBuyLamports = (splitPlan.usableLamports * BigInt(config.bullstrAirdropBps)) / 10_000n;
     const sideWalletLamports = (splitPlan.usableLamports * BigInt(config.sideWalletBps)) / 10_000n;
     console.log(
-      `[${epochId}] split plan: usable=${lamportsToSol(splitPlan.usableLamports)} SOL, ansemBuy=${lamportsToSol(rewardBuyLamports)} SOL, solAirdrop=${lamportsToSol(solAirdropLamports)} SOL, sideWallet=${lamportsToSol(sideWalletLamports)} SOL`
+      `[${epochId}] split plan: usable=${lamportsToSol(splitPlan.usableLamports)} SOL, ansemBuy=${lamportsToSol(rewardBuyLamports)} SOL, bullstrBuy=${lamportsToSol(bullstrBuyLamports)} SOL, sideWallet=${lamportsToSol(sideWalletLamports)} SOL`
     );
     await sendSideWalletShare(epochId, sideWalletLamports);
 
@@ -126,9 +124,16 @@ export async function runEpoch(date = new Date()) {
       rewardReceivedUi: 0,
       txSig: null as string | null
     };
+    let bullstrBuy = {
+      baseSpentLamports: 0n,
+      rewardReceivedRaw: 0n,
+      rewardReceivedUi: 0,
+      txSig: null as string | null
+    };
 
     if (config.rewardMode === "token") {
       buy = await buyReward(epochId, payoutReserveLamports, rewardBuyLamports);
+      bullstrBuy = await buyBullstr(epochId, payoutReserveLamports, bullstrBuyLamports);
       await recordBuy(
         epochId,
         buy.baseSpentLamports.toString(),
@@ -137,11 +142,13 @@ export async function runEpoch(date = new Date()) {
         buy.txSig
       );
     } else {
-      console.log(`[${epochId}] REWARD_MODE=sol, skipping buy; creator fees remain SOL for direct airdrop`);
+      console.log(`[${epochId}] REWARD_MODE=sol, skipping token buys`);
     }
 
     const availableRewardRaw = await treasuryRewardBalanceRaw(payoutReserveLamports);
+    const availableBullstrRaw = await treasuryRewardBalanceRaw(payoutReserveLamports, config.sourceTokenMint);
     const rewardPoolRaw = (availableRewardRaw * BigInt(config.airdropRewardBps)) / 10_000n;
+    const bullstrPoolRaw = (availableBullstrRaw * BigInt(config.airdropRewardBps)) / 10_000n;
     if (config.rewardMode === "sol") {
       buy = {
         baseSpentLamports: 0n,
@@ -154,17 +161,23 @@ export async function runEpoch(date = new Date()) {
     console.log(
       `[${epochId}] reward pool: ${rewardPoolRaw.toString()} raw of ${availableRewardRaw.toString()} raw treasury balance (${config.airdropRewardBps} bps)`
     );
+    console.log(
+      `[${epochId}] BULLSTR pool: ${bullstrPoolRaw.toString()} raw of ${availableBullstrRaw.toString()} raw treasury balance (${config.airdropRewardBps} bps)`
+    );
     const allocations = rewardPoolRaw > config.minRewardRawToAirdrop ? await computeAllocations(holders, rewardPoolRaw) : [];
-    const solAllocations = await computeSolAllocations(holders, solAirdropLamports);
+    const bullstrAllocations =
+      bullstrPoolRaw > config.minRewardRawToAirdrop
+        ? await computeAllocations(holders, bullstrPoolRaw, config.sourceTokenMint)
+        : [];
 
-    if (!allocations.length && !solAllocations.length) {
+    if (!allocations.length && !bullstrAllocations.length) {
       await completeEpoch(epochId, {
         eligible_count: eligibleHolders.length,
         reward_bought: buy.rewardReceivedUi.toString(),
         reward_distributed: "0",
         status: "skipped"
       });
-      console.log(`[${epochId}] no ANSEM or SOL reward balance, skipped airdrop`);
+      console.log(`[${epochId}] no ANSEM or BULLSTR reward balance, skipped airdrop`);
       return;
     }
 
@@ -174,11 +187,11 @@ export async function runEpoch(date = new Date()) {
     if (tokenAirdrop.stoppedForReserve && tokenAirdrop.settledCount === 0) {
       throw new Error("ANSEM airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
     }
-    const solAirdrop = solAllocations.length
-      ? await airdropSolRewards(epochId, solAllocations, "SOL")
+    const bullstrAirdrop = bullstrAllocations.length
+      ? await airdropTokenRewards(epochId, bullstrAllocations, "BULLSTR", config.sourceTokenMint)
       : { settledUi: 0, settledCount: 0, stoppedForReserve: false };
-    if (solAirdrop.stoppedForReserve && solAirdrop.settledCount === 0) {
-      throw new Error("SOL airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
+    if (bullstrAirdrop.stoppedForReserve && bullstrAirdrop.settledCount === 0) {
+      throw new Error("BULLSTR airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
     }
     const distributed = tokenAirdrop.settledUi;
     await completeEpoch(epochId, {
@@ -187,7 +200,7 @@ export async function runEpoch(date = new Date()) {
       reward_distributed: distributed.toString()
     });
     console.log(
-      `[${epochId}] summary: eligible=${eligibleHolders.length}, ansemRecipients=${tokenAirdrop.settledCount}/${allocations.length}, solRecipients=${solAirdrop.settledCount}/${solAllocations.length}, bought=${buy.rewardReceivedUi}, ansemDistributed=${distributed}, solDistributed=${solAirdrop.settledUi}`
+      `[${epochId}] summary: eligible=${eligibleHolders.length}, ansemRecipients=${tokenAirdrop.settledCount}/${allocations.length}, bullstrRecipients=${bullstrAirdrop.settledCount}/${bullstrAllocations.length}, ansemBought=${buy.rewardReceivedUi}, bullstrBought=${bullstrBuy.rewardReceivedUi}, ansemDistributed=${distributed}, bullstrDistributed=${bullstrAirdrop.settledUi}`
     );
   } catch (error) {
     await failEpoch(epochId, error).catch((dbError) => {

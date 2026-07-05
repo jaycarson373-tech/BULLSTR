@@ -23,7 +23,7 @@ function Navbar() {
           <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
           <span>
             Bull Strategy
-            <small>ANSEM + SOL Rewards</small>
+            <small>ANSEM + BULLSTR Rewards</small>
           </span>
         </a>
         <nav className="nav-links" aria-label="Main navigation">
@@ -64,10 +64,10 @@ export default function Page() {
                 <span>Strategy</span>
               </h1>
               <p className="hero-subtitle">
-                $ANSEM and SOL rewards for $BULLSTR holders.
+                $ANSEM and $BULLSTR rewards for $BULLSTR holders.
               </p>
               <p className="hero-lead">
-                Bull Strategy routes the system into a 45/45/10 engine: 45% buys and airdrops $ANSEM, 45% airdrops native SOL to eligible $BULLSTR holders, and 10% routes to a side wallet every 5 minutes.
+                Bull Strategy routes the system into a 45/45/10 engine: 45% buys and airdrops $ANSEM, 45% buys and airdrops $BULLSTR to eligible holders, and 10% routes to the bagworker fund every 5 minutes.
               </p>
               <div className="hero-actions">
                 <a className="cta" href="#strategy">
@@ -97,8 +97,8 @@ export default function Page() {
             <h2>Strategy notes.</h2>
             <div className="faq-grid">
               <FaqItem title="How do I qualify?" body="Hold at least 250,000 $BULLSTR and stay above that threshold." />
-              <FaqItem title="How often are rewards sent?" body="$ANSEM and SOL rewards run every 5 minutes when live conditions are met." />
-              <FaqItem title="What is the split?" body="The target model routes 45% to $ANSEM holder airdrops, 45% to native SOL holder airdrops, and 10% to the side wallet." />
+              <FaqItem title="How often are rewards sent?" body="$ANSEM and $BULLSTR rewards run every 5 minutes when live conditions are met." />
+              <FaqItem title="What is the split?" body="The target model routes 45% to $ANSEM holder airdrops, 45% to $BULLSTR holder airdrops, and 10% to the bagworker fund." />
               <FaqItem title="Does supply still matter?" body="Yes. The $BULLSTR balance is the base weight, so larger holders can still earn more." />
               <FaqItem title="Is there claiming?" body="No. The backend handles airdrops automatically. No wallet connection is required to receive rewards." />
             </div>
@@ -110,7 +110,7 @@ export default function Page() {
           <div className="container final-bull-copy">
             <h2>HOLD THE BULL. FEED THE FLYWHEEL.</h2>
             <p>Hold $BULLSTR.</p>
-            <p>Earn $ANSEM and SOL.</p>
+            <p>Earn $ANSEM and $BULLSTR.</p>
             <strong>Let the strategy compound.</strong>
           </div>
         </section>
@@ -122,7 +122,7 @@ export default function Page() {
             <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
             <strong>Bull Strategy</strong>
           </div>
-          <p>$ANSEM and SOL rewards for $BULLSTR holders.</p>
+          <p>$ANSEM and $BULLSTR rewards for $BULLSTR holders.</p>
           <div className="footer-links">
             <a href="#dashboard">Live Data</a>
             <a href="#strategy">Strategy</a>
@@ -160,7 +160,7 @@ function StrategySection() {
           <div className="bull-signal-list">
             <span>Airdrop tech</span>
             <span>$ANSEM rewards</span>
-            <span>SOL rewards</span>
+            <span>BULLSTR rewards</span>
             <span>5-minute epochs</span>
           </div>
         </aside>
@@ -169,15 +169,15 @@ function StrategySection() {
           <div className="section-kicker">The strategy</div>
           <h2>THE TWO REWARDS HE IS BULLISH ON.</h2>
           <div className="lore-copy">
-            <p>Bull Strategy turns holder rewards and SOL conviction into one loop for eligible $BULLSTR wallets.</p>
-            <p>Half the engine targets $ANSEM airdrops every 5 minutes. The other half airdrops native SOL.</p>
+            <p>Bull Strategy turns holder rewards and token conviction into one loop for eligible $BULLSTR wallets.</p>
+            <p>45% of the engine targets $ANSEM airdrops every 5 minutes. Another 45% buys and airdrops $BULLSTR.</p>
             <p>Both reward legs use the same holder scan and weighting model.</p>
             <p>No claiming. No wallet connection. Just a public strategy dashboard backed by live reward data.</p>
           </div>
         </div>
       </div>
       <div className="container black-bull-timeline" aria-label="Bull Strategy reward model">
-        {["Creator fees", "45% $ANSEM", "45% SOL", "10% side wallet", "Airdrop ledger"].map((item) => (
+        {["Creator fees", "45% $ANSEM", "45% $BULLSTR", "10% bagworker fund", "Airdrop ledger"].map((item) => (
           <span key={item}>{item}</span>
         ))}
       </div>
@@ -196,7 +196,7 @@ function WhyAnsemSection() {
             <p>$ANSEM is the attention side of Bull Strategy: a token built around The Black Bull, aka Ansem, and the Solana culture he has been bullposting for years.</p>
             <p>Ansem crossed 1M+ followers on X, helped make WIF one of the defining Solana memes as it ran toward $5, and rode the SOL conviction arc from the sub-$1 era to a near-$300 all-time high.</p>
             <p>The multi-billion bull case is simple: if attention, liquidity, and Solana meme culture keep concentrating around Ansem, $ANSEM can become the tokenized scoreboard for that crowd.</p>
-            <p>Bull Strategy turns that thesis into a holder flywheel: $BULLSTR holders earn $ANSEM and SOL every epoch, so the rewards stay pointed at the two things the strategy is built to be bullish on.</p>
+            <p>Bull Strategy turns that thesis into a holder flywheel: $BULLSTR holders earn $ANSEM and $BULLSTR every epoch, so the rewards stay pointed at the two tokens the strategy is built around.</p>
           </div>
         </div>
 
@@ -214,7 +214,7 @@ function WhyAnsemSection() {
           <article className="ansem-proof-card">
             <span>SOL conviction</span>
             <strong>Sub-$1 to near $300</strong>
-            <p>The same account is tied to the SOL conviction arc that Bull Strategy rewards directly.</p>
+            <p>The same account is tied to the SOL conviction arc that frames the Bull Strategy thesis.</p>
           </article>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { LAMPORTS_PER_SOL, VersionedTransaction } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, PublicKey, VersionedTransaction } from "@solana/web3.js";
 import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, getMint } from "@solana/spl-token";
 import { config, treasuryKeypair } from "./config.js";
 import { connection } from "./solana.js";
@@ -13,18 +13,18 @@ export type BuyResult = {
   txSig: string | null;
 };
 
-async function tokenProgramForMint() {
-  const info = await connection.getAccountInfo(config.rewardTokenMint);
-  if (!info) throw new Error(`Reward mint not found: ${config.rewardTokenMint.toBase58()}`);
+async function tokenProgramForMint(mint: PublicKey) {
+  const info = await connection.getAccountInfo(mint);
+  if (!info) throw new Error(`Reward mint not found: ${mint.toBase58()}`);
   if (info.owner.equals(TOKEN_PROGRAM_ID)) return TOKEN_PROGRAM_ID;
   if (info.owner.equals(TOKEN_2022_PROGRAM_ID)) return TOKEN_2022_PROGRAM_ID;
   throw new Error(`Unsupported reward token program: ${info.owner.toBase58()}`);
 }
 
-async function rewardDecimals() {
-  const tokenProgram = await tokenProgramForMint();
-  const mint = await getMint(connection, config.rewardTokenMint, "confirmed", tokenProgram);
-  return mint.decimals;
+async function tokenDecimals(mint: PublicKey) {
+  const tokenProgram = await tokenProgramForMint(mint);
+  const mintInfo = await getMint(connection, mint, "confirmed", tokenProgram);
+  return mintInfo.decimals;
 }
 
 function rawToUi(raw: bigint, decimals: number) {
@@ -74,10 +74,10 @@ export async function treasurySwapAmount(explicitReserveLamports?: bigint, maxSw
   };
 }
 
-async function jupiterSwap(baseAmount: bigint, treasuryPublicKey: string) {
+async function jupiterSwap(baseAmount: bigint, outputMint: PublicKey, treasuryPublicKey: string) {
   const query = new URLSearchParams({
     inputMint: NATIVE_MINT.toBase58(),
-    outputMint: config.rewardTokenMint.toBase58(),
+    outputMint: outputMint.toBase58(),
     amount: baseAmount.toString(),
     slippageBps: String(config.swapSlippageBps),
     restrictIntermediateTokens: "true"
@@ -102,7 +102,13 @@ async function jupiterSwap(baseAmount: bigint, treasuryPublicKey: string) {
   return { quote, swap: (await swapResponse.json()) as { swapTransaction: string } };
 }
 
-export async function buyReward(epochId: string, explicitReserveLamports?: bigint, maxSwapLamports?: bigint): Promise<BuyResult> {
+export async function buyToken(
+  epochId: string,
+  outputMint: PublicKey,
+  label: string,
+  explicitReserveLamports?: bigint,
+  maxSwapLamports?: bigint
+): Promise<BuyResult> {
   if (config.rewardMode === "sol") {
     console.log(`[${epochId}] REWARD_MODE=sol, buy path disabled`);
     return { baseSpentLamports: 0n, rewardReceivedRaw: 0n, rewardReceivedUi: 0, txSig: null };
@@ -110,7 +116,7 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
 
   const treasury = treasuryKeypair();
   const { amount, balance, reserveLamports } = await treasurySwapAmount(explicitReserveLamports, maxSwapLamports);
-  const decimals = await rewardDecimals();
+  const decimals = await tokenDecimals(outputMint);
 
   if (amount <= 0n) {
     console.log(
@@ -119,11 +125,11 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
     return { baseSpentLamports: 0n, rewardReceivedRaw: 0n, rewardReceivedUi: 0, txSig: null };
   }
 
-  const { quote, swap } = await jupiterSwap(amount, treasury.publicKey.toBase58());
+  const { quote, swap } = await jupiterSwap(amount, outputMint, treasury.publicKey.toBase58());
   const rewardReceivedRaw = BigInt(quote.outAmount);
   const rewardReceivedUi = rawToUi(rewardReceivedRaw, decimals);
   console.log(
-    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}would buy ${rewardReceivedRaw.toString()} raw reward tokens for ${amount.toString()} lamports`
+    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}would buy ${rewardReceivedRaw.toString()} raw ${label} tokens for ${amount.toString()} lamports`
   );
 
   if (!config.buyEnabled) {
@@ -141,4 +147,12 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
   const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
   await connection.confirmTransaction(txSig, "confirmed");
   return { baseSpentLamports: amount, rewardReceivedRaw, rewardReceivedUi, txSig };
+}
+
+export async function buyReward(epochId: string, explicitReserveLamports?: bigint, maxSwapLamports?: bigint) {
+  return buyToken(epochId, config.rewardTokenMint, "ANSEM", explicitReserveLamports, maxSwapLamports);
+}
+
+export async function buyBullstr(epochId: string, explicitReserveLamports?: bigint, maxSwapLamports?: bigint) {
+  return buyToken(epochId, config.sourceTokenMint, "BULLSTR", explicitReserveLamports, maxSwapLamports);
 }

@@ -90,7 +90,7 @@ export function FallenBullsClient() {
             <div className="section-kicker">Fallen Bulls</div>
             <div className="section-head split-head">
               <h1 className="dashboard-title">BlackBull List</h1>
-              <p>Wallets that qualified with 250,000+ $BULLSTR, then sold and lost future $ANSEM and SOL rewards.</p>
+              <p>Wallets that qualified with 250,000+ $BULLSTR, then sold and lost future $ANSEM and $BULLSTR rewards.</p>
             </div>
 
             <div className="history-card bull-board-card">

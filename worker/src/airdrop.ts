@@ -50,10 +50,10 @@ type PayoutReserve = {
   missingAtas: Set<string>;
 };
 
-async function tokenProgramForMint() {
+async function tokenProgramForMint(mint = config.rewardTokenMint) {
   if (config.rewardMode === "sol") throw new Error("Token mint lookup is not used when REWARD_MODE=sol");
-  const info = await connection.getAccountInfo(config.rewardTokenMint);
-  if (!info) throw new Error(`Reward mint not found: ${config.rewardTokenMint.toBase58()}`);
+  const info = await connection.getAccountInfo(mint);
+  if (!info) throw new Error(`Reward mint not found: ${mint.toBase58()}`);
   if (info.owner.equals(TOKEN_PROGRAM_ID)) return TOKEN_PROGRAM_ID;
   if (info.owner.equals(TOKEN_2022_PROGRAM_ID)) return TOKEN_2022_PROGRAM_ID;
   throw new Error(`Unsupported reward token program: ${info.owner.toBase58()}`);
@@ -63,16 +63,16 @@ function rawToUi(raw: bigint, decimals: number) {
   return Number(raw) / 10 ** decimals;
 }
 
-async function rewardDecimals() {
+async function rewardDecimals(mint = config.rewardTokenMint) {
   if (config.rewardMode === "sol") return 9;
-  const tokenProgram = await tokenProgramForMint();
-  const mintInfo = await getMint(connection, config.rewardTokenMint, "confirmed", tokenProgram);
+  const tokenProgram = await tokenProgramForMint(mint);
+  const mintInfo = await getMint(connection, mint, "confirmed", tokenProgram);
   return mintInfo.decimals;
 }
 
-function rewardAtaForOwner(owner: PublicKey, tokenProgram: PublicKey) {
+function rewardAtaForOwner(owner: PublicKey, tokenProgram: PublicKey, mint = config.rewardTokenMint) {
   return getAssociatedTokenAddressSync(
-    config.rewardTokenMint,
+    mint,
     owner,
     true,
     tokenProgram,
@@ -95,15 +95,15 @@ async function computeStrategyWeights(holders: Holder[]): Promise<WeightedHolder
   });
 }
 
-export async function treasuryRewardBalanceRaw(reserveLamports = 0n) {
+export async function treasuryRewardBalanceRaw(reserveLamports = 0n, mint = config.rewardTokenMint) {
   const treasury = treasuryKeypair();
   if (config.rewardMode === "sol") {
     const balance = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
     return balance > reserveLamports ? balance - reserveLamports : 0n;
   }
 
-  const tokenProgram = await tokenProgramForMint();
-  const ata = getAssociatedTokenAddressSync(config.rewardTokenMint, treasury.publicKey, false, tokenProgram);
+  const tokenProgram = await tokenProgramForMint(mint);
+  const ata = getAssociatedTokenAddressSync(mint, treasury.publicKey, false, tokenProgram);
   try {
     const balance = await connection.getTokenAccountBalance(ata, "confirmed");
     return BigInt(balance.value.amount);
@@ -112,9 +112,9 @@ export async function treasuryRewardBalanceRaw(reserveLamports = 0n) {
   }
 }
 
-export async function computeAllocations(holders: Holder[], rewardRaw: bigint): Promise<Allocation[]> {
+export async function computeAllocations(holders: Holder[], rewardRaw: bigint, mint = config.rewardTokenMint): Promise<Allocation[]> {
   if (!holders.length || rewardRaw <= config.minRewardRawToAirdrop) return [];
-  const decimals = await rewardDecimals();
+  const decimals = await rewardDecimals(mint);
   return computeAllocationsWithDecimals(holders, rewardRaw, decimals);
 }
 
@@ -198,25 +198,20 @@ export async function estimatePayoutReserveLamports(wallets: string[]) {
   return totalLamports;
 }
 
-function estimateSolPayoutReserveLamports(walletCount: number) {
-  if (walletCount <= 0) return 0n;
-  const reserveLamports = BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
-  const batchCount = BigInt(Math.max(1, Math.ceil(walletCount / config.airdropBatchSize)));
-  return reserveLamports + batchCount * AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS;
-}
-
 export async function estimateDualPayoutReserveLamports(wallets: string[]) {
   const permanentReserveLamports = BigInt(Math.floor(config.minSolReserve * LAMPORTS_PER_SOL));
   if (!wallets.length) return permanentReserveLamports + BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
 
-  const tokenProgram = await tokenProgramForMint();
-  const atas = wallets.map((wallet) => rewardAtaForOwner(new PublicKey(wallet), tokenProgram));
-  const tokenReserve = await payoutReserveForAtas(atas);
-  const solReserveLamports = estimateSolPayoutReserveLamports(wallets.length);
-  const totalLamports = permanentReserveLamports + tokenReserve.totalLamports + solReserveLamports;
+  const ansemProgram = await tokenProgramForMint(config.rewardTokenMint);
+  const bullstrProgram = await tokenProgramForMint(config.sourceTokenMint);
+  const ansemAtas = wallets.map((wallet) => rewardAtaForOwner(new PublicKey(wallet), ansemProgram, config.rewardTokenMint));
+  const bullstrAtas = wallets.map((wallet) => rewardAtaForOwner(new PublicKey(wallet), bullstrProgram, config.sourceTokenMint));
+  const ansemReserve = await payoutReserveForAtas(ansemAtas);
+  const bullstrReserve = await payoutReserveForAtas(bullstrAtas);
+  const totalLamports = permanentReserveLamports + ansemReserve.totalLamports + bullstrReserve.totalLamports;
 
   console.log(
-    `[RESERVE] dual payout reserve for ${wallets.length} wallets: total=${totalLamports}, permanent=${permanentReserveLamports}, tokenReserve=${tokenReserve.totalLamports}, solReserve=${solReserveLamports}`
+    `[RESERVE] dual token payout reserve for ${wallets.length} wallets: total=${totalLamports}, permanent=${permanentReserveLamports}, ansemReserve=${ansemReserve.totalLamports}, bullstrReserve=${bullstrReserve.totalLamports}`
   );
   return totalLamports;
 }
@@ -229,12 +224,13 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
 export async function airdropTokenRewards(
   epochId: string,
   allocations: Allocation[],
-  rewardAsset = "ANSEM"
+  rewardAsset = "ANSEM",
+  mint = config.rewardTokenMint
 ): Promise<AirdropResult> {
   const treasury = treasuryKeypair();
-  const tokenProgram = await tokenProgramForMint();
-  const mintInfo = await getMint(connection, config.rewardTokenMint, "confirmed", tokenProgram);
-  const sourceAta = getAssociatedTokenAddressSync(config.rewardTokenMint, treasury.publicKey, false, tokenProgram);
+  const tokenProgram = await tokenProgramForMint(mint);
+  const mintInfo = await getMint(connection, mint, "confirmed", tokenProgram);
+  const sourceAta = getAssociatedTokenAddressSync(mint, treasury.publicKey, false, tokenProgram);
   let settledRaw = 0n;
   let settledUi = 0;
   let settledCount = 0;
@@ -268,7 +264,7 @@ export async function airdropTokenRewards(
     return {
       ...allocation,
       owner,
-      destinationAta: rewardAtaForOwner(owner, tokenProgram)
+      destinationAta: rewardAtaForOwner(owner, tokenProgram, mint)
     };
   });
 
@@ -311,7 +307,7 @@ export async function airdropTokenRewards(
               treasury.publicKey,
               allocation.destinationAta,
               allocation.owner,
-              config.rewardTokenMint,
+              mint,
               tokenProgram,
               ASSOCIATED_TOKEN_PROGRAM_ID
             )
@@ -321,7 +317,7 @@ export async function airdropTokenRewards(
         tx.add(
           createTransferCheckedInstruction(
             sourceAta,
-            config.rewardTokenMint,
+            mint,
             allocation.destinationAta,
             treasury.publicKey,
             allocation.amount,

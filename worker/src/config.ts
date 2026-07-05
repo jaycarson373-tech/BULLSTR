@@ -66,12 +66,12 @@ if (rewardMode === "token" && !configuredRewardTokenMint) {
   throw new Error("Missing required env REWARD_TOKEN_MINT when REWARD_MODE=token");
 }
 const swapBalanceBps = Math.min(10_000, Math.max(1, intEnv("SWAP_BALANCE_BPS", 4500)));
-const solAirdropBps = Math.min(10_000, Math.max(0, intEnv("SOL_AIRDROP_BPS", 4500)));
+const bullstrAirdropBps = Math.min(10_000, Math.max(0, intEnv("BULLSTR_AIRDROP_BPS", 4500)));
 const sideWalletBps = Math.min(10_000, Math.max(0, intEnv("SIDE_WALLET_BPS", 1000)));
-if (swapBalanceBps + solAirdropBps + sideWalletBps > 10_000) {
+if (swapBalanceBps + bullstrAirdropBps + sideWalletBps > 10_000) {
   throw new Error(
-    `SWAP_BALANCE_BPS + SOL_AIRDROP_BPS + SIDE_WALLET_BPS cannot exceed 10000; got ${
-      swapBalanceBps + solAirdropBps + sideWalletBps
+    `SWAP_BALANCE_BPS + BULLSTR_AIRDROP_BPS + SIDE_WALLET_BPS cannot exceed 10000; got ${
+      swapBalanceBps + bullstrAirdropBps + sideWalletBps
     }`
   );
 }
@@ -96,7 +96,7 @@ export const config = {
   excludeWallets: optionalWallets("EXCLUDE_WALLETS"),
 
   swapBalanceBps,
-  solAirdropBps,
+  bullstrAirdropBps,
   sideWalletBps,
   sideWalletPublicKey: optionalPublicKeyEnv("SIDE_WALLET_PUBLIC_KEY"),
   minSolReserve: Math.max(0.3, numberEnv("MIN_SOL_RESERVE", 0.3)),

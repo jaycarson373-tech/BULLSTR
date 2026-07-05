@@ -224,8 +224,9 @@ function rewardAsset(row: Pick<PayoutRow, "reward_asset">) {
 function rewardAssetRank(asset: string) {
   const upper = asset.toUpperCase();
   if (upper === "ANSEM") return 0;
-  if (upper === "SOL") return 1;
-  return 2;
+  if (upper === "BULLSTR") return 1;
+  if (upper === "SOL") return 2;
+  return 3;
 }
 
 function emptyRewardAssetTotal(rewardAsset: string): RewardAssetTotal {

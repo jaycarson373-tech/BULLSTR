@@ -90,7 +90,7 @@ const emptyStats: StatsResponse = {
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12_000;
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLSTR";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM + SOL";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM + BULLSTR";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -203,7 +203,7 @@ export function HeroCountdown() {
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
   const totalDistributed = stats ? formatRewardTotals(stats.totalRewardTotals, "Awaiting first drop") : "Awaiting first drop";
   const ansemAirdropped = stats ? rewardTotalAmount(stats.totalRewardTotals, "ANSEM") : 0;
-  const solAirdropped = stats ? rewardTotalAmount(stats.totalRewardTotals, "SOL") : 0;
+  const bullstrAirdropped = stats ? rewardTotalAmount(stats.totalRewardTotals, "BULLSTR") : 0;
 
   return (
     <div className="hero-countdown" aria-live="polite">
@@ -223,8 +223,8 @@ export function HeroCountdown() {
           <b>{ansemAirdropped > 0 ? `${formatNumber(ansemAirdropped, 2)} ANSEM` : "Awaiting first drop"}</b>
         </div>
         <div>
-          <span>SOL Airdropped</span>
-          <b>{solAirdropped > 0 ? `${formatNumber(solAirdropped, 4)} SOL` : "Awaiting first drop"}</b>
+          <span>BULLSTR Airdropped</span>
+          <b>{bullstrAirdropped > 0 ? `${formatNumber(bullstrAirdropped, 2)} BULLSTR` : "Awaiting first drop"}</b>
         </div>
         <div>
           <span>{SOURCE_SYMBOL} Eligible</span>
@@ -325,15 +325,15 @@ export function RewardExplanation() {
       <div className="container">
           <div className="section-kicker">How rewards work</div>
         <div className="section-head split-head">
-          <h2>45% $ANSEM. 45% SOL. 10% side wallet.</h2>
-          <p>Bull Strategy turns creator fees into two live reward streams for eligible $BULLSTR holders, with a 10% side-wallet route.</p>
+          <h2>45% $ANSEM. 45% $BULLSTR. 10% bagworker fund.</h2>
+          <p>Bull Strategy turns creator fees into two live token reward streams for eligible $BULLSTR holders, with a 10% bagworker fund route.</p>
         </div>
         <div className="reward-flow">
           {[
             `Hold at least 250,000 $${SOURCE_SYMBOL}`,
             "45% routes to $ANSEM reward buys",
             "$ANSEM distributes every epoch",
-            "45% distributes as native SOL",
+            "45% routes to $BULLSTR reward buys",
             "$BULLSTR balance sets reward share",
             "Everything is tracked on-chain"
           ].map((item) => (
@@ -345,7 +345,7 @@ export function RewardExplanation() {
         <div className="share-example">
           {[
             ["Weight", "$BULLSTR held", "proportional share"],
-            ["Split", "$ANSEM + SOL", "two reward legs"],
+            ["Split", "$ANSEM + BULLSTR", "two reward legs"],
             ["Ledger", "On-chain transfers", "tracked every epoch"]
           ].map(([holder, multiplier, copy]) => (
             <article className="share-card" key={holder}>
@@ -538,7 +538,7 @@ export function AirdropHistory() {
       <div className="container">
         <div className="section-kicker">Airdrop history</div>
         <div className="section-head split-head">
-          <h2>ANSEM + SOL Distributions</h2>
+          <h2>ANSEM + BULLSTR Distributions</h2>
           <p>Settled airdrops only. Failed or skipped worker attempts are not counted.</p>
         </div>
         <div className="history-card">
