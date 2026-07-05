@@ -73,13 +73,13 @@ export function FallenBullsClient() {
             <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt="Bull Strategy logo" />
             <span>
               Bull Strategy
-              <small>Ineligible Wallets</small>
+              <small>BlackBull List</small>
             </span>
           </Link>
           <div className="nav-links">
             <Link href="/">Landing</Link>
             <Link href="/dashboard">Dashboard</Link>
-            <Link href="/fallen-bulls">Ineligible</Link>
+            <Link href="/fallen-bulls">BlackBull List</Link>
           </div>
         </div>
       </header>
@@ -87,10 +87,10 @@ export function FallenBullsClient() {
       <main className="dashboard fallen-bulls-page">
         <section className="section history-section">
           <div className="container">
-            <div className="section-kicker">Ineligibility ledger</div>
+            <div className="section-kicker">Fallen Bulls</div>
             <div className="section-head split-head">
-              <h1 className="dashboard-title">Ineligible Wallets</h1>
-              <p>Wallets that lost eligibility by selling or falling below the 250,000 $BULLSTR requirement.</p>
+              <h1 className="dashboard-title">BlackBull List</h1>
+              <p>Wallets that qualified with 250,000+ $BULLSTR, then sold and lost future $ANSEM and SOL rewards.</p>
             </div>
 
             <div className="history-card bull-board-card">
@@ -101,10 +101,10 @@ export function FallenBullsClient() {
                       <th>Wallet</th>
                       <th>Reason</th>
                       <th>Total Rewards Earned</th>
-                      <th>Status</th>
+                      <th>List Status</th>
                       <th>Final Streak</th>
                       <th>Last Airdrop</th>
-                      <th>Removed At</th>
+                      <th>Listed At</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -114,7 +114,7 @@ export function FallenBullsClient() {
                           <td>{compactAddress(wallet.address)}</td>
                           <td>{wallet.ineligibleReason}</td>
                           <td>{formatNumber(wallet.totalRewardEarned)} Rewards</td>
-                          <td>Ineligible</td>
+                          <td>BlackBull Listed</td>
                           <td>{wallet.currentStreak ?? 0} epochs</td>
                           <td>{formatDate(wallet.lastAirdropAt)}</td>
                           <td>{formatDate(wallet.ineligibleAt ?? wallet.lastSeenAt)}</td>
@@ -122,7 +122,7 @@ export function FallenBullsClient() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={7}>No ineligible wallets recorded yet.</td>
+                        <td colSpan={7}>No wallets on the BlackBull List yet.</td>
                       </tr>
                     )}
                   </tbody>

@@ -102,7 +102,11 @@ export async function GET() {
       config.key
     );
     const activeStates = (holderStates ?? []).filter((row) => !row.permanently_ineligible);
-    const fallenStates = (holderStates ?? []).filter((row) => row.permanently_ineligible);
+    const fallenStates = (holderStates ?? []).filter(
+      (row) =>
+        row.permanently_ineligible &&
+        (row.ineligible_reason === "balance_decreased" || row.ineligible_reason === "dropped_below_threshold_or_sold")
+    );
     const payoutRows = await getSettledPayouts(config).catch((error) => {
       console.warn("optional payout totals query failed", error);
       return [] as PayoutRow[];
