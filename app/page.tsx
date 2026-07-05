@@ -84,6 +84,7 @@ export default function Page() {
 
         <LiveProtocolDashboard />
         <StrategySection />
+        <WhyAnsemSection />
         <RewardExplanation />
         <PermanentEligibility />
         <BullBoard />
@@ -179,6 +180,43 @@ function StrategySection() {
         {["Creator fees", "50% $ANSEM", "50% SOL", "Holder scan", "Airdrop ledger"].map((item) => (
           <span key={item}>{item}</span>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function WhyAnsemSection() {
+  return (
+    <section className="section why-ansem-section" id="why-ansem">
+      <div className="container why-ansem-grid">
+        <div className="why-ansem-copy">
+          <div className="section-kicker">Why $ANSEM?</div>
+          <h2>ATTENTION IS THE STRATEGY.</h2>
+          <div className="lore-copy">
+            <p>$ANSEM is the attention side of Bull Strategy: a token built around The Black Bull, aka Ansem, and the Solana culture he has been bullposting for years.</p>
+            <p>Ansem crossed 1M+ followers on X, helped make WIF one of the defining Solana memes as it ran toward $5, and rode the SOL conviction arc from the sub-$1 era to a near-$300 all-time high.</p>
+            <p>The multi-billion bull case is simple: if attention, liquidity, and Solana meme culture keep concentrating around Ansem, $ANSEM can become the tokenized scoreboard for that crowd.</p>
+            <p>Bull Strategy turns that thesis into a holder flywheel: $BULLSTR holders earn $ANSEM and SOL every epoch, so the rewards stay pointed at the two things the strategy is built to be bullish on.</p>
+          </div>
+        </div>
+
+        <div className="ansem-proof-grid" aria-label="Ansem market thesis">
+          <article className="ansem-proof-card">
+            <span>Reach</span>
+            <strong>1M+ X followers</strong>
+            <p>The Black Bull already has the audience size most meme tokens try to manufacture.</p>
+          </article>
+          <article className="ansem-proof-card">
+            <span>WIF lore</span>
+            <strong>Near $5 cycle high</strong>
+            <p>WIF became the Solana culture trade, and Ansem was one of its loudest bullposters.</p>
+          </article>
+          <article className="ansem-proof-card">
+            <span>SOL conviction</span>
+            <strong>Sub-$1 to near $300</strong>
+            <p>The same account is tied to the SOL conviction arc that Bull Strategy rewards directly.</p>
+          </article>
+        </div>
       </div>
     </section>
   );

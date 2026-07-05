@@ -2409,6 +2409,10 @@ td a,
     linear-gradient(180deg, rgba(2, 4, 3, 0.12), rgba(2, 4, 3, 0.86));
 }
 
+.hood-strategy-page h1 {
+  font-size: clamp(4.35rem, 9.8vw, 9.8rem);
+}
+
 .hero-subtitle {
   color: var(--accent);
   font-weight: 700;
@@ -2452,6 +2456,71 @@ td a,
   opacity: 0.36;
   filter: none;
   transform: none;
+}
+
+.why-ansem-section {
+  --section-art: url("/brand/bull-strategy-logo.png");
+  --section-art-position: right 10vw center;
+  --section-art-size: min(44vw, 620px) auto;
+  --section-art-speed: -0.01;
+  background:
+    radial-gradient(ellipse at 12% 20%, rgba(57, 255, 20, 0.12), transparent 38%),
+    radial-gradient(ellipse at 88% 64%, rgba(20, 92, 36, 0.2), transparent 38%),
+    linear-gradient(180deg, rgba(2, 4, 3, 0.98), rgba(5, 10, 7, 0.98));
+}
+
+.why-ansem-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.68fr);
+  gap: 42px;
+  align-items: start;
+}
+
+.why-ansem-copy h2 {
+  max-width: 780px;
+}
+
+.why-ansem-copy .lore-copy {
+  max-width: 860px;
+}
+
+.ansem-proof-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.ansem-proof-card {
+  border: 1px solid rgba(57, 255, 20, 0.18);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(236, 255, 240, 0.05), rgba(236, 255, 240, 0.015)),
+    rgba(3, 8, 5, 0.9);
+  padding: 22px;
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.24);
+}
+
+.ansem-proof-card span {
+  color: var(--green);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.ansem-proof-card strong {
+  display: block;
+  margin-top: 18px;
+  color: var(--accent);
+  font-size: clamp(1.85rem, 3.1vw, 3rem);
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.ansem-proof-card p {
+  margin-top: 14px;
+  color: var(--faint);
+  font-size: 0.98rem;
+  line-height: 1.65;
 }
 
 .metric-card,
@@ -2610,6 +2679,10 @@ td a,
   .black-bull-timeline {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .why-ansem-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 720px) {
@@ -2618,7 +2691,7 @@ td a,
   }
 
   .hood-strategy-page h1 {
-    font-size: clamp(3.4rem, 18vw, 5.8rem);
+    font-size: clamp(3.1rem, 16vw, 5.2rem);
   }
 
   .hood-hero .hero-mountains {
