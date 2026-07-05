@@ -13,9 +13,9 @@ export const metadata: Metadata = {
     siteName: "Bull Strategy",
     images: [
       {
-        url: "/brand/bull-strategy-logo.png",
-        width: 1200,
-        height: 1200,
+        url: "/brand/site-preview.png",
+        width: 1175,
+        height: 1174,
         alt: "Bull Strategy"
       }
     ],
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Bull Strategy",
     description: "$ANSEM and $BULLSTR rewards for $BULLSTR holders every 5 minutes.",
-    images: ["/brand/bull-strategy-logo.png"]
+    images: ["/brand/site-preview.png"]
   },
   icons: {
     icon: [
