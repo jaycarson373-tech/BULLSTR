@@ -13,7 +13,7 @@ import {
 } from "./home-strategy-data";
 
 const PROJECT_NAME = "Bull Strategy";
-const DEFAULT_CA = "";
+const DEFAULT_CA = "9Q86QfqzQ6HyVEeeTwie8PP3Eb3VPDd2S9gfFq5ypump";
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "https://pump.fun";
 const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/BullStrategySol";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CA;
