@@ -1648,52 +1648,6 @@ td a,
   --section-art-speed: -0.01;
 }
 
-.final-bull-section {
-  --section-art: url("/brand/bull-strategy-logo.png");
-  --section-art-position: center 48%;
-  --section-art-speed: -0.014;
-  min-height: 82vh;
-  display: grid;
-  align-items: end;
-  overflow: hidden;
-  background: #020202;
-}
-
-.final-bull-art {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.22) 56%, rgba(0, 0, 0, 0.82)),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.86)),
-    url("/brand/bull-strategy-logo.png") right 8vw center / min(56vw, 720px) auto no-repeat;
-  filter: saturate(0.88) contrast(1.1);
-  transform: translate3d(0, calc(var(--scroll-y) * -0.018), 0);
-}
-
-.final-bull-copy {
-  display: grid;
-  gap: 12px;
-  padding-bottom: 40px;
-}
-
-.final-bull-copy h2 {
-  max-width: 760px;
-}
-
-.final-bull-copy p,
-.final-bull-copy strong {
-  color: var(--ivory);
-  font-family: Cinzel, Georgia, serif;
-  font-size: clamp(1.55rem, 3.4vw, 3.4rem);
-  line-height: 1.04;
-}
-
-.final-bull-copy strong {
-  color: var(--accent);
-}
-
 .faq-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -1714,7 +1668,20 @@ td a,
 .footer {
   border-top: 1px solid rgba(57, 255, 20, 0.18);
   background: #050504;
-  padding: 40px 0;
+  padding: 34px 0 40px;
+}
+
+.footer-art-wrap {
+  margin-bottom: 28px;
+}
+
+.footer-strategy-art {
+  display: block;
+  width: min(100%, 1280px);
+  margin: 0 auto;
+  border: 1px solid rgba(57, 255, 20, 0.22);
+  background: var(--accent);
+  box-shadow: 0 26px 90px rgba(0, 0, 0, 0.36), 0 0 42px rgba(57, 255, 20, 0.1);
 }
 
 .footer-grid {
@@ -2279,12 +2246,6 @@ td a,
     transform: none;
   }
 
-  .final-bull-art {
-    background:
-      linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.9)),
-      url("/brand/bull-strategy-logo.png") center 18% / min(86vw, 460px) auto no-repeat;
-  }
-
   .activity-row,
   .holder-line {
     grid-template-columns: 1fr;
@@ -2715,17 +2676,6 @@ td {
 
 td a,
 .details-button {
-  color: var(--green);
-}
-
-.final-bull-art {
-  background:
-    radial-gradient(circle at 76% 44%, rgba(57, 255, 20, 0.18), transparent 24%),
-    url("/brand/bull-strategy-logo.png") right 8vw center / min(52vw, 720px) auto no-repeat;
-  filter: none;
-}
-
-.final-bull-copy strong {
   color: var(--green);
 }
 

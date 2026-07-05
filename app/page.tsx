@@ -109,18 +109,12 @@ export default function Page() {
           </div>
         </section>
 
-        <section className="section final-bull-section">
-          <div className="final-bull-art" aria-hidden="true" />
-          <div className="container final-bull-copy">
-            <h2>HOLD THE BULL. FEED THE FLYWHEEL.</h2>
-            <p>Hold $BULLSTR.</p>
-            <p>Earn $ANSEM and $BULLSTR.</p>
-            <strong>Let the strategy compound.</strong>
-          </div>
-        </section>
       </main>
 
       <footer className="footer">
+        <div className="container footer-art-wrap">
+          <img className="footer-strategy-art" src="/brand/bull-strategy-footer.png" alt="Bull Strategy 45/45/10 rewards" />
+        </div>
         <div className="container footer-grid">
           <div className="footer-brand">
             <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
