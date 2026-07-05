@@ -2020,10 +2020,12 @@ td a,
   from {
     opacity: 0.88;
     filter: drop-shadow(0 0 18px rgba(57, 255, 20, 0.1));
+    transform: translate3d(0, calc(var(--scroll-y) * 0.012), 0) rotate(-3deg) scale(1.01);
   }
   to {
     opacity: 0.96;
     filter: drop-shadow(0 0 34px rgba(57, 255, 20, 0.18));
+    transform: translate3d(0, calc(var(--scroll-y) * 0.012), 0) rotate(3deg) scale(1.01);
   }
 }
 
@@ -2031,10 +2033,12 @@ td a,
   from {
     opacity: 0.38;
     filter: drop-shadow(0 0 14px rgba(57, 255, 20, 0.08));
+    transform: translate3d(0, calc(var(--scroll-y) * 0.012), 0) rotate(-2deg) scale(1.01);
   }
   to {
     opacity: 0.46;
     filter: drop-shadow(0 0 24px rgba(57, 255, 20, 0.14));
+    transform: translate3d(0, calc(var(--scroll-y) * 0.012), 0) rotate(2deg) scale(1.01);
   }
 }
 
@@ -2398,8 +2402,10 @@ td a,
     url("/brand/bull-strategy-logo.png") right 7vw center / min(48vw, 660px) auto no-repeat;
   opacity: 0.92;
   filter: drop-shadow(0 0 22px rgba(57, 255, 20, 0.12));
-  animation: bullBackgroundGlow 14s ease-in-out infinite alternate;
+  animation: bullBackgroundGlow 16s ease-in-out infinite alternate;
+  transform-origin: 72% 48%;
   transform: translate3d(0, calc(var(--scroll-y) * 0.012), 0);
+  will-change: transform, opacity, filter;
 }
 
 .hood-hero .hero-shade {
@@ -2699,7 +2705,8 @@ td a,
       radial-gradient(circle at 50% 24%, rgba(57, 255, 20, 0.18), transparent 32%),
       url("/brand/bull-strategy-logo.png") center 18% / min(86vw, 420px) auto no-repeat;
     opacity: 0.42;
-    animation: mobileBullBackgroundGlow 14s ease-in-out infinite alternate;
+    animation: mobileBullBackgroundGlow 16s ease-in-out infinite alternate;
+    transform-origin: 50% 24%;
   }
 
   .dashboard-grid,
