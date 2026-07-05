@@ -30,7 +30,7 @@ The two reward legs share the same 5-minute epoch and proportional holder weight
 
 Reward weight is proportional to `$BULLSTR` held.
 
-Every epoch is 5 minutes by default. Default eligibility is 250,000 `$BULLSTR`. Selling any amount of `$BULLSTR`, or falling below `ELIGIBILITY_MIN`, permanently removes that wallet from future tracked distributions.
+Every epoch is 5 minutes by default. Default eligibility is 250,000 `$BULLSTR`. Selling any amount of `$BULLSTR`, falling below `ELIGIBILITY_MIN`, or holding `MAX_HOLDER_PCT` percent or more of supply permanently removes that wallet from future tracked distributions.
 
 ## Local Development
 

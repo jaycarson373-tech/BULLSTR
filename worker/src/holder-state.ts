@@ -63,15 +63,20 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
 
       const droppedBelowThreshold = !current || current.uiBalance < config.eligibilityMin;
       const soldAnyAmount = current ? current.rawBalance < previousRaw : true;
+      const atOrAboveHolderCap = current ? current.holderPct >= config.maxHolderPct : false;
 
-      if (droppedBelowThreshold || soldAnyAmount) {
+      if (droppedBelowThreshold || soldAnyAmount || atOrAboveHolderCap) {
         updates.push({
           wallet: state.wallet,
           source_balance: current?.uiBalance.toString() ?? state.source_balance ?? "0",
           source_balance_raw: current?.rawBalance.toString() ?? state.source_balance_raw ?? "0",
           highest_source_balance_raw: state.highest_source_balance_raw ?? state.source_balance_raw ?? "0",
           permanently_ineligible: true,
-          ineligible_reason: soldAnyAmount ? "balance_decreased" : "dropped_below_threshold",
+          ineligible_reason: soldAnyAmount
+            ? "balance_decreased"
+            : atOrAboveHolderCap
+              ? "holder_pct_at_or_above_max"
+              : "dropped_below_threshold",
           ineligible_at: now,
           last_seen_at: now,
           last_epoch_id: epochId,
@@ -96,6 +101,28 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
           current_multiplier_bps: 10_000
         });
       }
+    }
+
+    for (const holder of currentHolders) {
+      const existing = stateByWallet.get(holder.wallet);
+      if (existing || permanentlyRemoved.has(holder.wallet)) continue;
+      if (holder.holderPct < config.maxHolderPct) continue;
+
+      updates.push({
+        wallet: holder.wallet,
+        source_balance: holder.uiBalance.toString(),
+        source_balance_raw: holder.rawBalance.toString(),
+        highest_source_balance_raw: holder.rawBalance.toString(),
+        permanently_ineligible: true,
+        ineligible_reason: "holder_pct_at_or_above_max",
+        ineligible_at: now,
+        last_seen_at: now,
+        last_epoch_id: epochId,
+        updated_at: now,
+        current_streak_epochs: 0,
+        current_multiplier_bps: 10_000
+      });
+      permanentlyRemoved.add(holder.wallet);
     }
 
     for (const holder of eligibleHolders) {

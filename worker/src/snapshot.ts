@@ -146,9 +146,9 @@ export async function eligibleHoldersFromSnapshot(holders: Holder[]): Promise<Ho
     .filter((holder) => holder.uiBalance >= config.eligibilityMin)
     .filter((holder) => !excluded.has(holder.wallet))
     .filter((holder) => {
-      const isWhale = holder.holderPct > config.maxHolderPct;
+      const isWhale = holder.holderPct >= config.maxHolderPct;
       if (isWhale) {
-        console.log(`[SNAPSHOT] excluded whale ${holder.wallet}: ${holder.holderPct}%`);
+        console.log(`[SNAPSHOT] excluded max-holder ${holder.wallet}: ${holder.holderPct}%`);
       }
       return !isWhale;
     })

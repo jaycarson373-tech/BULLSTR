@@ -344,7 +344,7 @@ async function liveEligibleHolderCount() {
   for (const [wallet, rawBalance] of balances) {
     if (excluded.has(wallet)) continue;
     if (rawBalance < minRawBalance) continue;
-    if (holderPct(rawBalance, rawSupply) > maxHolderPct) continue;
+    if (holderPct(rawBalance, rawSupply) >= maxHolderPct) continue;
     count += 1;
   }
 

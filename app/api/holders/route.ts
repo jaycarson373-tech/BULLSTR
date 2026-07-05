@@ -88,6 +88,7 @@ function reasonLabel(reason: string | null | undefined) {
   if (reason === "balance_decreased") return "Sold BULLSTR";
   if (reason === "dropped_below_threshold") return "Dropped below 250K";
   if (reason === "dropped_below_threshold_or_sold") return "Sold or dropped below 250K";
+  if (reason === "holder_pct_at_or_above_max") return "Reached 5%+ holder cap";
   return "Permanently ineligible";
 }
 
