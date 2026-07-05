@@ -216,19 +216,19 @@ export function HeroCountdown() {
       <div className="hero-mini-dashboard">
         <div>
           <span>Bagholder Wallet</span>
-          <b>{stats?.bagholderSolBalance !== null && stats?.bagholderSolBalance !== undefined ? `${formatLiveNumber(stats.bagholderSolBalance, 4)} SOL` : "Awaiting wallet"}</b>
+          <b>{stats?.bagholderSolBalance !== null && stats?.bagholderSolBalance !== undefined ? `${formatLiveNumber(stats.bagholderSolBalance, 4)} SOL` : "0"}</b>
         </div>
         <div>
           <span>ANSEM Airdropped</span>
-          <b>{ansemAirdropped > 0 ? `${formatNumber(ansemAirdropped, 2)} ANSEM` : "Awaiting first drop"}</b>
+          <b>{ansemAirdropped > 0 ? `${formatNumber(ansemAirdropped, 2)} ANSEM` : "0"}</b>
         </div>
         <div>
           <span>BULLSTR Airdropped</span>
-          <b>{bullstrAirdropped > 0 ? `${formatNumber(bullstrAirdropped, 2)} BULLSTR` : "Awaiting first drop"}</b>
+          <b>{bullstrAirdropped > 0 ? `${formatNumber(bullstrAirdropped, 2)} BULLSTR` : "0"}</b>
         </div>
         <div>
           <span>{SOURCE_SYMBOL} Eligible</span>
-          <b>{stats?.eligibleBullstrHeld ? formatNumber(stats.eligibleBullstrHeld, 0) : "Awaiting scan"}</b>
+          <b>{stats?.eligibleBullstrHeld ? formatNumber(stats.eligibleBullstrHeld, 0) : "0"}</b>
         </div>
         <div>
           <span>Total Epochs</span>
