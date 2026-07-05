@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { BagworkBalance } from "./bagwork-balance";
 import { BullLogoHero } from "./bull-logo-hero";
 import { CopyCaButton } from "./copy-ca-button";
 import {
@@ -170,6 +171,7 @@ function StrategySection() {
             <span>BULLSTR rewards</span>
             <span>5-minute epochs</span>
           </div>
+          <BagworkBalance />
         </aside>
 
         <div className="black-bull-copy">

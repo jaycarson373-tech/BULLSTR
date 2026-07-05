@@ -1133,6 +1133,35 @@ h3 {
   border-color: rgba(20, 92, 36, 0.24);
 }
 
+.bagwork-balance {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  margin-top: 6px;
+  border: 1px solid rgba(57, 255, 20, 0.2);
+  border-radius: 14px;
+  background: rgba(6, 15, 8, 0.72);
+  padding: 15px 18px;
+}
+
+.bagwork-balance span {
+  color: var(--accent);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.bagwork-balance strong {
+  color: var(--ivory);
+  font-size: clamp(1.18rem, 2vw, 1.55rem);
+  font-weight: 950;
+  letter-spacing: -0.02em;
+  text-align: right;
+  white-space: nowrap;
+}
+
 .black-bull-timeline {
   position: relative;
   display: grid;
