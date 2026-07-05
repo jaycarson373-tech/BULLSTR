@@ -2423,11 +2423,12 @@ td a,
 
 .hood-hero .hero-mountains {
   background:
-    linear-gradient(135deg, transparent 0 48%, rgba(57, 255, 20, 0.2) 48% 48.25%, transparent 48.25%),
-    linear-gradient(160deg, transparent 0 62%, rgba(0, 200, 5, 0.22) 62% 62.3%, transparent 62.3%),
-    url("/brand/bull-strategy-logo.png") right 7vw center / min(48vw, 660px) auto no-repeat;
-  opacity: 0.92;
-  filter: drop-shadow(0 0 22px rgba(57, 255, 20, 0.12));
+    linear-gradient(135deg, transparent 0 46%, rgba(57, 255, 20, 0.28) 46% 46.22%, transparent 46.22%),
+    linear-gradient(160deg, transparent 0 64%, rgba(0, 200, 5, 0.24) 64% 64.28%, transparent 64.28%),
+    radial-gradient(circle at 79% 50%, rgba(57, 255, 20, 0.18), transparent 28%),
+    url("/brand/bull-strategy-footer.png") right -6vw center / min(66vw, 1120px) auto no-repeat;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 28px rgba(57, 255, 20, 0.16)) drop-shadow(0 32px 80px rgba(0, 0, 0, 0.48));
   animation: bullBackgroundGlow 16s ease-in-out infinite alternate;
   transform-origin: 72% 48%;
   transform: translate3d(0, calc(var(--scroll-y) * 0.012), 0);
@@ -2720,8 +2721,8 @@ td a,
   .hood-hero .hero-mountains {
     background:
       radial-gradient(circle at 50% 24%, rgba(57, 255, 20, 0.18), transparent 32%),
-      url("/brand/bull-strategy-logo.png") center 18% / min(86vw, 420px) auto no-repeat;
-    opacity: 0.42;
+      url("/brand/bull-strategy-footer.png") center 18% / min(128vw, 640px) auto no-repeat;
+    opacity: 0.36;
     animation: mobileBullBackgroundGlow 16s ease-in-out infinite alternate;
     transform-origin: 50% 24%;
   }
