@@ -467,6 +467,33 @@ h3 {
   text-transform: uppercase;
 }
 
+.hero-mini-dashboard {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  border-top: 1px solid rgba(57, 255, 20, 0.16);
+  padding-top: 18px;
+}
+
+.hero-mini-dashboard div {
+  display: grid;
+  min-height: 78px;
+  align-content: space-between;
+  gap: 8px;
+  border: 1px solid rgba(57, 255, 20, 0.14);
+  border-radius: 12px;
+  background: rgba(2, 4, 3, 0.56);
+  padding: 12px;
+}
+
+.hero-mini-dashboard b {
+  overflow-wrap: anywhere;
+  color: var(--ivory);
+  font-size: clamp(0.92rem, 1.6vw, 1.08rem);
+  font-weight: 900;
+  line-height: 1.1;
+}
+
 .section {
   position: relative;
   isolation: isolate;
@@ -2158,6 +2185,10 @@ td a,
 
   .hero-countdown strong {
     font-size: 3.1rem;
+  }
+
+  .hero-mini-dashboard {
+    grid-template-columns: 1fr;
   }
 
   .section {

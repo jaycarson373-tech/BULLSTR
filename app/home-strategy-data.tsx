@@ -40,6 +40,8 @@ type StatsResponse = {
   lastRewardTotals: RewardTotal[];
   totalRewardTotals: RewardTotal[];
   latestEligibleHolders: number;
+  eligibleBullstrHeld: number;
+  bagholderSolBalance: number | null;
   nextDropTime: string;
   roundHistory: Round[];
   recentRewards: Reward[];
@@ -78,6 +80,8 @@ const emptyStats: StatsResponse = {
   lastRewardTotals: [],
   totalRewardTotals: [],
   latestEligibleHolders: 0,
+  eligibleBullstrHeld: 0,
+  bagholderSolBalance: null,
   nextDropTime: new Date().toISOString(),
   roundHistory: [],
   recentRewards: []
@@ -109,6 +113,11 @@ function formatNumber(value: number, maximumFractionDigits = 2) {
   return value.toLocaleString(undefined, { maximumFractionDigits });
 }
 
+function formatLiveNumber(value: number, maximumFractionDigits = 2) {
+  if (!Number.isFinite(value) || value < 0) return "Awaiting";
+  return value.toLocaleString(undefined, { maximumFractionDigits });
+}
+
 function formatCount(value: number) {
   if (!Number.isFinite(value) || value < 0) return "Awaiting";
   return value.toLocaleString(undefined, { maximumFractionDigits: 0 });
@@ -129,6 +138,10 @@ function formatRewardTotals(totals: RewardTotal[] | undefined, empty = "Awaiting
   return liveTotals
     .map((total) => `${formatNumber(total.rewardAmount, rewardDecimals(total.rewardAsset))} ${total.rewardAsset}`)
     .join(" / ");
+}
+
+function rewardTotalAmount(totals: RewardTotal[] | undefined, asset: string) {
+  return totals?.find((total) => total.rewardAsset.toUpperCase() === asset.toUpperCase())?.rewardAmount ?? 0;
 }
 
 function formatDate(value: string) {
@@ -189,6 +202,8 @@ export function HeroCountdown() {
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
   const totalDistributed = stats ? formatRewardTotals(stats.totalRewardTotals, "Awaiting first drop") : "Awaiting first drop";
+  const ansemAirdropped = stats ? rewardTotalAmount(stats.totalRewardTotals, "ANSEM") : 0;
+  const solAirdropped = stats ? rewardTotalAmount(stats.totalRewardTotals, "SOL") : 0;
 
   return (
     <div className="hero-countdown" aria-live="polite">
@@ -197,6 +212,32 @@ export function HeroCountdown() {
       <div className="hero-total-distributed">
         <span>Total Rewards Distributed</span>
         <b>{totalDistributed}</b>
+      </div>
+      <div className="hero-mini-dashboard">
+        <div>
+          <span>Bagholder Wallet</span>
+          <b>{stats?.bagholderSolBalance !== null && stats?.bagholderSolBalance !== undefined ? `${formatLiveNumber(stats.bagholderSolBalance, 4)} SOL` : "Awaiting wallet"}</b>
+        </div>
+        <div>
+          <span>ANSEM Airdropped</span>
+          <b>{ansemAirdropped > 0 ? `${formatNumber(ansemAirdropped, 2)} ANSEM` : "Awaiting first drop"}</b>
+        </div>
+        <div>
+          <span>SOL Airdropped</span>
+          <b>{solAirdropped > 0 ? `${formatNumber(solAirdropped, 4)} SOL` : "Awaiting first drop"}</b>
+        </div>
+        <div>
+          <span>{SOURCE_SYMBOL} Eligible</span>
+          <b>{stats?.eligibleBullstrHeld ? formatNumber(stats.eligibleBullstrHeld, 0) : "Awaiting scan"}</b>
+        </div>
+        <div>
+          <span>Total Epochs</span>
+          <b>{stats ? formatCount(stats.totalEpochs) : "Loading"}</b>
+        </div>
+        <div>
+          <span>Eligible Bulls</span>
+          <b>{stats ? formatCount(stats.latestEligibleHolders) : "Loading"}</b>
+        </div>
       </div>
     </div>
   );
@@ -220,6 +261,15 @@ export function LiveProtocolDashboard() {
         <div className="lux-grid dashboard-grid airdrop-grid">
           <MetricCard label="Total Rewards Distributed" value={stats ? formatRewardTotals(stats.totalRewardTotals) : "Loading"} strong />
           <MetricCard label="Eligible Holders" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} />
+          <MetricCard label={`Eligible ${SOURCE_SYMBOL} Held`} value={stats ? formatAmount(stats.eligibleBullstrHeld, SOURCE_SYMBOL, 0) : "Loading"} />
+          <MetricCard
+            label="Bagholder Wallet"
+            value={
+              stats?.bagholderSolBalance !== null && stats?.bagholderSolBalance !== undefined
+                ? `${formatLiveNumber(stats.bagholderSolBalance, 4)} SOL`
+                : "Awaiting wallet"
+            }
+          />
           <MetricCard label="ANSEM Bought" value={latestRound ? formatAmount(latestRound.rewardBought, "ANSEM", 4) : "Awaiting live distribution"} />
           <MetricCard label="Next Distribution" value={countdown} />
           <MetricCard label="Last Drop TX" value={latestRound?.txSig ? compactAddress(latestRound.txSig) : "Awaiting tx"} muted />
@@ -275,15 +325,15 @@ export function RewardExplanation() {
       <div className="container">
           <div className="section-kicker">How rewards work</div>
         <div className="section-head split-head">
-          <h2>50% $ANSEM. 50% SOL.</h2>
-          <p>Bull Strategy turns creator fees into two live reward streams for eligible $BULLSTR holders.</p>
+          <h2>45% $ANSEM. 45% SOL. 10% side wallet.</h2>
+          <p>Bull Strategy turns creator fees into two live reward streams for eligible $BULLSTR holders, with a 10% side-wallet route.</p>
         </div>
         <div className="reward-flow">
           {[
             `Hold at least 250,000 $${SOURCE_SYMBOL}`,
-            "50% routes to $ANSEM reward buys",
+            "45% routes to $ANSEM reward buys",
             "$ANSEM distributes every epoch",
-            "50% distributes as native SOL",
+            "45% distributes as native SOL",
             "$BULLSTR balance sets reward share",
             "Everything is tracked on-chain"
           ].map((item) => (

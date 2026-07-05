@@ -42,6 +42,11 @@ type PayoutRow = {
   created_at: string | null;
 };
 
+type HolderStateRow = {
+  source_balance: string | number | null;
+  permanently_ineligible: boolean | null;
+};
+
 type RewardAssetTotal = {
   rewardAsset: string;
   rewardAmount: number;
@@ -166,6 +171,35 @@ function sourceTokenMint() {
     return new PublicKey(value);
   } catch {
     console.warn("stats route could not parse SOURCE_TOKEN_MINT");
+    return null;
+  }
+}
+
+function bagholderWalletPublicKey() {
+  const value =
+    process.env.BAGHOLDER_WALLET_PUBLIC_KEY ??
+    process.env.TREASURY_WALLET_PUBLIC_KEY ??
+    process.env.SIDE_WALLET_PUBLIC_KEY ??
+    process.env.NEXT_PUBLIC_BAGHOLDER_WALLET_PUBLIC_KEY;
+  if (!value) return null;
+  try {
+    return new PublicKey(value);
+  } catch {
+    console.warn("stats route could not parse bagholder wallet public key");
+    return null;
+  }
+}
+
+async function bagholderSolBalanceOrNull() {
+  const wallet = bagholderWalletPublicKey();
+  if (!wallet) return null;
+
+  try {
+    const connection = new Connection(rpcUrl(), "confirmed");
+    const balance = await connection.getBalance(wallet, "confirmed");
+    return balance / 1_000_000_000;
+  } catch (error) {
+    console.warn("stats route could not fetch bagholder SOL balance", error);
     return null;
   }
 }
@@ -374,6 +408,8 @@ export async function GET() {
       lastRewardTotals: [],
       totalRewardTotals: [],
       latestEligibleHolders: latestEligibleHolders ?? 0,
+      eligibleBullstrHeld: 0,
+      bagholderSolBalance: await bagholderSolBalanceOrNull(),
       nextDropTime: nextDropTime(),
       epochHistory: [],
       roundHistory: [],
@@ -386,6 +422,13 @@ export async function GET() {
       config,
       "epochs?select=epoch_id,status,eligible_count,reward_bought,reward_distributed,started_at,completed_at&order=started_at.desc&limit=50"
     );
+    const holderStates = await getSupabaseJson<HolderStateRow[]>(
+      config,
+      "holder_states?select=source_balance,permanently_ineligible&permanently_ineligible=eq.false&limit=10000"
+    ).catch((error) => {
+      console.warn("stats route could not fetch holder state totals", error);
+      return [] as HolderStateRow[];
+    });
     const epochIds = rows.map((row) => row.epoch_id);
     const claims = epochIds.length
       ? await fetch(
@@ -528,6 +571,8 @@ export async function GET() {
     const storedEligibleHolders = toNumber(latestRealRow?.eligible_count);
     const latestEligibleHolders =
       storedEligibleHolders > 0 ? storedEligibleHolders : (await liveEligibleHolderCountOrNull()) ?? storedEligibleHolders;
+    const eligibleBullstrHeld = holderStates.reduce((sum, row) => sum + toNumber(row.source_balance), 0);
+    const bagholderSolBalance = await bagholderSolBalanceOrNull();
 
     return NextResponse.json({
       currentEpoch: realEpochCount,
@@ -537,6 +582,8 @@ export async function GET() {
       lastRewardTotals: epochHistory[0]?.rewardTotals ?? [],
       totalRewardTotals,
       latestEligibleHolders,
+      eligibleBullstrHeld,
+      bagholderSolBalance,
       nextDropTime: nextDropTime(),
       epochHistory,
       roundHistory,
@@ -553,6 +600,8 @@ export async function GET() {
       lastRewardTotals: [],
       totalRewardTotals: [],
       latestEligibleHolders: latestEligibleHolders ?? 0,
+      eligibleBullstrHeld: 0,
+      bagholderSolBalance: await bagholderSolBalanceOrNull(),
       nextDropTime: nextDropTime(),
       epochHistory: [],
       roundHistory: [],

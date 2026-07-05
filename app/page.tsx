@@ -98,7 +98,7 @@ export default function Page() {
             <div className="faq-grid">
               <FaqItem title="How do I qualify?" body="Hold at least 250,000 $BULLSTR and stay above that threshold." />
               <FaqItem title="How often are rewards sent?" body="$ANSEM and SOL rewards run every 5 minutes when live conditions are met." />
-              <FaqItem title="What is the split?" body="The target model routes 50% to $ANSEM holder airdrops and 50% to native SOL holder airdrops." />
+              <FaqItem title="What is the split?" body="The target model routes 45% to $ANSEM holder airdrops, 45% to native SOL holder airdrops, and 10% to the side wallet." />
               <FaqItem title="Does supply still matter?" body="Yes. The $BULLSTR balance is the base weight, so larger holders can still earn more." />
               <FaqItem title="Is there claiming?" body="No. The backend handles airdrops automatically. No wallet connection is required to receive rewards." />
             </div>
@@ -110,7 +110,7 @@ export default function Page() {
           <div className="container final-bull-copy">
             <h2>HOLD THE BULL. FEED THE FLYWHEEL.</h2>
             <p>Hold $BULLSTR.</p>
-            <p>Earn $ANSEM.</p>
+            <p>Earn $ANSEM and SOL.</p>
             <strong>Let the strategy compound.</strong>
           </div>
         </section>
@@ -177,7 +177,7 @@ function StrategySection() {
         </div>
       </div>
       <div className="container black-bull-timeline" aria-label="Bull Strategy reward model">
-        {["Creator fees", "50% $ANSEM", "50% SOL", "Holder scan", "Airdrop ledger"].map((item) => (
+        {["Creator fees", "45% $ANSEM", "45% SOL", "10% side wallet", "Airdrop ledger"].map((item) => (
           <span key={item}>{item}</span>
         ))}
       </div>
