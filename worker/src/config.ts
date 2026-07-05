@@ -65,10 +65,15 @@ const configuredRewardTokenMint = optionalPublicKeyEnv("REWARD_TOKEN_MINT");
 if (rewardMode === "token" && !configuredRewardTokenMint) {
   throw new Error("Missing required env REWARD_TOKEN_MINT when REWARD_MODE=token");
 }
-const swapBalanceBps = Math.min(10_000, Math.max(1, intEnv("SWAP_BALANCE_BPS", 5000)));
-const solAirdropBps = Math.min(10_000, Math.max(0, intEnv("SOL_AIRDROP_BPS", 5000)));
-if (swapBalanceBps + solAirdropBps > 10_000) {
-  throw new Error(`SWAP_BALANCE_BPS + SOL_AIRDROP_BPS cannot exceed 10000; got ${swapBalanceBps + solAirdropBps}`);
+const swapBalanceBps = Math.min(10_000, Math.max(1, intEnv("SWAP_BALANCE_BPS", 4500)));
+const solAirdropBps = Math.min(10_000, Math.max(0, intEnv("SOL_AIRDROP_BPS", 4500)));
+const sideWalletBps = Math.min(10_000, Math.max(0, intEnv("SIDE_WALLET_BPS", 1000)));
+if (swapBalanceBps + solAirdropBps + sideWalletBps > 10_000) {
+  throw new Error(
+    `SWAP_BALANCE_BPS + SOL_AIRDROP_BPS + SIDE_WALLET_BPS cannot exceed 10000; got ${
+      swapBalanceBps + solAirdropBps + sideWalletBps
+    }`
+  );
 }
 
 export const config = {
@@ -92,6 +97,8 @@ export const config = {
 
   swapBalanceBps,
   solAirdropBps,
+  sideWalletBps,
+  sideWalletPublicKey: optionalPublicKeyEnv("SIDE_WALLET_PUBLIC_KEY"),
   minSolReserve: Math.max(0.3, numberEnv("MIN_SOL_RESERVE", 0.3)),
   airdropSolReserve: Math.max(0.05, numberEnv("AIRDROP_SOL_RESERVE", 0.05)),
   airdropBatchSize: Math.max(1, intEnv("AIRDROP_BATCH_SIZE", 4)),

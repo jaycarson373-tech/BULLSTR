@@ -13,12 +13,51 @@ import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, startEp
 import { applyHolderState } from "./holder-state.js";
 import { currentEpochId } from "./time.js";
 import { eligibleHoldersFromSnapshot, selectRewardRecipients, snapshotSourceHolders } from "./snapshot.js";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, SystemProgram, Transaction } from "@solana/web3.js";
+import { connection } from "./solana.js";
+import { treasuryKeypair } from "./config.js";
 
 let running = false;
 
 function lamportsToSol(lamports: bigint) {
   return Number(lamports) / LAMPORTS_PER_SOL;
+}
+
+async function sendSideWalletShare(epochId: string, lamports: bigint) {
+  if (config.sideWalletBps <= 0 || lamports <= 0n) return null;
+
+  const sideWallet = config.sideWalletPublicKey;
+  const sideWalletLabel = sideWallet?.toBase58() ?? "SIDE_WALLET_PUBLIC_KEY";
+  console.log(
+    `[${epochId}] ${config.airdropEnabled ? "" : "[DRY-RUN] "}would send ${lamportsToSol(lamports)} SOL (${config.sideWalletBps / 100}%) to side wallet ${sideWalletLabel}`
+  );
+
+  if (!config.airdropEnabled) return null;
+  if (!sideWallet) {
+    throw new Error("Missing required env SIDE_WALLET_PUBLIC_KEY for live side-wallet transfer");
+  }
+
+  const treasury = treasuryKeypair();
+  const tx = new Transaction().add(
+    SystemProgram.transfer({
+      fromPubkey: treasury.publicKey,
+      toPubkey: sideWallet,
+      lamports
+    })
+  );
+  tx.feePayer = treasury.publicKey;
+  tx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
+  tx.sign(treasury);
+
+  const simulation = await connection.simulateTransaction(tx);
+  if (simulation.value.err) {
+    throw new Error(`Side-wallet transfer simulation failed: ${JSON.stringify(simulation.value.err)}`);
+  }
+
+  const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
+  await connection.confirmTransaction(txSig, "confirmed");
+  console.log(`[${epochId}] side-wallet transfer settled: ${txSig}`);
+  return txSig;
 }
 
 export async function runEpoch(date = new Date()) {
@@ -75,9 +114,12 @@ export async function runEpoch(date = new Date()) {
     const splitPlan = await treasurySolBudget(payoutReserveLamports);
     const rewardBuyLamports = (splitPlan.usableLamports * BigInt(config.swapBalanceBps)) / 10_000n;
     const solAirdropLamports = (splitPlan.usableLamports * BigInt(config.solAirdropBps)) / 10_000n;
+    const sideWalletLamports = (splitPlan.usableLamports * BigInt(config.sideWalletBps)) / 10_000n;
     console.log(
-      `[${epochId}] split plan: usable=${lamportsToSol(splitPlan.usableLamports)} SOL, ansemBuy=${lamportsToSol(rewardBuyLamports)} SOL, solAirdrop=${lamportsToSol(solAirdropLamports)} SOL`
+      `[${epochId}] split plan: usable=${lamportsToSol(splitPlan.usableLamports)} SOL, ansemBuy=${lamportsToSol(rewardBuyLamports)} SOL, solAirdrop=${lamportsToSol(solAirdropLamports)} SOL, sideWallet=${lamportsToSol(sideWalletLamports)} SOL`
     );
+    await sendSideWalletShare(epochId, sideWalletLamports);
+
     let buy = {
       baseSpentLamports: 0n,
       rewardReceivedRaw: 0n,

@@ -3,11 +3,12 @@
 Source token: `$BULLSTR`  
 Reward assets: `$ANSEM` and `SOL`
 
-Bull Strategy is a fork of the airdrop engine rebranded around a 50/50 strategic flywheel:
+Bull Strategy is a fork of the airdrop engine rebranded around a 45/45/10 strategic flywheel:
 
-- 50% of usable SOL is routed through Jupiter to buy `$ANSEM`.
+- 45% of usable SOL is routed through Jupiter to buy `$ANSEM`.
 - `$ANSEM` is airdropped to eligible `$BULLSTR` holders every 5 minutes.
-- 50% of usable SOL is airdropped directly as native SOL to eligible `$BULLSTR` holders.
+- 45% of usable SOL is airdropped directly as native SOL to eligible `$BULLSTR` holders.
+- 10% of usable SOL is sent to the configured side wallet.
 
 The site is a Next.js dashboard with a Railway-compatible worker and Supabase proof tables.
 
@@ -19,10 +20,11 @@ The token reward leg is implemented:
 2. Snapshot `$BULLSTR` holders with at least `ELIGIBILITY_MIN`.
 3. Apply permanent holder-state rules.
 4. Weight selected holders by raw `$BULLSTR` balance.
-5. Use `SWAP_BALANCE_BPS=5000` to buy `$ANSEM` with 50% of usable SOL.
-6. Use `SOL_AIRDROP_BPS=5000` to reserve 50% of usable SOL for native SOL holder airdrops.
-7. Airdrop the bought `$ANSEM` and native SOL to eligible holders.
-8. Store epochs, snapshots, reward pools, and payouts in Supabase.
+5. Use `SWAP_BALANCE_BPS=4500` to buy `$ANSEM` with 45% of usable SOL.
+6. Use `SOL_AIRDROP_BPS=4500` to reserve 45% of usable SOL for native SOL holder airdrops.
+7. Send `SIDE_WALLET_BPS=1000` to `SIDE_WALLET_PUBLIC_KEY`.
+8. Airdrop the bought `$ANSEM` and native SOL to eligible holders.
+9. Store epochs, snapshots, reward pools, and payouts in Supabase.
 
 The two reward legs share the same 5-minute epoch and proportional holder weighting model.
 
@@ -82,9 +84,11 @@ MAX_WALLETS_PER_EPOCH=150
 MAX_HOLDER_PCT=5
 EXCLUDE_WALLETS=
 
-SWAP_BALANCE_BPS=5000
+SWAP_BALANCE_BPS=4500
 SWAP_SLIPPAGE_BPS=300
-SOL_AIRDROP_BPS=5000
+SOL_AIRDROP_BPS=4500
+SIDE_WALLET_BPS=1000
+SIDE_WALLET_PUBLIC_KEY=<SIDE_WALLET_PUBLIC_KEY>
 MIN_SOL_REWARD_LAMPORTS_TO_AIRDROP=5000
 
 MIN_SOL_RESERVE=0.3

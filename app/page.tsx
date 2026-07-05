@@ -67,7 +67,7 @@ export default function Page() {
                 $ANSEM and SOL rewards for $BULLSTR holders.
               </p>
               <p className="hero-lead">
-                Bull Strategy routes the system into a 50/50 engine: half buys and airdrops $ANSEM, half airdrops native SOL to eligible $BULLSTR holders every 5 minutes.
+                Bull Strategy routes the system into a 45/45/10 engine: 45% buys and airdrops $ANSEM, 45% airdrops native SOL to eligible $BULLSTR holders, and 10% routes to a side wallet every 5 minutes.
               </p>
               <div className="hero-actions">
                 <a className="cta" href="#strategy">
