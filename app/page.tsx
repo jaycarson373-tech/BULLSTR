@@ -114,9 +114,6 @@ export default function Page() {
       </main>
 
       <footer className="footer">
-        <div className="container footer-art-wrap">
-          <img className="footer-strategy-art" src="/brand/bull-strategy-footer.png" alt="Bull Strategy 45/45/10 rewards" />
-        </div>
         <div className="container footer-grid">
           <div className="footer-brand">
             <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
