@@ -2478,7 +2478,9 @@ td a,
 }
 
 .hood-strategy-page h1 {
+  color: var(--accent);
   font-size: clamp(4.35rem, 9.8vw, 9.8rem);
+  text-shadow: 0 24px 80px rgba(0, 0, 0, 0.76), 0 0 34px rgba(57, 255, 20, 0.22);
 }
 
 .hero-subtitle {
