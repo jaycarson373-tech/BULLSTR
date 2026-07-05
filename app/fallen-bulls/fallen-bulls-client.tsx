@@ -79,7 +79,7 @@ export function FallenBullsClient() {
           <div className="nav-links">
             <Link href="/">Landing</Link>
             <Link href="/dashboard">Dashboard</Link>
-            <Link href="/fallen-bulls">BlackBull List</Link>
+            <Link href="/blackbull-list">BlackBull List</Link>
           </div>
         </div>
       </header>

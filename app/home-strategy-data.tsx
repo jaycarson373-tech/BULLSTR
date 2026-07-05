@@ -381,9 +381,6 @@ export function BullBoard() {
         <div className="section-head split-head">
           <h2>STRATEGY BOARD</h2>
           <p>Clean holder table showing balance, share, earned rewards, and latest reward activity.</p>
-          <a className="cta secondary" href="/fallen-bulls">
-            BlackBull List
-          </a>
         </div>
         <div className="history-card bull-board-card">
           <div className="table-wrap">
