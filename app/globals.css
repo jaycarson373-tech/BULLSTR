@@ -24,10 +24,12 @@
   --danger: #39ff14;
   --success: #9bd46b;
   --scroll-y: 0px;
+  --bull-cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext x='1' y='24' font-size='24'%3E%F0%9F%90%82%3C/text%3E%3C/svg%3E") 6 20, auto;
 }
 
 * {
   box-sizing: border-box;
+  cursor: var(--bull-cursor);
 }
 
 html {
@@ -52,6 +54,15 @@ a {
 button,
 input {
   font: inherit;
+}
+
+a,
+button,
+[role="button"],
+input,
+textarea,
+select {
+  cursor: var(--bull-cursor);
 }
 
 img {
