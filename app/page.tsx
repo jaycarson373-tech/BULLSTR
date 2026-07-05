@@ -60,14 +60,6 @@ export default function Page() {
   return (
     <div className="page hood-strategy-page">
       <Navbar />
-      <div className="floating-bottom-links" aria-label="Trading links">
-        <a href={BUY_URL} target="_blank" rel="noreferrer">
-          BUY $BULLSTR
-        </a>
-        <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">
-          DEXSCREENER
-        </a>
-      </div>
 
       <main>
         <section className="hero hood-hero" id="top">
@@ -130,6 +122,14 @@ export default function Page() {
           <div className="footer-brand">
             <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
             <strong>Bull Strategy</strong>
+          </div>
+          <div className="footer-trade-links" aria-label="Trading links">
+            <a href={BUY_URL} target="_blank" rel="noreferrer">
+              BUY $BULLSTR
+            </a>
+            <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">
+              DEXSCREENER
+            </a>
           </div>
           <div className="footer-links">
             <a href="#dashboard">Live Data</a>

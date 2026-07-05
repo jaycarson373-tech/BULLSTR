@@ -265,7 +265,8 @@ h3 {
 
 .nav-links,
 .nav-actions,
-.footer-links {
+.footer-links,
+.footer-trade-links {
   display: flex;
   align-items: center;
   gap: 18px;
@@ -273,6 +274,7 @@ h3 {
 
 .nav-links a,
 .footer-links a,
+.footer-trade-links a,
 .footer-links span {
   color: var(--muted);
   font-size: 0.78rem;
@@ -282,7 +284,8 @@ h3 {
 }
 
 .nav-links a:hover,
-.footer-links a:hover {
+.footer-links a:hover,
+.footer-trade-links a:hover {
   color: var(--accent);
 }
 
@@ -366,34 +369,6 @@ h3 {
 
 .ca-copy-button {
   cursor: pointer;
-}
-
-.floating-bottom-links {
-  position: fixed;
-  right: 22px;
-  bottom: 22px;
-  z-index: 60;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  border: 1px solid rgba(57, 255, 20, 0.16);
-  background: rgba(2, 4, 3, 0.72);
-  padding: 10px 14px;
-  backdrop-filter: blur(14px);
-}
-
-.floating-bottom-links a {
-  color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transition: color 160ms ease, text-shadow 160ms ease;
-}
-
-.floating-bottom-links a:hover {
-  color: var(--accent);
-  text-shadow: 0 0 16px rgba(57, 255, 20, 0.28);
 }
 
 .mono {
@@ -1769,6 +1744,10 @@ td a,
   text-transform: uppercase;
 }
 
+.footer-trade-links {
+  justify-content: flex-end;
+}
+
 .footer-links,
 .footer-ca {
   grid-column: 1 / -1;
@@ -2203,17 +2182,6 @@ td a,
     min-height: 40px;
     padding: 0 12px;
     font-size: 0.78rem;
-  }
-
-  .floating-bottom-links {
-    right: 14px;
-    bottom: 14px;
-    gap: 12px;
-    padding: 9px 10px;
-  }
-
-  .floating-bottom-links a {
-    font-size: 0.68rem;
   }
 
   .hero-shade {
