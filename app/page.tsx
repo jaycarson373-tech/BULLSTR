@@ -130,7 +130,6 @@ export default function Page() {
             <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
             <strong>Bull Strategy</strong>
           </div>
-          <p>$ANSEM and $BULLSTR rewards for $BULLSTR holders.</p>
           <div className="footer-links">
             <a href="#dashboard">Live Data</a>
             <a href="#strategy">Strategy</a>
