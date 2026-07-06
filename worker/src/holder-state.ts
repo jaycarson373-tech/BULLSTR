@@ -62,21 +62,16 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
       const previousRaw = parseRaw(state.source_balance_raw);
 
       const droppedBelowThreshold = !current || current.uiBalance < config.eligibilityMin;
-      const soldAnyAmount = current ? current.rawBalance < previousRaw : true;
-      const atOrAboveHolderCap = current ? current.holderPct >= config.maxHolderPct : false;
+      const atOrAboveHolderCap = current && current.holderPct >= config.maxHolderPct;
 
-      if (droppedBelowThreshold || soldAnyAmount || atOrAboveHolderCap) {
+      if (atOrAboveHolderCap) {
         updates.push({
           wallet: state.wallet,
-          source_balance: current?.uiBalance.toString() ?? state.source_balance ?? "0",
-          source_balance_raw: current?.rawBalance.toString() ?? state.source_balance_raw ?? "0",
+          source_balance: current.uiBalance.toString(),
+          source_balance_raw: current.rawBalance.toString(),
           highest_source_balance_raw: state.highest_source_balance_raw ?? state.source_balance_raw ?? "0",
           permanently_ineligible: true,
-          ineligible_reason: soldAnyAmount
-            ? "balance_decreased"
-            : atOrAboveHolderCap
-              ? "holder_pct_at_or_above_max"
-              : "dropped_below_threshold",
+          ineligible_reason: "holder_pct_at_or_above_max",
           ineligible_at: now,
           last_seen_at: now,
           last_epoch_id: epochId,
@@ -85,6 +80,21 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
           current_multiplier_bps: 10_000
         });
         permanentlyRemoved.add(state.wallet);
+      } else if (droppedBelowThreshold) {
+        updates.push({
+          wallet: state.wallet,
+          source_balance: current?.uiBalance.toString() ?? state.source_balance ?? "0",
+          source_balance_raw: current?.rawBalance.toString() ?? state.source_balance_raw ?? "0",
+          highest_source_balance_raw: state.highest_source_balance_raw ?? state.source_balance_raw ?? "0",
+          last_seen_at: now,
+          last_epoch_id: epochId,
+          updated_at: now,
+          current_streak_epochs: 0,
+          current_multiplier_bps: 10_000,
+          permanently_ineligible: false,
+          ineligible_reason: null,
+          ineligible_at: null
+        });
       } else if (!eligibleByWallet.has(state.wallet)) {
         updates.push({
           wallet: state.wallet,
@@ -129,28 +139,7 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
       const existing = stateByWallet.get(holder.wallet);
       if (existing?.permanently_ineligible || permanentlyRemoved.has(holder.wallet)) continue;
 
-      const previousRaw = parseRaw(existing?.source_balance_raw);
       const highestRaw = parseRaw(existing?.highest_source_balance_raw);
-      const soldAnyAmount = existing && holder.rawBalance < previousRaw;
-
-      if (soldAnyAmount) {
-        updates.push({
-          wallet: holder.wallet,
-          source_balance: holder.uiBalance.toString(),
-          source_balance_raw: holder.rawBalance.toString(),
-          highest_source_balance_raw: highestRaw > holder.rawBalance ? highestRaw.toString() : holder.rawBalance.toString(),
-          permanently_ineligible: true,
-          ineligible_reason: "balance_decreased",
-          ineligible_at: now,
-          last_seen_at: now,
-          last_epoch_id: epochId,
-          updated_at: now,
-          current_streak_epochs: 0,
-          current_multiplier_bps: 10_000
-        });
-        permanentlyRemoved.add(holder.wallet);
-        continue;
-      }
 
       const nextStreak = existing ? (existing.current_streak_epochs ?? 0) + 1 : 1;
       const multiplierBps = 10_000;
