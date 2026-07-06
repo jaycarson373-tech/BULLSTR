@@ -421,11 +421,11 @@ export function AnsemIndexApp() {
         <motion.section className="ai-section" id="faq" {...fadeUp}>
           <div className="ai-section-head">
             <span className="ai-kicker">FAQ</span>
-            <h2>Reward Questions</h2>
+            <h2>Ansem Index Questions</h2>
           </div>
           <div className="ai-faq">
             {[
-              ["What is the Index?", "A 50/50 reward system built around ANSEM and $AI."],
+              ["What is the Ansem Index?", "Ansem Index is a 50/50 reward system built around ANSEM and $AI."],
               ["How does it work?", "Fees buy ANSEM for $AI holders and buy $AI for top ANSEM holders."],
               ["How often does it run?", "Reward epochs are prepared for five-minute cycles."],
               ["Where do transactions show?", "Settled reward transactions appear in the transaction table with Solscan links."],
