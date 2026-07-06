@@ -29,7 +29,7 @@ export function AppPolish() {
   }, []);
 
   useEffect(() => {
-    const selector = ".section, .card, .stat, .history-card, .metric-card, .flow-step, .multiplier-card, .reset-warning-card, .reward-flow-card, .share-card, .path-card, .black-bull-card, .eligibility-card, .philosophy-card, .conviction-card, .warning-card, .lookup-card, .faq-item";
+    const selector = ".ai-section, .ai-card, .ai-holding-card, .ai-table, .ai-thesis, .ai-performance-card, .ai-terminal, .ai-faq details";
     const elements = new Set<Element>();
     const observer = new IntersectionObserver(
       (entries) => {
@@ -66,10 +66,8 @@ export function AppPolish() {
 
   return (
     <div className={`loading-screen${leaving ? " is-leaving" : ""}`}>
-      <div className="loader-mascot">
-        <img src="/brand/ansem-logo.png" alt="" />
-      </div>
-      <div className="loader-text">Ansemification</div>
+      <div className="loader-index-mark" aria-hidden="true">6900</div>
+      <div className="loader-text">ANSEM INDEX 6900</div>
       <div className="loader-line" aria-hidden="true">
         <span />
       </div>

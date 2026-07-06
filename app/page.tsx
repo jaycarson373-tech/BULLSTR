@@ -1,5 +1,5 @@
-import { AnsemificationApp } from "./ansemification-app";
+import { AnsemIndexApp } from "./ansemification-app";
 
 export default function Page() {
-  return <AnsemificationApp />;
+  return <AnsemIndexApp />;
 }

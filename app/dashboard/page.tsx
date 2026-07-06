@@ -1,5 +1,5 @@
-import { DashboardClient } from "./dashboard-client";
+import { AnsemIndexApp } from "../ansemification-app";
 
 export default function DashboardPage() {
-  return <DashboardClient />;
+  return <AnsemIndexApp />;
 }

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#000000"/>
+  <path d="M0 110h1200M0 220h1200M0 330h1200M0 440h1200M0 550h1200M120 0v630M240 0v630M360 0v630M480 0v630M600 0v630M720 0v630M840 0v630M960 0v630M1080 0v630" stroke="#7CFF3B" stroke-opacity=".08"/>
+  <circle cx="870" cy="170" r="230" fill="#7CFF3B" opacity=".08"/>
+  <path d="M76 424C167 386 209 328 292 348C402 374 449 248 545 269C656 293 689 168 807 192C911 214 959 118 1124 142" fill="none" stroke="#7CFF3B" stroke-width="5"/>
+  <path d="M76 424C167 386 209 328 292 348C402 374 449 248 545 269C656 293 689 168 807 192C911 214 959 118 1124 142V630H76Z" fill="#7CFF3B" opacity=".08"/>
+  <rect x="70" y="76" width="90" height="90" rx="22" fill="#7CFF3B" fill-opacity=".08" stroke="#7CFF3B" stroke-opacity=".45"/>
+  <text x="115" y="128" text-anchor="middle" fill="#7CFF3B" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="900" letter-spacing="2">6900</text>
+  <text x="70" y="260" fill="#F7F7F7" font-family="Inter, Arial, sans-serif" font-size="98" font-weight="900" letter-spacing="-6">ANSEM INDEX 6900</text>
+  <text x="76" y="316" fill="#8C8C8C" font-family="Inter, Arial, sans-serif" font-size="25" font-weight="700" letter-spacing="5">$INDEX / AI ATTENTION INDEX</text>
+</svg>
