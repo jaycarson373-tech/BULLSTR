@@ -2859,6 +2859,27 @@ select {
     #050403;
 }
 
+.hood-strategy-page::before {
+  background-color: #050403;
+  background-image:
+    radial-gradient(ellipse at 35px 47px, rgba(245, 215, 170, 0.9) 0 12px, transparent 12.8px),
+    radial-gradient(ellipse at 37px 29px, #b66a3d 0 11px, transparent 11.8px),
+    radial-gradient(ellipse at 32px 19px, #170907 0 15px, transparent 15.8px),
+    radial-gradient(circle at 42px 28px, #0d0604 0 1.8px, transparent 2.2px),
+    radial-gradient(ellipse at 43px 34px, rgba(24, 9, 5, 0.85) 0 6px, transparent 6.8px),
+    radial-gradient(circle at 32px 32px, transparent 0 25px, rgba(255, 160, 42, 0.92) 25.5px 27.4px, transparent 28px),
+    radial-gradient(circle at 32px 32px, #8f4c18 0 29px, transparent 30px),
+    radial-gradient(circle at 32px 32px, #120704 0 32px, transparent 33px);
+  background-size: 64px 64px;
+  opacity: 0.65;
+  animation: none;
+}
+
+.hood-strategy-page::after {
+  opacity: 0;
+  animation: none;
+}
+
 .site-bg,
 .bg-hills,
 .bg-stone,
@@ -2944,9 +2965,9 @@ td a,
   align-items: center;
   padding: 150px 0 86px;
   background:
-    radial-gradient(circle at 18% 28%, rgba(255, 138, 31, 0.16), transparent 28%),
-    radial-gradient(circle at 78% 18%, rgba(124, 255, 107, 0.08), transparent 22%),
-    #050403;
+    radial-gradient(circle at 18% 28%, rgba(255, 138, 31, 0.18), transparent 28%),
+    radial-gradient(circle at 78% 18%, rgba(124, 255, 107, 0.1), transparent 22%),
+    linear-gradient(90deg, rgba(5, 4, 3, 0.9), rgba(5, 4, 3, 0.42) 54%, rgba(5, 4, 3, 0.84));
   animation: none;
 }
 
@@ -2955,7 +2976,7 @@ td a,
 }
 
 .hood-hero .hero-shade {
-  background: linear-gradient(90deg, rgba(5, 4, 3, 0.96), rgba(5, 4, 3, 0.38) 56%, rgba(5, 4, 3, 0.82));
+  background: linear-gradient(90deg, rgba(5, 4, 3, 0.96), rgba(5, 4, 3, 0.28) 56%, rgba(5, 4, 3, 0.84));
 }
 
 .hood-strategy-page h1 {
