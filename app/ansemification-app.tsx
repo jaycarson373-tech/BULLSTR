@@ -21,7 +21,6 @@ const signalCards = [
   ["Allocation", "Routes rewards through the index."]
 ];
 
-const holdings = ["ANSEM", "PENDING 02", "PENDING 03", "PENDING 04", "PENDING 05"];
 const tabs = ["1D", "7D", "30D", "ALL"];
 const terminalLines = ["Watching attention...", "Collecting narratives...", "Ranking conviction...", "Waiting for $AI6900 rebalance..."];
 const feeRails = [
@@ -126,7 +125,7 @@ export function AnsemIndexApp() {
           <span>ANSEM INDEX 6900</span>
         </a>
         <nav aria-label="Primary navigation">
-          <a href="#index">Index</a>
+          <a href="#rails">Index</a>
           <a href="#rebalances">Rebalances</a>
           <a href="#performance">Performance</a>
           <a href="#faq">FAQ</a>
@@ -147,7 +146,7 @@ export function AnsemIndexApp() {
               rail: half to ANSEM for $AI6900 holders, half to $AI6900 for top ANSEM holders.
             </p>
             <div className="ai-actions">
-              <a href="#index">View Index</a>
+              <a href="#rails">View Index</a>
               <a href="#rebalances">View Rebalances</a>
             </div>
           </motion.div>
@@ -216,31 +215,6 @@ export function AnsemIndexApp() {
                 <b>{value}</b>
                 <span>{title}</span>
                 <p>{copy}</p>
-              </article>
-            ))}
-          </div>
-        </motion.section>
-
-        <motion.section className="ai-section" id="index" {...fadeUp}>
-          <div className="ai-section-head split">
-            <div>
-              <span className="ai-kicker">LIVE INDEX</span>
-              <h2>ETF Style Allocation</h2>
-            </div>
-            <span className="ai-status">NO LIVE HOLDINGS YET</span>
-          </div>
-          <div className="ai-holdings">
-            {holdings.map((asset) => (
-              <article className="ai-holding-card" key={asset}>
-                <div>
-                  <span>{asset}</span>
-                  <strong>Weight</strong>
-                </div>
-                <b>0%</b>
-                <div>
-                  <span>Confidence</span>
-                  <strong>0</strong>
-                </div>
               </article>
             ))}
           </div>
