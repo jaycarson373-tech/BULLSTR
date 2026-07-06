@@ -4013,7 +4013,7 @@ body { background: var(--index-black); color: var(--index-white); }
 .ai-footer .ai-brand-mark { width: 52px; height: 52px; }
 
 .index-animated-bg {
-  position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; opacity: 0.65;
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; opacity: 0.82;
   background:
     radial-gradient(circle at 50% 16%, rgba(124, 255, 59, 0.11), transparent 28rem),
     radial-gradient(circle at 85% 28%, rgba(229, 172, 40, 0.1), transparent 22rem),
@@ -4038,18 +4038,18 @@ body { background: var(--index-black); color: var(--index-white); }
 .index-bg-shade {
   position: absolute; inset: 0; z-index: 8;
   background:
-    radial-gradient(circle at 50% 18%, transparent 0 18rem, rgba(0, 0, 0, 0.42) 42rem),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.55) 45%, rgba(0, 0, 0, 0.84)),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.66) 12%, rgba(0, 0, 0, 0.5) 38%, rgba(0, 0, 0, 0.72) 100%);
+    radial-gradient(circle at 50% 18%, transparent 0 20rem, rgba(0, 0, 0, 0.22) 42rem),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.36) 45%, rgba(0, 0, 0, 0.74)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.42) 12%, rgba(0, 0, 0, 0.36) 38%, rgba(0, 0, 0, 0.58) 100%);
 }
 .index-art-scenes {
   position: absolute; inset: 0; z-index: 1; overflow: hidden;
 }
 .index-art-scene {
   position: absolute; top: var(--scene-top); left: -8%; right: -8%; height: var(--scene-height);
-  background:
-    radial-gradient(circle at var(--scene-x) var(--scene-y), rgba(124, 255, 59, 0.25), transparent 28%),
-    var(--scene-image) center / cover no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   opacity: var(--scene-opacity);
   filter: blur(var(--scene-blur)) saturate(1.2) contrast(1.08);
   transform: translate3d(var(--scene-move-x), var(--scene-move-y), 0) scale(var(--scene-scale)) rotate(-0.35deg);
@@ -4070,7 +4070,7 @@ body { background: var(--index-black); color: var(--index-white); }
 }
 .index-art-scene::after {
   content: ""; position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.64));
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.34));
 }
 .index-matrix {
   position: absolute; inset: -8% 0; z-index: 2; display: grid; grid-template-columns: repeat(18, 1fr); gap: 2vw;

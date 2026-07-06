@@ -6,12 +6,12 @@ import { useEffect, useState } from "react";
 const tickerRows = Array.from({ length: 8 }, (_, index) => index);
 const codeColumns = Array.from({ length: 18 }, (_, index) => index);
 const scenes = [
-  { image: "/brand/backgrounds/ai6900-bg-2.jpg", top: "0%", height: "25%", x: "68%", y: "8%", scale: 1.2, opacity: 0.5, blur: "10px", drift: "28s" },
-  { image: "/brand/backgrounds/ai6900-bg-6.jpg", top: "17%", height: "23%", x: "18%", y: "8%", scale: 1.12, opacity: 0.42, blur: "8px", drift: "32s" },
-  { image: "/brand/backgrounds/ai6900-bg-3.jpg", top: "33%", height: "24%", x: "72%", y: "10%", scale: 1.16, opacity: 0.44, blur: "7px", drift: "36s" },
-  { image: "/brand/backgrounds/ai6900-bg-1.jpg", top: "49%", height: "23%", x: "18%", y: "8%", scale: 1.1, opacity: 0.4, blur: "9px", drift: "30s" },
-  { image: "/brand/backgrounds/ai6900-bg-4.jpg", top: "64%", height: "25%", x: "74%", y: "10%", scale: 1.18, opacity: 0.46, blur: "7px", drift: "38s" },
-  { image: "/brand/backgrounds/ai6900-bg-5.jpg", top: "80%", height: "24%", x: "28%", y: "10%", scale: 1.14, opacity: 0.44, blur: "8px", drift: "34s" }
+  { image: "/brand/backgrounds/ai6900-bg-2.jpg", top: "-4%", height: "34%", x: "68%", y: "8%", scale: 1.12, opacity: 0.78, blur: "2px", drift: "28s" },
+  { image: "/brand/backgrounds/ai6900-bg-6.jpg", top: "11%", height: "34%", x: "18%", y: "8%", scale: 1.08, opacity: 0.68, blur: "2px", drift: "32s" },
+  { image: "/brand/backgrounds/ai6900-bg-3.jpg", top: "28%", height: "34%", x: "72%", y: "10%", scale: 1.1, opacity: 0.7, blur: "2px", drift: "36s" },
+  { image: "/brand/backgrounds/ai6900-bg-1.jpg", top: "45%", height: "34%", x: "18%", y: "8%", scale: 1.08, opacity: 0.66, blur: "3px", drift: "30s" },
+  { image: "/brand/backgrounds/ai6900-bg-4.jpg", top: "62%", height: "35%", x: "74%", y: "10%", scale: 1.1, opacity: 0.72, blur: "2px", drift: "38s" },
+  { image: "/brand/backgrounds/ai6900-bg-5.jpg", top: "77%", height: "35%", x: "28%", y: "10%", scale: 1.1, opacity: 0.7, blur: "2px", drift: "34s" }
 ];
 const coins = [
   { x: "7%", y: "18%", size: 82, delay: "-2s", duration: "18s", blur: "0px", opacity: 0.34 },
@@ -45,7 +45,6 @@ export function AnimatedBackground() {
             key={scene.image}
             style={
               {
-                "--scene-image": `url("${scene.image}")`,
                 "--scene-top": scene.top,
                 "--scene-height": scene.height,
                 "--scene-x": scene.x,
@@ -57,7 +56,8 @@ export function AnimatedBackground() {
                 "--scene-depth": 5 + index * 3,
                 "--scene-delay": `${index * -5}s`,
                 "--scene-move-x": `${parallax.x * (5 + index * 3)}px`,
-                "--scene-move-y": `${parallax.y * (4 + index * 2)}px`
+                "--scene-move-y": `${parallax.y * (4 + index * 2)}px`,
+                backgroundImage: `radial-gradient(circle at ${scene.x} ${scene.y}, rgba(124, 255, 59, 0.28), transparent 30%), url("${scene.image}")`
               } as CSSProperties
             }
           />
