@@ -23,7 +23,7 @@ const DASHBOARD_ZEROES: DashboardMetric[] = [
 ];
 
 const LOADING_STEPS = ["Analyzing...", "Applying Ansem...", "Generating...", "Finalizing..."];
-const SOURCE_MINT = process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim();
+const SOURCE_MINT = process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ?? "7aCs6WabHiXYGmqaLN68T2oM4QeStTqSN3EoFXG3pump";
 const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/Ansemification";
 const PUMPFUN_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "https://pump.fun";
 const DEXSCREENER_URL = process.env.NEXT_PUBLIC_DEXSCREENER_URL ?? "https://dexscreener.com/solana";
