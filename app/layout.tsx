@@ -5,10 +5,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://ai6900.xyz"),
   title: "ANSEM INDEX 6900",
-  description: "$AI6900 is an AI-powered attention index tracking the strongest narratives across Crypto Twitter.",
+  description: "$AI6900 is the ANSEM INDEX tracking attention, conviction, and reward flows across Crypto Twitter.",
   openGraph: {
     title: "ANSEM INDEX 6900",
-    description: "$AI6900 is an AI-powered attention index tracking the strongest narratives across Crypto Twitter.",
+    description: "$AI6900 is the ANSEM INDEX tracking attention, conviction, and reward flows across Crypto Twitter.",
     url: "https://ai6900.xyz",
     siteName: "ANSEM INDEX 6900",
     images: [
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "ANSEM INDEX 6900",
-    description: "$AI6900 is an AI-powered attention index tracking the strongest narratives across Crypto Twitter.",
+    description: "$AI6900 is the ANSEM INDEX tracking attention, conviction, and reward flows across Crypto Twitter.",
     images: ["https://ai6900.xyz/brand/index-preview.png"]
   },
   icons: {

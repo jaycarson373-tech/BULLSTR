@@ -2,13 +2,14 @@
 
 import { motion, type Transition } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
+import { AnimatedBackground } from "./animated-background";
 
 const SOURCE_MINT = process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ?? "7aCs6WabHiXYGmqaLN68T2oM4QeStTqSN3EoFXG3pump";
 
 const dashboardMetrics = [
   { label: "INDEX VALUE", value: "0.00" },
   { label: "INDEX CHANGE", value: "0%" },
-  { label: "AI CONFIDENCE", value: "0" },
+  { label: "INDEX SIGNAL", value: "0" },
   { label: "FEE RAILS", value: "50/50" }
 ];
 
@@ -17,12 +18,12 @@ const signalCards = [
   ["Conviction", "Tracks repeat posting and engagement quality."],
   ["Momentum", "Monitors volume and velocity."],
   ["Mindshare", "Ranks discussion dominance."],
-  ["Allocation", "Automatically updates the index."]
+  ["Allocation", "Routes rewards through the index."]
 ];
 
 const holdings = ["ANSEM", "PENDING 02", "PENDING 03", "PENDING 04", "PENDING 05"];
 const tabs = ["1D", "7D", "30D", "ALL"];
-const terminalLines = ["Scanning X...", "Collecting narratives...", "Updating conviction model...", "Waiting for $AI6900 rebalance..."];
+const terminalLines = ["Watching attention...", "Collecting narratives...", "Ranking conviction...", "Waiting for $AI6900 rebalance..."];
 const feeRails = [
   ["50%", "Ansem Index", "Routes into the index allocation engine."],
   ["50%", "ANSEM Distribution", "Buys ANSEM and airdrops to $AI6900 holders."]
@@ -85,7 +86,7 @@ function TerminalActivity() {
     <div className="ai-terminal">
       <div className="ai-terminal-top">
         <span>LIVE ACTIVITY</span>
-        <span>MODEL: WAITING</span>
+        <span>INDEX: WAITING</span>
       </div>
       <div className="ai-terminal-feed">
         {terminalLines.map((line, index) => (
@@ -111,16 +112,13 @@ export function AnsemIndexApp() {
   }, []);
 
   const heroMetrics = useMemo(
-    () => [...dashboardMetrics, { label: "NEXT REBALANCE", value: formatCountdown(countdown) }, { label: "LIVE SIGNAL", value: "INITIALIZING..." }],
+    () => [...dashboardMetrics, { label: "NEXT REBALANCE", value: formatCountdown(countdown) }, { label: "LIVE SIGNAL", value: "WAITING..." }],
     [countdown]
   );
 
   return (
     <div className="ai-index-app">
-      <div className="ai-background" aria-hidden="true">
-        <div className="ai-world-map" />
-        <IndexChart />
-      </div>
+      <AnimatedBackground />
 
       <header className="ai-nav">
         <a className="ai-brand" href="#top" aria-label="ANSEM INDEX 6900 home">
@@ -142,11 +140,11 @@ export function AnsemIndexApp() {
       <main>
         <section className="ai-hero" id="top">
           <motion.div className="ai-hero-copy" {...fadeUp}>
-            <span className="ai-kicker">AI ATTENTION INDEX</span>
+            <span className="ai-kicker">ANSEM ATTENTION INDEX</span>
             <h1>ANSEM INDEX 6900</h1>
             <p>
-              AI-powered attention index tracking the strongest narratives across Crypto Twitter and automatically allocating
-              creator fees through a 50/50 rail: half to the Ansem Index, half to ANSEM accumulation for $AI6900 holders.
+              Attention index tracking the strongest narratives across Crypto Twitter and routing creator fees through a 50/50
+              rail: half to ANSEM for $AI6900 holders, half to $AI6900 for top ANSEM holders.
             </p>
             <div className="ai-actions">
               <a href="#index">View Index</a>
@@ -194,8 +192,8 @@ export function AnsemIndexApp() {
 
         <motion.section className="ai-section" id="how" {...fadeUp}>
           <div className="ai-section-head">
-            <span className="ai-kicker">MODEL STACK</span>
-            <h2>How The AI Works</h2>
+            <span className="ai-kicker">INDEX STACK</span>
+            <h2>How The Index Works</h2>
           </div>
           <div className="ai-card-grid five">
             {signalCards.map(([title, copy]) => (
@@ -260,7 +258,7 @@ export function AnsemIndexApp() {
               <span>Time</span>
               <span>Action</span>
               <span>Reason</span>
-              <span>AI Score</span>
+              <span>Score</span>
             </div>
             <div className="ai-empty">Waiting for first rebalance...</div>
           </div>
@@ -268,7 +266,7 @@ export function AnsemIndexApp() {
 
         <motion.section className="ai-thesis" {...fadeUp}>
           <span className="ai-kicker">WHY THE INDEX EXISTS</span>
-          <h2>Markets follow attention. Attention follows conviction. The AI measures both.</h2>
+          <h2>Markets follow attention. Attention follows conviction. The index tracks both.</h2>
           <p>$AI6900 turns attention into an allocation system.</p>
         </motion.section>
 
@@ -303,8 +301,8 @@ export function AnsemIndexApp() {
           </div>
           <div className="ai-faq">
             {[
-              ["What is the Index?", "An AI-powered attention index designed to track and allocate toward the strongest crypto narratives."],
-              ["How does the AI work?", "It monitors attention, conviction, momentum, and mindshare before producing allocation signals."],
+              ["What is the Index?", "An attention index designed to track and allocate toward the strongest crypto narratives."],
+              ["How does the index work?", "It follows attention, conviction, momentum, and mindshare before producing allocation signals."],
               ["How often does it rebalance?", "The interface is prepared for five-minute rebalance cycles."],
               ["How are allocations decided?", "Allocations remain at zero until live index data is connected."],
               ["What is the ticker?", "The ticker is $AI6900."]

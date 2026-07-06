@@ -1,21 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export function AppPolish() {
-  const [visible, setVisible] = useState(true);
-  const [leaving, setLeaving] = useState(false);
-
-  useEffect(() => {
-    const reveal = () => {
-      setLeaving(true);
-      window.setTimeout(() => setVisible(false), 360);
-    };
-
-    const timer = window.setTimeout(reveal, 1100);
-    return () => window.clearTimeout(timer);
-  }, []);
-
   useEffect(() => {
     const updateScrolled = () => {
       document.documentElement.classList.toggle("is-scrolled", window.scrollY > 12);
@@ -62,17 +49,5 @@ export function AppPolish() {
     };
   }, []);
 
-  if (!visible) return null;
-
-  return (
-    <div className={`loading-screen${leaving ? " is-leaving" : ""}`}>
-      <div className="loader-index-mark" aria-hidden="true">
-        <img src="/brand/ai6900-logo.png" alt="" />
-      </div>
-      <div className="loader-text">ANSEM INDEX 6900</div>
-      <div className="loader-line" aria-hidden="true">
-        <span />
-      </div>
-    </div>
-  );
+  return null;
 }
