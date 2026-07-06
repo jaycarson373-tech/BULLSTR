@@ -23,6 +23,9 @@ const DASHBOARD_ZEROES: DashboardMetric[] = [
 ];
 
 const LOADING_STEPS = ["Analyzing...", "Applying Ansem...", "Generating...", "Finalizing..."];
+const X_URL = "https://x.com/Ansemification";
+const PUMPFUN_URL = "https://pump.fun";
+const DEXSCREENER_URL = "https://dexscreener.com/solana";
 
 function formatCountdown(totalSeconds: number) {
   const minutes = Math.floor(totalSeconds / 60);
@@ -242,6 +245,10 @@ export function AnsemificationApp() {
           <a href="#rewards">Rewards</a>
           <a href="#dashboard">Dashboard</a>
         </nav>
+        <div className="ansem-nav-actions" aria-label="Project links">
+          <span>CA: soon</span>
+          <a href={X_URL} target="_blank" rel="noreferrer">X</a>
+        </div>
       </header>
 
       <main>
@@ -390,6 +397,23 @@ export function AnsemificationApp() {
           </div>
         </section>
       </main>
+
+      <footer className="ansem-footer">
+        <div className="ansem-footer-copy">
+          Ansemify any PFP. Tag @Ansemification on X. 75% fees buy ANSEM for $Ansemify holders every 5 mins. 25% for PFP bonuses.
+        </div>
+        <div className="ansem-footer-row">
+          <div className="ansem-footer-links">
+            <a href={X_URL} target="_blank" rel="noreferrer">x.com</a>
+            <a href={X_URL} target="_blank" rel="noreferrer">X</a>
+          </div>
+          <div className="ansem-footer-links ansem-footer-trade">
+            <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">Dexscreener</a>
+            <a href={PUMPFUN_URL} target="_blank" rel="noreferrer">Pump.fun</a>
+            <a href={PUMPFUN_URL} target="_blank" rel="noreferrer">Buy $Ansemify</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

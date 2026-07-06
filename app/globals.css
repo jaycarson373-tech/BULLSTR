@@ -3275,14 +3275,41 @@ td a,
   gap: 18px;
 }
 
-.ansem-nav-links a {
+.ansem-nav-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ansem-nav-links a,
+.ansem-nav-actions a,
+.ansem-nav-actions span {
   color: var(--app-muted);
   font-size: 0.82rem;
   font-weight: 800;
   transition: color 180ms ease, transform 180ms ease;
 }
 
-.ansem-nav-links a:hover {
+.ansem-nav-actions span {
+  border: 1px solid var(--app-border);
+  border-radius: 999px;
+  background: rgba(244, 255, 241, 0.045);
+  padding: 9px 12px;
+  white-space: nowrap;
+}
+
+.ansem-nav-actions a {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid var(--app-border);
+  border-radius: 999px;
+  background: rgba(244, 255, 241, 0.045);
+}
+
+.ansem-nav-links a:hover,
+.ansem-nav-actions a:hover {
   color: var(--app-green);
   transform: translateY(-1px);
 }
@@ -3688,6 +3715,59 @@ td a,
   line-height: 1.16;
 }
 
+.ansem-footer {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: min(1180px, calc(100% - 32px));
+  gap: 22px;
+  margin: 0 auto;
+  border-top: 1px solid var(--app-border);
+  padding: 34px 0 44px;
+}
+
+.ansem-footer-copy {
+  max-width: 900px;
+  color: var(--app-muted);
+  font-size: clamp(1rem, 1.8vw, 1.28rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.35;
+}
+
+.ansem-footer-row,
+.ansem-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ansem-footer-row {
+  justify-content: space-between;
+}
+
+.ansem-footer-links {
+  flex-wrap: wrap;
+}
+
+.ansem-footer-links a {
+  color: var(--app-muted);
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.ansem-footer-links a:hover {
+  color: var(--app-green);
+  transform: translateY(-1px);
+}
+
+.ansem-footer-trade {
+  justify-content: flex-end;
+}
+
 @keyframes ansemPulse {
   0%,
   100% {
@@ -3740,10 +3820,15 @@ td a,
     padding: 14px 0;
   }
 
-  .ansem-nav-links {
+  .ansem-nav-links,
+  .ansem-nav-actions {
     width: 100%;
     justify-content: space-between;
     gap: 10px;
+  }
+
+  .ansem-nav-actions {
+    justify-content: flex-start;
   }
 
   .ansem-grid-four,
@@ -3758,6 +3843,15 @@ td a,
     left: 24px;
     bottom: -18px;
     transform: rotate(90deg);
+  }
+
+  .ansem-footer-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .ansem-footer-trade {
+    justify-content: flex-start;
   }
 }
 
