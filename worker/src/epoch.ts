@@ -5,6 +5,7 @@ import {
   airdropTokenRewards,
   computeAllocations,
   estimateDualPayoutReserveLamports,
+  estimatePayoutReserveLamports,
   treasuryRewardBalanceRaw
 } from "./airdrop.js";
 import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, startEpoch } from "./db.js";
@@ -108,7 +109,10 @@ export async function runEpoch(date = new Date()) {
       return;
     }
 
-    const payoutReserveLamports = await estimateDualPayoutReserveLamports(holders.map((holder) => holder.wallet));
+    const rewardSourceTokenLegEnabled = config.bullstrAirdropBps > 0;
+    const payoutReserveLamports = rewardSourceTokenLegEnabled
+      ? await estimateDualPayoutReserveLamports(holders.map((holder) => holder.wallet))
+      : await estimatePayoutReserveLamports(holders.map((holder) => holder.wallet));
     const splitPlan = await treasurySolBudget(payoutReserveLamports);
     const rewardBuyLamports = (splitPlan.usableLamports * BigInt(config.swapBalanceBps)) / 10_000n;
     const bullstrBuyLamports = (splitPlan.usableLamports * BigInt(config.bullstrAirdropBps)) / 10_000n;
@@ -133,7 +137,9 @@ export async function runEpoch(date = new Date()) {
 
     if (config.rewardMode === "token") {
       buy = await buyReward(epochId, payoutReserveLamports, rewardBuyLamports);
-      bullstrBuy = await buyBullstr(epochId, payoutReserveLamports, bullstrBuyLamports);
+      if (rewardSourceTokenLegEnabled) {
+        bullstrBuy = await buyBullstr(epochId, payoutReserveLamports, bullstrBuyLamports);
+      }
       await recordBuy(
         epochId,
         buy.baseSpentLamports.toString(),
@@ -146,9 +152,13 @@ export async function runEpoch(date = new Date()) {
     }
 
     const availableRewardRaw = await treasuryRewardBalanceRaw(payoutReserveLamports);
-    const availableBullstrRaw = await treasuryRewardBalanceRaw(payoutReserveLamports, config.sourceTokenMint);
+    const availableBullstrRaw = rewardSourceTokenLegEnabled
+      ? await treasuryRewardBalanceRaw(payoutReserveLamports, config.sourceTokenMint)
+      : 0n;
     const rewardPoolRaw = (availableRewardRaw * BigInt(config.airdropRewardBps)) / 10_000n;
-    const bullstrPoolRaw = (availableBullstrRaw * BigInt(config.airdropRewardBps)) / 10_000n;
+    const bullstrPoolRaw = rewardSourceTokenLegEnabled
+      ? (availableBullstrRaw * BigInt(config.airdropRewardBps)) / 10_000n
+      : 0n;
     if (config.rewardMode === "sol") {
       buy = {
         baseSpentLamports: 0n,
