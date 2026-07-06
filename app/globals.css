@@ -3933,6 +3933,7 @@ body { background: var(--index-black); color: var(--index-white); }
 .ai-nav a:hover { color: var(--index-green); transform: translateY(-1px); }
 .ai-nav-meta { justify-content: flex-end; gap: 10px; min-width: 0; }
 .ai-nav-meta span, .ai-nav-meta a { max-width: min(360px, 36vw); overflow: hidden; border: 1px solid var(--index-border); border-radius: 999px; padding: 9px 12px; text-overflow: ellipsis; white-space: nowrap; }
+.ai-nav-meta .ai-ca-chip { max-width: min(540px, 42vw); color: var(--index-green); border-color: rgba(124, 255, 59, 0.34); background: rgba(124, 255, 59, 0.06); }
 
 .ai-hero { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 390px; align-items: center; gap: clamp(32px, 5vw, 76px); min-height: calc(100vh - 100px); padding: 72px 0 92px; }
 .ai-hero::before {

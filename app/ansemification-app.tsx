@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatedBackground } from "./animated-background";
 
 const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/AI6900SOL_";
+const CA = process.env.NEXT_PUBLIC_CA?.trim() || "6UHbrLBSbrUuGR3Qeu1UBAHHruAPTmvf2hsRWGYGpump";
 
 const dashboardMetrics = [
   { label: "INDEX VALUE", value: "0.00" },
@@ -132,6 +133,7 @@ export function AnsemIndexApp() {
         </nav>
         <div className="ai-nav-meta">
           <span>$AI6900</span>
+          <span className="ai-ca-chip">CA: {CA}</span>
           <a href={X_URL} target="_blank" rel="noreferrer">X</a>
         </div>
       </header>
