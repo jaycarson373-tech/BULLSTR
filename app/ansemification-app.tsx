@@ -14,17 +14,17 @@ const dashboardMetrics = [
 ];
 
 const signalCards = [
-  ["Market Attention", "Measures mentions across X."],
-  ["Conviction", "Tracks repeat posting and engagement quality."],
-  ["Momentum", "Monitors volume and velocity."],
-  ["Mindshare", "Ranks discussion dominance."],
-  ["Allocation", "Routes rewards through the index."]
+  ["Hold AI6900", "Eligible holders receive ANSEM rewards."],
+  ["Buy ANSEM", "Creator fees buy ANSEM every epoch."],
+  ["Reward Holders", "ANSEM goes back to AI6900 holders."],
+  ["Buy AI6900", "Creator fees also buy the index token."],
+  ["Reward ANSEM", "Top ANSEM holders receive AI6900."]
 ];
 
 const tabs = ["1D", "7D", "30D", "ALL"];
-const terminalLines = ["Watching attention...", "Collecting narratives...", "Ranking conviction...", "Waiting for $AI6900 rebalance..."];
+const terminalLines = ["Waiting for fees...", "Preparing next epoch...", "Checking reward wallets...", "Waiting for $AI6900 rewards..."];
 const feeRails = [
-  ["50%", "Ansem Index", "Routes into the index allocation engine."],
+  ["50%", "Ansem Index", "Buys $AI6900 and rewards top ANSEM holders."],
   ["50%", "ANSEM Distribution", "Buys ANSEM and airdrops to $AI6900 holders."]
 ];
 
@@ -139,11 +139,11 @@ export function AnsemIndexApp() {
       <main>
         <section className="ai-hero" id="top">
           <motion.div className="ai-hero-copy" {...fadeUp}>
-            <span className="ai-kicker">ANSEM ATTENTION INDEX</span>
+            <span className="ai-kicker">ANSEM INDEX</span>
             <h1>ANSEM INDEX 6900</h1>
             <p>
-              Attention index tracking the strongest narratives across Crypto Twitter and routing creator fees through a 50/50
-              rail: half to ANSEM for $AI6900 holders, half to $AI6900 for top ANSEM holders.
+              The Ansem Index routes creator fees through a 50/50 reward rail: half to ANSEM for $AI6900 holders,
+              half to $AI6900 for top ANSEM holders.
             </p>
             <div className="ai-actions">
               <a href="#rails">View Index</a>
@@ -165,7 +165,7 @@ export function AnsemIndexApp() {
           <div className="ai-section-head split">
             <div>
               <span className="ai-kicker">$AI6900 CULTURE TAPE</span>
-              <h2>Attention becomes allocation.</h2>
+              <h2>The Ansem Index rewards both sides.</h2>
             </div>
             <span className="ai-status">VISUAL SYSTEM ONLINE</span>
           </div>
@@ -224,7 +224,7 @@ export function AnsemIndexApp() {
           <div className="ai-section-head split">
             <div>
               <span className="ai-kicker">LIVE REBALANCES</span>
-              <h2>Allocation Timeline</h2>
+              <h2>Reward Timeline</h2>
             </div>
           </div>
           <div className="ai-table">
@@ -240,8 +240,8 @@ export function AnsemIndexApp() {
 
         <motion.section className="ai-thesis" {...fadeUp}>
           <span className="ai-kicker">WHY THE INDEX EXISTS</span>
-          <h2>Markets follow attention. Attention follows conviction. The index tracks both.</h2>
-          <p>$AI6900 turns attention into an allocation system.</p>
+          <h2>Hold $AI6900. Earn ANSEM. Top ANSEM holders earn $AI6900.</h2>
+          <p>The index runs both reward rails every epoch.</p>
         </motion.section>
 
         <motion.section className="ai-section" id="performance" {...fadeUp}>
@@ -275,10 +275,10 @@ export function AnsemIndexApp() {
           </div>
           <div className="ai-faq">
             {[
-              ["What is the Index?", "An attention index designed to track and allocate toward the strongest crypto narratives."],
-              ["How does the index work?", "It follows attention, conviction, momentum, and mindshare before producing allocation signals."],
+              ["What is the Index?", "A reward index built around ANSEM and $AI6900."],
+              ["How does the index work?", "Fees buy ANSEM for $AI6900 holders and buy $AI6900 for top ANSEM holders."],
               ["How often does it rebalance?", "The interface is prepared for five-minute rebalance cycles."],
-              ["How are allocations decided?", "Allocations remain at zero until live index data is connected."],
+              ["How are rewards decided?", "Rewards remain at zero until live reward data is connected."],
               ["What is the ticker?", "The ticker is $AI6900."]
             ].map(([question, answer]) => (
               <details key={question}>
