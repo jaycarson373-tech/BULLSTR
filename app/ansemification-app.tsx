@@ -231,7 +231,9 @@ export function AnsemificationApp() {
     >
       <header className="ansem-nav">
         <a className="ansem-brand" href="#top" aria-label="Ansemification home">
-          <span className="ansem-logo">A</span>
+          <span className="ansem-logo">
+            <img src="/brand/ansem-logo.png" alt="" />
+          </span>
           <span>Ansemification</span>
         </a>
         <nav className="ansem-nav-links" aria-label="Primary navigation">

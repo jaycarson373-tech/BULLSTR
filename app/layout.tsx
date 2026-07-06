@@ -4,27 +4,27 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://bullstrategy.fun"),
-  title: "Ansemification",
-  description: "Get Ansemified. Creator fees buy $ANSEM and reward eligible holders.",
+  title: "Ansemifying",
+  description: "Upload any profile picture and instantly Ansemify it.",
   openGraph: {
-    title: "Ansemification",
-    description: "The trenches asked for a sign. We built the machine.",
+    title: "Ansemifying",
+    description: "Upload a PFP. Become Ansem.",
     url: "https://bullstrategy.fun",
     siteName: "Ansemification",
     images: [
       {
         url: "/brand/site-preview.png",
-        width: 1175,
-        height: 1174,
-        alt: "Ansemification"
+        width: 1200,
+        height: 630,
+        alt: "Ansemifying"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ansemification",
-    description: "Get Ansemified. A meme movement with a live reward dashboard attached.",
+    title: "Ansemifying",
+    description: "Upload any profile picture and instantly Ansemify it.",
     images: ["/brand/site-preview.png"]
   },
   icons: {

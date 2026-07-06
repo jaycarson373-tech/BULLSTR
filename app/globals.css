@@ -2903,8 +2903,8 @@ select {
 .brand-mark,
 .loader-mascot {
   border-color: rgba(255, 138, 31, 0.34);
-  border-radius: 10px;
-  background: linear-gradient(135deg, #ff8a1f, #7cff6b);
+  border-radius: 18px;
+  background: rgba(8, 15, 10, 0.78);
   color: #050403;
   box-shadow: 0 0 34px rgba(255, 138, 31, 0.16);
 }
@@ -3254,14 +3254,21 @@ td a,
 
 .ansem-logo {
   display: grid;
-  width: 42px;
-  height: 42px;
+  width: 54px;
+  height: 54px;
   place-items: center;
   border: 1px solid rgba(124, 255, 107, 0.34);
-  border-radius: 14px;
+  border-radius: 18px;
   background: rgba(8, 15, 10, 0.78);
   color: var(--app-green);
   box-shadow: 0 0 28px rgba(124, 255, 107, 0.16);
+  overflow: hidden;
+}
+
+.ansem-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .ansem-nav-links {
