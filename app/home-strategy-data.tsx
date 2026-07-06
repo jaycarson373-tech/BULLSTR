@@ -89,8 +89,8 @@ const emptyStats: StatsResponse = {
 
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12_000;
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLSTR";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM + BULLSTR";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMIFY";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -203,28 +203,19 @@ export function HeroCountdown() {
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
   const totalDistributed = stats ? formatRewardTotals(stats.totalRewardTotals, "Awaiting first drop") : "Awaiting first drop";
   const ansemAirdropped = stats ? rewardTotalAmount(stats.totalRewardTotals, "ANSEM") : 0;
-  const bullstrAirdropped = stats ? rewardTotalAmount(stats.totalRewardTotals, "BULLSTR") : 0;
 
   return (
     <div className="hero-countdown" aria-live="polite">
-      <span>Next Distribution</span>
+      <span>Next Ansemification</span>
       <strong>{countdown}</strong>
       <div className="hero-total-distributed">
-        <span>Total Rewards Distributed</span>
+        <span>Total $ANSEM Airdropped</span>
         <b>{totalDistributed}</b>
       </div>
       <div className="hero-mini-dashboard">
         <div>
-          <span>Bagholder Wallet</span>
-          <b>{stats?.bagholderSolBalance !== null && stats?.bagholderSolBalance !== undefined ? `${formatLiveNumber(stats.bagholderSolBalance, 4)} SOL` : "0"}</b>
-        </div>
-        <div>
           <span>ANSEM Airdropped</span>
           <b>{ansemAirdropped > 0 ? `${formatNumber(ansemAirdropped, 2)} ANSEM` : "0"}</b>
-        </div>
-        <div>
-          <span>BULLSTR Airdropped</span>
-          <b>{bullstrAirdropped > 0 ? `${formatNumber(bullstrAirdropped, 2)} BULLSTR` : "0"}</b>
         </div>
         <div>
           <span>{SOURCE_SYMBOL} Eligible</span>
@@ -235,7 +226,7 @@ export function HeroCountdown() {
           <b>{stats ? formatCount(stats.totalEpochs) : "Loading"}</b>
         </div>
         <div>
-          <span>Eligible Bulls</span>
+          <span>Eligible Holders</span>
           <b>{stats ? formatCount(stats.latestEligibleHolders) : "Loading"}</b>
         </div>
       </div>
@@ -249,30 +240,24 @@ export function LiveProtocolDashboard() {
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
   const latestRound = rounds[0];
+  const totalAnsemAirdropped = stats ? rewardTotalAmount(stats.totalRewardTotals, "ANSEM") : 0;
+  const totalAnsemBought = rounds.reduce((sum, round) => sum + (Number.isFinite(round.rewardBought) ? round.rewardBought : 0), 0);
 
   return (
     <section className="section live-section airdrop-section" id="dashboard">
       <div className="container">
-        <div className="section-kicker">Live dashboard</div>
+        <div className="section-kicker">Machine readout</div>
         <div className="section-head split-head">
-          <h2>Strategy dashboard.</h2>
-          <p>Live values come from the existing reward backend. Total distributions, holder count, reward pool, and transactions update from Supabase.</p>
+          <h2>The dashboard lives here. It does not run the cult.</h2>
+          <p>Live values come from the existing reward backend. If the backend has not settled data yet, this stays quiet instead of inventing numbers.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
-          <MetricCard label="Total Rewards Distributed" value={stats ? formatRewardTotals(stats.totalRewardTotals) : "Loading"} strong />
+          <MetricCard label="Total $ANSEM Bought" value={totalAnsemBought > 0 ? formatAmount(totalAnsemBought, "ANSEM", 4) : "Awaiting live distribution"} strong />
+          <MetricCard label="Total Airdropped" value={totalAnsemAirdropped > 0 ? formatAmount(totalAnsemAirdropped, "ANSEM", 2) : stats ? formatRewardTotals(stats.totalRewardTotals) : "Loading"} />
+          <MetricCard label="Last Epoch" value={latestRound ? `#${latestRound.epoch} ${statusLabel(latestRound.status)}` : "Awaiting epoch"} />
+          <MetricCard label="Next Epoch Timer" value={countdown} />
           <MetricCard label="Eligible Holders" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} />
-          <MetricCard label={`Eligible ${SOURCE_SYMBOL} Held`} value={stats ? formatAmount(stats.eligibleBullstrHeld, SOURCE_SYMBOL, 0) : "Loading"} />
-          <MetricCard
-            label="Bagholder Wallet"
-            value={
-              stats?.bagholderSolBalance !== null && stats?.bagholderSolBalance !== undefined
-                ? `${formatLiveNumber(stats.bagholderSolBalance, 4)} SOL`
-                : "Awaiting wallet"
-            }
-          />
-          <MetricCard label="ANSEM Bought" value={latestRound ? formatAmount(latestRound.rewardBought, "ANSEM", 4) : "Awaiting live distribution"} />
-          <MetricCard label="Next Distribution" value={countdown} />
-          <MetricCard label="Last Drop TX" value={latestRound?.txSig ? compactAddress(latestRound.txSig) : "Awaiting tx"} muted />
+          <MetricCard label="Recent TX" value={latestRound?.txSig ? compactAddress(latestRound.txSig) : "Awaiting tx"} muted />
         </div>
       </div>
     </section>
@@ -303,11 +288,11 @@ export function PermanentEligibility() {
     <section className="section eligibility-section" id="eligibility">
       <div className="container warning-layout">
         <div>
-          <div className="section-kicker">Eligibility rules</div>
-          <h2>Hold 250K+ $BULLSTR.</h2>
+          <div className="section-kicker">Eligibility</div>
+          <h2>Hold ${SOURCE_SYMBOL} and let the machine work.</h2>
         </div>
         <div className="eligibility-flow">
-          {[`250K+ $${SOURCE_SYMBOL}`, "Creator Fees", "Every Epoch", "Holder Snapshot", "On-chain Tracking"].map((item, index) => (
+          {["Hold", "Creator fees", "$ANSEM buys", "Airdrop epoch", "On-chain receipt"].map((item, index) => (
             <article className="eligibility-card" key={item}>
               <span>{index + 1}</span>
               <strong>{item}</strong>
@@ -323,19 +308,16 @@ export function RewardExplanation() {
   return (
     <section className="section reward-explainer-section" id="how">
       <div className="container">
-          <div className="section-kicker">How rewards work</div>
+          <div className="section-kicker">How it works</div>
         <div className="section-head split-head">
-          <h2>45% $ANSEM. 45% $BULLSTR. 10% bagworker fund.</h2>
-          <p>Bull Strategy turns creator fees into two live token reward streams for eligible $BULLSTR holders, with a 10% bagworker fund route.</p>
+          <h2>Three steps. Very serious technology. Extremely unserious culture.</h2>
+          <p>Hold the meme, let fees buy $ANSEM, receive the Ansemification event when epochs settle.</p>
         </div>
         <div className="reward-flow">
           {[
-            `Hold at least 250,000 $${SOURCE_SYMBOL}`,
-            "45% routes to $ANSEM reward buys",
-            "$ANSEM distributes every epoch",
-            "45% routes to $BULLSTR reward buys",
-            "$BULLSTR balance sets reward share",
-            "Everything is tracked on-chain"
+            `Hold $${SOURCE_SYMBOL}`,
+            "Fees buy $ANSEM",
+            "Holders get Ansemified"
           ].map((item) => (
             <article className="reward-flow-card" key={item}>
               <strong>{item}</strong>
@@ -344,9 +326,9 @@ export function RewardExplanation() {
         </div>
         <div className="share-example">
           {[
-            ["Weight", "$BULLSTR held", "proportional share"],
-            ["Split", "$ANSEM + BULLSTR", "two reward legs"],
-            ["Ledger", "On-chain transfers", "tracked every epoch"]
+            ["Input", "Creator fees", "the machine eats"],
+            ["Output", "$ANSEM", "belief token appears"],
+            ["Receipts", "On-chain", "no fake scoreboard"]
           ].map(([holder, multiplier, copy]) => (
             <article className="share-card" key={holder}>
               <span>{holder}</span>
@@ -377,10 +359,10 @@ export function BullBoard() {
   return (
     <section className="section bull-board-section" id="bull-board">
       <div className="container">
-        <div className="section-kicker">Strategy board</div>
+        <div className="section-kicker">Holder board</div>
         <div className="section-head split-head">
-          <h2>STRATEGY BOARD</h2>
-          <p>Clean holder table showing balance, share, earned rewards, and latest reward activity.</p>
+          <h2>Ansemified wallets.</h2>
+          <p>A simple holder table for balance, share, earned rewards, and latest reward activity.</p>
         </div>
         <div className="history-card bull-board-card">
           <div className="table-wrap">
@@ -388,7 +370,7 @@ export function BullBoard() {
               <thead>
                 <tr>
                   <th>Wallet</th>
-                  <th>$BULLSTR Held</th>
+                  <th>${SOURCE_SYMBOL} Held</th>
                   <th>Share</th>
                   <th>Total {REWARD_SYMBOL} Earned</th>
                   <th>Last Airdrop</th>
@@ -411,7 +393,7 @@ export function BullBoard() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={5}>Awaiting Strategy Board.</td>
+                    <td colSpan={5}>Awaiting holder data.</td>
                   </tr>
                 )}
               </tbody>
@@ -430,9 +412,9 @@ export function RecentAirdrops() {
   return (
     <section className="section recent-airdrops-section" id="airdrops">
       <div className="container">
-        <div className="section-kicker">Reward history</div>
+        <div className="section-kicker">Recent drops</div>
         <div className="section-head split-head">
-          <h2>Tracked on-chain.</h2>
+          <h2>Receipts or it did not happen.</h2>
           <p>Settled reward transfers from the live backend. Failed or skipped attempts are not counted.</p>
         </div>
         <div className="history-card">
@@ -442,7 +424,7 @@ export function RecentAirdrops() {
                 <tr>
                   <th>Wallet</th>
                   <th>Reward Type</th>
-                  <th>{REWARD_SYMBOL} Received</th>
+                  <th>Reward Received</th>
                   <th>Time</th>
                   <th>TX Link</th>
                 </tr>
@@ -494,7 +476,7 @@ export function HolderLookup() {
       <div className="container split-section">
         <div>
           <div className="section-kicker">Holder lookup</div>
-          <h2>Check your place in the Bull.</h2>
+          <h2>Check your Ansemification status.</h2>
           <p className="lead">
             Wallet-level status uses the live holder-state tracker after the first tracked epoch.
           </p>
@@ -514,7 +496,7 @@ export function HolderLookup() {
             {submitted ? (
               <>
                 <strong>{compactAddress(wallet)}</strong>
-                <span>Awaiting live backend integration for wallet-level Bull status.</span>
+                <span>Awaiting live backend integration for wallet-level Ansemification status.</span>
               </>
             ) : (
               <span>Enter a wallet to check eligibility once lookup integration is live.</span>
@@ -535,7 +517,7 @@ export function AirdropHistory() {
       <div className="container">
         <div className="section-kicker">Airdrop history</div>
         <div className="section-head split-head">
-          <h2>ANSEM + BULLSTR Distributions</h2>
+          <h2>$ANSEM Distributions</h2>
           <p>Settled airdrops only. Failed or skipped worker attempts are not counted.</p>
         </div>
         <div className="history-card">
@@ -546,7 +528,7 @@ export function AirdropHistory() {
                   <th>Epoch</th>
                   <th>ANSEM Bought</th>
                   <th>Recipients</th>
-                  <th>Bull Weight</th>
+                  <th>Weight</th>
                   <th>Total Distributed</th>
                   <th>Transaction</th>
                 </tr>
@@ -558,7 +540,7 @@ export function AirdropHistory() {
                       <td>#{round.epoch}</td>
                       <td>{formatAmount(round.rewardBought, "ANSEM")}</td>
                       <td>{round.rewardTotals.some((total) => total.rewardAmount > 0) ? "Settled" : statusLabel(round.status)}</td>
-                      <td>Bull Score</td>
+                      <td>Holder share</td>
                       <td>{formatRewardTotals(round.rewardTotals)}</td>
                       <td>
                         {round.txSig ? (

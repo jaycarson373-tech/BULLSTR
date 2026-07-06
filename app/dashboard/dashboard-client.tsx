@@ -80,9 +80,9 @@ const emptyStats: StatsResponse = {
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
 const EPOCH_MS = 5 * 60 * 1000;
-const PROJECT_NAME = "Bull Strategy";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLSTR";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM + BULLSTR";
+const PROJECT_NAME = "Ansemification";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMIFY";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -285,16 +285,15 @@ export function DashboardClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
+            <span className="brand-mark">A</span>
             <span>
-              Bull Strategy
-              <small>ANSEM + BULLSTR Rewards</small>
+              {PROJECT_NAME}
+              <small>Ansemify yourself</small>
             </span>
           </Link>
           <div className="nav-links">
             <Link href="/">Landing</Link>
             <Link href="/dashboard">Dashboard</Link>
-            <Link className="blackbull-link" href="/blackbull-list">BlackBull List</Link>
           </div>
         </div>
       </header>
@@ -305,7 +304,7 @@ export function DashboardClient() {
             <div>
               <div className="eyebrow">
                 <span className="pulse" />
-                Live reward ledger
+                Live Ansemification ledger
               </div>
               <h1 className="dashboard-title">Airdrop Ledger</h1>
             </div>
@@ -318,7 +317,7 @@ export function DashboardClient() {
               <div className="stats dashboard-stats">
                 <div className="stat live-stat">
                   <strong>{countdown}</strong>
-                  <span>Next Distribution</span>
+                  <span>Next Epoch</span>
                   <div className="round-progress tiny" aria-hidden="true">
                     <span style={{ width: `${Math.min(100, Math.max(0, progress))}%` }} />
                   </div>
@@ -339,7 +338,7 @@ export function DashboardClient() {
                   <strong className={hasRewards ? "" : "empty-value"}>
                     {hasRewards ? formatRewardTotals(liveStats.totalRewardTotals) : "Awaiting first drop"}
                   </strong>
-                  <span>Total Rewards Distributed</span>
+                  <span>Total Airdropped</span>
                 </div>
               </div>
 

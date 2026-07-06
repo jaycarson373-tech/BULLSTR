@@ -1,39 +1,26 @@
-# Bull Strategy
+# Ansemification
 
-Source token: `$BULLSTR`  
-Reward assets: `$ANSEM` and `$BULLSTR`
+Source token: `$ANSEMIFY`
+Reward asset: `$ANSEM`
 
-Bull Strategy is a fork of the airdrop engine rebranded around a 45/45/10 strategic flywheel:
+Ansemification is a meme-site wrapper around the existing airdrop engine:
 
-- 45% of usable SOL is routed through Jupiter to buy `$ANSEM`.
-- `$ANSEM` is airdropped to eligible `$BULLSTR` holders every 5 minutes.
-- 45% of usable SOL is routed through Jupiter to buy `$BULLSTR`.
-- Bought `$BULLSTR` is airdropped to eligible `$BULLSTR` holders every 5 minutes.
-- 10% of usable SOL is sent to the configured bagworker fund wallet.
+- 75% of usable SOL is routed through Jupiter to buy `$ANSEM`.
+- Bought `$ANSEM` is airdropped to eligible `$ANSEMIFY` holders on each epoch.
+- The dashboard reads settled epochs, payouts, holders, and recent drops from Supabase.
 
-The site is a Next.js dashboard with a Railway-compatible worker and Supabase proof tables.
+The site should feel like a CT meme movement first, with the dashboard attached as proof.
 
 ## Current Implementation
 
-The token reward leg is implemented:
-
 1. Claim creator fees into the treasury.
-2. Snapshot `$BULLSTR` holders with at least `ELIGIBILITY_MIN`.
-3. Apply permanent holder-state rules.
-4. Weight selected holders by raw `$BULLSTR` balance.
-5. Use `SWAP_BALANCE_BPS=4500` to buy `$ANSEM` with 45% of usable SOL.
-6. Use `BULLSTR_AIRDROP_BPS=4500` to buy `$BULLSTR` with 45% of usable SOL.
-7. Send `SIDE_WALLET_BPS=1000` to `SIDE_WALLET_PUBLIC_KEY`.
-8. Airdrop the bought `$ANSEM` and `$BULLSTR` to eligible holders.
-9. Store epochs, snapshots, reward pools, and payouts in Supabase.
-
-The two reward legs share the same 5-minute epoch and proportional holder weighting model.
-
-## Weighting
-
-Reward weight is proportional to `$BULLSTR` held.
-
-Every epoch is 5 minutes by default. Default eligibility is 250,000 `$BULLSTR`. Selling any amount of `$BULLSTR`, falling below `ELIGIBILITY_MIN`, or holding `MAX_HOLDER_PCT` percent or more of supply permanently removes that wallet from future tracked distributions.
+2. Snapshot source-token holders with at least `ELIGIBILITY_MIN`.
+3. Weight selected holders by raw source-token balance.
+4. Use `SWAP_BALANCE_BPS=7500` to buy `$ANSEM` with 75% of usable SOL.
+5. Keep `BULLSTR_AIRDROP_BPS=0` for the Ansemification public mechanic.
+6. Optionally route the remaining bps to `SIDE_WALLET_PUBLIC_KEY`.
+7. Airdrop bought `$ANSEM` to eligible holders.
+8. Store epochs, snapshots, reward pools, and payouts in Supabase.
 
 ## Local Development
 
@@ -55,12 +42,12 @@ npm run build
 Copy `.env.example` and fill in the live mints and keys.
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME="Bull Strategy"
-NEXT_PUBLIC_SOURCE_SYMBOL=BULLSTR
-NEXT_PUBLIC_REWARD_SYMBOL="ANSEM + BULLSTR"
-NEXT_PUBLIC_CA=<BULLSTR_MINT>
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=<BULLSTR_MINT>
-NEXT_PUBLIC_X_URL=https://x.com/BullStrategySol
+NEXT_PUBLIC_PROJECT_NAME="Ansemification"
+NEXT_PUBLIC_SOURCE_SYMBOL=ANSEMIFY
+NEXT_PUBLIC_REWARD_SYMBOL="ANSEM"
+NEXT_PUBLIC_CA=<ANSEMIFY_MINT>
+NEXT_PUBLIC_SOURCE_TOKEN_MINT=<ANSEMIFY_MINT>
+NEXT_PUBLIC_X_URL=<X_URL>
 NEXT_PUBLIC_BUY_URL=https://pump.fun
 NEXT_PUBLIC_DEXSCREENER_URL=<DEXSCREENER_PAIR_OR_TOKEN_URL>
 NEXT_PUBLIC_FIRST_AIRDROP_AT=<OPTIONAL_ISO_TIME>
@@ -69,11 +56,10 @@ NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<SUPABASE_ANON_KEY>
 SUPABASE_URL=<SUPABASE_URL>
 SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
-BAGHOLDER_WALLET_PUBLIC_KEY=<PUBLIC_WALLET_FOR_SITE_BALANCE>
 
 REWARD_MODE=token
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=<BULLSTR_MINT>
+SOURCE_TOKEN_MINT=<ANSEMIFY_MINT>
 REWARD_TOKEN_MINT=<ANSEM_MINT>
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET>
 
@@ -87,10 +73,10 @@ MAX_WALLETS_PER_EPOCH=150
 MAX_HOLDER_PCT=5
 EXCLUDE_WALLETS=
 
-SWAP_BALANCE_BPS=4500
+SWAP_BALANCE_BPS=7500
 SWAP_SLIPPAGE_BPS=300
-BULLSTR_AIRDROP_BPS=4500
-SIDE_WALLET_BPS=1000
+BULLSTR_AIRDROP_BPS=0
+SIDE_WALLET_BPS=2500
 SIDE_WALLET_PUBLIC_KEY=<SIDE_WALLET_PUBLIC_KEY>
 
 MIN_SOL_RESERVE=0.3
@@ -102,7 +88,3 @@ MIN_REWARD_RAW_TO_AIRDROP=1
 ```
 
 Keep `CLAIM_ENABLED`, `BUY_ENABLED`, and `AIRDROP_ENABLED` false until the live treasury, mints, Supabase tables, and worker dry runs are verified.
-
-## Logo
-
-The old placeholder logo has been removed. Add the final logo asset when ready.

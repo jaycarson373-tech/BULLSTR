@@ -1,18 +1,15 @@
 import { ArrowRight } from "lucide-react";
-import { BagworkBalance } from "./bagwork-balance";
-import { BullLogoHero } from "./bull-logo-hero";
 import { CopyCaButton } from "./copy-ca-button";
 import {
   BullBoard,
-  HeroCountdown,
   HolderLookup,
   LiveProtocolDashboard,
-  PermanentEligibility,
   RecentAirdrops,
   RewardExplanation
 } from "./home-strategy-data";
 
-const PROJECT_NAME = "Bull Strategy";
+const PROJECT_NAME = "Ansemification";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMIFY";
 const DEFAULT_CA = "9Q86QfqzQ6HyVEeeTwie8PP3Eb3VPDd2S9gfFq5ypump";
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "https://pump.fun";
 const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/BullStrategySol";
@@ -26,29 +23,29 @@ function Navbar() {
     <header className="nav">
       <div className="container nav-inner">
         <a className="brand" href="/">
-          <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
+          <span className="brand-mark">A</span>
           <span>
-            Bull Strategy
-            <small>ANSEM + BULLSTR Rewards</small>
+            Ansemification
+            <small>Ansemify yourself</small>
           </span>
         </a>
         <nav className="nav-links" aria-label="Main navigation">
-          <a href="#dashboard">Live Data</a>
-          <a href="#strategy">Strategy</a>
-          <a href="#how">Rewards</a>
-          <a href="#bull-board">Board</a>
+          <a href="#what">What</a>
+          <a href="#machine">Machine</a>
+          <a href="#lore">Lore</a>
+          <a href="#how">How</a>
+          <a href="#dashboard">Dashboard</a>
           <a href="#airdrops">Airdrops</a>
-          <a className="blackbull-link" href="/blackbull-list">BlackBull List</a>
         </nav>
         <div className="nav-actions">
           {CONTRACT_ADDRESS ? (
             <CopyCaButton address={CONTRACT_ADDRESS} label={shortAddress(CONTRACT_ADDRESS)} />
           ) : null}
-          <a className="mini-button x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Bull Strategy on X">
+          <a className="mini-button x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Ansemification on X">
             X
           </a>
           <a className="cta secondary" href="/dashboard">
-            View Airdrops
+            Dashboard
           </a>
         </div>
       </div>
@@ -63,54 +60,51 @@ export default function Page() {
 
       <main>
         <section className="hero hood-hero" id="top">
-          <BullLogoHero />
           <div className="hero-shade" aria-hidden="true" />
 
           <div className="container hero-inner">
             <div className="hero-copy-stack">
-              <div className="section-kicker">Dual reward flywheel</div>
+              <div className="section-kicker">Trenches revival machine</div>
               <h1>
-                <span>Bull</span>
-                <span>Strategy</span>
+                <span>Get</span>
+                <span>Ansemified.</span>
               </h1>
               <p className="hero-subtitle">
-                $ANSEM and $BULLSTR rewards for $BULLSTR holders.
+                The trenches asked for a sign. We built the machine.
               </p>
               <p className="hero-lead">
-                Bull Strategy routes the system into a 45/45/10 engine: 45% buys and airdrops $ANSEM, 45% buys and airdrops $BULLSTR to eligible holders, and 10% routes to the bagworker fund every 5 minutes.
+                A meme movement for becoming higher-conviction, higher-belief, and just delusional enough to survive another market cycle.
               </p>
               <div className="hero-actions">
-                <a className="cta" href="#strategy">
-                  View Strategy <ArrowRight size={18} />
+                <a className="cta" href="#what">
+                  Get Ansemified <ArrowRight size={18} />
                 </a>
-                <a className="cta secondary" href="#airdrops">
-                  View Rewards
+                <a className="cta secondary" href="#dashboard">
+                  View Dashboard
                 </a>
               </div>
             </div>
-            <HeroCountdown />
           </div>
         </section>
 
-        <LiveProtocolDashboard />
-        <StrategySection />
-        <WhyAnsemSection />
+        <WhatSection />
+        <MachineSection />
+        <LoreSection />
         <RewardExplanation />
-        <PermanentEligibility />
+        <LiveProtocolDashboard />
         <BullBoard />
         <RecentAirdrops />
         <HolderLookup />
 
         <section className="section faq-section" id="faq">
           <div className="container">
-            <div className="section-kicker">FAQ</div>
-            <h2>Strategy notes.</h2>
+            <div className="section-kicker">FAQ for the confused but curious</div>
+            <h2>Small print, trench edition.</h2>
             <div className="faq-grid">
-              <FaqItem title="How do I qualify?" body="Hold at least 250,000 $BULLSTR and stay above that threshold." />
-              <FaqItem title="How often are rewards sent?" body="$ANSEM and $BULLSTR rewards run every 5 minutes when live conditions are met." />
-              <FaqItem title="What is the split?" body="The target model routes 45% to $ANSEM holder airdrops, 45% to $BULLSTR holder airdrops, and 10% to the bagworker fund." />
-              <FaqItem title="Does supply still matter?" body="Yes. The $BULLSTR balance is the base weight, so larger holders can still earn more." />
-              <FaqItem title="Is there claiming?" body="No. The backend handles airdrops automatically. No wallet connection is required to receive rewards." />
+              <FaqItem title="What is this?" body="A meme site with a real reward dashboard attached. The bit is funny; the airdrop data is not pretend." />
+              <FaqItem title="How do I get Ansemified?" body={`Hold $${SOURCE_SYMBOL}. The machine handles the reward math and shows settled activity on the dashboard.`} />
+              <FaqItem title="What gets bought?" body="The headline mechanic is simple: creator fees target $ANSEM buys and holder airdrops." />
+              <FaqItem title="Do I need to claim?" body="No claim button, no wallet connection ritual. If the backend sends it, the dashboard shows it." />
             </div>
           </div>
         </section>
@@ -120,21 +114,22 @@ export default function Page() {
       <footer className="footer">
         <div className="container footer-grid">
           <div className="footer-brand">
-            <img className="brand-logo" src="/brand/bull-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
-            <strong>Bull Strategy</strong>
+            <span className="brand-mark">A</span>
+            <strong>Ansemification</strong>
           </div>
           <div className="footer-trade-links" aria-label="Trading links">
             <a href={BUY_URL} target="_blank" rel="noreferrer">
-              BUY $BULLSTR
+              BUY ${SOURCE_SYMBOL}
             </a>
             <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">
               DEXSCREENER
             </a>
           </div>
           <div className="footer-links">
-            <a href="#dashboard">Live Data</a>
-            <a href="#strategy">Strategy</a>
-            <a href="#bull-board">Board</a>
+            <a href="#what">What</a>
+            <a href="#machine">Machine</a>
+            <a href="#lore">Lore</a>
+            <a href="#dashboard">Dashboard</a>
             <a href="#airdrops">Airdrops</a>
             <a href={X_URL} target="_blank" rel="noreferrer">
               X
@@ -152,79 +147,67 @@ export default function Page() {
   );
 }
 
-function StrategySection() {
+function WhatSection() {
   return (
-    <section className="section strategy-thesis-section" id="strategy">
-      <div className="black-bull-glow" aria-hidden="true" />
-      <div className="container black-bull-grid">
-        <aside className="black-bull-card">
-          <div className="black-bull-portrait">
-            <img src="/brand/bull-strategy-logo.png" alt="Bull Strategy mark" />
-          </div>
-          <div className="black-bull-card-head">
-            <span>Strategy stack</span>
-            <strong>Bull Strategy</strong>
-          </div>
-          <div className="bull-signal-list">
-            <span>Airdrop tech</span>
-            <span>$ANSEM rewards</span>
-            <span>BULLSTR rewards</span>
-            <span>5-minute epochs</span>
-          </div>
-          <BagworkBalance />
-        </aside>
-
-        <div className="black-bull-copy">
-          <div className="section-kicker">The strategy</div>
-          <h2>THE TWO REWARDS HE IS BULLISH ON.</h2>
-          <div className="lore-copy">
-            <p>Bull Strategy turns holder rewards and token conviction into one loop for eligible $BULLSTR wallets.</p>
-            <p>45% of the engine targets $ANSEM airdrops every 5 minutes. Another 45% buys and airdrops $BULLSTR.</p>
-            <p>Both reward legs use the same holder scan and weighting model.</p>
-            <p>No claiming. No wallet connection. Just a public strategy dashboard backed by live reward data.</p>
-          </div>
+    <section className="section ansem-section" id="what">
+      <div className="container ansem-two-column">
+        <div>
+          <div className="section-kicker">What is Ansemification?</div>
+          <h2>Regular trench user in. Market creature out.</h2>
         </div>
-      </div>
-      <div className="container black-bull-timeline" aria-label="Bull Strategy reward model">
-        {["Creator fees", "45% $ANSEM", "45% $BULLSTR", "10% bagworker fund", "Airdrop ledger"].map((item) => (
-          <span key={item}>{item}</span>
-        ))}
+        <div className="lore-copy">
+          <p>Ansemification is the process of turning regular trench users into higher-conviction, higher-belief, higher-delusion market creatures.</p>
+          <p>You show up with a wallet, a thesis, and maybe three hours of sleep. The machine handles the rest.</p>
+          <p>No boardroom energy. No suit cosplay. Just a clean little ritual for people who still believe the timeline can be funny.</p>
+        </div>
       </div>
     </section>
   );
 }
 
-function WhyAnsemSection() {
+function MachineSection() {
   return (
-    <section className="section why-ansem-section" id="why-ansem">
-      <div className="container why-ansem-grid">
-        <div className="why-ansem-copy">
-          <div className="section-kicker">Why $ANSEM?</div>
-          <h2>ATTENTION IS THE STRATEGY.</h2>
-          <div className="lore-copy">
-            <p>$ANSEM is the attention side of Bull Strategy: a token built around The Black Bull, aka Ansem, and the Solana culture he has been bullposting for years.</p>
-            <p>Ansem crossed 1M+ followers on X, helped make WIF one of the defining Solana memes as it ran toward $5, and rode the SOL conviction arc from the sub-$1 era to a near-$300 all-time high.</p>
-            <p>The multi-billion bull case is simple: if attention, liquidity, and Solana meme culture keep concentrating around Ansem, $ANSEM can become the tokenized scoreboard for that crowd.</p>
-            <p>Bull Strategy turns that thesis into a holder flywheel: $BULLSTR holders earn $ANSEM and $BULLSTR every epoch, so the rewards stay pointed at the two tokens the strategy is built around.</p>
-          </div>
+    <section className="section machine-section" id="machine">
+      <div className="container">
+        <div className="section-kicker">The Machine</div>
+        <div className="section-head split-head">
+          <h2>Fees go in. $ANSEM comes out.</h2>
+          <p>75% of creator fees swap into $ANSEM and get airdropped back to eligible holders.</p>
         </div>
+        <div className="ansem-steps">
+          <article>
+            <span>01</span>
+            <strong>Creator fees</strong>
+            <p>The engine watches the pot like a sleep-deprived timeline addict.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <strong>$ANSEM buys</strong>
+            <p>The machine points the flow at the belief token.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <strong>Airdrop loop</strong>
+            <p>Eligible holders get Ansemified when epochs settle.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  );
+}
 
-        <div className="ansem-proof-grid" aria-label="Ansem market thesis">
-          <article className="ansem-proof-card">
-            <span>Reach</span>
-            <strong>1M+ X followers</strong>
-            <p>The Black Bull already has the audience size most meme tokens try to manufacture.</p>
-          </article>
-          <article className="ansem-proof-card">
-            <span>WIF lore</span>
-            <strong>Near $5 cycle high</strong>
-            <p>WIF became the Solana culture trade, and Ansem was one of its loudest bullposters.</p>
-          </article>
-          <article className="ansem-proof-card">
-            <span>SOL conviction</span>
-            <strong>Sub-$1 to near $300</strong>
-            <p>The same account is tied to the SOL conviction arc that frames the Bull Strategy thesis.</p>
-          </article>
+function LoreSection() {
+  return (
+    <section className="section lore-section" id="lore">
+      <div className="container ansem-two-column">
+        <div>
+          <div className="section-kicker">Lore</div>
+          <h2>Ansem revived belief in the trenches.</h2>
+        </div>
+        <div className="lore-copy">
+          <p>He asked for airdrops. He made people believe again. The group chat stopped doomscrolling for twelve seconds and remembered the game is supposed to be fun.</p>
+          <p>Ansemification is taking that energy and putting it onchain: a little cult, a little comedy, a little reward machine for the people who keep showing up.</p>
+          <p>Become Ansem? Obviously impossible. Get Ansemified? Now we can work with that.</p>
         </div>
       </div>
     </section>

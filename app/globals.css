@@ -2321,7 +2321,7 @@ td a,
   }
 }
 
-/* Bull Strategy fintech rebrand */
+/* Legacy green theme overrides kept below for older components; Ansemification overrides are appended later. */
 :root {
   --black: #020403;
   --charcoal: #06100a;
@@ -2345,8 +2345,7 @@ td a,
 }
 
 .hood-strategy-page,
-.dashboard,
-.fallen-bulls-page {
+.dashboard {
   background:
     radial-gradient(circle at 82% 8%, rgba(57, 255, 20, 0.16), transparent 26%),
     radial-gradient(circle at 14% 18%, rgba(0, 200, 5, 0.14), transparent 22%),
@@ -2389,25 +2388,6 @@ td a,
   font-weight: 800;
   letter-spacing: -0.045em;
   line-height: 0.94;
-}
-
-.fallen-bulls-page .history-section {
-  min-height: calc(100vh - 96px);
-}
-
-.fallen-bulls-page .dashboard-title {
-  color: #f0fff1;
-  text-shadow: 0 0 34px rgba(57, 255, 20, 0.16);
-}
-
-.fallen-bulls-page .bull-board-card {
-  border-color: rgba(57, 255, 20, 0.28);
-  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(57, 255, 20, 0.12);
-}
-
-.fallen-bulls-page tbody td:nth-child(4) {
-  color: var(--green);
-  font-weight: 800;
 }
 
 .nav {
@@ -2832,5 +2812,311 @@ td a,
 
   .bull-logo-orbit img {
     transform: none !important;
+  }
+}
+
+/* Ansemification rebrand */
+:root {
+  --black: #050403;
+  --charcoal: #0d0b08;
+  --charcoal-2: #14100b;
+  --stone: #1b1510;
+  --stone-2: #24190f;
+  --deep-green: #47d85b;
+  --deep-green-soft: #17351d;
+  --accent: #ff8a1f;
+  --accent-soft: #ffb347;
+  --green: #7cff6b;
+  --green-soft: #1d3a20;
+  --red-glow: #ff8a1f;
+  --ivory: #fff4e7;
+  --muted: #b7a99a;
+  --faint: rgba(255, 244, 231, 0.68);
+  --border: rgba(255, 138, 31, 0.22);
+  --border-soft: rgba(255, 244, 231, 0.1);
+  --panel: rgba(15, 12, 9, 0.88);
+  --panel-2: rgba(22, 16, 11, 0.9);
+  --danger: #ff6b3d;
+  --success: #7cff6b;
+  --bull-cursor: auto;
+}
+
+*,
+a,
+button,
+[role="button"],
+input,
+textarea,
+select {
+  cursor: auto;
+}
+
+.hood-strategy-page,
+.dashboard {
+  background:
+    radial-gradient(circle at 16% 14%, rgba(255, 138, 31, 0.13), transparent 28%),
+    radial-gradient(circle at 86% 18%, rgba(124, 255, 107, 0.08), transparent 24%),
+    #050403;
+}
+
+.site-bg,
+.bg-hills,
+.bg-stone,
+.hero-clouds,
+.hero-fog,
+.bull-logo-hero,
+.black-bull-glow {
+  display: none !important;
+}
+
+.nav {
+  border-bottom-color: rgba(255, 138, 31, 0.16);
+  background: rgba(5, 4, 3, 0.86);
+}
+
+.is-scrolled .nav {
+  border-color: rgba(255, 138, 31, 0.28);
+  background: rgba(5, 4, 3, 0.97);
+}
+
+.brand-mark,
+.loader-mascot {
+  border-color: rgba(255, 138, 31, 0.34);
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ff8a1f, #7cff6b);
+  color: #050403;
+  box-shadow: 0 0 34px rgba(255, 138, 31, 0.16);
+}
+
+.loader-mascot {
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  font-weight: 950;
+}
+
+.brand > span:not(.brand-mark),
+.section-kicker,
+.hood-strategy-page h1,
+.hood-strategy-page h2,
+.dashboard h1,
+.dashboard h2,
+.dashboard-title {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.brand small,
+.nav-links a,
+.footer-links a,
+.footer-trade-links a,
+.footer-links span {
+  letter-spacing: 0.04em;
+}
+
+.nav-links a:hover,
+.footer-links a:hover,
+.footer-trade-links a:hover,
+td a,
+.details-button {
+  color: var(--accent);
+}
+
+.cta,
+.mini-button,
+.details-button,
+.lookup-card button {
+  border-color: rgba(255, 138, 31, 0.52);
+  border-radius: 10px;
+  background: var(--accent);
+  color: #050403;
+  box-shadow: 0 18px 54px rgba(255, 138, 31, 0.14);
+}
+
+.cta.secondary,
+.mini-button,
+.details-button {
+  background: rgba(255, 244, 231, 0.035);
+  color: var(--ivory);
+}
+
+.hood-hero {
+  min-height: 92svh;
+  align-items: center;
+  padding: 150px 0 86px;
+  background:
+    radial-gradient(circle at 18% 28%, rgba(255, 138, 31, 0.16), transparent 28%),
+    radial-gradient(circle at 78% 18%, rgba(124, 255, 107, 0.08), transparent 22%),
+    #050403;
+  animation: none;
+}
+
+.hood-hero::after {
+  background: linear-gradient(180deg, transparent, #050403);
+}
+
+.hood-hero .hero-shade {
+  background: linear-gradient(90deg, rgba(5, 4, 3, 0.96), rgba(5, 4, 3, 0.38) 56%, rgba(5, 4, 3, 0.82));
+}
+
+.hood-strategy-page h1 {
+  max-width: 920px;
+  color: var(--ivory);
+  font-size: clamp(4.2rem, 10vw, 10.6rem);
+  font-weight: 950;
+  letter-spacing: -0.075em;
+  line-height: 0.88;
+  text-shadow: 0 22px 90px rgba(0, 0, 0, 0.54), 0 0 42px rgba(255, 138, 31, 0.13);
+}
+
+.hood-strategy-page h1 span,
+.hood-strategy-page h1 span:first-child {
+  letter-spacing: -0.075em;
+}
+
+.hero-subtitle {
+  color: var(--accent);
+  font-size: clamp(1.35rem, 2.4vw, 2.2rem);
+  font-weight: 900;
+}
+
+.hero-lead,
+.lore-copy p,
+.section-head p,
+.lead {
+  color: var(--faint);
+}
+
+.section {
+  background: #050403;
+}
+
+.section::before {
+  display: none;
+}
+
+.ansem-two-column {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.75fr) minmax(0, 1fr);
+  gap: clamp(28px, 7vw, 96px);
+  align-items: start;
+}
+
+.ansem-section,
+.machine-section,
+.lore-section {
+  padding: 108px 0;
+}
+
+.ansem-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.ansem-steps article,
+.metric-card,
+.history-card,
+.reward-flow-card,
+.share-card,
+.lookup-card,
+.faq-item,
+.card,
+.stat {
+  border: 1px solid rgba(255, 138, 31, 0.14);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 244, 231, 0.045), rgba(255, 244, 231, 0.012)),
+    rgba(13, 10, 8, 0.86);
+  box-shadow: none;
+}
+
+.ansem-steps article {
+  min-height: 220px;
+  padding: 24px;
+}
+
+.ansem-steps span,
+.section-kicker,
+.metric-card-strong strong,
+.reward-flow-card::before {
+  color: var(--accent);
+}
+
+.ansem-steps strong {
+  display: block;
+  margin-top: 42px;
+  color: var(--ivory);
+  font-size: clamp(1.7rem, 3vw, 3rem);
+  line-height: 0.95;
+}
+
+.ansem-steps p {
+  margin-top: 16px;
+  color: var(--faint);
+  line-height: 1.55;
+}
+
+.dashboard-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.metric-card strong,
+.share-card strong,
+.live-stat strong,
+.hero-countdown strong,
+.hero-total-distributed b {
+  color: var(--accent);
+}
+
+.reward-flow {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.reward-flow-card:not(:last-child)::after,
+.eligibility-card:not(:last-child)::after {
+  color: var(--green);
+}
+
+.blackbull-link,
+.blackbull-title::after {
+  color: inherit;
+  text-decoration: none;
+  text-shadow: none;
+}
+
+.blackbull-title::after {
+  display: none;
+}
+
+.footer {
+  border-top-color: rgba(255, 138, 31, 0.16);
+  background: #050403;
+}
+
+.loader-text {
+  color: var(--accent);
+}
+
+.loader-line span {
+  background: var(--accent);
+}
+
+@media (max-width: 1080px) {
+  .ansem-two-column,
+  .dashboard-grid,
+  .reward-flow,
+  .ansem-steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .hood-hero {
+    min-height: 86svh;
+    padding: 122px 0 52px;
+  }
+
+  .hood-strategy-page h1 {
+    font-size: clamp(3.25rem, 17vw, 5.9rem);
   }
 }
