@@ -9,7 +9,7 @@ const dashboardMetrics = [
   { label: "INDEX VALUE", value: "0.00" },
   { label: "INDEX CHANGE", value: "0%" },
   { label: "AI CONFIDENCE", value: "0" },
-  { label: "CURRENT HOLDINGS", value: "0" }
+  { label: "FEE RAILS", value: "50/50" }
 ];
 
 const signalCards = [
@@ -20,9 +20,13 @@ const signalCards = [
   ["Allocation", "Automatically updates the index."]
 ];
 
-const holdings = ["ANSEM", "BULLSTR", "WIF", "SOL", "BONK"];
+const holdings = ["ANSEM", "PENDING 02", "PENDING 03", "PENDING 04", "PENDING 05"];
 const tabs = ["1D", "7D", "30D", "ALL"];
-const terminalLines = ["Scanning X...", "Collecting narratives...", "Updating conviction model...", "Waiting for rebalance..."];
+const terminalLines = ["Scanning X...", "Collecting narratives...", "Updating conviction model...", "Waiting for $AI6900 rebalance..."];
+const feeRails = [
+  ["50%", "Ansem Index", "Routes into the index allocation engine."],
+  ["50%", "ANSEM Distribution", "Buys ANSEM and airdrops to $AI6900 holders."]
+];
 
 const smoothTransition: Transition = { duration: 0.7, ease: [0.22, 1, 0.36, 1] };
 
@@ -130,7 +134,7 @@ export function AnsemIndexApp() {
           <a href="#faq">FAQ</a>
         </nav>
         <div className="ai-nav-meta">
-          <span>$INDEX</span>
+          <span>$AI6900</span>
           <span>{SOURCE_MINT}</span>
         </div>
       </header>
@@ -142,7 +146,7 @@ export function AnsemIndexApp() {
             <h1>ANSEM INDEX 6900</h1>
             <p>
               AI-powered attention index tracking the strongest narratives across Crypto Twitter and automatically allocating
-              creator fees to the highest conviction assets.
+              creator fees through a 50/50 rail: half to the Ansem Index, half to ANSEM accumulation for $AI6900 holders.
             </p>
             <div className="ai-actions">
               <a href="#index">View Index</a>
@@ -160,6 +164,34 @@ export function AnsemIndexApp() {
           </motion.aside>
         </section>
 
+        <motion.section className="ai-section ai-culture-section" {...fadeUp}>
+          <div className="ai-section-head split">
+            <div>
+              <span className="ai-kicker">$AI6900 CULTURE TAPE</span>
+              <h2>Attention becomes allocation.</h2>
+            </div>
+            <span className="ai-status">VISUAL SYSTEM ONLINE</span>
+          </div>
+          <div className="ai-culture-grid">
+            <article className="ai-culture-panel is-cathedral">
+              <span>ANSEM INDEX</span>
+              <strong>6900</strong>
+            </article>
+            <article className="ai-culture-panel is-terminal">
+              <span>GREEN TAPE</span>
+              <strong>+6900%</strong>
+            </article>
+            <article className="ai-culture-panel is-coin">
+              <span>SIGNAL COIN</span>
+              <strong>AI6900</strong>
+            </article>
+            <article className="ai-culture-panel is-grid">
+              <span>NARRATIVE MATRIX</span>
+              <strong>LIVE</strong>
+            </article>
+          </div>
+        </motion.section>
+
         <motion.section className="ai-section" id="how" {...fadeUp}>
           <div className="ai-section-head">
             <span className="ai-kicker">MODEL STACK</span>
@@ -169,6 +201,22 @@ export function AnsemIndexApp() {
             {signalCards.map(([title, copy]) => (
               <article className="ai-card" key={title}>
                 <small>{title.toUpperCase()}</small>
+                <p>{copy}</p>
+              </article>
+            ))}
+          </div>
+        </motion.section>
+
+        <motion.section className="ai-section" id="rails" {...fadeUp}>
+          <div className="ai-section-head">
+            <span className="ai-kicker">CREATOR FEE ROUTING</span>
+            <h2>Two rails. One index.</h2>
+          </div>
+          <div className="ai-rail-grid">
+            {feeRails.map(([value, title, copy]) => (
+              <article className="ai-rail-card" key={title}>
+                <b>{value}</b>
+                <span>{title}</span>
                 <p>{copy}</p>
               </article>
             ))}
@@ -221,7 +269,7 @@ export function AnsemIndexApp() {
         <motion.section className="ai-thesis" {...fadeUp}>
           <span className="ai-kicker">WHY THE INDEX EXISTS</span>
           <h2>Markets follow attention. Attention follows conviction. The AI measures both.</h2>
-          <p>The index owns the strongest narratives before they are obvious.</p>
+          <p>$AI6900 turns attention into an allocation system.</p>
         </motion.section>
 
         <motion.section className="ai-section" id="performance" {...fadeUp}>
@@ -258,7 +306,8 @@ export function AnsemIndexApp() {
               ["What is the Index?", "An AI-powered attention index designed to track and allocate toward the strongest crypto narratives."],
               ["How does the AI work?", "It monitors attention, conviction, momentum, and mindshare before producing allocation signals."],
               ["How often does it rebalance?", "The interface is prepared for five-minute rebalance cycles."],
-              ["How are allocations decided?", "Allocations remain at zero until live index data is connected."]
+              ["How are allocations decided?", "Allocations remain at zero until live index data is connected."],
+              ["What is the ticker?", "The ticker is $AI6900."]
             ].map(([question, answer]) => (
               <details key={question}>
                 <summary>{question}</summary>
