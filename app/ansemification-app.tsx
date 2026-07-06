@@ -4,7 +4,7 @@ import { motion, type Transition } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { AnimatedBackground } from "./animated-background";
 
-const SOURCE_MINT = process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ?? "7aCs6WabHiXYGmqaLN68T2oM4QeStTqSN3EoFXG3pump";
+const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/AI6900SOL_";
 
 const dashboardMetrics = [
   { label: "INDEX VALUE", value: "0.00" },
@@ -132,7 +132,7 @@ export function AnsemIndexApp() {
         </nav>
         <div className="ai-nav-meta">
           <span>$AI6900</span>
-          <span>{SOURCE_MINT}</span>
+          <a href={X_URL} target="_blank" rel="noreferrer">X</a>
         </div>
       </header>
 
