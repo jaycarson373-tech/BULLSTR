@@ -23,9 +23,10 @@ const DASHBOARD_ZEROES: DashboardMetric[] = [
 ];
 
 const LOADING_STEPS = ["Analyzing...", "Applying Ansem...", "Generating...", "Finalizing..."];
-const X_URL = "https://x.com/Ansemification";
-const PUMPFUN_URL = "https://pump.fun";
-const DEXSCREENER_URL = "https://dexscreener.com/solana";
+const SOURCE_MINT = process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim();
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/Ansemification";
+const PUMPFUN_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "https://pump.fun";
+const DEXSCREENER_URL = process.env.NEXT_PUBLIC_DEXSCREENER_URL ?? "https://dexscreener.com/solana";
 
 function formatCountdown(totalSeconds: number) {
   const minutes = Math.floor(totalSeconds / 60);
@@ -246,7 +247,7 @@ export function AnsemificationApp() {
           <a href="#dashboard">Dashboard</a>
         </nav>
         <div className="ansem-nav-actions" aria-label="Project links">
-          <span>CA: soon</span>
+          <span>{SOURCE_MINT ? `CA: ${SOURCE_MINT}` : "CA: soon"}</span>
           <a href={X_URL} target="_blank" rel="noreferrer">X</a>
         </div>
       </header>
