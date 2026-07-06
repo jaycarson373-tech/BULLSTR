@@ -1,17 +1,16 @@
 import { claimFees } from "./claim.js";
-import { buyBullstr, buyReward, treasurySolBudget } from "./buy.js";
+import { buyIndexToken, buyReward, treasurySolBudget } from "./buy.js";
 import { config } from "./config.js";
 import {
   airdropTokenRewards,
   computeAllocations,
-  estimateDualPayoutReserveLamports,
-  estimatePayoutReserveLamports,
+  estimateTokenPayoutReserveLamports,
   treasuryRewardBalanceRaw
 } from "./airdrop.js";
 import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, startEpoch } from "./db.js";
 import { applyHolderState } from "./holder-state.js";
 import { currentEpochId } from "./time.js";
-import { eligibleHoldersFromSnapshot, selectRewardRecipients, snapshotSourceHolders } from "./snapshot.js";
+import { eligibleHoldersFromSnapshot, selectRewardRecipients, snapshotSourceHolders, topHoldersForMint } from "./snapshot.js";
 import { LAMPORTS_PER_SOL, SystemProgram, Transaction } from "@solana/web3.js";
 import { connection } from "./solana.js";
 import { treasuryKeypair } from "./config.js";
@@ -95,9 +94,15 @@ export async function runEpoch(date = new Date()) {
     );
     const selectedHolders = selectRewardRecipients(epochId, eligibleHolders);
     const holders = selectedHolders;
-    console.log(`[${epochId}] selected reward recipients: ${holders.length}`);
+    console.log(`[${epochId}] selected ANSEM reward recipients from AI6900 holders: ${holders.length}`);
 
-    if (!holders.length) {
+    const indexRewardEnabled = config.indexAirdropBps > 0;
+    const ansemHolders = indexRewardEnabled
+      ? await topHoldersForMint(config.rewardTokenMint, config.indexHolderLimit, "ANSEM")
+      : [];
+    console.log(`[${epochId}] selected AI6900 reward recipients from top ANSEM holders: ${ansemHolders.length}`);
+
+    if (!holders.length && !ansemHolders.length) {
       await recordBuy(epochId, "0", "0", "0", null);
       await completeEpoch(epochId, {
         eligible_count: eligibleHolders.length,
@@ -109,16 +114,16 @@ export async function runEpoch(date = new Date()) {
       return;
     }
 
-    const rewardSourceTokenLegEnabled = config.bullstrAirdropBps > 0;
-    const payoutReserveLamports = rewardSourceTokenLegEnabled
-      ? await estimateDualPayoutReserveLamports(holders.map((holder) => holder.wallet))
-      : await estimatePayoutReserveLamports(holders.map((holder) => holder.wallet));
+    const payoutReserveLamports = await estimateTokenPayoutReserveLamports([
+      { wallets: holders.map((holder) => holder.wallet), mint: config.rewardTokenMint, label: "ANSEM-to-AI6900-holders" },
+      { wallets: ansemHolders.map((holder) => holder.wallet), mint: config.sourceTokenMint, label: "AI6900-to-ANSEM-holders" }
+    ]);
     const splitPlan = await treasurySolBudget(payoutReserveLamports);
     const rewardBuyLamports = (splitPlan.usableLamports * BigInt(config.swapBalanceBps)) / 10_000n;
-    const bullstrBuyLamports = (splitPlan.usableLamports * BigInt(config.bullstrAirdropBps)) / 10_000n;
+    const indexBuyLamports = (splitPlan.usableLamports * BigInt(config.indexAirdropBps)) / 10_000n;
     const sideWalletLamports = (splitPlan.usableLamports * BigInt(config.sideWalletBps)) / 10_000n;
     console.log(
-      `[${epochId}] split plan: usable=${lamportsToSol(splitPlan.usableLamports)} SOL, ansemBuy=${lamportsToSol(rewardBuyLamports)} SOL, bullstrBuy=${lamportsToSol(bullstrBuyLamports)} SOL, sideWallet=${lamportsToSol(sideWalletLamports)} SOL`
+      `[${epochId}] split plan: usable=${lamportsToSol(splitPlan.usableLamports)} SOL, ansemBuy=${lamportsToSol(rewardBuyLamports)} SOL, ai6900Buy=${lamportsToSol(indexBuyLamports)} SOL, sideWallet=${lamportsToSol(sideWalletLamports)} SOL`
     );
     await sendSideWalletShare(epochId, sideWalletLamports);
 
@@ -128,7 +133,7 @@ export async function runEpoch(date = new Date()) {
       rewardReceivedUi: 0,
       txSig: null as string | null
     };
-    let bullstrBuy = {
+    let indexBuy = {
       baseSpentLamports: 0n,
       rewardReceivedRaw: 0n,
       rewardReceivedUi: 0,
@@ -137,8 +142,8 @@ export async function runEpoch(date = new Date()) {
 
     if (config.rewardMode === "token") {
       buy = await buyReward(epochId, payoutReserveLamports, rewardBuyLamports);
-      if (rewardSourceTokenLegEnabled) {
-        bullstrBuy = await buyBullstr(epochId, payoutReserveLamports, bullstrBuyLamports);
+      if (indexRewardEnabled) {
+        indexBuy = await buyIndexToken(epochId, payoutReserveLamports, indexBuyLamports);
       }
       await recordBuy(
         epochId,
@@ -152,12 +157,12 @@ export async function runEpoch(date = new Date()) {
     }
 
     const availableRewardRaw = await treasuryRewardBalanceRaw(payoutReserveLamports);
-    const availableBullstrRaw = rewardSourceTokenLegEnabled
+    const availableIndexRaw = indexRewardEnabled
       ? await treasuryRewardBalanceRaw(payoutReserveLamports, config.sourceTokenMint)
       : 0n;
     const rewardPoolRaw = (availableRewardRaw * BigInt(config.airdropRewardBps)) / 10_000n;
-    const bullstrPoolRaw = rewardSourceTokenLegEnabled
-      ? (availableBullstrRaw * BigInt(config.airdropRewardBps)) / 10_000n
+    const indexPoolRaw = indexRewardEnabled
+      ? (availableIndexRaw * BigInt(config.airdropRewardBps)) / 10_000n
       : 0n;
     if (config.rewardMode === "sol") {
       buy = {
@@ -172,22 +177,22 @@ export async function runEpoch(date = new Date()) {
       `[${epochId}] reward pool: ${rewardPoolRaw.toString()} raw of ${availableRewardRaw.toString()} raw treasury balance (${config.airdropRewardBps} bps)`
     );
     console.log(
-      `[${epochId}] BULLSTR pool: ${bullstrPoolRaw.toString()} raw of ${availableBullstrRaw.toString()} raw treasury balance (${config.airdropRewardBps} bps)`
+      `[${epochId}] AI6900 pool: ${indexPoolRaw.toString()} raw of ${availableIndexRaw.toString()} raw treasury balance (${config.airdropRewardBps} bps)`
     );
     const allocations = rewardPoolRaw > config.minRewardRawToAirdrop ? await computeAllocations(holders, rewardPoolRaw) : [];
-    const bullstrAllocations =
-      bullstrPoolRaw > config.minRewardRawToAirdrop
-        ? await computeAllocations(holders, bullstrPoolRaw, config.sourceTokenMint)
+    const indexAllocations =
+      indexPoolRaw > config.minRewardRawToAirdrop
+        ? await computeAllocations(ansemHolders, indexPoolRaw, config.sourceTokenMint)
         : [];
 
-    if (!allocations.length && !bullstrAllocations.length) {
+    if (!allocations.length && !indexAllocations.length) {
       await completeEpoch(epochId, {
         eligible_count: eligibleHolders.length,
         reward_bought: buy.rewardReceivedUi.toString(),
         reward_distributed: "0",
         status: "skipped"
       });
-      console.log(`[${epochId}] no ANSEM or BULLSTR reward balance, skipped airdrop`);
+      console.log(`[${epochId}] no ANSEM or AI6900 reward balance, skipped airdrop`);
       return;
     }
 
@@ -197,11 +202,11 @@ export async function runEpoch(date = new Date()) {
     if (tokenAirdrop.stoppedForReserve && tokenAirdrop.settledCount === 0) {
       throw new Error("ANSEM airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
     }
-    const bullstrAirdrop = bullstrAllocations.length
-      ? await airdropTokenRewards(epochId, bullstrAllocations, "BULLSTR", config.sourceTokenMint)
+    const indexAirdrop = indexAllocations.length
+      ? await airdropTokenRewards(epochId, indexAllocations, "AI6900", config.sourceTokenMint)
       : { settledUi: 0, settledCount: 0, stoppedForReserve: false };
-    if (bullstrAirdrop.stoppedForReserve && bullstrAirdrop.settledCount === 0) {
-      throw new Error("BULLSTR airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
+    if (indexAirdrop.stoppedForReserve && indexAirdrop.settledCount === 0) {
+      throw new Error("AI6900 airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
     }
     const distributed = tokenAirdrop.settledUi;
     await completeEpoch(epochId, {
@@ -210,7 +215,7 @@ export async function runEpoch(date = new Date()) {
       reward_distributed: distributed.toString()
     });
     console.log(
-      `[${epochId}] summary: eligible=${eligibleHolders.length}, ansemRecipients=${tokenAirdrop.settledCount}/${allocations.length}, bullstrRecipients=${bullstrAirdrop.settledCount}/${bullstrAllocations.length}, ansemBought=${buy.rewardReceivedUi}, bullstrBought=${bullstrBuy.rewardReceivedUi}, ansemDistributed=${distributed}, bullstrDistributed=${bullstrAirdrop.settledUi}`
+      `[${epochId}] summary: eligible=${eligibleHolders.length}, ansemRecipients=${tokenAirdrop.settledCount}/${allocations.length}, ai6900Recipients=${indexAirdrop.settledCount}/${indexAllocations.length}, ansemBought=${buy.rewardReceivedUi}, ai6900Bought=${indexBuy.rewardReceivedUi}, ansemDistributed=${distributed}, ai6900Distributed=${indexAirdrop.settledUi}`
     );
   } catch (error) {
     await failEpoch(epochId, error).catch((dbError) => {

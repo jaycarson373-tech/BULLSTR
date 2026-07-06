@@ -198,21 +198,26 @@ export async function estimatePayoutReserveLamports(wallets: string[]) {
   return totalLamports;
 }
 
-export async function estimateDualPayoutReserveLamports(wallets: string[]) {
+export async function estimateTokenPayoutReserveLamports(
+  legs: { wallets: string[]; mint: PublicKey; label: string }[]
+) {
   const permanentReserveLamports = BigInt(Math.floor(config.minSolReserve * LAMPORTS_PER_SOL));
-  if (!wallets.length) return permanentReserveLamports + BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
+  let tokenReserveLamports = 0n;
 
-  const ansemProgram = await tokenProgramForMint(config.rewardTokenMint);
-  const bullstrProgram = await tokenProgramForMint(config.sourceTokenMint);
-  const ansemAtas = wallets.map((wallet) => rewardAtaForOwner(new PublicKey(wallet), ansemProgram, config.rewardTokenMint));
-  const bullstrAtas = wallets.map((wallet) => rewardAtaForOwner(new PublicKey(wallet), bullstrProgram, config.sourceTokenMint));
-  const ansemReserve = await payoutReserveForAtas(ansemAtas);
-  const bullstrReserve = await payoutReserveForAtas(bullstrAtas);
-  const totalLamports = permanentReserveLamports + ansemReserve.totalLamports + bullstrReserve.totalLamports;
+  for (const leg of legs) {
+    if (!leg.wallets.length) continue;
+    const tokenProgram = await tokenProgramForMint(leg.mint);
+    const atas = leg.wallets.map((wallet) => rewardAtaForOwner(new PublicKey(wallet), tokenProgram, leg.mint));
+    const reserve = await payoutReserveForAtas(atas);
+    tokenReserveLamports += reserve.totalLamports;
+    console.log(
+      `[RESERVE] ${leg.label} payout reserve for ${leg.wallets.length} wallets: leg=${reserve.totalLamports}, buffer=${reserve.reserveLamports}, ataRent=${reserve.estimatedRentLamports}, missingAtas=${reserve.missingAtas.size}, fees=${reserve.estimatedFeeLamports}`
+    );
+  }
 
-  console.log(
-    `[RESERVE] dual token payout reserve for ${wallets.length} wallets: total=${totalLamports}, permanent=${permanentReserveLamports}, ansemReserve=${ansemReserve.totalLamports}, bullstrReserve=${bullstrReserve.totalLamports}`
-  );
+  const fallbackReserveLamports = BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
+  const totalLamports = permanentReserveLamports + (tokenReserveLamports > 0n ? tokenReserveLamports : fallbackReserveLamports);
+  console.log(`[RESERVE] combined token payout reserve: total=${totalLamports}, permanent=${permanentReserveLamports}`);
   return totalLamports;
 }
 

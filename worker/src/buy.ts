@@ -153,6 +153,6 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
   return buyToken(epochId, config.rewardTokenMint, "ANSEM", explicitReserveLamports, maxSwapLamports);
 }
 
-export async function buyBullstr(epochId: string, explicitReserveLamports?: bigint, maxSwapLamports?: bigint) {
-  return buyToken(epochId, config.sourceTokenMint, "BULLSTR", explicitReserveLamports, maxSwapLamports);
+export async function buyIndexToken(epochId: string, explicitReserveLamports?: bigint, maxSwapLamports?: bigint) {
+  return buyToken(epochId, config.sourceTokenMint, "AI6900", explicitReserveLamports, maxSwapLamports);
 }

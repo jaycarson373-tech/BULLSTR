@@ -52,15 +52,16 @@ function canonicalPoolPda(mint: PublicKey) {
   return pumpAmmPda([Buffer.from("pool"), index, poolAuthority.toBuffer(), mint.toBuffer(), NATIVE_MINT.toBuffer()]);
 }
 
-function excludedWallets(mintAuthority: PublicKey | null) {
+function excludedWallets(mint: PublicKey, mintAuthority: PublicKey | null) {
   const excluded = new Set<string>();
+  addExcluded(excluded, mint);
   addExcluded(excluded, config.sourceTokenMint);
   addExcluded(excluded, config.rewardTokenMint);
   addExcluded(excluded, treasuryKeypair().publicKey);
   addExcluded(excluded, mintAuthority);
-  addExcluded(excluded, bondingCurvePda(config.sourceTokenMint));
-  addExcluded(excluded, bondingCurveV2Pda(config.sourceTokenMint));
-  addExcluded(excluded, canonicalPoolPda(config.sourceTokenMint));
+  addExcluded(excluded, bondingCurvePda(mint));
+  addExcluded(excluded, bondingCurveV2Pda(mint));
+  addExcluded(excluded, canonicalPoolPda(mint));
   for (const wallet of config.excludeWallets) addExcluded(excluded, wallet);
   return excluded;
 }
@@ -93,17 +94,17 @@ export function selectRewardRecipients(epochId: string, holders: Holder[]) {
   return recipients;
 }
 
-export async function snapshotSourceHolders(): Promise<Holder[]> {
-  const tokenProgram = await tokenProgramForMint(config.sourceTokenMint);
-  const supply = await connection.getTokenSupply(config.sourceTokenMint, "confirmed");
+export async function snapshotTokenHolders(mint: PublicKey, label = "token"): Promise<Holder[]> {
+  const tokenProgram = await tokenProgramForMint(mint);
+  const supply = await connection.getTokenSupply(mint, "confirmed");
   const rawSupply = BigInt(supply.value.amount);
-  if (rawSupply <= 0n) throw new Error(`Source token supply is zero: ${config.sourceTokenMint.toBase58()}`);
+  if (rawSupply <= 0n) throw new Error(`${label} supply is zero: ${mint.toBase58()}`);
 
   const filters = tokenProgram.equals(TOKEN_PROGRAM_ID)
-    ? [{ dataSize: 165 }, { memcmp: { offset: 0, bytes: config.sourceTokenMint.toBase58() } }]
-    : [{ memcmp: { offset: 0, bytes: config.sourceTokenMint.toBase58() } }];
+    ? [{ dataSize: 165 }, { memcmp: { offset: 0, bytes: mint.toBase58() } }]
+    : [{ memcmp: { offset: 0, bytes: mint.toBase58() } }];
   const accounts = await connection.getParsedProgramAccounts(tokenProgram, { filters });
-  console.log(`holder query returned ${accounts.length} token accounts for mint ${config.sourceTokenMint.toBase58()}`);
+  console.log(`holder query returned ${accounts.length} token accounts for ${label} mint ${mint.toBase58()}`);
   console.log(`mint decimals: ${supply.value.decimals}`);
 
   const balances = new Map<string, bigint>();
@@ -138,10 +139,14 @@ export async function snapshotSourceHolders(): Promise<Holder[]> {
   return aggregated.sort((a, b) => (a.rawBalance === b.rawBalance ? 0 : a.rawBalance > b.rawBalance ? -1 : 1));
 }
 
+export async function snapshotSourceHolders(): Promise<Holder[]> {
+  return snapshotTokenHolders(config.sourceTokenMint, "source");
+}
+
 export async function eligibleHoldersFromSnapshot(holders: Holder[]): Promise<Holder[]> {
   const tokenProgram = await tokenProgramForMint(config.sourceTokenMint);
   const mintInfo = await getMint(connection, config.sourceTokenMint, "confirmed", tokenProgram);
-  const excluded = excludedWallets(mintInfo.mintAuthority);
+  const excluded = excludedWallets(config.sourceTokenMint, mintInfo.mintAuthority);
   return holders
     .filter((holder) => holder.uiBalance >= config.eligibilityMin)
     .filter((holder) => !excluded.has(holder.wallet))
@@ -157,4 +162,14 @@ export async function eligibleHoldersFromSnapshot(holders: Holder[]): Promise<Ho
 
 export async function snapshotEligibleHolders(): Promise<Holder[]> {
   return eligibleHoldersFromSnapshot(await snapshotSourceHolders());
+}
+
+export async function topHoldersForMint(mint: PublicKey, limit: number, label = "token"): Promise<Holder[]> {
+  const tokenProgram = await tokenProgramForMint(mint);
+  const mintInfo = await getMint(connection, mint, "confirmed", tokenProgram);
+  const excluded = excludedWallets(mint, mintInfo.mintAuthority);
+  return (await snapshotTokenHolders(mint, label))
+    .filter((holder) => holder.rawBalance > 0n)
+    .filter((holder) => !excluded.has(holder.wallet))
+    .slice(0, limit);
 }
