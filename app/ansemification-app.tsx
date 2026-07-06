@@ -124,7 +124,7 @@ export function AnsemIndexApp() {
 
       <header className="ai-nav">
         <a className="ai-brand" href="#top" aria-label="ANSEM INDEX 6900 home">
-          <span className="ai-brand-mark">6900</span>
+          <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
           <span>ANSEM INDEX 6900</span>
         </a>
         <nav aria-label="Primary navigation">
@@ -319,7 +319,7 @@ export function AnsemIndexApp() {
       </main>
 
       <footer className="ai-footer">
-        <span className="ai-brand-mark">6900</span>
+        <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
         <span>ANSEM INDEX 6900</span>
       </footer>
     </div>

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     siteName: "ANSEM INDEX 6900",
     images: [
       {
-        url: "/brand/index-preview.svg",
+        url: "/brand/index-preview.png",
         width: 1200,
         height: 630,
         alt: "ANSEM INDEX 6900"
@@ -25,11 +25,10 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ANSEM INDEX 6900",
     description: "$AI6900 is an AI-powered attention index tracking the strongest narratives across Crypto Twitter.",
-    images: ["/brand/index-preview.svg"]
+    images: ["/brand/index-preview.png"]
   },
   icons: {
     icon: [
-      { url: "/brand/index-icon.svg", type: "image/svg+xml" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },

@@ -66,7 +66,9 @@ export function AppPolish() {
 
   return (
     <div className={`loading-screen${leaving ? " is-leaving" : ""}`}>
-      <div className="loader-index-mark" aria-hidden="true">6900</div>
+      <div className="loader-index-mark" aria-hidden="true">
+        <img src="/brand/ai6900-logo.png" alt="" />
+      </div>
       <div className="loader-text">ANSEM INDEX 6900</div>
       <div className="loader-line" aria-hidden="true">
         <span />
