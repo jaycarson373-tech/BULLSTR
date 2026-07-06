@@ -4013,121 +4013,97 @@ body { background: var(--index-black); color: var(--index-white); }
 .ai-footer .ai-brand-mark { width: 52px; height: 52px; }
 
 .index-animated-bg {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; opacity: 0.82;
-  background:
-    radial-gradient(circle at 50% 16%, rgba(124, 255, 59, 0.11), transparent 28rem),
-    radial-gradient(circle at 85% 28%, rgba(229, 172, 40, 0.1), transparent 22rem),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.92));
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.8;
+  background: #020602;
 }
 .index-animated-bg::before,
 .index-animated-bg::after {
-  content: ""; position: absolute; inset: 0; z-index: 4; pointer-events: none;
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
 }
 .index-animated-bg::before {
-  opacity: 0.14;
-  background-image: radial-gradient(rgba(247, 247, 247, 0.55) 0.7px, transparent 1px);
+  opacity: 0.12;
+  background-image: radial-gradient(rgba(247, 247, 247, 0.55) 0.65px, transparent 1px);
   background-size: 5px 5px;
   mix-blend-mode: screen;
-  animation: dustFloat 26s ease-in-out infinite;
+  animation: indexDust 30s ease-in-out infinite;
 }
 .index-animated-bg::after {
-  opacity: 0.1;
-  background: repeating-linear-gradient(180deg, transparent 0 6px, rgba(124, 255, 59, 0.18) 7px, transparent 8px);
+  opacity: 0.08;
+  background: repeating-linear-gradient(180deg, transparent 0 7px, rgba(124, 255, 59, 0.18) 8px, transparent 9px);
   mix-blend-mode: screen;
 }
-.index-bg-shade {
-  position: absolute; inset: 0; z-index: 8;
-  background:
-    radial-gradient(circle at 50% 18%, transparent 0 20rem, rgba(0, 0, 0, 0.22) 42rem),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.36) 45%, rgba(0, 0, 0, 0.74)),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.42) 12%, rgba(0, 0, 0, 0.36) 38%, rgba(0, 0, 0, 0.58) 100%);
+.index-bg-images {
+  position: absolute;
+  inset: -8%;
+  z-index: 1;
 }
-.index-art-scenes {
-  position: absolute; inset: 0; z-index: 1; overflow: hidden;
-}
-.index-art-scene {
-  position: absolute; top: var(--scene-top); left: -8%; right: -8%; height: var(--scene-height);
+.index-bg-image {
+  position: absolute;
+  width: min(52vw, 760px);
+  min-width: 520px;
+  aspect-ratio: 1;
+  border-radius: 28px;
   background-position: center;
-  background-size: cover;
   background-repeat: no-repeat;
-  opacity: var(--scene-opacity);
-  filter: blur(var(--scene-blur)) saturate(1.2) contrast(1.08);
-  transform: translate3d(var(--scene-move-x), var(--scene-move-y), 0) scale(var(--scene-scale)) rotate(-0.35deg);
-  transform-origin: center;
-  will-change: transform, opacity;
-  animation: sceneDrift var(--scene-drift) ease-in-out infinite;
-  animation-delay: var(--scene-delay);
-  mask-image: linear-gradient(to bottom, transparent, black 15%, black 76%, transparent);
-}
-.index-art-scene::before {
-  content: ""; position: absolute; inset: -18%;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(124, 255, 59, 0.2), transparent 32%),
-    linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.58));
+  background-size: cover;
+  opacity: 0.8;
+  filter: saturate(1.18) contrast(1.08) brightness(0.82);
   mix-blend-mode: screen;
-  opacity: 0.5;
-  animation: glowBreathe 22s ease-in-out infinite;
+  box-shadow: 0 0 90px rgba(124, 255, 59, 0.2);
+  transform: translate3d(0, 0, 0) scale(1.02) rotate(-0.35deg);
+  will-change: transform, opacity;
+  animation: indexBgFloat 34s ease-in-out infinite;
 }
-.index-art-scene::after {
-  content: ""; position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.34));
+.index-bg-image.is-hero {
+  top: -4%;
+  right: -3%;
+  width: min(56vw, 820px);
+  animation-duration: 34s;
 }
-.index-matrix {
-  position: absolute; inset: -8% 0; z-index: 2; display: grid; grid-template-columns: repeat(18, 1fr); gap: 2vw;
-  opacity: 0.32; transform: rotate(-7deg) scale(1.12);
-  mask-image: radial-gradient(circle at 50% 36%, black, transparent 78%);
+.index-bg-image.is-bull {
+  top: 18%;
+  left: -8%;
+  animation-duration: 30s;
+  animation-delay: -8s;
 }
-.index-matrix span {
-  --fall-distance: 34vh;
-  color: rgba(124, 255, 59, 0.72); font-family: "SFMono-Regular", Consolas, monospace; font-size: clamp(0.7rem, 1vw, 1rem); font-weight: 800; line-height: 1.8;
-  writing-mode: vertical-rl; text-shadow: 0 0 12px rgba(124, 255, 59, 0.42);
-  animation: matrixFall calc(10s + (var(--column) * 0.45s)) linear infinite;
-  animation-delay: calc(var(--column) * -0.8s);
+.index-bg-image.is-vortex {
+  right: -10%;
+  bottom: 4%;
+  width: min(52vw, 760px);
+  animation-duration: 38s;
+  animation-delay: -14s;
 }
-.index-ticker-wall {
-  position: absolute; inset: 5% -18% auto -18%; z-index: 3; display: grid; gap: 18px; transform: rotate(-6deg); opacity: 0.34;
+.index-bg-image.is-mountains {
+  bottom: -8%;
+  left: 10%;
+  width: min(58vw, 820px);
+  animation-duration: 42s;
+  animation-delay: -20s;
 }
-.index-ticker-wall span {
-  color: rgba(124, 255, 59, 0.54); font-family: "SFMono-Regular", Consolas, monospace; font-size: clamp(1.3rem, 3vw, 3.4rem); font-weight: 950; letter-spacing: 0.02em; white-space: nowrap;
-  text-shadow: 0 0 20px rgba(124, 255, 59, 0.42);
-  animation: tickerSlide 28s linear infinite;
+.index-bg-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  background:
+    radial-gradient(circle at 50% 15%, rgba(124, 255, 59, 0.06), transparent 30rem),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.32) 44%, rgba(0, 0, 0, 0.66)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.28) 30%, rgba(0, 0, 0, 0.48) 100%);
 }
-.index-ticker-wall span:nth-child(even) { animation-direction: reverse; color: rgba(229, 172, 40, 0.28); }
-.index-chart-glow {
-  position: absolute; left: -6%; right: -6%; bottom: 3%; z-index: 3; height: 54vh; opacity: 0.56; filter: blur(0.2px) drop-shadow(0 0 26px rgba(124, 255, 59, 0.36));
-}
-.index-chart-glow svg { width: 100%; height: 100%; }
-.index-chart-glow path { fill: none; stroke: rgba(124, 255, 59, 0.64); stroke-width: 5; stroke-dasharray: 1100; animation: chartPulse 11s ease-in-out infinite; }
-.index-chart-glow path:nth-child(2) { stroke: rgba(229, 172, 40, 0.32); stroke-width: 3; animation-delay: -4s; }
-.index-arrow-field span {
-  position: absolute; z-index: 3; left: var(--left); bottom: -12%; width: 42px; height: 42px; opacity: 0.24;
-  border-top: 10px solid rgba(124, 255, 59, 0.7); border-right: 10px solid rgba(124, 255, 59, 0.7);
-  transform: rotate(-45deg); filter: blur(0.5px) drop-shadow(0 0 16px rgba(124, 255, 59, 0.5));
-  animation: arrowRise var(--arrow-duration) linear infinite;
-  animation-delay: var(--arrow-delay);
-}
-.index-coin-field { position: absolute; inset: 0; z-index: 4; }
-.index-floating-coin {
-  position: absolute; left: var(--x); top: var(--y); width: var(--size); height: var(--size); border-radius: 999px;
-  background: url("/brand/ai6900-logo.png") center / cover no-repeat;
-  opacity: var(--opacity); filter: blur(var(--blur)) drop-shadow(0 0 22px rgba(229, 172, 40, 0.36));
-  animation: coinFloat var(--duration) ease-in-out infinite; animation-delay: var(--delay);
-  transform-style: preserve-3d;
-}
-.index-floating-coin.is-dark { filter: grayscale(0.45) brightness(0.72) sepia(0.2) hue-rotate(64deg) blur(var(--blur)) drop-shadow(0 0 22px rgba(124, 255, 59, 0.34)); }
 
 @keyframes aiChartTrace { 0%, 100% { stroke-dashoffset: 0; transform: translateX(0); } 50% { stroke-dashoffset: 180; transform: translateX(-18px); } }
-@keyframes sceneDrift { 0%, 100% { translate: 0 -3px; rotate: -0.35deg; } 50% { translate: 0 5px; rotate: 0.35deg; } }
-@keyframes glowBreathe { 0%, 100% { opacity: 0.34; transform: scale(0.98); } 50% { opacity: 0.62; transform: scale(1.04); } }
-@keyframes dustFloat { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(8px, -10px, 0); } }
-@keyframes matrixFall { 0% { transform: translateY(-34vh); } 100% { transform: translateY(34vh); } }
-@keyframes tickerSlide { 0% { transform: translateX(-18%); } 100% { transform: translateX(18%); } }
-@keyframes chartPulse { 0%, 100% { stroke-dashoffset: 0; opacity: 0.4; } 50% { stroke-dashoffset: 240; opacity: 0.88; } }
-@keyframes arrowRise { 0% { transform: translateY(0) rotate(-45deg) scale(0.72); opacity: 0; } 18% { opacity: 0.24; } 100% { transform: translateY(-120vh) rotate(-45deg) scale(1.1); opacity: 0; } }
-@keyframes coinFloat { 0%, 100% { transform: translate3d(0, 0, 0) rotateZ(-8deg) rotateY(0deg); } 50% { transform: translate3d(18px, -34px, 0) rotateZ(10deg) rotateY(18deg); } }
+@keyframes indexBgFloat { 0%, 100% { transform: translate3d(0, 0, 0) scale(1.02) rotate(-0.35deg); } 50% { transform: translate3d(0, -10px, 0) scale(1.05) rotate(0.35deg); } }
+@keyframes indexDust { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(8px, -10px, 0); } }
 @media (prefers-reduced-motion: reduce) {
-  .ai-chart-line, .index-matrix span, .index-ticker-wall span, .index-chart-glow path, .index-arrow-field span, .index-floating-coin { animation: none; }
-  .index-art-scene, .index-art-scene::before, .index-animated-bg::before { animation: none; }
+  .ai-chart-line, .index-bg-image, .index-animated-bg::before { animation: none; }
   .ai-card, .ai-faq details { transition: none; }
 }
 @media (max-width: 980px) { .ai-nav { grid-template-columns: 1fr; padding: 18px 0; } .ai-nav nav, .ai-nav-meta { justify-content: flex-start; flex-wrap: wrap; } .ai-hero { grid-template-columns: 1fr; min-height: auto; padding-top: 52px; } .ai-hero-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ai-card-grid.five, .ai-culture-grid, .ai-rail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ai-culture-panel.is-cathedral { grid-row: auto; min-height: 250px; } .ai-section-head.split { grid-template-columns: 1fr; } .ai-chart { inset: auto -20% 10% 0; } }
