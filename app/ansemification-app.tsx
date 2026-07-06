@@ -4,93 +4,63 @@ import { motion, type Transition } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { AnimatedBackground } from "./animated-background";
 
-type RewardTotal = {
-  rewardAsset: string;
-  rewardAmount: number;
-  normalRewardAmount: number;
-  recipients: number;
-  latestTime: string | null;
-  latestTxSig: string | null;
-};
-
 type StatsResponse = {
-  totalEpochs: number;
-  totalRewardTotals: RewardTotal[];
-  latestEligibleHolders: number;
   nextDropTime: string;
   recentRewards: Array<{
     epoch: number;
     rewardAsset?: string;
     wallet: string;
     rewardAmount: number;
-    normalRewardAmount: number;
     time: string;
     status: string;
     txSig: string | null;
   }>;
 };
 
-type PriceResponse = {
-  priceUsd: number;
-  priceChange24h: number;
-  url: string | null;
-  updatedAt: string;
-};
-
-const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/AI6900SOL_";
-const CA = process.env.NEXT_PUBLIC_CA?.trim() || "6UHbrLBSbrUuGR3Qeu1UBAHHruAPTmvf2hsRWGYGpump";
-const BUY_URL = "https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=6UHbrLBSbrUuGR3Qeu1UBAHHruAPTmvf2hsRWGYGpump";
-const PUMP_URL = "https://pump.fun/coin/6UHbrLBSbrUuGR3Qeu1UBAHHruAPTmvf2hsRWGYGpump";
-const DEXSCREENER_URL = "https://dexscreener.com/solana/6UHbrLBSbrUuGR3Qeu1UBAHHruAPTmvf2hsRWGYGpump";
-const COMMUNITY_URL = "https://x.com/i/communities/2025622274150215996";
-const REFRESH_MS = 12_000;
+const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "#";
+const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim() || "#";
+const DEXSCREENER_URL = process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || "#";
 const EPOCH_MS = 5 * 60 * 1000;
 
 const emptyStats: StatsResponse = {
-  totalEpochs: 0,
-  totalRewardTotals: [],
-  latestEligibleHolders: 0,
   nextDropTime: new Date().toISOString(),
   recentRewards: []
 };
 
-const emptyPrice: PriceResponse = {
-  priceUsd: 0,
-  priceChange24h: 0,
-  url: null,
-  updatedAt: new Date().toISOString()
-};
-
-const signalCards = [
-  ["Hold $AI", "Eligible $AI holders receive ANSEM rewards."],
-  ["Buy ANSEM", "Creator fees buy ANSEM every epoch."],
-  ["Reward $AI Holders", "ANSEM goes back to eligible $AI holders."],
-  ["Buy $AI", "Creator fees also buy the source token."],
-  ["Reward ANSEM Holders", "Top ANSEM holders receive $AI."]
-];
-
-const terminalLines = ["Waiting for fees...", "Checking $AI holders...", "Checking ANSEM holders...", "Waiting for reward tx..."];
-const feeRails = [
-  ["50%", "$AI Rewards", "Buys $AI and rewards top ANSEM holders."],
-  ["50%", "ANSEM Rewards", "Buys ANSEM and airdrops to $AI holders."]
-];
-const memeImages = [
-  "/brand/memes/ai-meme-1.png",
-  "/brand/memes/ai-meme-2.png",
-  "/brand/memes/ai-meme-3.png",
-  "/brand/memes/ai-meme-4.png",
-  "/brand/memes/ai-meme-5.png",
-  "/brand/memes/ai-meme-6.png"
-];
-
-const smoothTransition: Transition = { duration: 0.7, ease: [0.22, 1, 0.36, 1] };
-
+const smoothTransition: Transition = { duration: 0.75, ease: [0.22, 1, 0.36, 1] };
 const fadeUp = {
   initial: { opacity: 0, y: 22, filter: "blur(10px)" },
   whileInView: { opacity: 1, y: 0, filter: "blur(0px)" },
   viewport: { once: true, margin: "-80px" },
   transition: smoothTransition
 };
+
+const steps = [
+  ["01", "Creator fees accumulate."],
+  ["02", "65% automatically buys $ANSEM. Distributed to eligible holders."],
+  ["03", "35% funds holder expansion. The protocol continuously airdrops new wallets to increase the ecosystem."],
+  ["04", "Repeat forever. More holders. More attention. More conviction."]
+];
+
+const dashboardCards = [
+  ["Total $ANSEM Distributed", "0"],
+  ["Eligible Holders", "0"],
+  ["Target Holders", "10,000"],
+  ["Current Holders", "0"],
+  ["Progress to 10,000", "0%"],
+  ["Next Distribution", "05:00"],
+  ["Latest Distribution TX", "Waiting"],
+  ["System Status", "Initializing"]
+];
+
+const liveDashboardCards = [
+  ["Total ANSEM Distributed", "0"],
+  ["Total Wallets Airdropped", "0"],
+  ["Current Holder Count", "0"],
+  ["Progress To 10,000", "0%"],
+  ["Latest TX", "Waiting"],
+  ["Next Distribution", "05:00"]
+];
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -102,152 +72,87 @@ async function getJson<T>(path: string, fallback: T): Promise<T> {
   }
 }
 
+function fallbackNextDropMs() {
+  return Math.ceil(Date.now() / EPOCH_MS) * EPOCH_MS;
+}
+
 function formatCountdown(totalSeconds: number) {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 }
 
-function fallbackNextDropMs() {
-  return Math.ceil(Date.now() / EPOCH_MS) * EPOCH_MS;
-}
-
-function formatNumber(value: number, maximumFractionDigits = 2) {
-  return value.toLocaleString(undefined, { maximumFractionDigits });
-}
-
-function formatToken(value: number, symbol: string, maximumFractionDigits = 2) {
-  return `${formatNumber(value, maximumFractionDigits)} ${symbol}`;
-}
-
-function formatUsd(value: number) {
-  return `$${value.toLocaleString(undefined, { maximumFractionDigits: value >= 1 ? 4 : 8 })}`;
-}
-
 function formatTime(value: string) {
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "–" : date.toLocaleString();
+  return Number.isNaN(date.getTime()) ? "Pending" : date.toLocaleString();
 }
 
-function compactAddress(address: string) {
-  if (address.length <= 12) return address;
-  return `${address.slice(0, 4)}...${address.slice(-4)}`;
+function compactTx(tx: string | null) {
+  if (!tx) return "Waiting";
+  return `${tx.slice(0, 4)}...${tx.slice(-4)}`;
 }
 
-function assetKey(asset: string | undefined) {
-  return (asset ?? "").replace(/^\$/, "").trim().toUpperCase();
-}
-
-function rewardTotalAmount(totals: RewardTotal[], keys: string[]) {
-  const wanted = new Set(keys.map(assetKey));
-  return totals.reduce((sum, total) => (wanted.has(assetKey(total.rewardAsset)) ? sum + total.rewardAmount : sum), 0);
-}
-
-function displayAsset(asset: string | undefined) {
-  const key = assetKey(asset);
-  if (key === "AI6900") return "$AI";
-  if (key === "AI") return "$AI";
-  if (key === "ANSEM") return "$ANSEM";
-  return asset ? `$${asset.replace(/^\$/, "")}` : "$ANSEM";
-}
-
-function IndexChart() {
+function StrategyChart() {
   return (
-    <div className="ai-chart" aria-hidden="true">
+    <div className="ai-chart strategy-chart" aria-hidden="true">
       <svg viewBox="0 0 900 420" preserveAspectRatio="none">
         <defs>
-          <linearGradient id="chartLine" x1="0" x2="1">
-            <stop offset="0%" stopColor="rgba(124, 255, 59, 0)" />
-            <stop offset="45%" stopColor="rgba(124, 255, 59, 0.72)" />
-            <stop offset="100%" stopColor="rgba(124, 255, 59, 0.12)" />
+          <linearGradient id="strategyLine" x1="0" x2="1">
+            <stop offset="0%" stopColor="rgba(255, 122, 0, 0)" />
+            <stop offset="50%" stopColor="rgba(255, 122, 0, 0.82)" />
+            <stop offset="100%" stopColor="rgba(255, 122, 0, 0.12)" />
           </linearGradient>
-          <linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="rgba(124, 255, 59, 0.18)" />
-            <stop offset="100%" stopColor="rgba(124, 255, 59, 0)" />
+          <linearGradient id="strategyFill" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor="rgba(255, 122, 0, 0.16)" />
+            <stop offset="100%" stopColor="rgba(255, 122, 0, 0)" />
           </linearGradient>
         </defs>
-        <path
-          className="ai-chart-fill"
-          d="M0 315 C80 290 120 248 190 266 C285 291 323 196 406 208 C504 222 520 124 628 142 C716 157 760 87 900 104 L900 420 L0 420 Z"
-        />
-        <path
-          className="ai-chart-line"
-          d="M0 315 C80 290 120 248 190 266 C285 291 323 196 406 208 C504 222 520 124 628 142 C716 157 760 87 900 104"
-        />
+        <path className="ai-chart-fill" d="M0 330 C90 295 135 280 215 258 C320 230 372 170 465 190 C560 210 620 122 700 136 C780 150 820 112 900 82 L900 420 L0 420 Z" />
+        <path className="ai-chart-line" d="M0 330 C90 295 135 280 215 258 C320 230 372 170 465 190 C560 210 620 122 700 136 C780 150 820 112 900 82" />
       </svg>
     </div>
   );
 }
 
-function TerminalActivity() {
-  const [lineIndex, setLineIndex] = useState(0);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setLineIndex((value) => (value + 1) % terminalLines.length);
-    }, 1800);
-    return () => window.clearInterval(timer);
-  }, []);
-
+function DistributionTable({ rewards }: { rewards: StatsResponse["recentRewards"] }) {
   return (
-    <div className="ai-terminal">
-      <div className="ai-terminal-top">
-        <span>LIVE ACTIVITY</span>
-        <span>REWARDS: WAITING</span>
+    <div className="ai-table ai-transactions">
+      <div className="ai-transaction-head">
+        <span>Time</span>
+        <span>Amount</span>
+        <span>Recipients</span>
+        <span>TX</span>
+        <span>Status</span>
       </div>
-      <div className="ai-terminal-feed">
-        {terminalLines.map((line, index) => (
-          <div className={index === lineIndex ? "is-active" : ""} key={line}>
-            <span>{new Date(0).toISOString().slice(11, 19)}</span>
-            <strong>{line}</strong>
+      {rewards.length ? (
+        rewards.slice(0, 10).map((reward) => (
+          <div className="ai-transaction-row" key={`${reward.epoch}-${reward.wallet}-${reward.time}-${reward.txSig ?? "pending"}`}>
+            <span>{formatTime(reward.time)}</span>
+            <span>{reward.rewardAmount.toLocaleString(undefined, { maximumFractionDigits: 4 })} {reward.rewardAsset ?? "ANSEM"}</span>
+            <span>1</span>
+            {reward.txSig ? <a href={`https://solscan.io/tx/${reward.txSig}`} target="_blank" rel="noreferrer">{compactTx(reward.txSig)}</a> : <span>Waiting</span>}
+            <span>{reward.status}</span>
           </div>
-        ))}
-      </div>
+        ))
+      ) : (
+        <div className="ai-empty">Waiting for first distribution...</div>
+      )}
     </div>
-  );
-}
-
-function MemeConveyor() {
-  const belt = [...memeImages, ...memeImages];
-
-  return (
-    <motion.section className="ai-meme-section" aria-label="AI6900 meme conveyor" {...fadeUp}>
-      <div className="ai-meme-conveyor" aria-label="AI6900 meme gallery">
-        <div className="ai-meme-track">
-          {belt.map((src, index) => (
-            <figure className="ai-meme-card" key={`${src}-${index}`}>
-              <a href={src} download>
-                <img src={src} alt="" loading="lazy" />
-              </a>
-            </figure>
-          ))}
-        </div>
-      </div>
-    </motion.section>
   );
 }
 
 export function AnsemIndexApp() {
   const [stats, setStats] = useState<StatsResponse>(emptyStats);
-  const [price, setPrice] = useState<PriceResponse>(emptyPrice);
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     let active = true;
-
     const load = async () => {
-      const [nextStats, nextPrice] = await Promise.all([
-        getJson<StatsResponse>("/api/stats", emptyStats),
-        getJson<PriceResponse>("/api/ansem-price", emptyPrice)
-      ]);
-
-      if (!active) return;
-      setStats(nextStats);
-      setPrice(nextPrice);
+      const nextStats = await getJson<StatsResponse>("/api/stats", emptyStats);
+      if (active) setStats(nextStats);
     };
-
     load();
-    const refreshTimer = window.setInterval(load, REFRESH_MS);
+    const refreshTimer = window.setInterval(load, 12_000);
     return () => {
       active = false;
       window.clearInterval(refreshTimer);
@@ -259,39 +164,28 @@ export function AnsemIndexApp() {
     return () => window.clearInterval(timer);
   }, []);
 
-  const nextDropMs = Math.max(Date.parse(stats.nextDropTime) || 0, fallbackNextDropMs());
-  const countdown = formatCountdown(Math.max(0, Math.ceil((nextDropMs - now) / 1000)));
-  const totalAnsemDistributed = rewardTotalAmount(stats.totalRewardTotals, ["ANSEM"]);
-  const totalAiDistributed = rewardTotalAmount(stats.totalRewardTotals, ["AI", "AI6900"]);
-  const transactionCount = stats.recentRewards.filter((reward) => reward.txSig).length;
+  const countdown = formatCountdown(Math.max(0, Math.ceil((Math.max(Date.parse(stats.nextDropTime) || 0, fallbackNextDropMs()) - now) / 1000)));
   const heroMetrics = useMemo(
-    () => [
-      { label: "$AI DISTRIBUTED TO ANSEM HOLDERS", value: formatToken(totalAiDistributed, "$AI") },
-      { label: "$ANSEM DISTRIBUTED TO $AI HOLDERS", value: formatToken(totalAnsemDistributed, "$ANSEM") },
-      { label: "ELIGIBLE $AI HOLDERS", value: "0" },
-      { label: "ANSEM PRICE", value: formatUsd(price.priceUsd) },
-      { label: "NEXT EPOCH", value: countdown },
-      { label: "RECENT TXS", value: formatNumber(transactionCount, 0) }
-    ],
-    [countdown, price.priceUsd, totalAiDistributed, totalAnsemDistributed, transactionCount]
+    () => dashboardCards.map(([label, value]) => (label === "Next Distribution" ? { label, value: countdown } : { label, value })),
+    [countdown]
   );
 
   return (
-    <div className="ai-index-app">
+    <div className="ai-index-app strategy-app">
       <AnimatedBackground />
 
       <header className="ai-nav">
-        <a className="ai-brand" href="#top" aria-label="ANSEM INDEX 6900 home">
-          <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-          <span>ANSEM INDEX 6900</span>
+        <a className="ai-brand" href="#top" aria-label="ANSEM STRATEGY home">
+          <span className="strategy-brand-mark">AS</span>
+          <span>ANSEM STRATEGY</span>
         </a>
         <nav aria-label="Primary navigation">
-          <a href="/dashboard">Dashboard</a>
-          <a href="#transactions">Transactions</a>
+          <a href="#strategy">Strategy</a>
+          <a href="#dashboard">Dashboard</a>
           <a href="#faq">FAQ</a>
         </nav>
         <div className="ai-nav-meta">
-          <span className="ai-ca-chip">CA: {CA}</span>
+          <span className="strategy-ticker">$ANSTR</span>
           <a href={X_URL} target="_blank" rel="noreferrer">X</a>
         </div>
       </header>
@@ -299,15 +193,12 @@ export function AnsemIndexApp() {
       <main>
         <section className="ai-hero" id="top">
           <motion.div className="ai-hero-copy" {...fadeUp}>
-            <span className="ai-kicker">ANSEM INDEX</span>
-            <h1>ANSEM INDEX 6900</h1>
-            <p>
-              The Ansem Index routes creator fees through a 50/50 reward rail: half to ANSEM for $AI holders,
-              half to $AI for top ANSEM holders.
-            </p>
+            <span className="ai-kicker">AUTOMATED CONVICTION STRATEGY</span>
+            <h1>ANSEM STRATEGY</h1>
+            <p>The first automated strategy built around growing the Black Bull economy.</p>
             <div className="ai-actions">
-              <a href="/dashboard">View Dashboard</a>
-              <a href="#transactions">View Transactions</a>
+              <a href={BUY_URL} target="_blank" rel="noreferrer">Buy $ANSTR</a>
+              <a href="#strategy">View Strategy</a>
             </div>
           </motion.div>
 
@@ -321,115 +212,95 @@ export function AnsemIndexApp() {
           </motion.aside>
         </section>
 
-        <motion.section className="ai-section" id="how" {...fadeUp}>
+        <motion.section className="ai-section" id="strategy" {...fadeUp}>
           <div className="ai-section-head">
-            <span className="ai-kicker">REWARD STACK</span>
-            <h2>How Rewards Work</h2>
+            <span className="ai-kicker">HOW THE STRATEGY WORKS</span>
+            <h2>Conviction, automated.</h2>
           </div>
-          <div className="ai-card-grid five">
-            {signalCards.map(([title, copy]) => (
-              <article className="ai-card" key={title}>
-                <small>{title.toUpperCase()}</small>
+          <div className="ai-card-grid four">
+            {steps.map(([number, copy]) => (
+              <article className="ai-card" key={number}>
+                <small>{number}</small>
                 <p>{copy}</p>
               </article>
             ))}
           </div>
         </motion.section>
 
-        <motion.section className="ai-section" id="rails" {...fadeUp}>
-          <div className="ai-section-head">
-            <span className="ai-kicker">CREATOR FEE ROUTING</span>
-            <h2>Two rails. Live rewards.</h2>
-          </div>
-          <div className="ai-rail-grid">
-            {feeRails.map(([value, title, copy]) => (
-              <article className="ai-rail-card" key={title}>
-                <b>{value}</b>
-                <span>{title}</span>
-                <p>{copy}</p>
-              </article>
-            ))}
-          </div>
-        </motion.section>
-
-        <motion.section className="ai-section" id="transactions" {...fadeUp}>
+        <motion.section className="ai-section holder-strategy" {...fadeUp}>
           <div className="ai-section-head split">
             <div>
-              <span className="ai-kicker">RECENT TRANSACTIONS</span>
-              <h2>Reward Transactions</h2>
+              <span className="ai-kicker">THE HOLDER STRATEGY</span>
+              <h2>10,000 Holder Goal</h2>
             </div>
+            <span className="ai-status">0% COMPLETE</span>
           </div>
-          <div className="ai-table ai-transactions">
-            <div className="ai-transaction-head">
-              <span>Time</span>
-              <span>Wallet</span>
-              <span>Asset</span>
-              <span>Amount</span>
-              <span>Tx</span>
+          <div className="holder-panel">
+            <div className="holder-progress"><span /></div>
+            <div className="holder-stats">
+              <article><span>Current Holders</span><strong>0</strong></article>
+              <article><span>Remaining Holders</span><strong>10,000</strong></article>
+              <article><span>Estimated SOL Required</span><strong>20 SOL</strong></article>
             </div>
-            {stats.recentRewards.length ? (
-              stats.recentRewards.slice(0, 12).map((reward) => (
-                <div className="ai-transaction-row" key={`${reward.epoch}-${reward.wallet}-${reward.time}-${reward.rewardAsset ?? "ANSEM"}`}>
-                  <span>{formatTime(reward.time)}</span>
-                  <span className="mono">{compactAddress(reward.wallet)}</span>
-                  <span>{displayAsset(reward.rewardAsset)}</span>
-                  <span className="mono">{formatToken(reward.rewardAmount, displayAsset(reward.rewardAsset), 4)}</span>
-                  {reward.txSig ? (
-                    <a href={`https://solscan.io/tx/${reward.txSig}`} target="_blank" rel="noreferrer">Solscan</a>
-                  ) : (
-                    <span>Pending</span>
-                  )}
-                </div>
-              ))
-            ) : (
-              <div className="ai-empty">No reward transactions yet.</div>
-            )}
+            <p>Growing the holder base isn't marketing. It's the strategy.</p>
+          </div>
+        </motion.section>
+
+        <motion.section className="ai-section" id="distributions" {...fadeUp}>
+          <div className="ai-section-head split">
+            <div>
+              <span className="ai-kicker">LIVE DISTRIBUTIONS</span>
+              <h2>Proof Table</h2>
+            </div>
+            <span className="ai-status">WAITING</span>
+          </div>
+          <DistributionTable rewards={[]} />
+        </motion.section>
+
+        <motion.section className="ai-section" id="dashboard" {...fadeUp}>
+          <div className="ai-section-head">
+            <span className="ai-kicker">LIVE DASHBOARD</span>
+            <h2>Strategy metrics.</h2>
+          </div>
+          <div className="ai-dashboard-grid">
+            {liveDashboardCards.map(([label, value]) => (
+              <article className="ai-hero-metric" key={label}>
+                <span>{label}</span>
+                <strong>{label === "Next Distribution" ? countdown : value}</strong>
+              </article>
+            ))}
           </div>
         </motion.section>
 
         <motion.section className="ai-thesis" {...fadeUp}>
-          <span className="ai-kicker">WHY IT EXISTS</span>
-          <h2>Hold $AI. Earn ANSEM. Top ANSEM holders earn $AI.</h2>
-          <p>The reward rails run every epoch when fees are available.</p>
-        </motion.section>
-
-        <motion.section className="ai-section" id="price" {...fadeUp}>
-          <div className="ai-section-head split">
-            <div>
-              <span className="ai-kicker">ANSEM PRICE</span>
-              <h2>Live ANSEM Chart</h2>
-            </div>
-            <span className="ai-status">DEXSCREENER</span>
-          </div>
-          <div className="ai-performance-card">
-            <IndexChart />
-            <div className="ai-performance-zero">{formatUsd(price.priceUsd)}</div>
-            <div className="ai-price-meta">
-              <span>ANSEM / USD</span>
-              <strong>{price.priceChange24h >= 0 ? "+" : ""}{formatNumber(price.priceChange24h, 2)}% 24H</strong>
-              {price.url ? <a href={price.url} target="_blank" rel="noreferrer">Open chart</a> : null}
-            </div>
-          </div>
+          <span className="ai-kicker">WHY THIS EXISTS</span>
+          <h2>Most projects buy back. We build holders.</h2>
+          <p>More holders. More conviction. More attention. The strategy compounds itself.</p>
         </motion.section>
 
         <motion.section className="ai-section" {...fadeUp}>
-          <TerminalActivity />
+          <div className="ai-performance-card">
+            <StrategyChart />
+            <div className="ai-performance-zero">65 / 35</div>
+            <div className="ai-price-meta">
+              <span>65% buys ANSEM</span>
+              <strong>35% expands holders</strong>
+            </div>
+          </div>
         </motion.section>
-
-        <MemeConveyor />
 
         <motion.section className="ai-section" id="faq" {...fadeUp}>
           <div className="ai-section-head">
             <span className="ai-kicker">FAQ</span>
-            <h2>Ansem Index Questions</h2>
+            <h2>Ansem Strategy Questions</h2>
           </div>
           <div className="ai-faq">
             {[
-              ["What is the Ansem Index?", "Ansem Index is a 50/50 reward system built around ANSEM and $AI."],
-              ["How does it work?", "Fees buy ANSEM for $AI holders and buy $AI for top ANSEM holders."],
-              ["How often does it run?", "Reward epochs are prepared for five-minute cycles."],
-              ["Where do transactions show?", "Settled reward transactions appear in the transaction table with Solscan links."],
-              ["What is the ticker?", "The ticker is $AI."]
+              ["Why 65%?", "65% of creator fees is dedicated to continuously buying $ANSEM and distributing it to eligible holders."],
+              ["Why 35%?", "35% is reserved for holder expansion so the ecosystem can keep reaching new wallets."],
+              ["Why 10,000 holders?", "The goal is to make distribution itself part of the strategy."],
+              ["How do distributions work?", "The system runs on timed epochs and displays live proof once connected."],
+              ["Who qualifies?", "Eligibility is handled by the strategy rules and existing wallet logic."]
             ].map(([question, answer]) => (
               <details key={question}>
                 <summary>{question}</summary>
@@ -442,14 +313,12 @@ export function AnsemIndexApp() {
 
       <footer className="ai-footer">
         <div className="ai-footer-brand">
-          <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-          <span>ANSEM INDEX 6900</span>
+          <span className="strategy-brand-mark">AS</span>
+          <span>ANSEM STRATEGY</span>
         </div>
         <div className="ai-footer-links">
-          <a href={COMMUNITY_URL} target="_blank" rel="noreferrer">X COMMUNITY</a>
           <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">DEXSCREENER</a>
-          <a href={PUMP_URL} target="_blank" rel="noreferrer">PUMP.FUN</a>
-          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $AI</a>
+          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $ANSTR</a>
         </div>
       </footer>
     </div>
@@ -457,157 +326,5 @@ export function AnsemIndexApp() {
 }
 
 export function RewardsDashboardApp() {
-  const [stats, setStats] = useState<StatsResponse>(emptyStats);
-  const [price, setPrice] = useState<PriceResponse>(emptyPrice);
-  const [now, setNow] = useState(() => Date.now());
-
-  useEffect(() => {
-    let active = true;
-
-    const load = async () => {
-      const [nextStats, nextPrice] = await Promise.all([
-        getJson<StatsResponse>("/api/stats", emptyStats),
-        getJson<PriceResponse>("/api/ansem-price", emptyPrice)
-      ]);
-
-      if (!active) return;
-      setStats(nextStats);
-      setPrice(nextPrice);
-    };
-
-    load();
-    const refreshTimer = window.setInterval(load, REFRESH_MS);
-    return () => {
-      active = false;
-      window.clearInterval(refreshTimer);
-    };
-  }, []);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setNow(Date.now()), 1000);
-    return () => window.clearInterval(timer);
-  }, []);
-
-  const nextDropMs = Math.max(Date.parse(stats.nextDropTime) || 0, fallbackNextDropMs());
-  const countdown = formatCountdown(Math.max(0, Math.ceil((nextDropMs - now) / 1000)));
-  const totalAnsemDistributed = rewardTotalAmount(stats.totalRewardTotals, ["ANSEM"]);
-  const totalAiDistributed = rewardTotalAmount(stats.totalRewardTotals, ["AI", "AI6900"]);
-  const transactionCount = stats.recentRewards.filter((reward) => reward.txSig).length;
-  const dashboardMetrics = [
-    { label: "$AI to ANSEM holders", value: formatToken(totalAiDistributed, "$AI") },
-    { label: "$ANSEM to $AI holders", value: formatToken(totalAnsemDistributed, "$ANSEM") },
-    { label: "Eligible $AI holders", value: "0" },
-    { label: "ANSEM price", value: formatUsd(price.priceUsd) },
-    { label: "Next epoch", value: countdown },
-    { label: "Reward txs", value: formatNumber(transactionCount, 0) }
-  ];
-
-  return (
-    <div className="ai-index-app">
-      <AnimatedBackground />
-
-      <header className="ai-nav">
-        <a className="ai-brand" href="/" aria-label="ANSEM INDEX 6900 home">
-          <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-          <span>ANSEM INDEX 6900</span>
-        </a>
-        <nav aria-label="Dashboard navigation">
-          <a href="/">Home</a>
-          <a href="#transactions">Transactions</a>
-          <a href="#price">ANSEM Price</a>
-        </nav>
-        <div className="ai-nav-meta">
-          <span className="ai-ca-chip">CA: {CA}</span>
-          <a href={X_URL} target="_blank" rel="noreferrer">X</a>
-        </div>
-      </header>
-
-      <main className="ai-dashboard-main">
-        <motion.section className="ai-section ai-dashboard-hero" {...fadeUp}>
-          <div className="ai-section-head split">
-            <div>
-              <span className="ai-kicker">LIVE DASHBOARD</span>
-              <h1>Reward Dashboard</h1>
-            </div>
-            <span className="ai-status">AUTO REFRESH</span>
-          </div>
-          <div className="ai-dashboard-grid">
-            {dashboardMetrics.map((metric) => (
-              <article className="ai-hero-metric" key={metric.label}>
-                <span>{metric.label}</span>
-                <strong>{metric.value}</strong>
-              </article>
-            ))}
-          </div>
-        </motion.section>
-
-        <motion.section className="ai-section" id="transactions" {...fadeUp}>
-          <div className="ai-section-head split">
-            <div>
-              <span className="ai-kicker">SETTLED REWARDS</span>
-              <h2>Transactions</h2>
-            </div>
-          </div>
-          <div className="ai-table ai-transactions">
-            <div className="ai-transaction-head">
-              <span>Time</span>
-              <span>Wallet</span>
-              <span>Asset</span>
-              <span>Amount</span>
-              <span>Tx</span>
-            </div>
-            {stats.recentRewards.length ? (
-              stats.recentRewards.map((reward) => (
-                <div className="ai-transaction-row" key={`${reward.epoch}-${reward.wallet}-${reward.time}-${reward.rewardAsset ?? "ANSEM"}`}>
-                  <span>{formatTime(reward.time)}</span>
-                  <span className="mono">{compactAddress(reward.wallet)}</span>
-                  <span>{displayAsset(reward.rewardAsset)}</span>
-                  <span className="mono">{formatToken(reward.rewardAmount, displayAsset(reward.rewardAsset), 4)}</span>
-                  {reward.txSig ? (
-                    <a href={`https://solscan.io/tx/${reward.txSig}`} target="_blank" rel="noreferrer">Solscan</a>
-                  ) : (
-                    <span>Pending</span>
-                  )}
-                </div>
-              ))
-            ) : (
-              <div className="ai-empty">No reward transactions yet.</div>
-            )}
-          </div>
-        </motion.section>
-
-        <motion.section className="ai-section" id="price" {...fadeUp}>
-          <div className="ai-section-head split">
-            <div>
-              <span className="ai-kicker">ANSEM PRICE</span>
-              <h2>Live ANSEM Chart</h2>
-            </div>
-            <span className="ai-status">DEXSCREENER</span>
-          </div>
-          <div className="ai-performance-card">
-            <IndexChart />
-            <div className="ai-performance-zero">{formatUsd(price.priceUsd)}</div>
-            <div className="ai-price-meta">
-              <span>ANSEM / USD</span>
-              <strong>{price.priceChange24h >= 0 ? "+" : ""}{formatNumber(price.priceChange24h, 2)}% 24H</strong>
-              {price.url ? <a href={price.url} target="_blank" rel="noreferrer">Open chart</a> : null}
-            </div>
-          </div>
-        </motion.section>
-      </main>
-
-      <footer className="ai-footer">
-        <div className="ai-footer-brand">
-          <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-          <span>ANSEM INDEX 6900</span>
-        </div>
-        <div className="ai-footer-links">
-          <a href={COMMUNITY_URL} target="_blank" rel="noreferrer">X COMMUNITY</a>
-          <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">DEXSCREENER</a>
-          <a href={PUMP_URL} target="_blank" rel="noreferrer">PUMP.FUN</a>
-          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $AI</a>
-        </div>
-      </footer>
-    </div>
-  );
+  return <AnsemIndexApp />;
 }

@@ -3,29 +3,20 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ai6900.xyz"),
-  title: "ANSEM INDEX 6900",
-  description: "$AI is the ANSEM INDEX: ANSEM rewards for AI holders and AI rewards for top ANSEM holders.",
+  metadataBase: new URL("https://ansemstrategy.com"),
+  title: "ANSEM STRATEGY",
+  description: "$ANSTR is an automated strategy built around growing the Black Bull economy.",
   openGraph: {
-    title: "ANSEM INDEX 6900",
-    description: "$AI is the ANSEM INDEX: ANSEM rewards for AI holders and AI rewards for top ANSEM holders.",
-    url: "https://ai6900.xyz",
-    siteName: "ANSEM INDEX 6900",
-    images: [
-      {
-        url: "https://ai6900.xyz/brand/index-preview.png",
-        width: 1200,
-        height: 630,
-        alt: "ANSEM INDEX 6900"
-      }
-    ],
+    title: "ANSEM STRATEGY",
+    description: "$ANSTR is an automated strategy built around growing the Black Bull economy.",
+    url: "https://ansemstrategy.com",
+    siteName: "ANSEM STRATEGY",
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "ANSEM INDEX 6900",
-    description: "$AI is the ANSEM INDEX: ANSEM rewards for AI holders and AI rewards for top ANSEM holders.",
-    images: ["https://ai6900.xyz/brand/index-preview.png"]
+    title: "ANSEM STRATEGY",
+    description: "$ANSTR is an automated strategy built around growing the Black Bull economy."
   },
   icons: {
     icon: [
