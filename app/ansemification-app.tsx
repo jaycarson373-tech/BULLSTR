@@ -98,13 +98,13 @@ function StrategyChart() {
       <svg viewBox="0 0 900 420" preserveAspectRatio="none">
         <defs>
           <linearGradient id="strategyLine" x1="0" x2="1">
-            <stop offset="0%" stopColor="rgba(255, 122, 0, 0)" />
-            <stop offset="50%" stopColor="rgba(255, 122, 0, 0.82)" />
-            <stop offset="100%" stopColor="rgba(255, 122, 0, 0.12)" />
+            <stop offset="0%" stopColor="rgba(245, 245, 245, 0)" />
+            <stop offset="50%" stopColor="rgba(245, 245, 245, 0.82)" />
+            <stop offset="100%" stopColor="rgba(245, 245, 245, 0.12)" />
           </linearGradient>
           <linearGradient id="strategyFill" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="rgba(255, 122, 0, 0.16)" />
-            <stop offset="100%" stopColor="rgba(255, 122, 0, 0)" />
+            <stop offset="0%" stopColor="rgba(245, 245, 245, 0.16)" />
+            <stop offset="100%" stopColor="rgba(245, 245, 245, 0)" />
           </linearGradient>
         </defs>
         <path className="ai-chart-fill" d="M0 330 C90 295 135 280 215 258 C320 230 372 170 465 190 C560 210 620 122 700 136 C780 150 820 112 900 82 L900 420 L0 420 Z" />
@@ -176,13 +176,13 @@ export function AnsemIndexApp() {
 
       <header className="ai-nav">
         <a className="ai-brand" href="#top" aria-label="ANSEM STRATEGY home">
-          <span className="strategy-logo-mark"><img src="/brand/ansem-strategy-logo.jpg" alt="" /></span>
+          <span className="strategy-brand-mark">AS</span>
           <span>ANSEM STRATEGY</span>
         </a>
         <nav aria-label="Primary navigation">
           <a href="#strategy">Strategy</a>
           <a href="#dashboard">Dashboard</a>
-          <a href="#distributions">Distributions</a>
+          <a href="#faq">FAQ</a>
         </nav>
         <div className="ai-nav-meta">
           <span className="strategy-ticker">$ANSTR</span>
@@ -193,9 +193,6 @@ export function AnsemIndexApp() {
       <main>
         <section className="ai-hero" id="top">
           <motion.div className="ai-hero-copy" {...fadeUp}>
-            <div className="strategy-hero-logo" aria-hidden="true">
-              <img src="/brand/ansem-strategy-logo.jpg" alt="" />
-            </div>
             <span className="ai-kicker">AUTOMATED CONVICTION STRATEGY</span>
             <h1>ANSEM STRATEGY</h1>
             <p>The first automated strategy built around growing the Black Bull economy.</p>
@@ -291,11 +288,32 @@ export function AnsemIndexApp() {
             </div>
           </div>
         </motion.section>
+
+        <motion.section className="ai-section" id="faq" {...fadeUp}>
+          <div className="ai-section-head">
+            <span className="ai-kicker">FAQ</span>
+            <h2>Ansem Strategy Questions</h2>
+          </div>
+          <div className="ai-faq">
+            {[
+              ["Why 65%?", "65% of creator fees is dedicated to continuously buying $ANSEM and distributing it to eligible holders."],
+              ["Why 35%?", "35% is reserved for holder expansion so the ecosystem can keep reaching new wallets."],
+              ["Why 10,000 holders?", "The goal is to make distribution itself part of the strategy."],
+              ["How do distributions work?", "The system runs on timed epochs and displays live proof once connected."],
+              ["Who qualifies?", "Eligibility is handled by the strategy rules and existing wallet logic."]
+            ].map(([question, answer]) => (
+              <details key={question}>
+                <summary>{question}</summary>
+                <p>{answer}</p>
+              </details>
+            ))}
+          </div>
+        </motion.section>
       </main>
 
       <footer className="ai-footer">
         <div className="ai-footer-brand">
-          <span className="strategy-logo-mark"><img src="/brand/ansem-strategy-logo.jpg" alt="" /></span>
+          <span className="strategy-brand-mark">AS</span>
           <span>ANSEM STRATEGY</span>
         </div>
         <div className="ai-footer-links">
