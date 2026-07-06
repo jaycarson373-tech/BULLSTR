@@ -3,17 +3,17 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ansemindex6900.com"),
+  metadataBase: new URL("https://ai6900.xyz"),
   title: "ANSEM INDEX 6900",
   description: "$AI6900 is an AI-powered attention index tracking the strongest narratives across Crypto Twitter.",
   openGraph: {
     title: "ANSEM INDEX 6900",
     description: "$AI6900 is an AI-powered attention index tracking the strongest narratives across Crypto Twitter.",
-    url: "https://ansemindex6900.com",
+    url: "https://ai6900.xyz",
     siteName: "ANSEM INDEX 6900",
     images: [
       {
-        url: "/brand/index-preview.png",
+        url: "https://ai6900.xyz/brand/index-preview.png",
         width: 1200,
         height: 630,
         alt: "ANSEM INDEX 6900"
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ANSEM INDEX 6900",
     description: "$AI6900 is an AI-powered attention index tracking the strongest narratives across Crypto Twitter.",
-    images: ["/brand/index-preview.png"]
+    images: ["https://ai6900.xyz/brand/index-preview.png"]
   },
   icons: {
     icon: [
