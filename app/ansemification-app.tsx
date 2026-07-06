@@ -161,34 +161,6 @@ export function AnsemIndexApp() {
           </motion.aside>
         </section>
 
-        <motion.section className="ai-section ai-culture-section" {...fadeUp}>
-          <div className="ai-section-head split">
-            <div>
-              <span className="ai-kicker">$AI6900 CULTURE TAPE</span>
-              <h2>The Ansem Index rewards both sides.</h2>
-            </div>
-            <span className="ai-status">VISUAL SYSTEM ONLINE</span>
-          </div>
-          <div className="ai-culture-grid">
-            <article className="ai-culture-panel is-cathedral">
-              <span>ANSEM INDEX</span>
-              <strong>6900</strong>
-            </article>
-            <article className="ai-culture-panel is-terminal">
-              <span>GREEN TAPE</span>
-              <strong>+6900%</strong>
-            </article>
-            <article className="ai-culture-panel is-coin">
-              <span>SIGNAL COIN</span>
-              <strong>AI6900</strong>
-            </article>
-            <article className="ai-culture-panel is-grid">
-              <span>NARRATIVE MATRIX</span>
-              <strong>LIVE</strong>
-            </article>
-          </div>
-        </motion.section>
-
         <motion.section className="ai-section" id="how" {...fadeUp}>
           <div className="ai-section-head">
             <span className="ai-kicker">INDEX STACK</span>
