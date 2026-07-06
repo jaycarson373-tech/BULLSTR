@@ -4228,12 +4228,64 @@ body { background: var(--index-black); color: var(--index-white); }
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.08), 0 0 34px rgba(255, 122, 0, 0.12);
 }
 
+.strategy-logo-mark {
+  display: grid;
+  width: 88px;
+  height: 44px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 122, 0, 0.24);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.72);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.08), 0 0 28px rgba(255, 122, 0, 0.1);
+}
+.strategy-logo-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.strategy-hero-logo {
+  width: min(520px, 100%);
+  aspect-ratio: 1280 / 426;
+  margin-bottom: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 122, 0, 0.18);
+  border-radius: 24px;
+  background: #000;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.48), 0 0 70px rgba(255, 122, 0, 0.08);
+}
+.strategy-hero-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .strategy-ticker {
   color: #ff7a00 !important;
   border-color: rgba(255, 122, 0, 0.34) !important;
   background: rgba(255, 122, 0, 0.06);
 }
 
+.strategy-app .ai-nav {
+  grid-template-columns: auto 1fr auto;
+  min-height: 92px;
+}
+.strategy-app .ai-nav nav {
+  justify-content: flex-end;
+}
+.strategy-app .ai-hero {
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  align-items: end;
+  min-height: calc(100vh - 92px);
+}
+.strategy-app .ai-hero-panel {
+  border-radius: 28px;
+  transform: translateY(32px);
+}
+.strategy-app .ai-hero-metric {
+  min-height: 118px;
+}
 .strategy-app .ai-brand-mark { display: none; }
 .strategy-app .ai-nav a:hover,
 .strategy-app .ai-actions a:hover,

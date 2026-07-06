@@ -11,12 +11,21 @@ export const metadata: Metadata = {
     description: "$ANSTR is an automated strategy built around growing the Black Bull economy.",
     url: "https://ansemstrategy.com",
     siteName: "ANSEM STRATEGY",
+    images: [
+      {
+        url: "https://ansemstrategy.com/brand/site-preview.png",
+        width: 1200,
+        height: 630,
+        alt: "ANSEM STRATEGY"
+      }
+    ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
     title: "ANSEM STRATEGY",
-    description: "$ANSTR is an automated strategy built around growing the Black Bull economy."
+    description: "$ANSTR is an automated strategy built around growing the Black Bull economy.",
+    images: ["https://ansemstrategy.com/brand/site-preview.png"]
   },
   icons: {
     icon: [

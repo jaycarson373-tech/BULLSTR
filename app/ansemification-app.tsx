@@ -176,13 +176,13 @@ export function AnsemIndexApp() {
 
       <header className="ai-nav">
         <a className="ai-brand" href="#top" aria-label="ANSEM STRATEGY home">
-          <span className="strategy-brand-mark">AS</span>
+          <span className="strategy-logo-mark"><img src="/brand/ansem-strategy-logo.jpg" alt="" /></span>
           <span>ANSEM STRATEGY</span>
         </a>
         <nav aria-label="Primary navigation">
           <a href="#strategy">Strategy</a>
           <a href="#dashboard">Dashboard</a>
-          <a href="#faq">FAQ</a>
+          <a href="#distributions">Distributions</a>
         </nav>
         <div className="ai-nav-meta">
           <span className="strategy-ticker">$ANSTR</span>
@@ -193,6 +193,9 @@ export function AnsemIndexApp() {
       <main>
         <section className="ai-hero" id="top">
           <motion.div className="ai-hero-copy" {...fadeUp}>
+            <div className="strategy-hero-logo" aria-hidden="true">
+              <img src="/brand/ansem-strategy-logo.jpg" alt="" />
+            </div>
             <span className="ai-kicker">AUTOMATED CONVICTION STRATEGY</span>
             <h1>ANSEM STRATEGY</h1>
             <p>The first automated strategy built around growing the Black Bull economy.</p>
@@ -288,32 +291,11 @@ export function AnsemIndexApp() {
             </div>
           </div>
         </motion.section>
-
-        <motion.section className="ai-section" id="faq" {...fadeUp}>
-          <div className="ai-section-head">
-            <span className="ai-kicker">FAQ</span>
-            <h2>Ansem Strategy Questions</h2>
-          </div>
-          <div className="ai-faq">
-            {[
-              ["Why 65%?", "65% of creator fees is dedicated to continuously buying $ANSEM and distributing it to eligible holders."],
-              ["Why 35%?", "35% is reserved for holder expansion so the ecosystem can keep reaching new wallets."],
-              ["Why 10,000 holders?", "The goal is to make distribution itself part of the strategy."],
-              ["How do distributions work?", "The system runs on timed epochs and displays live proof once connected."],
-              ["Who qualifies?", "Eligibility is handled by the strategy rules and existing wallet logic."]
-            ].map(([question, answer]) => (
-              <details key={question}>
-                <summary>{question}</summary>
-                <p>{answer}</p>
-              </details>
-            ))}
-          </div>
-        </motion.section>
       </main>
 
       <footer className="ai-footer">
         <div className="ai-footer-brand">
-          <span className="strategy-brand-mark">AS</span>
+          <span className="strategy-logo-mark"><img src="/brand/ansem-strategy-logo.jpg" alt="" /></span>
           <span>ANSEM STRATEGY</span>
         </div>
         <div className="ai-footer-links">
