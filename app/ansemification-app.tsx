@@ -41,7 +41,8 @@ const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/AI6900SOL_
 const CA = process.env.NEXT_PUBLIC_CA?.trim() || "6UHbrLBSbrUuGR3Qeu1UBAHHruAPTmvf2hsRWGYGpump";
 const BUY_URL = "https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=6UHbrLBSbrUuGR3Qeu1UBAHHruAPTmvf2hsRWGYGpump";
 const PUMP_URL = "https://pump.fun/coin/6UHbrLBSbrUuGR3Qeu1UBAHHruAPTmvf2hsRWGYGpump";
-const DEXSCREENER_URL = "#";
+const DEXSCREENER_URL = "https://dexscreener.com/solana/6UHbrLBSbrUuGR3Qeu1UBAHHruAPTmvf2hsRWGYGpump";
+const COMMUNITY_URL = "https://x.com/i/communities/2025622274150215996";
 const REFRESH_MS = 12_000;
 const EPOCH_MS = 5 * 60 * 1000;
 
@@ -72,6 +73,14 @@ const terminalLines = ["Waiting for fees...", "Checking $AI holders...", "Checki
 const feeRails = [
   ["50%", "$AI Rewards", "Buys $AI and rewards top ANSEM holders."],
   ["50%", "ANSEM Rewards", "Buys ANSEM and airdrops to $AI holders."]
+];
+const memeImages = [
+  "/brand/memes/ai-meme-1.png",
+  "/brand/memes/ai-meme-2.png",
+  "/brand/memes/ai-meme-3.png",
+  "/brand/memes/ai-meme-4.png",
+  "/brand/memes/ai-meme-5.png",
+  "/brand/memes/ai-meme-6.png"
 ];
 
 const smoothTransition: Transition = { duration: 0.7, ease: [0.22, 1, 0.36, 1] };
@@ -198,6 +207,26 @@ function TerminalActivity() {
   );
 }
 
+function MemeConveyor() {
+  const belt = [...memeImages, ...memeImages];
+
+  return (
+    <motion.section className="ai-meme-section" aria-label="AI6900 meme conveyor" {...fadeUp}>
+      <div className="ai-meme-conveyor" aria-label="AI6900 meme gallery">
+        <div className="ai-meme-track">
+          {belt.map((src, index) => (
+            <figure className="ai-meme-card" key={`${src}-${index}`}>
+              <a href={src} download>
+                <img src={src} alt="" loading="lazy" />
+              </a>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </motion.section>
+  );
+}
+
 export function AnsemIndexApp() {
   const [stats, setStats] = useState<StatsResponse>(emptyStats);
   const [price, setPrice] = useState<PriceResponse>(emptyPrice);
@@ -239,12 +268,12 @@ export function AnsemIndexApp() {
     () => [
       { label: "$AI DISTRIBUTED TO ANSEM HOLDERS", value: formatToken(totalAiDistributed, "$AI") },
       { label: "$ANSEM DISTRIBUTED TO $AI HOLDERS", value: formatToken(totalAnsemDistributed, "$ANSEM") },
-      { label: "ELIGIBLE $AI HOLDERS", value: formatNumber(stats.latestEligibleHolders, 0) },
+      { label: "ELIGIBLE $AI HOLDERS", value: "0" },
       { label: "ANSEM PRICE", value: formatUsd(price.priceUsd) },
       { label: "NEXT EPOCH", value: countdown },
       { label: "RECENT TXS", value: formatNumber(transactionCount, 0) }
     ],
-    [countdown, price.priceUsd, stats.latestEligibleHolders, totalAiDistributed, totalAnsemDistributed, transactionCount]
+    [countdown, price.priceUsd, totalAiDistributed, totalAnsemDistributed, transactionCount]
   );
 
   return (
@@ -262,7 +291,6 @@ export function AnsemIndexApp() {
           <a href="#faq">FAQ</a>
         </nav>
         <div className="ai-nav-meta">
-          <span>$AI</span>
           <span className="ai-ca-chip">CA: {CA}</span>
           <a href={X_URL} target="_blank" rel="noreferrer">X</a>
         </div>
@@ -388,6 +416,8 @@ export function AnsemIndexApp() {
           <TerminalActivity />
         </motion.section>
 
+        <MemeConveyor />
+
         <motion.section className="ai-section" id="faq" {...fadeUp}>
           <div className="ai-section-head">
             <span className="ai-kicker">FAQ</span>
@@ -416,7 +446,8 @@ export function AnsemIndexApp() {
           <span>ANSEM INDEX 6900</span>
         </div>
         <div className="ai-footer-links">
-          <a href={DEXSCREENER_URL}>DEXSCREENER</a>
+          <a href={COMMUNITY_URL} target="_blank" rel="noreferrer">X COMMUNITY</a>
+          <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">DEXSCREENER</a>
           <a href={PUMP_URL} target="_blank" rel="noreferrer">PUMP.FUN</a>
           <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $AI</a>
         </div>
@@ -465,7 +496,7 @@ export function RewardsDashboardApp() {
   const dashboardMetrics = [
     { label: "$AI to ANSEM holders", value: formatToken(totalAiDistributed, "$AI") },
     { label: "$ANSEM to $AI holders", value: formatToken(totalAnsemDistributed, "$ANSEM") },
-    { label: "Eligible $AI holders", value: formatNumber(stats.latestEligibleHolders, 0) },
+    { label: "Eligible $AI holders", value: "0" },
     { label: "ANSEM price", value: formatUsd(price.priceUsd) },
     { label: "Next epoch", value: countdown },
     { label: "Reward txs", value: formatNumber(transactionCount, 0) }
@@ -486,7 +517,6 @@ export function RewardsDashboardApp() {
           <a href="#price">ANSEM Price</a>
         </nav>
         <div className="ai-nav-meta">
-          <span>$AI</span>
           <span className="ai-ca-chip">CA: {CA}</span>
           <a href={X_URL} target="_blank" rel="noreferrer">X</a>
         </div>
@@ -572,7 +602,8 @@ export function RewardsDashboardApp() {
           <span>ANSEM INDEX 6900</span>
         </div>
         <div className="ai-footer-links">
-          <a href={DEXSCREENER_URL}>DEXSCREENER</a>
+          <a href={COMMUNITY_URL} target="_blank" rel="noreferrer">X COMMUNITY</a>
+          <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">DEXSCREENER</a>
           <a href={PUMP_URL} target="_blank" rel="noreferrer">PUMP.FUN</a>
           <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $AI</a>
         </div>
