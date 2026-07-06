@@ -16,11 +16,11 @@ type GeneratedImage = {
   fileName: string;
 };
 
-const DASHBOARD_ZEROES: DashboardMetric[] = [
-  { id: "pfps", label: "PFPs Ansemified", value: "0", icon: "🖼️" },
-  { id: "bonus", label: "Bonus Wallet", value: "0 ANSEM", icon: "💰" },
-  { id: "airdropped", label: "Total ANSEM Airdropped", value: "0", icon: "🎁" }
-];
+type SiteStats = {
+  bagholderSolBalance?: number | null;
+  totalRewardAirdropped?: number | null;
+  latestEligibleHolders?: number | null;
+};
 
 const LOADING_STEPS = ["Analyzing...", "Applying Ansem...", "Generating...", "Finalizing..."];
 const SOURCE_MINT = process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ?? "7aCs6WabHiXYGmqaLN68T2oM4QeStTqSN3EoFXG3pump";
@@ -32,6 +32,15 @@ function formatCountdown(totalSeconds: number) {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+}
+
+function formatCompactNumber(value: number, maximumFractionDigits = 2) {
+  return value.toLocaleString(undefined, { maximumFractionDigits });
+}
+
+function formatSol(value: number | null | undefined) {
+  if (!Number.isFinite(value ?? NaN) || (value ?? 0) <= 0) return "0 SOL";
+  return `${formatCompactNumber(value ?? 0, 4)} SOL`;
 }
 
 function drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {
@@ -133,10 +142,21 @@ export function AnsemificationApp() {
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
   const [cursor, setCursor] = useState({ x: 50, y: 18 });
+  const [stats, setStats] = useState<SiteStats | null>(null);
 
   const dashboardMetrics = useMemo(
-    () => [...DASHBOARD_ZEROES, { id: "epoch", label: "Next Reward Epoch", value: formatCountdown(countdown), icon: "⏱" }],
-    [countdown]
+    () => [
+      { id: "pfps", label: "PFPs Ansemified", value: "0", icon: "🖼️" },
+      { id: "bonus", label: "Bonus Wallet", value: formatSol(stats?.bagholderSolBalance), icon: "💰" },
+      {
+        id: "airdropped",
+        label: "Total ANSEM Airdropped",
+        value: formatCompactNumber(stats?.totalRewardAirdropped ?? 0),
+        icon: "🎁"
+      },
+      { id: "epoch", label: "Next Reward Epoch", value: formatCountdown(countdown), icon: "⏱" }
+    ],
+    [countdown, stats]
   );
 
   useEffect(() => {
@@ -144,6 +164,28 @@ export function AnsemificationApp() {
       setCountdown((value) => (value <= 1 ? 300 : value - 1));
     }, 1000);
     return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadStats() {
+      try {
+        const response = await fetch("/api/stats", { cache: "no-store" });
+        if (!response.ok) throw new Error("Stats request failed");
+        const nextStats = (await response.json()) as SiteStats;
+        if (active) setStats(nextStats);
+      } catch {
+        if (active) setStats(null);
+      }
+    }
+
+    void loadStats();
+    const timer = window.setInterval(() => void loadStats(), 30_000);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+    };
   }, []);
 
   useEffect(() => {

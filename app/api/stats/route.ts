@@ -74,6 +74,7 @@ type ParsedTokenAccountInfo = {
 
 const PUMP_PROGRAM_ID = new PublicKey("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P");
 const PUMP_AMM_PROGRAM_ID = new PublicKey("pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA");
+const DEFAULT_BONUS_WALLET_PUBLIC_KEY = "51PVdNdsEiMSreFtp7RWXiHVrCdbu8Mq8cR3vNp7SR5s";
 const LIVE_ELIGIBLE_CACHE_MS = 90_000;
 
 let liveEligibleCache: { key: string; value: number; expiresAt: number } | null = null;
@@ -180,7 +181,8 @@ function bagholderWalletPublicKey() {
     process.env.BAGHOLDER_WALLET_PUBLIC_KEY ??
     process.env.TREASURY_WALLET_PUBLIC_KEY ??
     process.env.SIDE_WALLET_PUBLIC_KEY ??
-    process.env.NEXT_PUBLIC_BAGHOLDER_WALLET_PUBLIC_KEY;
+    process.env.NEXT_PUBLIC_BAGHOLDER_WALLET_PUBLIC_KEY ??
+    DEFAULT_BONUS_WALLET_PUBLIC_KEY;
   if (!value) return null;
   try {
     return new PublicKey(value);
