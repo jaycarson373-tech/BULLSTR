@@ -3998,8 +3998,12 @@ body { background: var(--index-black); color: var(--index-white); }
 .ai-faq details { padding: 20px 22px; transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease; }
 .ai-faq summary { color: var(--index-white); font-size: 1rem; font-weight: 850; }
 .ai-faq p { max-width: 760px; margin-top: 14px; color: rgba(247, 247, 247, 0.64); line-height: 1.55; }
-.ai-footer { display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--index-border); padding: 34px 0 44px; }
+.ai-footer { display: flex; align-items: center; justify-content: space-between; gap: 22px; border-top: 1px solid var(--index-border); padding: 34px 0 44px; }
+.ai-footer-brand, .ai-footer-links { display: flex; align-items: center; gap: 12px; }
 .ai-footer .ai-brand-mark { width: 52px; height: 52px; }
+.ai-footer-links { flex-wrap: wrap; justify-content: flex-end; }
+.ai-footer-links a { border: 1px solid var(--index-border); border-radius: 999px; padding: 10px 12px; color: var(--index-grey); text-decoration: none; transition: border-color 180ms ease, color 180ms ease, transform 180ms ease; }
+.ai-footer-links a:hover { border-color: rgba(124, 255, 59, 0.38); color: var(--index-green); transform: translateY(-1px); }
 
 .index-animated-bg {
   position: fixed;
@@ -4119,4 +4123,4 @@ body { background: var(--index-black); color: var(--index-white); }
   .ai-card, .ai-faq details { transition: none; }
 }
 @media (max-width: 980px) { .ai-nav { grid-template-columns: 1fr; padding: 18px 0; } .ai-nav nav, .ai-nav-meta { justify-content: flex-start; flex-wrap: wrap; } .ai-hero { grid-template-columns: 1fr; min-height: auto; padding-top: 52px; } .ai-hero-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ai-card-grid.five, .ai-rail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ai-section-head.split { grid-template-columns: 1fr; } .ai-chart { inset: auto -20% 10% 0; } }
-@media (max-width: 620px) { .ai-nav, .ai-index-app main, .ai-footer { width: min(100%, calc(100% - 28px)); } .ai-hero h1 { font-size: clamp(3.2rem, 17vw, 5rem); } .ai-hero-panel, .ai-card-grid.five, .ai-rail-grid { grid-template-columns: 1fr; } .ai-table-head { display: none; } .ai-empty { grid-template-columns: 1fr; } .ai-terminal-feed div { grid-template-columns: 1fr; gap: 4px; } }
+@media (max-width: 620px) { .ai-nav, .ai-index-app main, .ai-footer { width: min(100%, calc(100% - 28px)); } .ai-hero h1 { font-size: clamp(3.2rem, 17vw, 5rem); } .ai-hero-panel, .ai-card-grid.five, .ai-rail-grid { grid-template-columns: 1fr; } .ai-table-head { display: none; } .ai-empty { grid-template-columns: 1fr; } .ai-terminal-feed div { grid-template-columns: 1fr; gap: 4px; } .ai-footer { align-items: flex-start; flex-direction: column; } .ai-footer-links { justify-content: flex-start; } }

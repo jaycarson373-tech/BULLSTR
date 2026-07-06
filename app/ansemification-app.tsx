@@ -6,6 +6,9 @@ import { AnimatedBackground } from "./animated-background";
 
 const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/AI6900SOL_";
 const CA = process.env.NEXT_PUBLIC_CA?.trim() || "6UHbrLBSbrUuGR3Qeu1UBAHHruAPTmvf2hsRWGYGpump";
+const BUY_URL = "https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=6UHbrLBSbrUuGR3Qeu1UBAHHruAPTmvf2hsRWGYGpump";
+const PUMP_URL = "https://pump.fun/coin/6UHbrLBSbrUuGR3Qeu1UBAHHruAPTmvf2hsRWGYGpump";
+const DEXSCREENER_URL = "#";
 
 const dashboardMetrics = [
   { label: "INDEX VALUE", value: "0.00" },
@@ -265,8 +268,15 @@ export function AnsemIndexApp() {
       </main>
 
       <footer className="ai-footer">
-        <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-        <span>ANSEM INDEX 6900</span>
+        <div className="ai-footer-brand">
+          <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
+          <span>ANSEM INDEX 6900</span>
+        </div>
+        <div className="ai-footer-links">
+          <a href={DEXSCREENER_URL}>DEXSCREENER</a>
+          <a href={PUMP_URL} target="_blank" rel="noreferrer">PUMP.FUN</a>
+          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $AI6900</a>
+        </div>
       </footer>
     </div>
   );
