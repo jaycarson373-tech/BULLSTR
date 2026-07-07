@@ -17,7 +17,7 @@ type StatsResponse = {
   }>;
 };
 
-const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "#";
+const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/ANSTR_sol";
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim() || "#";
 const DEXSCREENER_URL = process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || "#";
 const CA = process.env.NEXT_PUBLIC_CA?.trim() || "3CV1YaF2dBEpbuvAYaYiqE1K1YEsiehxbJ53b9LQpump";

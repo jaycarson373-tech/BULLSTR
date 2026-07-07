@@ -1,6 +1,26 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
 export function AnimatedBackground() {
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    const handlePointerMove = (event: PointerEvent) => {
+      root.style.setProperty("--cursor-x", `${event.clientX}px`);
+      root.style.setProperty("--cursor-y", `${event.clientY}px`);
+    };
+
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    return () => window.removeEventListener("pointermove", handlePointerMove);
+  }, []);
+
   return (
-    <div className="index-animated-bg strategy-bg" aria-hidden="true">
+    <div ref={rootRef} className="index-animated-bg strategy-bg" aria-hidden="true">
+      <div className="strategy-bg-cursor" />
       <div className="strategy-bg-bull" />
       <div className="strategy-bg-grid" />
       <div className="strategy-bg-mountains" />
