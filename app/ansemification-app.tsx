@@ -20,6 +20,7 @@ type StatsResponse = {
 const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "#";
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim() || "#";
 const DEXSCREENER_URL = process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || "#";
+const CA = process.env.NEXT_PUBLIC_CA?.trim() || "3CV1YaF2dBEpbuvAYaYiqE1K1YEsiehxbJ53b9LQpump";
 const EPOCH_MS = 5 * 60 * 1000;
 
 const emptyStats: StatsResponse = {
@@ -185,6 +186,7 @@ export function AnsemIndexApp() {
           <a href="#faq">FAQ</a>
         </nav>
         <div className="ai-nav-meta">
+          <span className="ai-ca-chip">CA: {CA}</span>
           <span className="strategy-ticker">$ANSTR</span>
           <a href={X_URL} target="_blank" rel="noreferrer">X</a>
         </div>
