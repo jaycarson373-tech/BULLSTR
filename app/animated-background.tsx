@@ -10,6 +10,11 @@ const scenes = [
 export function AnimatedBackground() {
   return (
     <div className="index-animated-bg" aria-hidden="true">
+      <div className="index-bg-tape">
+        <span>6900 +6900% $AI ANSEM INDEX 6900 +6900% $AI ANSEM INDEX</span>
+        <span>6900 +6900% $AI ANSEM INDEX 6900 +6900% $AI ANSEM INDEX</span>
+        <span>6900 +6900% $AI ANSEM INDEX 6900 +6900% $AI ANSEM INDEX</span>
+      </div>
       <div className="index-bg-images">
         {scenes.map((scene) => (
           <span
