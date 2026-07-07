@@ -17,10 +17,18 @@ type StatsResponse = {
   }>;
 };
 
-const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/AI6900SOL_";
-const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim() || "#";
+const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/Al6900_";
+const BUY_URL =
+  process.env.NEXT_PUBLIC_BUY_URL?.trim() ||
+  "https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=48mPhuhaiPrCk41Ay9zHBXdnzwY63beL5sejjz6Kpump";
+const PUMP_URL =
+  process.env.NEXT_PUBLIC_PUMP_URL?.trim() ||
+  "https://pump.fun/coin/48mPhuhaiPrCk41Ay9zHBXdnzwY63beL5sejjz6Kpump";
+const COMMUNITY_URL =
+  process.env.NEXT_PUBLIC_COMMUNITY_URL?.trim() ||
+  "https://x.com/i/communities/2032569869326004522";
 const DEXSCREENER_URL = process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || "#";
-const CA = process.env.NEXT_PUBLIC_CA?.trim() || "3CV1YaF2dBEpbuvAYaYiqE1K1YEsiehxbJ53b9LQpump";
+const CA = process.env.NEXT_PUBLIC_CA?.trim() || "48mPhuhaiPrCk41Ay9zHBXdnzwY63beL5sejjz6Kpump";
 const EPOCH_MS = 5 * 60 * 1000;
 
 const emptyStats: StatsResponse = {
@@ -320,6 +328,8 @@ export function AnsemIndexApp() {
         </div>
         <div className="ai-footer-links">
           <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">DEXSCREENER</a>
+          <a href={PUMP_URL} target="_blank" rel="noreferrer">PUMP</a>
+          <a href={COMMUNITY_URL} target="_blank" rel="noreferrer">COMMUNITY</a>
           <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $AI</a>
         </div>
       </footer>
