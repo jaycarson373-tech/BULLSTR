@@ -17,7 +17,7 @@ type StatsResponse = {
   }>;
 };
 
-const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/Al6900_";
+const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/AI6900__";
 const BUY_URL =
   process.env.NEXT_PUBLIC_BUY_URL?.trim() ||
   "https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=48mPhuhaiPrCk41Ay9zHBXdnzwY63beL5sejjz6Kpump";
