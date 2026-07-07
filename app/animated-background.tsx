@@ -21,7 +21,9 @@ export function AnimatedBackground() {
   return (
     <div ref={rootRef} className="index-animated-bg strategy-bg" aria-hidden="true">
       <div className="strategy-bg-cursor" />
-      <div className="strategy-bg-bull" />
+      <div className="strategy-bg-bull">
+        <img src="/brand/strategy-bull-parallax.png" alt="" />
+      </div>
       <div className="strategy-bg-grid" />
       <div className="strategy-bg-mountains" />
       <div className="strategy-bg-chart" />

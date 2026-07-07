@@ -17,7 +17,7 @@ type StatsResponse = {
   }>;
 };
 
-const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/ANSTR_sol";
+const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/AI6900SOL_";
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim() || "#";
 const DEXSCREENER_URL = process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || "#";
 const CA = process.env.NEXT_PUBLIC_CA?.trim() || "3CV1YaF2dBEpbuvAYaYiqE1K1YEsiehxbJ53b9LQpump";
@@ -40,7 +40,7 @@ const steps = [
   ["01", "Creator fees accumulate."],
   ["02", "65% automatically buys $ANSEM. Distributed to eligible holders."],
   ["03", "35% funds holder expansion. The protocol continuously airdrops new wallets to increase the ecosystem."],
-  ["04", "Repeat forever. More holders. More attention. More conviction."]
+  ["04", "Repeat forever. More holders. More conviction."]
 ];
 
 const dashboardCards = [
@@ -176,9 +176,9 @@ export function AnsemIndexApp() {
       <AnimatedBackground />
 
       <header className="ai-nav">
-        <a className="ai-brand" href="#top" aria-label="ANSEM STRATEGY home">
-          <span className="strategy-brand-mark">AS</span>
-          <span>ANSEM STRATEGY</span>
+        <a className="ai-brand" href="#top" aria-label="AI INDEX 6900 home">
+          <span className="strategy-brand-mark">AI</span>
+          <span>AI INDEX 6900</span>
         </a>
         <nav aria-label="Primary navigation">
           <a href="#strategy">Strategy</a>
@@ -187,7 +187,7 @@ export function AnsemIndexApp() {
         </nav>
         <div className="ai-nav-meta">
           <span className="ai-ca-chip">CA: {CA}</span>
-          <span className="strategy-ticker">$ANSTR</span>
+          <span className="strategy-ticker">$AI</span>
           <a href={X_URL} target="_blank" rel="noreferrer">X</a>
         </div>
       </header>
@@ -195,12 +195,12 @@ export function AnsemIndexApp() {
       <main>
         <section className="ai-hero" id="top">
           <motion.div className="ai-hero-copy" {...fadeUp}>
-            <span className="ai-kicker">AUTOMATED CONVICTION STRATEGY</span>
-            <h1>ANSEM STRATEGY</h1>
-            <p>The first automated strategy built around growing the Black Bull economy.</p>
+            <span className="ai-kicker">ANSEM INDEX</span>
+            <h1>AI INDEX 6900</h1>
+            <p>The Ansem Index built around growing the Black Bull economy.</p>
             <div className="ai-actions">
-              <a href={BUY_URL} target="_blank" rel="noreferrer">Buy $ANSTR</a>
-              <a href="#strategy">View Strategy</a>
+              <a href={BUY_URL} target="_blank" rel="noreferrer">Buy $AI</a>
+              <a href="#strategy">View Dashboard</a>
             </div>
           </motion.div>
 
@@ -216,8 +216,8 @@ export function AnsemIndexApp() {
 
         <motion.section className="ai-section" id="strategy" {...fadeUp}>
           <div className="ai-section-head">
-            <span className="ai-kicker">HOW THE STRATEGY WORKS</span>
-            <h2>Conviction, automated.</h2>
+            <span className="ai-kicker">HOW THE INDEX WORKS</span>
+            <h2>The index, automated.</h2>
           </div>
           <div className="ai-card-grid four">
             {steps.map(([number, copy]) => (
@@ -232,7 +232,7 @@ export function AnsemIndexApp() {
         <motion.section className="ai-section holder-strategy" {...fadeUp}>
           <div className="ai-section-head split">
             <div>
-              <span className="ai-kicker">THE HOLDER STRATEGY</span>
+              <span className="ai-kicker">THE HOLDER INDEX</span>
               <h2>10,000 Holder Goal</h2>
             </div>
             <span className="ai-status">0% COMPLETE</span>
@@ -244,7 +244,7 @@ export function AnsemIndexApp() {
               <article><span>Remaining Holders</span><strong>10,000</strong></article>
               <article><span>Estimated SOL Required</span><strong>20 SOL</strong></article>
             </div>
-            <p>Growing the holder base isn't marketing. It's the strategy.</p>
+            <p>Growing the holder base is part of the index.</p>
           </div>
         </motion.section>
 
@@ -262,7 +262,7 @@ export function AnsemIndexApp() {
         <motion.section className="ai-section" id="dashboard" {...fadeUp}>
           <div className="ai-section-head">
             <span className="ai-kicker">LIVE DASHBOARD</span>
-            <h2>Strategy metrics.</h2>
+            <h2>Index metrics.</h2>
           </div>
           <div className="ai-dashboard-grid">
             {liveDashboardCards.map(([label, value]) => (
@@ -277,7 +277,7 @@ export function AnsemIndexApp() {
         <motion.section className="ai-thesis" {...fadeUp}>
           <span className="ai-kicker">WHY THIS EXISTS</span>
           <h2>Most projects buy back. We build holders.</h2>
-          <p>More holders. More conviction. More attention. The strategy compounds itself.</p>
+          <p>More holders. More conviction. The index compounds itself.</p>
         </motion.section>
 
         <motion.section className="ai-section" {...fadeUp}>
@@ -294,15 +294,15 @@ export function AnsemIndexApp() {
         <motion.section className="ai-section" id="faq" {...fadeUp}>
           <div className="ai-section-head">
             <span className="ai-kicker">FAQ</span>
-            <h2>Ansem Strategy Questions</h2>
+            <h2>AI Index 6900 Questions</h2>
           </div>
           <div className="ai-faq">
             {[
               ["Why 65%?", "65% of creator fees is dedicated to continuously buying $ANSEM and distributing it to eligible holders."],
               ["Why 35%?", "35% is reserved for holder expansion so the ecosystem can keep reaching new wallets."],
-              ["Why 10,000 holders?", "The goal is to make distribution itself part of the strategy."],
+              ["Why 10,000 holders?", "The goal is to make distribution itself part of the index."],
               ["How do distributions work?", "The system runs on timed epochs and displays live proof once connected."],
-              ["Who qualifies?", "Eligibility is handled by the strategy rules and existing wallet logic."]
+              ["Who qualifies?", "Eligibility is handled by the index rules and existing wallet logic."]
             ].map(([question, answer]) => (
               <details key={question}>
                 <summary>{question}</summary>
@@ -315,12 +315,12 @@ export function AnsemIndexApp() {
 
       <footer className="ai-footer">
         <div className="ai-footer-brand">
-          <span className="strategy-brand-mark">AS</span>
-          <span>ANSEM STRATEGY</span>
+          <span className="strategy-brand-mark">AI</span>
+          <span>AI INDEX 6900</span>
         </div>
         <div className="ai-footer-links">
           <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">DEXSCREENER</a>
-          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $ANSTR</a>
+          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $AI</a>
         </div>
       </footer>
     </div>

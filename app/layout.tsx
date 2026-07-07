@@ -4,27 +4,27 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ansemstrategy.com"),
-  title: "ANSEM STRATEGY",
-  description: "$ANSTR is an automated strategy built around growing the Black Bull economy.",
+  title: "AI INDEX 6900",
+  description: "$AI is an automated strategy built around growing the Black Bull economy.",
   openGraph: {
-    title: "ANSEM STRATEGY",
-    description: "$ANSTR is an automated strategy built around growing the Black Bull economy.",
+    title: "AI INDEX 6900",
+    description: "$AI is an automated strategy built around growing the Black Bull economy.",
     url: "https://ansemstrategy.com",
-    siteName: "ANSEM STRATEGY",
+    siteName: "AI INDEX 6900",
     images: [
       {
         url: "https://ansemstrategy.com/brand/site-preview.png",
         width: 1200,
         height: 630,
-        alt: "ANSEM STRATEGY"
+        alt: "AI INDEX 6900"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "ANSEM STRATEGY",
-    description: "$ANSTR is an automated strategy built around growing the Black Bull economy.",
+    title: "AI INDEX 6900",
+    description: "$AI is an automated strategy built around growing the Black Bull economy.",
     images: ["https://ansemstrategy.com/brand/site-preview.png"]
   },
   icons: {
