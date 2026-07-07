@@ -77,14 +77,14 @@ function recipientScore(epochId: string, holder: Holder) {
     .digest("hex");
 }
 
-export function selectRewardRecipients(epochId: string, holders: Holder[]) {
+export function selectRewardRecipients(epochId: string, holders: Holder[], limit = config.maxWalletsPerEpoch) {
   const recipients = holders
     .map((holder) => ({ holder, score: recipientScore(epochId, holder) }))
     .sort((a, b) => {
       const score = a.score.localeCompare(b.score);
       return score || a.holder.wallet.localeCompare(b.holder.wallet);
     })
-    .slice(0, config.maxWalletsPerEpoch)
+    .slice(0, limit)
     .map(({ holder }) => holder);
 
   if (holders.length > recipients.length) {

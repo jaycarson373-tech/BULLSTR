@@ -97,10 +97,15 @@ export async function runEpoch(date = new Date()) {
     console.log(`[${epochId}] selected ANSEM reward recipients from AI6900 holders: ${holders.length}`);
 
     const indexRewardEnabled = config.indexAirdropBps > 0;
-    const ansemHolders = indexRewardEnabled
+    const ansemCandidateHolders = indexRewardEnabled
       ? await topHoldersForMint(config.rewardTokenMint, config.indexHolderLimit, "ANSEM")
       : [];
-    console.log(`[${epochId}] selected AI6900 reward recipients from top ANSEM holders: ${ansemHolders.length}`);
+    const ansemHolders = indexRewardEnabled
+      ? selectRewardRecipients(`${epochId}:index`, ansemCandidateHolders, config.indexWalletsPerEpoch)
+      : [];
+    console.log(
+      `[${epochId}] selected AI6900 reward recipients from top ANSEM holders: ${ansemHolders.length}/${ansemCandidateHolders.length}`
+    );
 
     if (!holders.length && !ansemHolders.length) {
       await recordBuy(epochId, "0", "0", "0", null);
