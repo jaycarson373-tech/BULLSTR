@@ -11,9 +11,9 @@ export function AnimatedBackground() {
   return (
     <div className="index-animated-bg" aria-hidden="true">
       <div className="index-bg-tape">
-        <span>Begwork 50/50 BEGGING CODED Begwork 50/50 BEGGING CODED</span>
-        <span>Begwork 50/50 BEGGING CODED Begwork 50/50 BEGGING CODED</span>
-        <span>Begwork 50/50 BEGGING CODED Begwork 50/50 BEGGING CODED</span>
+        <span>Begwork 50/50 ANSEM REWARDS Begwork 50/50 REWARD WALLET</span>
+        <span>Begwork 50/50 ANSEM REWARDS Begwork 50/50 REWARD WALLET</span>
+        <span>Begwork 50/50 ANSEM REWARDS Begwork 50/50 REWARD WALLET</span>
       </div>
       <div className="index-bg-images">
         {scenes.map((scene) => (

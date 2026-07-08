@@ -11,7 +11,7 @@ Begwork is a 5-minute creator-fee loop:
 - 50% of newly claimed SOL is sent to `SIDE_WALLET_PUBLIC_KEY`, the reward wallet.
 - The dashboard reads settled epochs, payouts, holders, and recent drops from Supabase.
 
-The site should feel like a black-screen launch terminal for Begwork.
+The site should feel like a clean launch terminal for Begwork.
 
 ## Current Implementation
 

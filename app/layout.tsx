@@ -5,10 +5,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://begwork.xyz"),
   title: "Begwork",
-  description: "Begwork is a black-screen launch site with 50/50 fee rails and begging coded into the loop.",
+  description: "Begwork routes creator fees through a 50/50 reward system for $BEG.",
   openGraph: {
     title: "Begwork",
-    description: "Begwork is a black-screen launch site with 50/50 fee rails and begging coded into the loop.",
+    description: "Begwork routes creator fees through a 50/50 reward system for $BEG.",
     url: "https://begwork.xyz",
     siteName: "Begwork",
     images: [
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Begwork",
-    description: "Begwork is a black-screen launch site with 50/50 fee rails and begging coded into the loop.",
+    description: "Begwork routes creator fees through a 50/50 reward system for $BEG.",
     images: ["https://begwork.xyz/logo.png"]
   },
   icons: {

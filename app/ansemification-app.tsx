@@ -38,7 +38,10 @@ type PriceResponse = {
 };
 
 const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/Begwork_";
-const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || "LAUNCHING SOON";
+const CA =
+  process.env.NEXT_PUBLIC_CA?.trim() ||
+  process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ||
+  "8RKuuDHZ8P8FDsGgPeG31LdeLfRii9P8GFxidzGWpump";
 const BUY_URL =
   process.env.NEXT_PUBLIC_BUY_URL?.trim() ||
   "https://pump.fun";
@@ -70,14 +73,14 @@ const emptyPrice: PriceResponse = {
 };
 
 const signalCards = [
-  ["Beg", "Begwork turns begging into a visible launch mechanic."],
-  ["Collect Fees", "Every epoch watches the fee pot and waits for enough fuel."],
+  ["Hold $BEG", "Eligible holders are included in the reward cycle."],
+  ["Collect Fees", "Each epoch checks for creator fees from the treasury."],
   ["50% ANSEM Rail", "Half the claimed SOL swaps into ANSEM."],
   ["50% Reward Wallet", "Half the claimed SOL sends to the reward wallet."],
-  ["Receipts", "Transactions stay on-screen so the loop is obvious."]
+  ["Receipts", "Settled transactions stay visible on the dashboard."]
 ];
 
-const terminalLines = ["Begging coded...", "Splitting fees 50/50...", "Routing buy pressure...", "Waiting for launch tx..."];
+const terminalLines = ["Checking creator fees...", "Splitting fees 50/50...", "Routing ANSEM swap...", "Waiting for reward tx..."];
 const feeRails = [
   ["50%", "ANSEM Rail", "Half of claimed SOL swaps through Jupiter into ANSEM."],
   ["50%", "Reward Wallet", "Half of claimed SOL transfers to the configured reward wallet."]
@@ -203,7 +206,7 @@ function TerminalActivity() {
     <div className="ai-terminal">
       <div className="ai-terminal-top">
         <span>LIVE ACTIVITY</span>
-        <span>BEGGING: CODED</span>
+        <span>REWARDS: ACTIVE</span>
       </div>
       <div className="ai-terminal-feed">
         {terminalLines.map((line, index) => (
@@ -279,7 +282,7 @@ export function AnsemIndexApp() {
       { label: "50% ANSEM SWAP", value: formatToken(totalAnsemDistributed, "$ANSEM") },
       { label: "50% REWARD WALLET", value: "SOL" },
       { label: "TICKER", value: "$BEG" },
-      { label: "BACKGROUND", value: "BLACK" },
+      { label: "REWARDS", value: "5 MIN" },
       { label: "NEXT EPOCH", value: countdown },
       { label: "RECENT TXS", value: formatNumber(transactionCount, 0) }
     ],
@@ -310,15 +313,15 @@ export function AnsemIndexApp() {
         <section className="ai-hero" id="top">
           <motion.div className="ai-hero-copy" {...fadeUp}>
             <img className="ai-hero-logo" src="/brand/begwork-icon.png" alt="" />
-            <span className="ai-kicker">BLACK SCREEN LAUNCH</span>
+            <span className="ai-kicker">CREATOR-FEE REWARDS</span>
             <h1>Begwork</h1>
             <p>
-              Begwork is a black-background launch site with the 50/50 thing front and center:
-              half the claimed SOL swaps into ANSEM, half sends to the reward wallet.
+              Begwork routes creator fees through a simple 50/50 system:
+              half of claimed SOL swaps into ANSEM, and half sends to the reward wallet.
             </p>
             <div className="ai-actions">
-              <a href={BUY_URL} target="_blank" rel="noreferrer">Launch Buy</a>
-              <a href="#rails">View 50/50</a>
+              <a href={BUY_URL} target="_blank" rel="noreferrer">Buy $BEG</a>
+              <a href="#rails">50/50 Rewards</a>
             </div>
           </motion.div>
 
@@ -334,8 +337,8 @@ export function AnsemIndexApp() {
 
         <motion.section className="ai-section" id="how" {...fadeUp}>
           <div className="ai-section-head">
-            <span className="ai-kicker">BEGGING CODED</span>
-            <h2>The whole site says the quiet part out loud.</h2>
+            <span className="ai-kicker">REWARD LOOP</span>
+            <h2>Creator fees flow into rewards every epoch.</h2>
           </div>
           <div className="ai-card-grid five">
             {signalCards.map(([title, copy]) => (
@@ -349,7 +352,7 @@ export function AnsemIndexApp() {
 
         <motion.section className="ai-section" id="rails" {...fadeUp}>
           <div className="ai-section-head">
-            <span className="ai-kicker">50/50 THING</span>
+            <span className="ai-kicker">50/50 SPLIT</span>
             <h2>Half swaps to ANSEM. Half sends to the reward wallet.</h2>
           </div>
           <div className="ai-rail-grid">
@@ -400,8 +403,8 @@ export function AnsemIndexApp() {
 
         <motion.section className="ai-thesis" {...fadeUp}>
           <span className="ai-kicker">WHY IT EXISTS</span>
-          <h2>Beg harder. Hold longer. Let the 50/50 fee rail do the talking.</h2>
-          <p>The reward rails run when fees are available. The begging is not a bit. It is coded.</p>
+          <h2>Hold $BEG. Track the fees. Watch the rewards settle.</h2>
+          <p>The reward rails run when creator fees are available.</p>
         </motion.section>
 
         <motion.section className="ai-section" id="price" {...fadeUp}>
@@ -436,9 +439,9 @@ export function AnsemIndexApp() {
           </div>
           <div className="ai-faq">
             {[
-              ["What is Begwork?", "Begwork is a black-screen launch site built around a visible 50/50 fee split."],
-              ["What is the 50/50 thing?", "Half the usable fees point at buy pressure and half point at the begging and holder loop."],
-              ["Is begging coded?", "Yes. The launch copy, activity feed, and rail system all make the begging mechanic explicit."],
+              ["What is Begwork?", "Begwork is a $BEG reward system powered by creator fees."],
+              ["How does the 50/50 split work?", "Half of claimed SOL swaps into ANSEM and half sends to the reward wallet."],
+              ["How often does it run?", "The worker checks for a new epoch every five minutes."],
               ["Where do transactions show?", "Settled launch receipts appear in the transaction table with Solscan links."],
               ["What is the ticker?", "The ticker is $BEG."]
             ].map(([question, answer]) => (
@@ -507,7 +510,7 @@ export function RewardsDashboardApp() {
   const dashboardMetrics = [
     { label: "50% ANSEM swap", value: formatToken(totalAnsemDistributed, "$ANSEM") },
     { label: "50% reward wallet", value: "SOL" },
-    { label: "Begging", value: "Coded" },
+    { label: "CA", value: compactAddress(CA) },
     { label: "$BEG price", value: formatUsd(price.priceUsd) },
     { label: "Next epoch", value: countdown },
     { label: "Reward txs", value: formatNumber(transactionCount, 0) }
