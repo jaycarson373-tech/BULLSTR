@@ -1,28 +1,24 @@
-# Begwork
+# Hood Strategy
 
-Source token: `$BEG`
-Reward asset: `$ANSEM`
+Source token: `$HOOD`
+Reward asset: `$HOOD`
 
-Begwork is a 5-minute creator-fee loop:
+Hood Strategy is a 50/50 reward loop:
 
-- The worker claims creator fees every epoch.
-- 50% of newly claimed SOL is routed through Jupiter to buy `$ANSEM`.
-- Bought `$ANSEM` is airdropped to eligible `$BEG` holders on each epoch.
-- 50% of newly claimed SOL is sent to `SIDE_WALLET_PUBLIC_KEY`, the reward wallet.
-- The dashboard reads settled epochs, payouts, holders, and recent drops from Supabase.
-
-The site should feel like a clean launch terminal for Begwork.
+- 50% of usable rewards buys HOOD Stock and airdrops it automatically to wallets holding 1M+ tokens.
+- 50% funds verified Hood memecoin holders, early movers, active X users, and live draw prizes.
+- Live draw winners must respond on X within 24 hours and prove ownership of the selected wallet.
+- Verified holders can add an ETH wallet after proving wallet ownership.
+- The site shows reward proof, holder activity, draw status, and Solscan links as rewards settle.
 
 ## Current Implementation
 
 1. Claim creator fees into the treasury.
 2. Snapshot source-token holders with at least `ELIGIBILITY_MIN`.
-3. Weight selected source-token holders by raw `$BEG` balance.
-4. Use `SWAP_BALANCE_BPS=5000` to buy `$ANSEM` with 50% of newly claimed SOL.
-5. Airdrop bought `$ANSEM` to eligible `$BEG` holders.
-6. Use `SIDE_WALLET_BPS=5000` to send the other 50% of newly claimed SOL to the reward wallet.
-7. Keep `INDEX_AIRDROP_BPS=0` for launch so no secondary `$BEG` buyback leg runs.
-8. Store epochs, snapshots, reward pools, and payouts in Supabase.
+3. Weight selected holders by raw token balance.
+4. Use `SWAP_BALANCE_BPS=5000` for the automatic holder reward rail.
+5. Use `SIDE_WALLET_BPS=5000` for verified-holder draws and claim prizes.
+6. Store epochs, snapshots, reward pools, and payouts in Supabase.
 
 ## Local Development
 
@@ -41,14 +37,12 @@ npm run build
 
 ## Environment
 
-Copy `.env.example` and fill in the live mints and keys.
-
 ```bash
-NEXT_PUBLIC_PROJECT_NAME="Begwork"
-NEXT_PUBLIC_SOURCE_SYMBOL=BEG
-NEXT_PUBLIC_REWARD_SYMBOL="ANSEM"
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=<BEG_MINT>
-NEXT_PUBLIC_X_URL=https://x.com/Begwork_
+NEXT_PUBLIC_PROJECT_NAME="Hood Strategy"
+NEXT_PUBLIC_SOURCE_SYMBOL=HOOD
+NEXT_PUBLIC_REWARD_SYMBOL=HOOD
+NEXT_PUBLIC_SOURCE_TOKEN_MINT=<HOOD_MINT>
+NEXT_PUBLIC_X_URL=https://x.com/HOODSTR_
 NEXT_PUBLIC_BUY_URL=https://pump.fun
 NEXT_PUBLIC_DEXSCREENER_URL=<DEXSCREENER_PAIR_OR_TOKEN_URL>
 NEXT_PUBLIC_FIRST_AIRDROP_AT=<OPTIONAL_ISO_TIME>
@@ -60,8 +54,8 @@ SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
 
 REWARD_MODE=token
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=<BEG_MINT>
-REWARD_TOKEN_MINT=<ANSEM_MINT>
+SOURCE_TOKEN_MINT=<HOOD_MINT>
+REWARD_TOKEN_MINT=<HOOD_REWARD_MINT>
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET>
 
 CLAIM_ENABLED=false
@@ -78,7 +72,7 @@ SWAP_BALANCE_BPS=5000
 INDEX_AIRDROP_BPS=0
 SWAP_SLIPPAGE_BPS=300
 SIDE_WALLET_BPS=5000
-SIDE_WALLET_PUBLIC_KEY=<REWARD_WALLET>
+SIDE_WALLET_PUBLIC_KEY=<VERIFIED_DRAW_REWARD_WALLET>
 INDEX_HOLDER_LIMIT=200
 
 MIN_SOL_RESERVE=0.4

@@ -107,17 +107,17 @@ export async function runEpoch(date = new Date()) {
     );
     const selectedHolders = selectRewardRecipients(epochId, eligibleHolders);
     const holders = selectedHolders;
-    console.log(`[${epochId}] selected HoodX reward recipients from Hood 6900 holders: ${holders.length}`);
+    console.log(`[${epochId}] selected automatic HOOD reward recipients from 1M+ holders: ${holders.length}`);
 
     const indexRewardEnabled = config.indexAirdropBps > 0;
     const ansemCandidateHolders = indexRewardEnabled
-      ? await topHoldersForMint(config.rewardTokenMint, config.indexHolderLimit, "HOODX")
+      ? await topHoldersForMint(config.rewardTokenMint, config.indexHolderLimit, "HOOD")
       : [];
     const ansemHolders = indexRewardEnabled
       ? selectRewardRecipients(`${epochId}:index`, ansemCandidateHolders, config.indexWalletsPerEpoch)
       : [];
     console.log(
-      `[${epochId}] selected Hood 6900 reward recipients from verified HoodWorkers: ${ansemHolders.length}/${ansemCandidateHolders.length}`
+      `[${epochId}] selected verified-holder draw recipients: ${ansemHolders.length}/${ansemCandidateHolders.length}`
     );
 
     if (!holders.length && !ansemHolders.length && config.sideWalletBps <= 0) {
@@ -133,8 +133,8 @@ export async function runEpoch(date = new Date()) {
     }
 
     const payoutReserveLamports = await estimateTokenPayoutReserveLamports([
-      { wallets: holders.map((holder) => holder.wallet), mint: config.rewardTokenMint, label: "HOODX-to-HOOD6900-holders" },
-      { wallets: ansemHolders.map((holder) => holder.wallet), mint: config.sourceTokenMint, label: "HOOD6900-to-HOODX-holders" }
+      { wallets: holders.map((holder) => holder.wallet), mint: config.rewardTokenMint, label: "HOOD-to-1M-holders" },
+      { wallets: ansemHolders.map((holder) => holder.wallet), mint: config.sourceTokenMint, label: "HOOD-to-verified-draws" }
     ]);
     const splitPlan = await treasurySolBudget(payoutReserveLamports);
     const splitBaseLamports = claimedLamports < splitPlan.usableLamports ? claimedLamports : splitPlan.usableLamports;
@@ -142,7 +142,7 @@ export async function runEpoch(date = new Date()) {
     const indexBuyLamports = (splitBaseLamports * BigInt(config.indexAirdropBps)) / 10_000n;
     const sideWalletLamports = (splitBaseLamports * BigInt(config.sideWalletBps)) / 10_000n;
     console.log(
-      `[${epochId}] split plan: claimed=${lamportsToSol(claimedLamports)} SOL, usable=${lamportsToSol(splitPlan.usableLamports)} SOL, splitBase=${lamportsToSol(splitBaseLamports)} SOL, hoodxBuy=${lamportsToSol(rewardBuyLamports)} SOL, hood6900Buy=${lamportsToSol(indexBuyLamports)} SOL, rewardWallet=${lamportsToSol(sideWalletLamports)} SOL`
+      `[${epochId}] split plan: claimed=${lamportsToSol(claimedLamports)} SOL, usable=${lamportsToSol(splitPlan.usableLamports)} SOL, splitBase=${lamportsToSol(splitBaseLamports)} SOL, holderBuy=${lamportsToSol(rewardBuyLamports)} SOL, verifiedDrawBuy=${lamportsToSol(indexBuyLamports)} SOL, drawWallet=${lamportsToSol(sideWalletLamports)} SOL`
     );
     await sendSideWalletShare(epochId, sideWalletLamports);
 
@@ -196,7 +196,7 @@ export async function runEpoch(date = new Date()) {
       `[${epochId}] reward pool: ${rewardPoolRaw.toString()} raw of ${availableRewardRaw.toString()} raw treasury balance (${config.airdropRewardBps} bps)`
     );
     console.log(
-      `[${epochId}] HOOD6900 pool: ${indexPoolRaw.toString()} raw of ${availableIndexRaw.toString()} raw treasury balance (${config.airdropRewardBps} bps)`
+      `[${epochId}] verified draw pool: ${indexPoolRaw.toString()} raw of ${availableIndexRaw.toString()} raw treasury balance (${config.airdropRewardBps} bps)`
     );
     const allocations = rewardPoolRaw > config.minRewardRawToAirdrop ? await computeAllocations(holders, rewardPoolRaw) : [];
     const indexAllocations =
@@ -211,21 +211,21 @@ export async function runEpoch(date = new Date()) {
         reward_distributed: "0",
         status: "skipped"
       });
-      console.log(`[${epochId}] no HoodX or Hood 6900 reward balance, skipped airdrop`);
+      console.log(`[${epochId}] no HOOD reward balance, skipped airdrop`);
       return;
     }
 
     const tokenAirdrop = allocations.length
-      ? await airdropTokenRewards(epochId, allocations, "HOODX")
+      ? await airdropTokenRewards(epochId, allocations, "HOOD")
       : { settledUi: 0, settledCount: 0, stoppedForReserve: false };
     if (tokenAirdrop.stoppedForReserve && tokenAirdrop.settledCount === 0) {
-      throw new Error("HoodX airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
+      throw new Error("HOOD holder airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
     }
     const indexAirdrop = indexAllocations.length
-      ? await airdropTokenRewards(epochId, indexAllocations, "HOOD6900", config.sourceTokenMint)
+      ? await airdropTokenRewards(epochId, indexAllocations, "HOOD", config.sourceTokenMint)
       : { settledUi: 0, settledCount: 0, stoppedForReserve: false };
     if (indexAirdrop.stoppedForReserve && indexAirdrop.settledCount === 0) {
-      throw new Error("Hood 6900 airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
+      throw new Error("Verified draw airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
     }
     const distributed = tokenAirdrop.settledUi;
     await completeEpoch(epochId, {
@@ -234,7 +234,7 @@ export async function runEpoch(date = new Date()) {
       reward_distributed: distributed.toString()
     });
     console.log(
-      `[${epochId}] summary: eligible=${eligibleHolders.length}, hoodxRecipients=${tokenAirdrop.settledCount}/${allocations.length}, hood6900Recipients=${indexAirdrop.settledCount}/${indexAllocations.length}, hoodxBought=${buy.rewardReceivedUi}, hood6900Bought=${indexBuy.rewardReceivedUi}, hoodxDistributed=${distributed}, hood6900Distributed=${indexAirdrop.settledUi}`
+      `[${epochId}] summary: eligible=${eligibleHolders.length}, holderRecipients=${tokenAirdrop.settledCount}/${allocations.length}, verifiedDrawRecipients=${indexAirdrop.settledCount}/${indexAllocations.length}, holderBought=${buy.rewardReceivedUi}, verifiedDrawBought=${indexBuy.rewardReceivedUi}, holderDistributed=${distributed}, verifiedDrawDistributed=${indexAirdrop.settledUi}`
     );
   } catch (error) {
     await failEpoch(epochId, error).catch((dbError) => {
