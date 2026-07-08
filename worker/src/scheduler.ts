@@ -7,7 +7,7 @@ console.log(
   `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
 );
 console.log(
-  `Reward split: ${config.swapBalanceBps / 100}% ANSEM to source holders, ${config.indexAirdropBps / 100}% BEG to verified beggars, ${config.sideWalletBps / 100}% side wallet.`
+  `Reward split: ${config.swapBalanceBps / 100}% claimed SOL to ANSEM swap, ${config.sideWalletBps / 100}% claimed SOL to reward wallet, ${config.indexAirdropBps / 100}% BEG buyback leg.`
 );
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
 console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} source tokens`);

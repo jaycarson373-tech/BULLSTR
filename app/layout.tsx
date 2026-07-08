@@ -3,29 +3,29 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://bullstr.xyz"),
-  title: "BULLSTR",
-  description: "BULLSTR is a black-screen launch site with 50/50 fee rails and begging coded into the loop.",
+  metadataBase: new URL("https://begwork.xyz"),
+  title: "Begwork",
+  description: "Begwork is a black-screen launch site with 50/50 fee rails and begging coded into the loop.",
   openGraph: {
-    title: "BULLSTR",
-    description: "BULLSTR is a black-screen launch site with 50/50 fee rails and begging coded into the loop.",
-    url: "https://bullstr.xyz",
-    siteName: "BULLSTR",
+    title: "Begwork",
+    description: "Begwork is a black-screen launch site with 50/50 fee rails and begging coded into the loop.",
+    url: "https://begwork.xyz",
+    siteName: "Begwork",
     images: [
       {
-        url: "https://bullstr.xyz/logo.png",
+        url: "https://begwork.xyz/logo.png",
         width: 1200,
         height: 630,
-        alt: "BULLSTR"
+        alt: "Begwork"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "BULLSTR",
-    description: "BULLSTR is a black-screen launch site with 50/50 fee rails and begging coded into the loop.",
-    images: ["https://bullstr.xyz/logo.png"]
+    title: "Begwork",
+    description: "Begwork is a black-screen launch site with 50/50 fee rails and begging coded into the loop.",
+    images: ["https://begwork.xyz/logo.png"]
   },
   icons: {
     icon: [

@@ -65,9 +65,9 @@ const configuredRewardTokenMint = optionalPublicKeyEnv("REWARD_TOKEN_MINT");
 if (rewardMode === "token" && !configuredRewardTokenMint) {
   throw new Error("Missing required env REWARD_TOKEN_MINT when REWARD_MODE=token");
 }
-const swapBalanceBps = Math.min(10_000, Math.max(1, intEnv("SWAP_BALANCE_BPS", 7500)));
+const swapBalanceBps = Math.min(10_000, Math.max(1, intEnv("SWAP_BALANCE_BPS", 5000)));
 const indexAirdropBps = Math.min(10_000, Math.max(0, intEnv("INDEX_AIRDROP_BPS", 0)));
-const sideWalletBps = Math.min(10_000, Math.max(0, intEnv("SIDE_WALLET_BPS", 0)));
+const sideWalletBps = Math.min(10_000, Math.max(0, intEnv("SIDE_WALLET_BPS", 5000)));
 if (swapBalanceBps + indexAirdropBps + sideWalletBps > 10_000) {
   throw new Error(
     `SWAP_BALANCE_BPS + INDEX_AIRDROP_BPS + SIDE_WALLET_BPS cannot exceed 10000; got ${

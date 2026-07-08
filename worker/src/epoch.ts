@@ -7,7 +7,7 @@ import {
   estimateTokenPayoutReserveLamports,
   treasuryRewardBalanceRaw
 } from "./airdrop.js";
-import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, startEpoch } from "./db.js";
+import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, recordClaim, startEpoch } from "./db.js";
 import { applyHolderState } from "./holder-state.js";
 import { currentEpochId } from "./time.js";
 import { eligibleHoldersFromSnapshot, selectRewardRecipients, snapshotSourceHolders, topHoldersForMint } from "./snapshot.js";
@@ -25,9 +25,9 @@ async function sendSideWalletShare(epochId: string, lamports: bigint) {
   if (config.sideWalletBps <= 0 || lamports <= 0n) return null;
 
   const sideWallet = config.sideWalletPublicKey;
-  const sideWalletLabel = sideWallet?.toBase58() ?? "SIDE_WALLET_PUBLIC_KEY";
+  const rewardWalletLabel = sideWallet?.toBase58() ?? "SIDE_WALLET_PUBLIC_KEY";
   console.log(
-    `[${epochId}] ${config.airdropEnabled ? "" : "[DRY-RUN] "}would send ${lamportsToSol(lamports)} SOL (${config.sideWalletBps / 100}%) to side wallet ${sideWalletLabel}`
+    `[${epochId}] ${config.airdropEnabled ? "" : "[DRY-RUN] "}would send ${lamportsToSol(lamports)} SOL (${config.sideWalletBps / 100}%) to reward wallet ${rewardWalletLabel}`
   );
 
   if (!config.airdropEnabled) return null;
@@ -75,7 +75,20 @@ export async function runEpoch(date = new Date()) {
     }
 
     await startEpoch(epochId);
-    await claimFees(epochId);
+    const treasury = treasuryKeypair();
+    const treasuryBalanceBeforeClaim = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
+    const claim = await claimFees(epochId);
+    const treasuryBalanceAfterClaim = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
+    const claimedLamports =
+      claim.txSig && treasuryBalanceAfterClaim > treasuryBalanceBeforeClaim
+        ? treasuryBalanceAfterClaim - treasuryBalanceBeforeClaim
+        : 0n;
+    console.log(
+      `[${epochId}] claimed fee delta available for 50/50 split: ${lamportsToSol(claimedLamports)} SOL`
+    );
+    if (claim.txSig && claimedLamports > 0n) {
+      await recordClaim(epochId, lamportsToSol(claimedLamports).toString(), claim.txSig);
+    }
 
     const sourceHolders = await snapshotSourceHolders();
     const balanceEligibleHolders = await eligibleHoldersFromSnapshot(sourceHolders);
@@ -107,7 +120,7 @@ export async function runEpoch(date = new Date()) {
       `[${epochId}] selected BEG reward recipients from verified beggars: ${ansemHolders.length}/${ansemCandidateHolders.length}`
     );
 
-    if (!holders.length && !ansemHolders.length) {
+    if (!holders.length && !ansemHolders.length && config.sideWalletBps <= 0) {
       await recordBuy(epochId, "0", "0", "0", null);
       await completeEpoch(epochId, {
         eligible_count: eligibleHolders.length,
@@ -124,11 +137,12 @@ export async function runEpoch(date = new Date()) {
       { wallets: ansemHolders.map((holder) => holder.wallet), mint: config.sourceTokenMint, label: "BEG-to-ANSEM-holders" }
     ]);
     const splitPlan = await treasurySolBudget(payoutReserveLamports);
-    const rewardBuyLamports = (splitPlan.usableLamports * BigInt(config.swapBalanceBps)) / 10_000n;
-    const indexBuyLamports = (splitPlan.usableLamports * BigInt(config.indexAirdropBps)) / 10_000n;
-    const sideWalletLamports = (splitPlan.usableLamports * BigInt(config.sideWalletBps)) / 10_000n;
+    const splitBaseLamports = claimedLamports < splitPlan.usableLamports ? claimedLamports : splitPlan.usableLamports;
+    const rewardBuyLamports = (splitBaseLamports * BigInt(config.swapBalanceBps)) / 10_000n;
+    const indexBuyLamports = (splitBaseLamports * BigInt(config.indexAirdropBps)) / 10_000n;
+    const sideWalletLamports = (splitBaseLamports * BigInt(config.sideWalletBps)) / 10_000n;
     console.log(
-      `[${epochId}] split plan: usable=${lamportsToSol(splitPlan.usableLamports)} SOL, ansemBuy=${lamportsToSol(rewardBuyLamports)} SOL, anstrBuy=${lamportsToSol(indexBuyLamports)} SOL, sideWallet=${lamportsToSol(sideWalletLamports)} SOL`
+      `[${epochId}] split plan: claimed=${lamportsToSol(claimedLamports)} SOL, usable=${lamportsToSol(splitPlan.usableLamports)} SOL, splitBase=${lamportsToSol(splitBaseLamports)} SOL, ansemBuy=${lamportsToSol(rewardBuyLamports)} SOL, begBuy=${lamportsToSol(indexBuyLamports)} SOL, rewardWallet=${lamportsToSol(sideWalletLamports)} SOL`
     );
     await sendSideWalletShare(epochId, sideWalletLamports);
 

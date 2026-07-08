@@ -37,7 +37,7 @@ type PriceResponse = {
   updatedAt: string;
 };
 
-const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/BullStrategySol";
+const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/Begwork_";
 const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || "LAUNCHING SOON";
 const BUY_URL =
   process.env.NEXT_PUBLIC_BUY_URL?.trim() ||
@@ -70,17 +70,17 @@ const emptyPrice: PriceResponse = {
 };
 
 const signalCards = [
-  ["Beg", "BULLSTR turns begging into a visible launch mechanic."],
+  ["Beg", "Begwork turns begging into a visible launch mechanic."],
   ["Collect Fees", "Every epoch watches the fee pot and waits for enough fuel."],
-  ["50% Buy Rail", "Half the usable fees point back at BULLSTR buy pressure."],
-  ["50% Beg Rail", "Half the usable fees route toward the holders begging hardest."],
+  ["50% ANSEM Rail", "Half the claimed SOL swaps into ANSEM."],
+  ["50% Reward Wallet", "Half the claimed SOL sends to the reward wallet."],
   ["Receipts", "Transactions stay on-screen so the loop is obvious."]
 ];
 
 const terminalLines = ["Begging coded...", "Splitting fees 50/50...", "Routing buy pressure...", "Waiting for launch tx..."];
 const feeRails = [
-  ["50%", "Buy Rail", "Half of usable fees are reserved for direct BULLSTR buy pressure."],
-  ["50%", "Beg Rail", "Half of usable fees are reserved for the begging and holder reward loop."]
+  ["50%", "ANSEM Rail", "Half of claimed SOL swaps through Jupiter into ANSEM."],
+  ["50%", "Reward Wallet", "Half of claimed SOL transfers to the configured reward wallet."]
 ];
 const memeImages = [
   "/brand/memes/ai-meme-1.png",
@@ -153,12 +153,12 @@ function rewardTotalAmount(totals: RewardTotal[], keys: string[]) {
 
 function displayAsset(asset: string | undefined) {
   const key = assetKey(asset);
-  if (key === "BULLSTR") return "$BULLSTR";
   if (key === "BEG") return "$BEG";
-  if (key === "AI6900") return "$BULLSTR";
-  if (key === "AI") return "$BULLSTR";
-  if (key === "ANSEM") return "$BEG";
-  return asset ? `$${asset.replace(/^\$/, "")}` : "$BULLSTR";
+  if (key === "BULLSTR") return "$BEG";
+  if (key === "AI6900") return "$BEG";
+  if (key === "AI") return "$BEG";
+  if (key === "ANSEM") return "$ANSEM";
+  return asset ? `$${asset.replace(/^\$/, "")}` : "$BEG";
 }
 
 function IndexChart() {
@@ -221,8 +221,8 @@ function MemeConveyor() {
   const belt = [...memeImages, ...memeImages];
 
   return (
-    <motion.section className="ai-meme-section" aria-label="BULLSTR meme conveyor" {...fadeUp}>
-      <div className="ai-meme-conveyor" aria-label="BULLSTR meme gallery">
+    <motion.section className="ai-meme-section" aria-label="Begwork meme conveyor" {...fadeUp}>
+      <div className="ai-meme-conveyor" aria-label="Begwork meme gallery">
         <div className="ai-meme-track">
           {belt.map((src, index) => (
             <figure className="ai-meme-card" key={`${src}-${index}`}>
@@ -273,18 +273,17 @@ export function AnsemIndexApp() {
   const nextDropMs = now ? Math.max(Date.parse(stats.nextDropTime) || 0, fallbackNextDropMs()) : 0;
   const countdown = now ? formatCountdown(Math.max(0, Math.ceil((nextDropMs - now) / 1000))) : "--:--";
   const totalAnsemDistributed = rewardTotalAmount(stats.totalRewardTotals, ["ANSEM"]);
-  const totalAiDistributed = rewardTotalAmount(stats.totalRewardTotals, ["AI", "AI6900"]);
   const transactionCount = stats.recentRewards.filter((reward) => reward.txSig).length;
   const heroMetrics = useMemo(
     () => [
-      { label: "50% BUY RAIL", value: formatToken(totalAiDistributed, "$BULLSTR") },
-      { label: "50% BEG RAIL", value: formatToken(totalAnsemDistributed, "$BEG") },
-      { label: "BEGGING", value: "CODED" },
+      { label: "50% ANSEM SWAP", value: formatToken(totalAnsemDistributed, "$ANSEM") },
+      { label: "50% REWARD WALLET", value: "SOL" },
+      { label: "TICKER", value: "$BEG" },
       { label: "BACKGROUND", value: "BLACK" },
       { label: "NEXT EPOCH", value: countdown },
       { label: "RECENT TXS", value: formatNumber(transactionCount, 0) }
     ],
-    [countdown, price.priceUsd, totalAiDistributed, totalAnsemDistributed, transactionCount]
+    [countdown, totalAnsemDistributed, transactionCount]
   );
 
   return (
@@ -292,9 +291,9 @@ export function AnsemIndexApp() {
       <AnimatedBackground />
 
       <header className="ai-nav">
-        <a className="ai-brand" href="#top" aria-label="BULLSTR home">
+        <a className="ai-brand" href="#top" aria-label="Begwork home">
           <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-          <span>BULLSTR</span>
+          <span>Begwork</span>
         </a>
         <nav aria-label="Primary navigation">
           <a href="/dashboard">Dashboard</a>
@@ -310,12 +309,12 @@ export function AnsemIndexApp() {
       <main>
         <section className="ai-hero" id="top">
           <motion.div className="ai-hero-copy" {...fadeUp}>
-            <img className="ai-hero-logo" src="/brand/bullstr-logo.png" alt="" />
+            <img className="ai-hero-logo" src="/brand/begwork-icon.png" alt="" />
             <span className="ai-kicker">BLACK SCREEN LAUNCH</span>
-            <h1>BULLSTR</h1>
+            <h1>Begwork</h1>
             <p>
-              BULLSTR is a black-background launch site with the 50/50 thing front and center:
-              half the fee rail buys pressure, half feeds the begging and holder loop.
+              Begwork is a black-background launch site with the 50/50 thing front and center:
+              half the claimed SOL swaps into ANSEM, half sends to the reward wallet.
             </p>
             <div className="ai-actions">
               <a href={BUY_URL} target="_blank" rel="noreferrer">Launch Buy</a>
@@ -351,7 +350,7 @@ export function AnsemIndexApp() {
         <motion.section className="ai-section" id="rails" {...fadeUp}>
           <div className="ai-section-head">
             <span className="ai-kicker">50/50 THING</span>
-            <h2>Half for buy pressure. Half for the begging loop.</h2>
+            <h2>Half swaps to ANSEM. Half sends to the reward wallet.</h2>
           </div>
           <div className="ai-rail-grid">
             {feeRails.map(([value, title, copy]) => (
@@ -401,15 +400,15 @@ export function AnsemIndexApp() {
 
         <motion.section className="ai-thesis" {...fadeUp}>
           <span className="ai-kicker">WHY IT EXISTS</span>
-          <h2>Beg harder. Hold longer. Let the 50/50 rail do the talking.</h2>
+          <h2>Beg harder. Hold longer. Let the 50/50 fee rail do the talking.</h2>
           <p>The reward rails run when fees are available. The begging is not a bit. It is coded.</p>
         </motion.section>
 
         <motion.section className="ai-section" id="price" {...fadeUp}>
           <div className="ai-section-head split">
             <div>
-              <span className="ai-kicker">BULLSTR PRICE</span>
-              <h2>Live BULLSTR Chart</h2>
+              <span className="ai-kicker">$BEG PRICE</span>
+              <h2>Live $BEG Chart</h2>
             </div>
             <span className="ai-status">DEXSCREENER</span>
           </div>
@@ -417,7 +416,7 @@ export function AnsemIndexApp() {
             <IndexChart />
             <div className="ai-performance-zero">{formatUsd(price.priceUsd)}</div>
             <div className="ai-price-meta">
-              <span>BULLSTR / USD</span>
+              <span>$BEG / USD</span>
               <strong>{price.priceChange24h >= 0 ? "+" : ""}{formatNumber(price.priceChange24h, 2)}% 24H</strong>
               {price.url ? <a href={price.url} target="_blank" rel="noreferrer">Open chart</a> : null}
             </div>
@@ -433,15 +432,15 @@ export function AnsemIndexApp() {
         <motion.section className="ai-section" id="faq" {...fadeUp}>
           <div className="ai-section-head">
             <span className="ai-kicker">FAQ</span>
-            <h2>BULLSTR Questions</h2>
+            <h2>Begwork Questions</h2>
           </div>
           <div className="ai-faq">
             {[
-              ["What is BULLSTR?", "BULLSTR is a black-screen launch site built around a visible 50/50 fee split."],
+              ["What is Begwork?", "Begwork is a black-screen launch site built around a visible 50/50 fee split."],
               ["What is the 50/50 thing?", "Half the usable fees point at buy pressure and half point at the begging and holder loop."],
               ["Is begging coded?", "Yes. The launch copy, activity feed, and rail system all make the begging mechanic explicit."],
               ["Where do transactions show?", "Settled launch receipts appear in the transaction table with Solscan links."],
-              ["What is the ticker?", "The site is branded BULLSTR until the live mint is set."]
+              ["What is the ticker?", "The ticker is $BEG."]
             ].map(([question, answer]) => (
               <details key={question}>
                 <summary>{question}</summary>
@@ -455,13 +454,13 @@ export function AnsemIndexApp() {
       <footer className="ai-footer">
         <div className="ai-footer-brand">
           <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-          <span>BULLSTR</span>
+          <span>Begwork</span>
         </div>
         <div className="ai-footer-links">
           <a href={COMMUNITY_URL} target="_blank" rel="noreferrer">X</a>
           <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">DEXSCREENER</a>
           <a href={PUMP_URL} target="_blank" rel="noreferrer">PUMP.FUN</a>
-          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY BULLSTR</a>
+          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $BEG</a>
         </div>
       </footer>
     </div>
@@ -504,13 +503,12 @@ export function RewardsDashboardApp() {
   const nextDropMs = now ? Math.max(Date.parse(stats.nextDropTime) || 0, fallbackNextDropMs()) : 0;
   const countdown = now ? formatCountdown(Math.max(0, Math.ceil((nextDropMs - now) / 1000))) : "--:--";
   const totalAnsemDistributed = rewardTotalAmount(stats.totalRewardTotals, ["ANSEM"]);
-  const totalAiDistributed = rewardTotalAmount(stats.totalRewardTotals, ["AI", "AI6900"]);
   const transactionCount = stats.recentRewards.filter((reward) => reward.txSig).length;
   const dashboardMetrics = [
-    { label: "50% buy rail", value: formatToken(totalAiDistributed, "$BULLSTR") },
-    { label: "50% beg rail", value: formatToken(totalAnsemDistributed, "$BEG") },
+    { label: "50% ANSEM swap", value: formatToken(totalAnsemDistributed, "$ANSEM") },
+    { label: "50% reward wallet", value: "SOL" },
     { label: "Begging", value: "Coded" },
-    { label: "BULLSTR price", value: formatUsd(price.priceUsd) },
+    { label: "$BEG price", value: formatUsd(price.priceUsd) },
     { label: "Next epoch", value: countdown },
     { label: "Reward txs", value: formatNumber(transactionCount, 0) }
   ];
@@ -520,14 +518,14 @@ export function RewardsDashboardApp() {
       <AnimatedBackground />
 
       <header className="ai-nav">
-        <a className="ai-brand" href="/" aria-label="BULLSTR home">
+        <a className="ai-brand" href="/" aria-label="Begwork home">
           <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-          <span>BULLSTR</span>
+          <span>Begwork</span>
         </a>
         <nav aria-label="Dashboard navigation">
           <a href="/">Home</a>
           <a href="#transactions">Transactions</a>
-          <a href="#price">BULLSTR Price</a>
+          <a href="#price">$BEG Price</a>
         </nav>
         <div className="ai-nav-meta">
           <span className="ai-ca-chip">CA: {CA}</span>
@@ -540,7 +538,7 @@ export function RewardsDashboardApp() {
           <div className="ai-section-head split">
             <div>
               <span className="ai-kicker">LIVE DASHBOARD</span>
-              <h1>BULLSTR Dashboard</h1>
+              <h1>Begwork Dashboard</h1>
             </div>
             <span className="ai-status">AUTO REFRESH</span>
           </div>
@@ -592,8 +590,8 @@ export function RewardsDashboardApp() {
         <motion.section className="ai-section" id="price" {...fadeUp}>
           <div className="ai-section-head split">
             <div>
-              <span className="ai-kicker">BULLSTR PRICE</span>
-              <h2>Live BULLSTR Chart</h2>
+              <span className="ai-kicker">$BEG PRICE</span>
+              <h2>Live $BEG Chart</h2>
             </div>
             <span className="ai-status">DEXSCREENER</span>
           </div>
@@ -601,7 +599,7 @@ export function RewardsDashboardApp() {
             <IndexChart />
             <div className="ai-performance-zero">{formatUsd(price.priceUsd)}</div>
             <div className="ai-price-meta">
-              <span>BULLSTR / USD</span>
+              <span>$BEG / USD</span>
               <strong>{price.priceChange24h >= 0 ? "+" : ""}{formatNumber(price.priceChange24h, 2)}% 24H</strong>
               {price.url ? <a href={price.url} target="_blank" rel="noreferrer">Open chart</a> : null}
             </div>
@@ -612,13 +610,13 @@ export function RewardsDashboardApp() {
       <footer className="ai-footer">
         <div className="ai-footer-brand">
           <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-          <span>BULLSTR</span>
+          <span>Begwork</span>
         </div>
         <div className="ai-footer-links">
           <a href={COMMUNITY_URL} target="_blank" rel="noreferrer">X</a>
           <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">DEXSCREENER</a>
           <a href={PUMP_URL} target="_blank" rel="noreferrer">PUMP.FUN</a>
-          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY BULLSTR</a>
+          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $BEG</a>
         </div>
       </footer>
     </div>
