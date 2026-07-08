@@ -3,29 +3,29 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ai6900.xyz"),
-  title: "ANSEM INDEX 6900",
-  description: "$AI is the ANSEM INDEX: ANSEM rewards for AI holders and AI rewards for top ANSEM holders.",
+  metadataBase: new URL("https://bullstr.xyz"),
+  title: "BULLSTR",
+  description: "BULLSTR is a black-screen launch site with 50/50 fee rails and begging coded into the loop.",
   openGraph: {
-    title: "ANSEM INDEX 6900",
-    description: "$AI is the ANSEM INDEX: ANSEM rewards for AI holders and AI rewards for top ANSEM holders.",
-    url: "https://ai6900.xyz",
-    siteName: "ANSEM INDEX 6900",
+    title: "BULLSTR",
+    description: "BULLSTR is a black-screen launch site with 50/50 fee rails and begging coded into the loop.",
+    url: "https://bullstr.xyz",
+    siteName: "BULLSTR",
     images: [
       {
-        url: "https://ai6900.xyz/brand/index-preview.png",
+        url: "https://bullstr.xyz/logo.png",
         width: 1200,
         height: 630,
-        alt: "ANSEM INDEX 6900"
+        alt: "BULLSTR"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "ANSEM INDEX 6900",
-    description: "$AI is the ANSEM INDEX: ANSEM rewards for AI holders and AI rewards for top ANSEM holders.",
-    images: ["https://ai6900.xyz/brand/index-preview.png"]
+    title: "BULLSTR",
+    description: "BULLSTR is a black-screen launch site with 50/50 fee rails and begging coded into the loop.",
+    images: ["https://bullstr.xyz/logo.png"]
   },
   icons: {
     icon: [

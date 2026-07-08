@@ -2,12 +2,12 @@ import { runEpoch } from "./epoch.js";
 import { config } from "./config.js";
 import { msUntilNextEpoch } from "./time.js";
 
-console.log(`AI Index worker started. Schedule: every ${config.epochMinutes} minutes.`);
+console.log(`Begwork worker started. Schedule: every ${config.epochMinutes} minutes.`);
 console.log(
   `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
 );
 console.log(
-  `Reward split: ${config.swapBalanceBps / 100}% ANSEM to source holders, ${config.indexAirdropBps / 100}% AI6900 to ANSEM holders, ${config.sideWalletBps / 100}% side wallet.`
+  `Reward split: ${config.swapBalanceBps / 100}% ANSEM to source holders, ${config.indexAirdropBps / 100}% BEG to verified beggars, ${config.sideWalletBps / 100}% side wallet.`
 );
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
 console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} source tokens`);

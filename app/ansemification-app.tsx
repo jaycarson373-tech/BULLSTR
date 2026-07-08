@@ -37,20 +37,20 @@ type PriceResponse = {
   updatedAt: string;
 };
 
-const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/AI6900__";
-const CA = process.env.NEXT_PUBLIC_CA?.trim() || "48mPhuhaiPrCk41Ay9zHBXdnzwY63beL5sejjz6Kpump";
+const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/BullStrategySol";
+const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || "LAUNCHING SOON";
 const BUY_URL =
   process.env.NEXT_PUBLIC_BUY_URL?.trim() ||
-  "https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=48mPhuhaiPrCk41Ay9zHBXdnzwY63beL5sejjz6Kpump";
+  "https://pump.fun";
 const PUMP_URL =
   process.env.NEXT_PUBLIC_PUMP_URL?.trim() ||
-  "https://pump.fun/coin/48mPhuhaiPrCk41Ay9zHBXdnzwY63beL5sejjz6Kpump";
+  "https://pump.fun";
 const DEXSCREENER_URL =
   process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() ||
-  "https://dexscreener.com/solana/48mPhuhaiPrCk41Ay9zHBXdnzwY63beL5sejjz6Kpump";
+  "https://dexscreener.com/solana";
 const COMMUNITY_URL =
   process.env.NEXT_PUBLIC_COMMUNITY_URL?.trim() ||
-  "https://x.com/i/communities/2032569869326004522";
+  X_URL;
 const REFRESH_MS = 12_000;
 const EPOCH_MS = 5 * 60 * 1000;
 
@@ -70,17 +70,17 @@ const emptyPrice: PriceResponse = {
 };
 
 const signalCards = [
-  ["Hold $AI", "Eligible $AI holders receive ANSEM rewards."],
-  ["Buy ANSEM", "Creator fees buy ANSEM every epoch."],
-  ["Reward $AI Holders", "ANSEM goes back to eligible $AI holders."],
-  ["Buy $AI", "Creator fees also buy the source token."],
-  ["Reward ANSEM Holders", "Top ANSEM holders receive $AI."]
+  ["Beg", "BULLSTR turns begging into a visible launch mechanic."],
+  ["Collect Fees", "Every epoch watches the fee pot and waits for enough fuel."],
+  ["50% Buy Rail", "Half the usable fees point back at BULLSTR buy pressure."],
+  ["50% Beg Rail", "Half the usable fees route toward the holders begging hardest."],
+  ["Receipts", "Transactions stay on-screen so the loop is obvious."]
 ];
 
-const terminalLines = ["Waiting for fees...", "Checking $AI holders...", "Checking ANSEM holders...", "Waiting for reward tx..."];
+const terminalLines = ["Begging coded...", "Splitting fees 50/50...", "Routing buy pressure...", "Waiting for launch tx..."];
 const feeRails = [
-  ["50%", "$AI Rewards", "Buys $AI and rewards top ANSEM holders."],
-  ["50%", "ANSEM Rewards", "Buys ANSEM and airdrops to $AI holders."]
+  ["50%", "Buy Rail", "Half of usable fees are reserved for direct BULLSTR buy pressure."],
+  ["50%", "Beg Rail", "Half of usable fees are reserved for the begging and holder reward loop."]
 ];
 const memeImages = [
   "/brand/memes/ai-meme-1.png",
@@ -153,10 +153,12 @@ function rewardTotalAmount(totals: RewardTotal[], keys: string[]) {
 
 function displayAsset(asset: string | undefined) {
   const key = assetKey(asset);
-  if (key === "AI6900") return "$AI";
-  if (key === "AI") return "$AI";
-  if (key === "ANSEM") return "$ANSEM";
-  return asset ? `$${asset.replace(/^\$/, "")}` : "$ANSEM";
+  if (key === "BULLSTR") return "$BULLSTR";
+  if (key === "BEG") return "$BEG";
+  if (key === "AI6900") return "$BULLSTR";
+  if (key === "AI") return "$BULLSTR";
+  if (key === "ANSEM") return "$BEG";
+  return asset ? `$${asset.replace(/^\$/, "")}` : "$BULLSTR";
 }
 
 function IndexChart() {
@@ -201,7 +203,7 @@ function TerminalActivity() {
     <div className="ai-terminal">
       <div className="ai-terminal-top">
         <span>LIVE ACTIVITY</span>
-        <span>REWARDS: WAITING</span>
+        <span>BEGGING: CODED</span>
       </div>
       <div className="ai-terminal-feed">
         {terminalLines.map((line, index) => (
@@ -219,8 +221,8 @@ function MemeConveyor() {
   const belt = [...memeImages, ...memeImages];
 
   return (
-    <motion.section className="ai-meme-section" aria-label="AI6900 meme conveyor" {...fadeUp}>
-      <div className="ai-meme-conveyor" aria-label="AI6900 meme gallery">
+    <motion.section className="ai-meme-section" aria-label="BULLSTR meme conveyor" {...fadeUp}>
+      <div className="ai-meme-conveyor" aria-label="BULLSTR meme gallery">
         <div className="ai-meme-track">
           {belt.map((src, index) => (
             <figure className="ai-meme-card" key={`${src}-${index}`}>
@@ -274,10 +276,10 @@ export function AnsemIndexApp() {
   const transactionCount = stats.recentRewards.filter((reward) => reward.txSig).length;
   const heroMetrics = useMemo(
     () => [
-      { label: "$AI DISTRIBUTED TO ANSEM HOLDERS", value: formatToken(totalAiDistributed, "$AI") },
-      { label: "$ANSEM DISTRIBUTED TO $AI HOLDERS", value: formatToken(totalAnsemDistributed, "$ANSEM") },
-      { label: "ELIGIBLE $AI HOLDERS", value: "0" },
-      { label: "ANSEM PRICE", value: formatUsd(price.priceUsd) },
+      { label: "50% BUY RAIL", value: formatToken(totalAiDistributed, "$BULLSTR") },
+      { label: "50% BEG RAIL", value: formatToken(totalAnsemDistributed, "$BEG") },
+      { label: "BEGGING", value: "CODED" },
+      { label: "BACKGROUND", value: "BLACK" },
       { label: "NEXT EPOCH", value: countdown },
       { label: "RECENT TXS", value: formatNumber(transactionCount, 0) }
     ],
@@ -289,13 +291,13 @@ export function AnsemIndexApp() {
       <AnimatedBackground />
 
       <header className="ai-nav">
-        <a className="ai-brand" href="#top" aria-label="ANSEM INDEX 6900 home">
+        <a className="ai-brand" href="#top" aria-label="BULLSTR home">
           <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-          <span>ANSEM INDEX 6900</span>
+          <span>BULLSTR</span>
         </a>
         <nav aria-label="Primary navigation">
           <a href="/dashboard">Dashboard</a>
-          <a href="#transactions">Transactions</a>
+          <a href="#rails">50/50</a>
           <a href="#faq">FAQ</a>
         </nav>
         <div className="ai-nav-meta">
@@ -307,15 +309,16 @@ export function AnsemIndexApp() {
       <main>
         <section className="ai-hero" id="top">
           <motion.div className="ai-hero-copy" {...fadeUp}>
-            <span className="ai-kicker">ANSEM INDEX</span>
-            <h1>ANSEM INDEX 6900</h1>
+            <img className="ai-hero-logo" src="/brand/bullstr-logo.png" alt="" />
+            <span className="ai-kicker">BLACK SCREEN LAUNCH</span>
+            <h1>BULLSTR</h1>
             <p>
-              The Ansem Index routes creator fees through a 50/50 reward rail: half to ANSEM for $AI holders,
-              half to $AI for top ANSEM holders.
+              BULLSTR is a black-background launch site with the 50/50 thing front and center:
+              half the fee rail buys pressure, half feeds the begging and holder loop.
             </p>
             <div className="ai-actions">
-              <a href="/dashboard">View Dashboard</a>
-              <a href="#transactions">View Transactions</a>
+              <a href={BUY_URL} target="_blank" rel="noreferrer">Launch Buy</a>
+              <a href="#rails">View 50/50</a>
             </div>
           </motion.div>
 
@@ -331,8 +334,8 @@ export function AnsemIndexApp() {
 
         <motion.section className="ai-section" id="how" {...fadeUp}>
           <div className="ai-section-head">
-            <span className="ai-kicker">REWARD STACK</span>
-            <h2>How Rewards Work</h2>
+            <span className="ai-kicker">BEGGING CODED</span>
+            <h2>The whole site says the quiet part out loud.</h2>
           </div>
           <div className="ai-card-grid five">
             {signalCards.map(([title, copy]) => (
@@ -346,8 +349,8 @@ export function AnsemIndexApp() {
 
         <motion.section className="ai-section" id="rails" {...fadeUp}>
           <div className="ai-section-head">
-            <span className="ai-kicker">CREATOR FEE ROUTING</span>
-            <h2>Two rails. Live rewards.</h2>
+            <span className="ai-kicker">50/50 THING</span>
+            <h2>Half for buy pressure. Half for the begging loop.</h2>
           </div>
           <div className="ai-rail-grid">
             {feeRails.map(([value, title, copy]) => (
@@ -364,7 +367,7 @@ export function AnsemIndexApp() {
           <div className="ai-section-head split">
             <div>
               <span className="ai-kicker">RECENT TRANSACTIONS</span>
-              <h2>Reward Transactions</h2>
+              <h2>Launch Receipts</h2>
             </div>
           </div>
           <div className="ai-table ai-transactions">
@@ -397,15 +400,15 @@ export function AnsemIndexApp() {
 
         <motion.section className="ai-thesis" {...fadeUp}>
           <span className="ai-kicker">WHY IT EXISTS</span>
-          <h2>Hold $AI. Earn ANSEM. Top ANSEM holders earn $AI.</h2>
-          <p>The reward rails run every epoch when fees are available.</p>
+          <h2>Beg harder. Hold longer. Let the 50/50 rail do the talking.</h2>
+          <p>The reward rails run when fees are available. The begging is not a bit. It is coded.</p>
         </motion.section>
 
         <motion.section className="ai-section" id="price" {...fadeUp}>
           <div className="ai-section-head split">
             <div>
-              <span className="ai-kicker">ANSEM PRICE</span>
-              <h2>Live ANSEM Chart</h2>
+              <span className="ai-kicker">BULLSTR PRICE</span>
+              <h2>Live BULLSTR Chart</h2>
             </div>
             <span className="ai-status">DEXSCREENER</span>
           </div>
@@ -413,7 +416,7 @@ export function AnsemIndexApp() {
             <IndexChart />
             <div className="ai-performance-zero">{formatUsd(price.priceUsd)}</div>
             <div className="ai-price-meta">
-              <span>ANSEM / USD</span>
+              <span>BULLSTR / USD</span>
               <strong>{price.priceChange24h >= 0 ? "+" : ""}{formatNumber(price.priceChange24h, 2)}% 24H</strong>
               {price.url ? <a href={price.url} target="_blank" rel="noreferrer">Open chart</a> : null}
             </div>
@@ -429,15 +432,15 @@ export function AnsemIndexApp() {
         <motion.section className="ai-section" id="faq" {...fadeUp}>
           <div className="ai-section-head">
             <span className="ai-kicker">FAQ</span>
-            <h2>Ansem Index Questions</h2>
+            <h2>BULLSTR Questions</h2>
           </div>
           <div className="ai-faq">
             {[
-              ["What is the Ansem Index?", "Ansem Index is a 50/50 reward system built around ANSEM and $AI."],
-              ["How does it work?", "Fees buy ANSEM for $AI holders and buy $AI for top ANSEM holders."],
-              ["How often does it run?", "Reward epochs are prepared for five-minute cycles."],
-              ["Where do transactions show?", "Settled reward transactions appear in the transaction table with Solscan links."],
-              ["What is the ticker?", "The ticker is $AI."]
+              ["What is BULLSTR?", "BULLSTR is a black-screen launch site built around a visible 50/50 fee split."],
+              ["What is the 50/50 thing?", "Half the usable fees point at buy pressure and half point at the begging and holder loop."],
+              ["Is begging coded?", "Yes. The launch copy, activity feed, and rail system all make the begging mechanic explicit."],
+              ["Where do transactions show?", "Settled launch receipts appear in the transaction table with Solscan links."],
+              ["What is the ticker?", "The site is branded BULLSTR until the live mint is set."]
             ].map(([question, answer]) => (
               <details key={question}>
                 <summary>{question}</summary>
@@ -451,13 +454,13 @@ export function AnsemIndexApp() {
       <footer className="ai-footer">
         <div className="ai-footer-brand">
           <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-          <span>ANSEM INDEX 6900</span>
+          <span>BULLSTR</span>
         </div>
         <div className="ai-footer-links">
-          <a href={COMMUNITY_URL} target="_blank" rel="noreferrer">X COMMUNITY</a>
+          <a href={COMMUNITY_URL} target="_blank" rel="noreferrer">X</a>
           <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">DEXSCREENER</a>
           <a href={PUMP_URL} target="_blank" rel="noreferrer">PUMP.FUN</a>
-          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $AI</a>
+          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY BULLSTR</a>
         </div>
       </footer>
     </div>
@@ -502,10 +505,10 @@ export function RewardsDashboardApp() {
   const totalAiDistributed = rewardTotalAmount(stats.totalRewardTotals, ["AI", "AI6900"]);
   const transactionCount = stats.recentRewards.filter((reward) => reward.txSig).length;
   const dashboardMetrics = [
-    { label: "$AI to ANSEM holders", value: formatToken(totalAiDistributed, "$AI") },
-    { label: "$ANSEM to $AI holders", value: formatToken(totalAnsemDistributed, "$ANSEM") },
-    { label: "Eligible $AI holders", value: "0" },
-    { label: "ANSEM price", value: formatUsd(price.priceUsd) },
+    { label: "50% buy rail", value: formatToken(totalAiDistributed, "$BULLSTR") },
+    { label: "50% beg rail", value: formatToken(totalAnsemDistributed, "$BEG") },
+    { label: "Begging", value: "Coded" },
+    { label: "BULLSTR price", value: formatUsd(price.priceUsd) },
     { label: "Next epoch", value: countdown },
     { label: "Reward txs", value: formatNumber(transactionCount, 0) }
   ];
@@ -515,14 +518,14 @@ export function RewardsDashboardApp() {
       <AnimatedBackground />
 
       <header className="ai-nav">
-        <a className="ai-brand" href="/" aria-label="ANSEM INDEX 6900 home">
+        <a className="ai-brand" href="/" aria-label="BULLSTR home">
           <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-          <span>ANSEM INDEX 6900</span>
+          <span>BULLSTR</span>
         </a>
         <nav aria-label="Dashboard navigation">
           <a href="/">Home</a>
           <a href="#transactions">Transactions</a>
-          <a href="#price">ANSEM Price</a>
+          <a href="#price">BULLSTR Price</a>
         </nav>
         <div className="ai-nav-meta">
           <span className="ai-ca-chip">CA: {CA}</span>
@@ -535,7 +538,7 @@ export function RewardsDashboardApp() {
           <div className="ai-section-head split">
             <div>
               <span className="ai-kicker">LIVE DASHBOARD</span>
-              <h1>Reward Dashboard</h1>
+              <h1>BULLSTR Dashboard</h1>
             </div>
             <span className="ai-status">AUTO REFRESH</span>
           </div>
@@ -553,7 +556,7 @@ export function RewardsDashboardApp() {
           <div className="ai-section-head split">
             <div>
               <span className="ai-kicker">SETTLED REWARDS</span>
-              <h2>Transactions</h2>
+              <h2>Launch Receipts</h2>
             </div>
           </div>
           <div className="ai-table ai-transactions">
@@ -587,8 +590,8 @@ export function RewardsDashboardApp() {
         <motion.section className="ai-section" id="price" {...fadeUp}>
           <div className="ai-section-head split">
             <div>
-              <span className="ai-kicker">ANSEM PRICE</span>
-              <h2>Live ANSEM Chart</h2>
+              <span className="ai-kicker">BULLSTR PRICE</span>
+              <h2>Live BULLSTR Chart</h2>
             </div>
             <span className="ai-status">DEXSCREENER</span>
           </div>
@@ -596,7 +599,7 @@ export function RewardsDashboardApp() {
             <IndexChart />
             <div className="ai-performance-zero">{formatUsd(price.priceUsd)}</div>
             <div className="ai-price-meta">
-              <span>ANSEM / USD</span>
+              <span>BULLSTR / USD</span>
               <strong>{price.priceChange24h >= 0 ? "+" : ""}{formatNumber(price.priceChange24h, 2)}% 24H</strong>
               {price.url ? <a href={price.url} target="_blank" rel="noreferrer">Open chart</a> : null}
             </div>
@@ -607,13 +610,13 @@ export function RewardsDashboardApp() {
       <footer className="ai-footer">
         <div className="ai-footer-brand">
           <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-          <span>ANSEM INDEX 6900</span>
+          <span>BULLSTR</span>
         </div>
         <div className="ai-footer-links">
-          <a href={COMMUNITY_URL} target="_blank" rel="noreferrer">X COMMUNITY</a>
+          <a href={COMMUNITY_URL} target="_blank" rel="noreferrer">X</a>
           <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">DEXSCREENER</a>
           <a href={PUMP_URL} target="_blank" rel="noreferrer">PUMP.FUN</a>
-          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $AI</a>
+          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY BULLSTR</a>
         </div>
       </footer>
     </div>
