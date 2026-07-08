@@ -99,7 +99,7 @@ export const config = {
   indexAirdropBps,
   sideWalletBps,
   sideWalletPublicKey: optionalPublicKeyEnv("SIDE_WALLET_PUBLIC_KEY"),
-  minSolReserve: Math.max(0.3, numberEnv("MIN_SOL_RESERVE", 0.3)),
+  minSolReserve: Math.max(0, numberEnv("MIN_SOL_RESERVE", 0.3)),
   airdropSolReserve: Math.max(0.05, numberEnv("AIRDROP_SOL_RESERVE", 0.05)),
   airdropBatchSize: Math.max(1, intEnv("AIRDROP_BATCH_SIZE", 4)),
   airdropRewardBps: Math.min(10_000, Math.max(1, intEnv("AIRDROP_REWARD_BPS", 10000))),

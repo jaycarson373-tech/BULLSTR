@@ -129,7 +129,7 @@ export async function buyToken(
   const rewardReceivedRaw = BigInt(quote.outAmount);
   const rewardReceivedUi = rawToUi(rewardReceivedRaw, decimals);
   console.log(
-    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}would buy ${rewardReceivedRaw.toString()} raw ${label} tokens for ${amount.toString()} lamports`
+    `[${epochId}] ${config.buyEnabled ? "quoted live buy" : "[DRY-RUN] would buy"} ${rewardReceivedRaw.toString()} raw ${label} tokens for ${amount.toString()} lamports`
   );
 
   if (!config.buyEnabled) {
@@ -146,6 +146,7 @@ export async function buyToken(
 
   const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
   await connection.confirmTransaction(txSig, "confirmed");
+  console.log(`[${epochId}] ${label} buy settled: ${txSig}`);
   return { baseSpentLamports: amount, rewardReceivedRaw, rewardReceivedUi, txSig };
 }
 
