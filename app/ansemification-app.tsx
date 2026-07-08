@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, type Transition } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatedBackground } from "./animated-background";
 
 type RewardTotal = {
@@ -72,13 +72,6 @@ const emptyPrice: PriceResponse = {
   updatedAt: new Date().toISOString()
 };
 
-const signalCards = [
-  ["1.", "The timeline BegWorks."],
-  ["2.", "Creator fees accumulate."],
-  ["3.", "50% buys $ANSEM for eligible holders."],
-  ["4.", "50% buys $ANSEM for bounty payouts."]
-];
-
 const terminalLines = [
   "New BegWorker verified...",
   "Creator fees received...",
@@ -88,13 +81,15 @@ const terminalLines = [
   "Waiting for next epoch..."
 ];
 const feeRails = [
-  ["50%", "Buys $ANSEM", "Automatically distributed to eligible holders."],
-  ["50%", "Funds Bounties", "Buys $ANSEM for verified BegWorkers pushing the meta."]
+  ["50%", "Community Bounties", "Funds new BegWork challenges."],
+  ["50%", "Verified BegWorkers", "Rewards contributors after successful participation."]
 ];
-const bountyCards = [
-  ["Edits", "Make Ansem impossible to miss."],
-  ["Replies", "Work the timeline where attention happens."],
-  ["Raids + Memes", "Do the wild CT stuff that pushes BegWork further."]
+const activeBounties = [
+  { title: "Tattoo BLACK BULL", reward: "2 SOL", category: "Stunt", status: "Open", countdown: "23:41", entries: "0" },
+  { title: "Best Ansem Edit", reward: "0.5 SOL", category: "Edit", status: "Open", countdown: "11:08", entries: "0" },
+  { title: "Funniest Reply", reward: "100k $ANSEM", category: "Reply", status: "Judging", countdown: "04:52", entries: "0" },
+  { title: "Best Raid", reward: "0.5 SOL", category: "Raid", status: "Open", countdown: "17:30", entries: "0" },
+  { title: "Best Video", reward: "250k $ANSEM", category: "Video", status: "Open", countdown: "35:15", entries: "0" }
 ];
 const memeImages = [
   "/brand/memes/ai-meme-1.png",
@@ -286,19 +281,6 @@ export function AnsemIndexApp() {
 
   const nextDropMs = now ? Math.max(Date.parse(stats.nextDropTime) || 0, fallbackNextDropMs()) : 0;
   const countdown = now ? formatCountdown(Math.max(0, Math.ceil((nextDropMs - now) / 1000))) : "--:--";
-  const totalAnsemDistributed = rewardTotalAmount(stats.totalRewardTotals, ["ANSEM"]);
-  const transactionCount = stats.recentRewards.filter((reward) => reward.txSig).length;
-  const heroMetrics = useMemo(
-    () => [
-      { label: "50% ANSEM SWAP", value: formatToken(totalAnsemDistributed, "$ANSEM") },
-      { label: "50% BOUNTY WALLET", value: "$ANSEM" },
-      { label: "TICKER", value: "$BEG" },
-      { label: "REWARDS", value: "5 MIN" },
-      { label: "NEXT EPOCH", value: countdown },
-      { label: "RECENT TXS", value: formatNumber(transactionCount, 0) }
-    ],
-    [countdown, totalAnsemDistributed, transactionCount]
-  );
 
   return (
     <div className="ai-index-app">
@@ -311,7 +293,8 @@ export function AnsemIndexApp() {
         </a>
         <nav aria-label="Primary navigation">
           <a href="/dashboard">Dashboard</a>
-          <a href="#rails">50/50</a>
+          <a href="#bounties">Bounties</a>
+          <a href="#treasury">Treasury</a>
           <a href="#faq">FAQ</a>
         </nav>
         <div className="ai-nav-meta">
@@ -324,43 +307,85 @@ export function AnsemIndexApp() {
         <section className="ai-hero" id="top">
           <motion.div className="ai-hero-copy" {...fadeUp}>
             <img className="ai-hero-logo" src="/brand/begwork-icon.png" alt="" />
-            <span className="ai-kicker">CREATOR-FEE REWARDS</span>
+            <span className="ai-kicker">BEGWORK ECONOMY</span>
             <h1>Begwork</h1>
+            <p>
+              The protocol funding the BegWork economy.
+              <br />
+              Ansem made working for attention one of the biggest metas on CT.
+              Instead of paying influencers, BegWork funds the community.
+              Complete bounties. Grow the Black Bull economy. Earn SOL and $ANSEM.
+            </p>
             <div className="ai-actions">
-              <a href={BUY_URL} target="_blank" rel="noreferrer">Buy $BEG</a>
-              <a href="#rails">50/50 Rewards</a>
+              <a href="#bounties">View Bounties</a>
+              <a href="#how">How It Works</a>
             </div>
           </motion.div>
 
-          <motion.aside id="dashboard" className="ai-hero-panel" initial={{ opacity: 0, x: 28, filter: "blur(12px)" }} animate={{ opacity: 1, x: 0, filter: "blur(0px)" }} transition={{ ...smoothTransition, duration: 0.8, delay: 0.15 }}>
-            {heroMetrics.map((metric) => (
-              <div className="ai-hero-metric" key={metric.label}>
-                <span>{metric.label}</span>
-                <strong>{metric.value}</strong>
-              </div>
-            ))}
+          <motion.aside id="next-bounty" className="ai-hero-panel ai-next-bounty" initial={{ opacity: 0, x: 28, filter: "blur(12px)" }} animate={{ opacity: 1, x: 0, filter: "blur(0px)" }} transition={{ ...smoothTransition, duration: 0.8, delay: 0.15 }}>
+            <div className="ai-hero-metric">
+              <span>Next Bounty</span>
+              <strong>Best Ansem Edit</strong>
+            </div>
+            <div className="ai-hero-metric">
+              <span>Reward</span>
+              <strong>0.5 SOL</strong>
+            </div>
+            <div className="ai-hero-metric">
+              <span>Time Remaining</span>
+              <strong>{countdown}</strong>
+            </div>
+            <div className="ai-hero-metric">
+              <span>Category</span>
+              <strong>Edit</strong>
+            </div>
+            <div className="ai-hero-metric">
+              <span>Entries</span>
+              <strong>0</strong>
+            </div>
           </motion.aside>
         </section>
 
-        <motion.section className="ai-section" id="how" {...fadeUp}>
+        <motion.section className="ai-section" id="bounties" {...fadeUp}>
           <div className="ai-section-head">
-            <span className="ai-kicker">HOW BEGWORK WORKS</span>
-            <h2>The meta became a machine.</h2>
+            <span className="ai-kicker">ACTIVE BEGWORK</span>
+            <h2>Complete bounties. Compete for attention. Win rewards.</h2>
           </div>
-          <div className="ai-card-grid four">
-            {signalCards.map(([title, copy]) => (
-              <article className="ai-card" key={title}>
-                <small>{title.toUpperCase()}</small>
-                <p>{copy}</p>
+          <div className="ai-bounty-grid">
+            {activeBounties.map((bounty) => (
+              <article className="ai-card ai-bounty-card" key={bounty.title}>
+                <div className="ai-bounty-top">
+                  <small>{bounty.category}</small>
+                  <span className={`ai-badge ${bounty.status.toLowerCase()}`}>{bounty.status}</span>
+                </div>
+                <h3>{bounty.title}</h3>
+                <strong>{bounty.reward}</strong>
+                <div className="ai-bounty-meta">
+                  <span>{bounty.countdown}</span>
+                  <span>{bounty.entries} entries</span>
+                </div>
               </article>
             ))}
           </div>
         </motion.section>
 
-        <motion.section className="ai-section" id="rails" {...fadeUp}>
+        <motion.section className="ai-thesis" id="how" {...fadeUp}>
+          <span className="ai-kicker">WHY BEGWORK EXISTS</span>
+          <h2>Attention became work.</h2>
+          <p>
+            One reply became worth more than a paid ad. People started making edits,
+            posting memes, raiding timelines, and competing for attention.
+          </p>
+          <p>
+            BegWork funds that behavior. The more the community builds, the stronger
+            the ecosystem becomes.
+          </p>
+        </motion.section>
+
+        <motion.section className="ai-section" id="treasury" {...fadeUp}>
           <div className="ai-section-head">
-            <span className="ai-kicker">THE FLYWHEEL</span>
-            <h2>Attention turns into fees. Fees fund bounties.</h2>
+            <span className="ai-kicker">HOW THE TREASURY WORKS</span>
+            <h2>The treasury supports the BegWork economy.</h2>
           </div>
           <div className="ai-rail-grid">
             {feeRails.map(([value, title, copy]) => (
@@ -373,43 +398,28 @@ export function AnsemIndexApp() {
           </div>
         </motion.section>
 
-        <motion.section className="ai-section" id="bounties" {...fadeUp}>
-          <div className="ai-section-head">
-            <span className="ai-kicker">BOUNTIES</span>
-            <h2>The other 50% pays people to push Ansem.</h2>
-          </div>
-          <div className="ai-card-grid three">
-            {bountyCards.map(([title, copy]) => (
-              <article className="ai-card" key={title}>
-                <small>{title.toUpperCase()}</small>
-                <p>{copy}</p>
-              </article>
-            ))}
-          </div>
-        </motion.section>
-
         <motion.section className="ai-section" id="transactions" {...fadeUp}>
           <div className="ai-section-head split">
             <div>
-              <span className="ai-kicker">RECENT TRANSACTIONS</span>
-              <h2>Launch Receipts</h2>
+              <span className="ai-kicker">LIVE WINNERS</span>
+              <h2>Recent BegWorkers</h2>
             </div>
           </div>
           <div className="ai-table ai-transactions">
             <div className="ai-transaction-head">
-              <span>Time</span>
               <span>Wallet</span>
-              <span>Asset</span>
-              <span>Amount</span>
-              <span>Tx</span>
+              <span>Bounty</span>
+              <span>Reward</span>
+              <span>Time</span>
+              <span>Proof</span>
             </div>
             {stats.recentRewards.length ? (
               stats.recentRewards.slice(0, 12).map((reward) => (
                 <div className="ai-transaction-row" key={`${reward.epoch}-${reward.wallet}-${reward.time}-${reward.rewardAsset ?? "ANSEM"}`}>
-                  <span>{formatTime(reward.time)}</span>
                   <span className="mono">{compactAddress(reward.wallet)}</span>
-                  <span>{displayAsset(reward.rewardAsset)}</span>
+                  <span>BegWork reward</span>
                   <span className="mono">{formatToken(reward.rewardAmount, displayAsset(reward.rewardAsset), 4)}</span>
+                  <span>{formatTime(reward.time)}</span>
                   {reward.txSig ? (
                     <a href={`https://solscan.io/tx/${reward.txSig}`} target="_blank" rel="noreferrer">Solscan</a>
                   ) : (
@@ -418,18 +428,9 @@ export function AnsemIndexApp() {
                 </div>
               ))
             ) : (
-              <div className="ai-empty">No reward transactions yet.</div>
+              <div className="ai-empty">No winners yet.</div>
             )}
           </div>
-        </motion.section>
-
-        <motion.section className="ai-thesis" {...fadeUp}>
-          <span className="ai-kicker">WHY BEGWORK EXISTS</span>
-          <h2>Ansem changed the attention economy.</h2>
-          <p>
-            Getting noticed became valuable. The timeline started grinding for a chance at an airdrop.
-            That&apos;s not begging anymore. That&apos;s BegWork.
-          </p>
         </motion.section>
 
         <motion.section className="ai-section" id="price" {...fadeUp}>
@@ -466,12 +467,12 @@ export function AnsemIndexApp() {
             {[
               [
                 "What is BegWork?",
-                "BegWork is the name the trenches gave to the meta of working for Ansem's attention in hopes of earning an airdrop. Instead of paying for attention, the community earned it."
+                "BegWork is the economy for earning through attention, contribution, and community work around Ansem."
               ],
-              ["How does the 50/50 split work?", "Half buys $ANSEM for eligible holders. The other half buys $ANSEM for bounty payouts to verified BegWorkers pushing the meta."],
-              ["Are there bounties?", "Yes. The bounty wallet is $ANSEM for edits, replies, raids, memes, clips, and other CT work that pushes Ansem and BegWork."],
-              ["How often does it run?", "The worker checks for a new epoch every five minutes."],
-              ["Where do transactions show?", "Settled launch receipts appear in the transaction table with Solscan links."],
+              ["How do I earn?", "Complete open bounties, post proof, and compete for rewards when your contribution grows the Black Bull economy."],
+              ["What kind of work counts?", "Edits, replies, raids, memes, videos, clips, and bold CT stunts can become BegWork."],
+              ["How does the treasury work?", "The treasury funds community bounties and rewards verified BegWorkers after successful participation."],
+              ["Where do winners show?", "Recent BegWorkers appear in the winners table with proof links once rewards settle."],
               ["What is the ticker?", "The ticker is $BEG."]
             ].map(([question, answer]) => (
               <details key={question}>

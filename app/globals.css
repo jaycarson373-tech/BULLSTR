@@ -3964,6 +3964,7 @@ body { background: var(--index-black); color: var(--index-white); }
 
 .ai-hero-panel, .ai-card, .ai-table, .ai-thesis, .ai-performance-card, .ai-terminal, .ai-faq details, .ai-rail-card { border: 1px solid var(--index-border); border-radius: 20px; background: linear-gradient(145deg, rgba(15, 15, 16, 0.82), rgba(5, 5, 5, 0.72)); box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42), inset 0 1px rgba(255, 255, 255, 0.035); backdrop-filter: blur(22px); }
 .ai-hero-panel { display: grid; gap: 1px; overflow: hidden; }
+.ai-next-bounty { align-self: center; }
 .ai-hero-metric { display: grid; gap: 10px; padding: 21px; background: rgba(255, 255, 255, 0.025); }
 .ai-hero-metric span, .ai-card small, .ai-table-head, .ai-terminal-top, .ai-footer { color: var(--index-grey); font-size: 0.72rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
 .ai-hero-metric strong { color: var(--index-white); font-size: clamp(1.6rem, 3vw, 2.6rem); font-weight: 950; letter-spacing: -0.05em; }
@@ -3984,9 +3985,19 @@ body { background: var(--index-black); color: var(--index-white); }
 .ai-card-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .ai-card-grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .ai-card-grid.five { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.ai-bounty-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
 .ai-card { min-height: 188px; padding: 22px; transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease; }
 .ai-card:hover, .ai-faq details:hover, .ai-rail-card:hover { border-color: var(--index-border-strong); box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5), 0 0 40px rgba(124, 255, 59, 0.07); transform: translateY(-3px); }
 .ai-card p { margin-top: 28px; color: rgba(247, 247, 247, 0.82); font-size: 1.02rem; font-weight: 650; line-height: 1.4; }
+.ai-bounty-card { display: grid; align-content: space-between; gap: 18px; min-height: 250px; }
+.ai-bounty-top, .ai-bounty-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ai-bounty-card h3 { color: var(--index-white); font-size: clamp(1.25rem, 2vw, 1.85rem); font-weight: 950; line-height: 1; letter-spacing: -0.04em; }
+.ai-bounty-card > strong { color: var(--index-green); font-size: clamp(1.5rem, 2.5vw, 2.35rem); font-weight: 950; letter-spacing: -0.05em; }
+.ai-bounty-meta { color: rgba(247, 247, 247, 0.62); font-size: 0.82rem; font-weight: 900; text-transform: uppercase; }
+.ai-badge { border: 1px solid var(--index-border); border-radius: 999px; padding: 7px 9px; color: var(--index-grey); font-size: 0.68rem; font-weight: 950; letter-spacing: 0.1em; text-transform: uppercase; }
+.ai-badge.open { border-color: rgba(124, 255, 59, 0.42); color: var(--index-green); background: rgba(124, 255, 59, 0.08); }
+.ai-badge.judging { border-color: rgba(247, 247, 247, 0.24); color: var(--index-white); }
+.ai-badge.claimed { opacity: 0.72; }
 .ai-status { border: 1px solid var(--index-border); border-radius: 999px; padding: 10px 13px; color: var(--index-grey); font-size: 0.72rem; font-weight: 900; letter-spacing: 0.12em; }
 .ai-rail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .ai-rail-card { display: grid; min-height: 230px; gap: 18px; padding: 26px; transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease; }
@@ -4199,5 +4210,6 @@ body { background: var(--index-black); color: var(--index-white); }
   .ai-chart-line, .index-bg-image, .index-bg-tape, .index-animated-bg::before, .ai-meme-track { animation: none; }
   .ai-card, .ai-faq details { transition: none; }
 }
-@media (max-width: 980px) { .ai-nav { grid-template-columns: 1fr; padding: 18px 0; } .ai-nav nav, .ai-nav-meta { justify-content: flex-start; flex-wrap: wrap; } .ai-hero { grid-template-columns: 1fr; min-height: auto; padding-top: 52px; } .ai-hero-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ai-card-grid.three, .ai-card-grid.four, .ai-card-grid.five, .ai-rail-grid, .ai-dashboard-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ai-section-head.split { grid-template-columns: 1fr; } .ai-chart { inset: auto -20% 10% 0; } .ai-transaction-head { display: none; } .ai-transaction-row { grid-template-columns: 1fr; gap: 8px; } }
-@media (max-width: 620px) { .ai-nav, .ai-index-app main, .ai-footer { width: min(100%, calc(100% - 28px)); } .ai-hero h1 { font-size: clamp(3.2rem, 17vw, 5rem); } .ai-hero-panel, .ai-card-grid.three, .ai-card-grid.four, .ai-card-grid.five, .ai-rail-grid, .ai-dashboard-grid { grid-template-columns: 1fr; } .ai-table-head { display: none; } .ai-empty { grid-template-columns: 1fr; } .ai-terminal-feed div { grid-template-columns: 1fr; gap: 4px; } .ai-footer { align-items: flex-start; flex-direction: column; } .ai-footer-links { justify-content: flex-start; } }
+@media (max-width: 1180px) { .ai-bounty-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 980px) { .ai-nav { grid-template-columns: 1fr; padding: 18px 0; } .ai-nav nav, .ai-nav-meta { justify-content: flex-start; flex-wrap: wrap; } .ai-hero { grid-template-columns: 1fr; min-height: auto; padding-top: 52px; } .ai-hero-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ai-card-grid.three, .ai-card-grid.four, .ai-card-grid.five, .ai-bounty-grid, .ai-rail-grid, .ai-dashboard-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ai-section-head.split { grid-template-columns: 1fr; } .ai-chart { inset: auto -20% 10% 0; } .ai-transaction-head { display: none; } .ai-transaction-row { grid-template-columns: 1fr; gap: 8px; } }
+@media (max-width: 620px) { .ai-nav, .ai-index-app main, .ai-footer { width: min(100%, calc(100% - 28px)); } .ai-hero h1 { font-size: clamp(3.2rem, 17vw, 5rem); } .ai-hero-panel, .ai-card-grid.three, .ai-card-grid.four, .ai-card-grid.five, .ai-bounty-grid, .ai-rail-grid, .ai-dashboard-grid { grid-template-columns: 1fr; } .ai-table-head { display: none; } .ai-empty { grid-template-columns: 1fr; } .ai-terminal-feed div { grid-template-columns: 1fr; gap: 4px; } .ai-footer { align-items: flex-start; flex-direction: column; } .ai-footer-links { justify-content: flex-start; } }
