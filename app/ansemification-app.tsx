@@ -73,17 +73,22 @@ const emptyPrice: PriceResponse = {
 };
 
 const signalCards = [
-  ["Hold $BEG", "Eligible holders are included in the reward cycle."],
-  ["Collect Fees", "Each epoch checks for creator fees from the treasury."],
-  ["50% ANSEM Rail", "Half the claimed SOL swaps into ANSEM."],
-  ["50% Reward Wallet", "Half the claimed SOL sends to the reward wallet."],
-  ["Receipts", "Settled transactions stay visible on the dashboard."]
+  ["1.", "The timeline BegWorks."],
+  ["2.", "Creator fees accumulate."],
+  ["3.", "50% buys $ANSEM for eligible holders."],
+  ["4.", "50% rewards verified BegWorkers."]
 ];
 
-const terminalLines = ["Checking creator fees...", "Splitting fees 50/50...", "Routing ANSEM swap...", "Waiting for reward tx..."];
+const terminalLines = [
+  "New BegWorker verified...",
+  "Creator fees received...",
+  "Buying $ANSEM...",
+  "Reward epoch completed...",
+  "Waiting for next epoch..."
+];
 const feeRails = [
-  ["50%", "ANSEM Rail", "Half of claimed SOL swaps through Jupiter into ANSEM."],
-  ["50%", "Reward Wallet", "Half of claimed SOL transfers to the configured reward wallet."]
+  ["50%", "Buys $ANSEM", "Automatically distributed to eligible holders."],
+  ["50%", "Rewards BegWorkers", "The people growing the meta."]
 ];
 const memeImages = [
   "/brand/memes/ai-meme-1.png",
@@ -316,8 +321,17 @@ export function AnsemIndexApp() {
             <span className="ai-kicker">CREATOR-FEE REWARDS</span>
             <h1>Begwork</h1>
             <p>
-              Begwork routes creator fees through a simple 50/50 system:
-              half of claimed SOL swaps into ANSEM, and half sends to the reward wallet.
+              Ansem turned earning an airdrop into one of the biggest metas on CT.
+              <br />
+              The timeline stopped asking for pumps.
+              <br />
+              It started working for attention.
+              <br />
+              Edits. Replies. Raids. Memes.
+              <br />
+              We called it BegWork.
+              <br />
+              Now the strategy is automated.
             </p>
             <div className="ai-actions">
               <a href={BUY_URL} target="_blank" rel="noreferrer">Buy $BEG</a>
@@ -337,10 +351,10 @@ export function AnsemIndexApp() {
 
         <motion.section className="ai-section" id="how" {...fadeUp}>
           <div className="ai-section-head">
-            <span className="ai-kicker">REWARD LOOP</span>
-            <h2>Creator fees flow into rewards every epoch.</h2>
+            <span className="ai-kicker">HOW BEGWORK WORKS</span>
+            <h2>The meta became a machine.</h2>
           </div>
-          <div className="ai-card-grid five">
+          <div className="ai-card-grid four">
             {signalCards.map(([title, copy]) => (
               <article className="ai-card" key={title}>
                 <small>{title.toUpperCase()}</small>
@@ -352,8 +366,8 @@ export function AnsemIndexApp() {
 
         <motion.section className="ai-section" id="rails" {...fadeUp}>
           <div className="ai-section-head">
-            <span className="ai-kicker">50/50 SPLIT</span>
-            <h2>Half swaps to ANSEM. Half sends to the reward wallet.</h2>
+            <span className="ai-kicker">THE FLYWHEEL</span>
+            <h2>Attention turns into fees. Fees turn into rewards.</h2>
           </div>
           <div className="ai-rail-grid">
             {feeRails.map(([value, title, copy]) => (
@@ -402,9 +416,12 @@ export function AnsemIndexApp() {
         </motion.section>
 
         <motion.section className="ai-thesis" {...fadeUp}>
-          <span className="ai-kicker">WHY IT EXISTS</span>
-          <h2>Hold $BEG. Track the fees. Watch the rewards settle.</h2>
-          <p>The reward rails run when creator fees are available.</p>
+          <span className="ai-kicker">WHY BEGWORK EXISTS</span>
+          <h2>Ansem changed the attention economy.</h2>
+          <p>
+            Getting noticed became valuable. The timeline started grinding for a chance at an airdrop.
+            That&apos;s not begging anymore. That&apos;s BegWork.
+          </p>
         </motion.section>
 
         <motion.section className="ai-section" id="price" {...fadeUp}>
@@ -439,7 +456,10 @@ export function AnsemIndexApp() {
           </div>
           <div className="ai-faq">
             {[
-              ["What is Begwork?", "Begwork is a $BEG reward system powered by creator fees."],
+              [
+                "What is BegWork?",
+                "BegWork is the name the trenches gave to the meta of working for Ansem's attention in hopes of earning an airdrop. Instead of paying for attention, the community earned it."
+              ],
               ["How does the 50/50 split work?", "Half of claimed SOL swaps into ANSEM and half sends to the reward wallet."],
               ["How often does it run?", "The worker checks for a new epoch every five minutes."],
               ["Where do transactions show?", "Settled launch receipts appear in the transaction table with Solscan links."],
