@@ -18,6 +18,31 @@ type StatsResponse = {
   totalRewardTotals: RewardTotal[];
   latestEligibleHolders: number;
   nextDropTime: string;
+  nextDrawTime: string;
+  drawIntervalHours: number;
+  drawRewardPct: number;
+  rewardWallet: {
+    address: string | null;
+    solBalance: number | null;
+    sourceTokenBalance: number | null;
+    rewardTokenBalance: number | null;
+  };
+  holderEpochDrops: Array<{
+    epoch: number;
+    time: string;
+    recipients: number;
+    totalSent: number;
+    rewardTotals: RewardTotal[];
+    txSig: string | null;
+  }>;
+  drawProofs: Array<{
+    epoch: number;
+    wallet: string;
+    rewardAsset?: string;
+    rewardAmount: number;
+    time: string;
+    txSig: string | null;
+  }>;
   recentRewards: Array<{
     epoch: number;
     rewardAsset?: string;
@@ -64,6 +89,17 @@ const emptyStats: StatsResponse = {
   totalRewardTotals: [],
   latestEligibleHolders: 0,
   nextDropTime: new Date().toISOString(),
+  nextDrawTime: new Date().toISOString(),
+  drawIntervalHours: 2,
+  drawRewardPct: 10,
+  rewardWallet: {
+    address: null,
+    solBalance: null,
+    sourceTokenBalance: null,
+    rewardTokenBalance: null
+  },
+  holderEpochDrops: [],
+  drawProofs: [],
   recentRewards: []
 };
 
@@ -170,9 +206,22 @@ function displayAsset(asset: string | undefined) {
   if (key === "BULLSTR") return "$HOOD";
   if (key === "AI6900") return "$HOOD";
   if (key === "AI") return "$HOOD";
-  if (key === "ANSEM") return "HOOD";
-  if (key === "HOODX") return "HOOD";
+  if (key === "ANSEM") return "HOODx";
+  if (key === "HOODX") return "HOODx";
   return asset ? asset.replace(/^\$/, "") : "$HOOD";
+}
+
+function formatRewardTotals(totals: RewardTotal[] | undefined, empty = "Awaiting") {
+  const liveTotals = (totals ?? []).filter((total) => total.rewardAmount > 0);
+  if (!liveTotals.length) return empty;
+  return liveTotals
+    .map((total) => formatToken(total.rewardAmount, displayAsset(total.rewardAsset), displayAsset(total.rewardAsset) === "SOL" ? 4 : 2))
+    .join(" / ");
+}
+
+function formatBalance(value: number | null | undefined, symbol: string, empty = "Awaiting") {
+  if (!Number.isFinite(value) || value === null || value === undefined) return empty;
+  return formatToken(value, symbol, symbol === "SOL" ? 4 : 2);
 }
 
 function IndexChart() {
@@ -541,6 +590,8 @@ export function RewardsDashboardApp() {
 
   const nextDropMs = now ? Math.max(Date.parse(stats.nextDropTime) || 0, fallbackNextDropMs()) : 0;
   const countdown = now ? formatCountdown(Math.max(0, Math.ceil((nextDropMs - now) / 1000))) : "--:--";
+  const nextDrawMs = now ? Date.parse(stats.nextDrawTime) || 0 : 0;
+  const drawCountdown = nextDrawMs ? formatCountdown(Math.max(0, Math.ceil((nextDrawMs - now) / 1000))) : "--:--";
   const totalHoodDistributed = rewardTotalAmount(stats.totalRewardTotals, ["HOODX", "HOOD6900", "ANSEM", "HOOD"]);
   const transactionCount = stats.recentRewards.filter((reward) => reward.txSig).length;
   const dashboardMetrics = [
@@ -563,6 +614,7 @@ export function RewardsDashboardApp() {
         </a>
         <nav aria-label="Dashboard navigation">
           <a href="/">Home</a>
+          <a href="#reward-split">50/50</a>
           <a href="#transactions">Transactions</a>
           <a href="#price">$HOOD Price</a>
         </nav>
@@ -588,6 +640,113 @@ export function RewardsDashboardApp() {
                 <strong>{metric.value}</strong>
               </article>
             ))}
+          </div>
+        </motion.section>
+
+        <motion.section className="ai-section" id="reward-split" {...fadeUp}>
+          <div className="ai-section-head split">
+            <div>
+              <span className="ai-kicker">50 / 50 REWARD DASHBOARD</span>
+              <h2>HOODx drops on the left. Reward wallet draws on the right.</h2>
+            </div>
+            <span className="ai-status">2H DRAW WINDOW</span>
+          </div>
+
+          <div className="hood-split-dashboard">
+            <article className="hood-split-panel">
+              <div className="hood-split-panel-head">
+                <span>Left Rail</span>
+                <h3>HOODx airdrops each epoch</h3>
+                <p>Automatic holder drops show exactly how much was sent and link to settled transaction proof.</p>
+              </div>
+              <div className="hood-epoch-list">
+                {stats.holderEpochDrops.length ? (
+                  stats.holderEpochDrops.map((drop) => (
+                    <div className="hood-epoch-row" key={`${drop.epoch}-${drop.time}`}>
+                      <div>
+                        <strong>Epoch #{drop.epoch}</strong>
+                        <span>{formatTime(drop.time)}</span>
+                      </div>
+                      <div>
+                        <strong>{formatRewardTotals(drop.rewardTotals, formatToken(drop.totalSent, "HOODx", 2))}</strong>
+                        <span>{drop.recipients.toLocaleString()} recipients</span>
+                      </div>
+                      {drop.txSig ? (
+                        <a href={`https://solscan.io/tx/${drop.txSig}`} target="_blank" rel="noreferrer">
+                          Proof
+                        </a>
+                      ) : (
+                        <span className="hood-proof-muted">Pending</span>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="hood-empty-proof">Awaiting settled HOODx epoch drops.</div>
+                )}
+              </div>
+            </article>
+
+            <article className="hood-split-panel">
+              <div className="hood-split-panel-head">
+                <span>Right Rail</span>
+                <h3>Reward wallet + verified draws</h3>
+                <p>Every {formatNumber(stats.drawIntervalHours, 0)} hours, a random holder can win {formatNumber(stats.drawRewardPct, 2)}% of the reward wallet after X activity and wallet-ownership verification.</p>
+              </div>
+              <div className="hood-wallet-grid">
+                <div>
+                  <span>Reward Wallet</span>
+                  <strong>{stats.rewardWallet.address ? compactAddress(stats.rewardWallet.address) : "Not set"}</strong>
+                </div>
+                <div>
+                  <span>SOL Owned</span>
+                  <strong>{formatBalance(stats.rewardWallet.solBalance, "SOL")}</strong>
+                </div>
+                <div>
+                  <span>HOOD Owned</span>
+                  <strong>{formatBalance(stats.rewardWallet.sourceTokenBalance, "HOOD")}</strong>
+                </div>
+                <div>
+                  <span>HOODx Owned</span>
+                  <strong>{formatBalance(stats.rewardWallet.rewardTokenBalance, "HOODx")}</strong>
+                </div>
+                <div>
+                  <span>Next Draw</span>
+                  <strong>{drawCountdown}</strong>
+                </div>
+                <div>
+                  <span>Eligible Pool</span>
+                  <strong>{formatNumber(stats.latestEligibleHolders, 0)}</strong>
+                </div>
+              </div>
+              <div className="hood-claim-rule">
+                Winner must be active on X/x.com, reply within 24 hours, prove wallet ownership, then send the claim wallet.
+              </div>
+              <div className="hood-epoch-list compact">
+                {stats.drawProofs.length ? (
+                  stats.drawProofs.map((proof) => (
+                    <div className="hood-epoch-row" key={`${proof.epoch}-${proof.wallet}-${proof.time}`}>
+                      <div>
+                        <strong>{compactAddress(proof.wallet)}</strong>
+                        <span>{formatTime(proof.time)}</span>
+                      </div>
+                      <div>
+                        <strong>{formatToken(proof.rewardAmount, displayAsset(proof.rewardAsset), 4)}</strong>
+                        <span>Epoch #{proof.epoch}</span>
+                      </div>
+                      {proof.txSig ? (
+                        <a href={`https://solscan.io/tx/${proof.txSig}`} target="_blank" rel="noreferrer">
+                          Proof
+                        </a>
+                      ) : (
+                        <span className="hood-proof-muted">Pending</span>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="hood-empty-proof">Verified draw transaction proof will appear after claims settle.</div>
+                )}
+              </div>
+            </article>
           </div>
         </motion.section>
 

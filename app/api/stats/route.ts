@@ -65,6 +65,13 @@ type EpochPayoutSummary = {
   rewardTotals: Map<string, RewardAssetTotal>;
 };
 
+type RewardWalletInfo = {
+  address: string | null;
+  solBalance: number | null;
+  sourceTokenBalance: number | null;
+  rewardTokenBalance: number | null;
+};
+
 type ParsedTokenAccountInfo = {
   owner?: string;
   tokenAmount?: {
@@ -204,6 +211,75 @@ async function bagholderSolBalanceOrNull() {
     console.warn("stats route could not fetch bagholder SOL balance", error);
     return null;
   }
+}
+
+function rewardTokenMint() {
+  const value = process.env.REWARD_TOKEN_MINT ?? process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT;
+  if (!value) return null;
+  try {
+    return new PublicKey(value);
+  } catch {
+    console.warn("stats route could not parse REWARD_TOKEN_MINT");
+    return null;
+  }
+}
+
+async function walletTokenBalanceOrNull(connection: Connection, owner: PublicKey, mint: PublicKey | null) {
+  if (!mint) return null;
+  try {
+    const accounts = await connection.getParsedTokenAccountsByOwner(owner, { mint }, "confirmed");
+    return accounts.value.reduce((sum, account) => {
+      const info = parsedTokenInfo(account.account.data);
+      return sum + Number(info?.tokenAmount?.amount ?? 0) / 10 ** Number((account.account.data as any)?.parsed?.info?.tokenAmount?.decimals ?? 0);
+    }, 0);
+  } catch (error) {
+    console.warn("stats route could not fetch reward wallet token balance", error);
+    return null;
+  }
+}
+
+async function rewardWalletInfoOrNull(): Promise<RewardWalletInfo> {
+  const wallet = bagholderWalletPublicKey();
+  if (!wallet) {
+    return { address: null, solBalance: null, sourceTokenBalance: null, rewardTokenBalance: null };
+  }
+
+  try {
+    const connection = new Connection(rpcUrl(), "confirmed");
+    const [solLamports, sourceTokenBalance, rewardTokenBalance] = await Promise.all([
+      connection.getBalance(wallet, "confirmed"),
+      walletTokenBalanceOrNull(connection, wallet, sourceTokenMint()),
+      walletTokenBalanceOrNull(connection, wallet, rewardTokenMint())
+    ]);
+
+    return {
+      address: wallet.toBase58(),
+      solBalance: solLamports / 1_000_000_000,
+      sourceTokenBalance,
+      rewardTokenBalance
+    };
+  } catch (error) {
+    console.warn("stats route could not fetch reward wallet info", error);
+    return {
+      address: wallet.toBase58(),
+      solBalance: null,
+      sourceTokenBalance: null,
+      rewardTokenBalance: null
+    };
+  }
+}
+
+function drawIntervalMs() {
+  return Math.max(1, numberEnv("DRAW_INTERVAL_HOURS", 2)) * 60 * 60 * 1000;
+}
+
+function nextDrawTime() {
+  const interval = drawIntervalMs();
+  return new Date(Math.ceil(Date.now() / interval) * interval).toISOString();
+}
+
+function drawRewardPct() {
+  return Math.min(100, Math.max(0, numberEnv("DRAW_REWARD_PCT", 10)));
 }
 
 function epochNumber(epochId: string, fallback: number) {
@@ -413,9 +489,15 @@ export async function GET() {
       latestEligibleHolders: latestEligibleHolders ?? 0,
       eligibleBullstrHeld: 0,
       bagholderSolBalance: await bagholderSolBalanceOrNull(),
+      rewardWallet: await rewardWalletInfoOrNull(),
+      nextDrawTime: nextDrawTime(),
+      drawIntervalHours: drawIntervalMs() / 3_600_000,
+      drawRewardPct: drawRewardPct(),
       nextDropTime: nextDropTime(),
       epochHistory: [],
       roundHistory: [],
+      holderEpochDrops: [],
+      drawProofs: [],
       recentRewards: []
     });
   }
@@ -550,6 +632,25 @@ export async function GET() {
       status: row.status ?? "unknown",
       txSig: row.tx_sig
     }));
+    const holderEpochDrops = roundHistory.slice(0, 12).map((round) => ({
+      epoch: round.epoch,
+      time: round.startedAt,
+      recipients: round.rewardTotals.reduce((sum, total) => sum + total.recipients, 0),
+      totalSent: round.rewardTotals.reduce((sum, total) => sum + total.rewardAmount, 0),
+      rewardTotals: round.rewardTotals,
+      txSig: round.txSig
+    }));
+    const drawProofs = payoutRows
+      .filter((row) => row.tx_sig)
+      .slice(0, 12)
+      .map((row) => ({
+        epoch: displayEpochById.get(row.epoch_id) ?? epochNumber(row.epoch_id, 0),
+        wallet: row.wallet,
+        rewardAsset: row.reward_asset ?? "HOOD",
+        rewardAmount: toNumber(row.reward_amount),
+        time: row.updated_at ?? row.created_at ?? row.epoch_id,
+        txSig: row.tx_sig
+      }));
     const totalRewardAirdropped = Array.from(payoutsByEpoch.values()).reduce(
       (sum, summary) => sum + summary.rewardAmount,
       0
@@ -576,6 +677,7 @@ export async function GET() {
       storedEligibleHolders > 0 ? storedEligibleHolders : (await liveEligibleHolderCountOrNull()) ?? storedEligibleHolders;
     const eligibleBullstrHeld = holderStates.reduce((sum, row) => sum + toNumber(row.source_balance), 0);
     const bagholderSolBalance = await bagholderSolBalanceOrNull();
+    const rewardWallet = await rewardWalletInfoOrNull();
 
     return NextResponse.json({
       currentEpoch: realEpochCount,
@@ -587,9 +689,15 @@ export async function GET() {
       latestEligibleHolders,
       eligibleBullstrHeld,
       bagholderSolBalance,
+      rewardWallet,
+      nextDrawTime: nextDrawTime(),
+      drawIntervalHours: drawIntervalMs() / 3_600_000,
+      drawRewardPct: drawRewardPct(),
       nextDropTime: nextDropTime(),
       epochHistory,
       roundHistory,
+      holderEpochDrops,
+      drawProofs,
       recentRewards
     });
   } catch (error) {
@@ -605,9 +713,15 @@ export async function GET() {
       latestEligibleHolders: latestEligibleHolders ?? 0,
       eligibleBullstrHeld: 0,
       bagholderSolBalance: await bagholderSolBalanceOrNull(),
+      rewardWallet: await rewardWalletInfoOrNull(),
+      nextDrawTime: nextDrawTime(),
+      drawIntervalHours: drawIntervalMs() / 3_600_000,
+      drawRewardPct: drawRewardPct(),
       nextDropTime: nextDropTime(),
       epochHistory: [],
       roundHistory: [],
+      holderEpochDrops: [],
+      drawProofs: [],
       recentRewards: []
     });
   }
