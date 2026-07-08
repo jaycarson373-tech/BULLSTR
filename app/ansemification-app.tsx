@@ -76,7 +76,7 @@ const signalCards = [
   ["1.", "The timeline BegWorks."],
   ["2.", "Creator fees accumulate."],
   ["3.", "50% buys $ANSEM for eligible holders."],
-  ["4.", "50% funds bounties and rewards BegWorkers."]
+  ["4.", "50% buys $ANSEM for bounty payouts."]
 ];
 
 const terminalLines = [
@@ -89,7 +89,7 @@ const terminalLines = [
 ];
 const feeRails = [
   ["50%", "Buys $ANSEM", "Automatically distributed to eligible holders."],
-  ["50%", "Funds Bounties", "Pays verified BegWorkers for pushing the meta."]
+  ["50%", "Funds Bounties", "Buys $ANSEM for verified BegWorkers pushing the meta."]
 ];
 const bountyCards = [
   ["Edits", "Make Ansem impossible to miss."],
@@ -291,7 +291,7 @@ export function AnsemIndexApp() {
   const heroMetrics = useMemo(
     () => [
       { label: "50% ANSEM SWAP", value: formatToken(totalAnsemDistributed, "$ANSEM") },
-      { label: "50% REWARD WALLET", value: "SOL" },
+      { label: "50% BOUNTY WALLET", value: "$ANSEM" },
       { label: "TICKER", value: "$BEG" },
       { label: "REWARDS", value: "5 MIN" },
       { label: "NEXT EPOCH", value: countdown },
@@ -326,19 +326,6 @@ export function AnsemIndexApp() {
             <img className="ai-hero-logo" src="/brand/begwork-icon.png" alt="" />
             <span className="ai-kicker">CREATOR-FEE REWARDS</span>
             <h1>Begwork</h1>
-            <p>
-              Ansem turned earning an airdrop into one of the biggest metas on CT.
-              <br />
-              The timeline stopped asking for pumps.
-              <br />
-              It started working for attention.
-              <br />
-              Edits. Replies. Raids. Memes.
-              <br />
-              We called it BegWork.
-              <br />
-              Now the strategy is automated.
-            </p>
             <div className="ai-actions">
               <a href={BUY_URL} target="_blank" rel="noreferrer">Buy $BEG</a>
               <a href="#rails">50/50 Rewards</a>
@@ -481,8 +468,8 @@ export function AnsemIndexApp() {
                 "What is BegWork?",
                 "BegWork is the name the trenches gave to the meta of working for Ansem's attention in hopes of earning an airdrop. Instead of paying for attention, the community earned it."
               ],
-              ["How does the 50/50 split work?", "Half of claimed SOL swaps into ANSEM. The other half funds bounties and rewards for verified BegWorkers pushing the meta."],
-              ["Are there bounties?", "Yes. The bounty side is for edits, replies, raids, memes, clips, and other CT work that pushes Ansem and BegWork."],
+              ["How does the 50/50 split work?", "Half buys $ANSEM for eligible holders. The other half buys $ANSEM for bounty payouts to verified BegWorkers pushing the meta."],
+              ["Are there bounties?", "Yes. The bounty wallet is $ANSEM for edits, replies, raids, memes, clips, and other CT work that pushes Ansem and BegWork."],
               ["How often does it run?", "The worker checks for a new epoch every five minutes."],
               ["Where do transactions show?", "Settled launch receipts appear in the transaction table with Solscan links."],
               ["What is the ticker?", "The ticker is $BEG."]
@@ -551,7 +538,7 @@ export function RewardsDashboardApp() {
   const transactionCount = stats.recentRewards.filter((reward) => reward.txSig).length;
   const dashboardMetrics = [
     { label: "50% ANSEM swap", value: formatToken(totalAnsemDistributed, "$ANSEM") },
-    { label: "50% reward wallet", value: "SOL" },
+    { label: "50% bounty wallet", value: "$ANSEM" },
     { label: "CA", value: compactAddress(CA) },
     { label: "$BEG price", value: formatUsd(price.priceUsd) },
     { label: "Next epoch", value: countdown },
