@@ -76,19 +76,25 @@ const signalCards = [
   ["1.", "The timeline BegWorks."],
   ["2.", "Creator fees accumulate."],
   ["3.", "50% buys $ANSEM for eligible holders."],
-  ["4.", "50% rewards verified BegWorkers."]
+  ["4.", "50% funds bounties and rewards BegWorkers."]
 ];
 
 const terminalLines = [
   "New BegWorker verified...",
   "Creator fees received...",
   "Buying $ANSEM...",
+  "Bounty payout queued...",
   "Reward epoch completed...",
   "Waiting for next epoch..."
 ];
 const feeRails = [
   ["50%", "Buys $ANSEM", "Automatically distributed to eligible holders."],
-  ["50%", "Rewards BegWorkers", "The people growing the meta."]
+  ["50%", "Funds Bounties", "Pays verified BegWorkers for pushing the meta."]
+];
+const bountyCards = [
+  ["Edits", "Make Ansem impossible to miss."],
+  ["Replies", "Work the timeline where attention happens."],
+  ["Raids + Memes", "Do the wild CT stuff that pushes BegWork further."]
 ];
 const memeImages = [
   "/brand/memes/ai-meme-1.png",
@@ -367,13 +373,28 @@ export function AnsemIndexApp() {
         <motion.section className="ai-section" id="rails" {...fadeUp}>
           <div className="ai-section-head">
             <span className="ai-kicker">THE FLYWHEEL</span>
-            <h2>Attention turns into fees. Fees turn into rewards.</h2>
+            <h2>Attention turns into fees. Fees fund bounties.</h2>
           </div>
           <div className="ai-rail-grid">
             {feeRails.map(([value, title, copy]) => (
               <article className="ai-rail-card" key={title}>
                 <b>{value}</b>
                 <span>{title}</span>
+                <p>{copy}</p>
+              </article>
+            ))}
+          </div>
+        </motion.section>
+
+        <motion.section className="ai-section" id="bounties" {...fadeUp}>
+          <div className="ai-section-head">
+            <span className="ai-kicker">BOUNTIES</span>
+            <h2>The other 50% pays people to push Ansem.</h2>
+          </div>
+          <div className="ai-card-grid three">
+            {bountyCards.map(([title, copy]) => (
+              <article className="ai-card" key={title}>
+                <small>{title.toUpperCase()}</small>
                 <p>{copy}</p>
               </article>
             ))}
@@ -460,7 +481,8 @@ export function AnsemIndexApp() {
                 "What is BegWork?",
                 "BegWork is the name the trenches gave to the meta of working for Ansem's attention in hopes of earning an airdrop. Instead of paying for attention, the community earned it."
               ],
-              ["How does the 50/50 split work?", "Half of claimed SOL swaps into ANSEM and half sends to the reward wallet."],
+              ["How does the 50/50 split work?", "Half of claimed SOL swaps into ANSEM. The other half funds bounties and rewards for verified BegWorkers pushing the meta."],
+              ["Are there bounties?", "Yes. The bounty side is for edits, replies, raids, memes, clips, and other CT work that pushes Ansem and BegWork."],
               ["How often does it run?", "The worker checks for a new epoch every five minutes."],
               ["Where do transactions show?", "Settled launch receipts appear in the transaction table with Solscan links."],
               ["What is the ticker?", "The ticker is $BEG."]
