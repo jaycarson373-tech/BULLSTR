@@ -240,7 +240,7 @@ function MemeConveyor() {
 export function AnsemIndexApp() {
   const [stats, setStats] = useState<StatsResponse>(emptyStats);
   const [price, setPrice] = useState<PriceResponse>(emptyPrice);
-  const [now, setNow] = useState(() => Date.now());
+  const [now, setNow] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -265,12 +265,13 @@ export function AnsemIndexApp() {
   }, []);
 
   useEffect(() => {
+    setNow(Date.now());
     const timer = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(timer);
   }, []);
 
-  const nextDropMs = Math.max(Date.parse(stats.nextDropTime) || 0, fallbackNextDropMs());
-  const countdown = formatCountdown(Math.max(0, Math.ceil((nextDropMs - now) / 1000)));
+  const nextDropMs = now ? Math.max(Date.parse(stats.nextDropTime) || 0, fallbackNextDropMs()) : 0;
+  const countdown = now ? formatCountdown(Math.max(0, Math.ceil((nextDropMs - now) / 1000))) : "--:--";
   const totalAnsemDistributed = rewardTotalAmount(stats.totalRewardTotals, ["ANSEM"]);
   const totalAiDistributed = rewardTotalAmount(stats.totalRewardTotals, ["AI", "AI6900"]);
   const transactionCount = stats.recentRewards.filter((reward) => reward.txSig).length;
@@ -470,7 +471,7 @@ export function AnsemIndexApp() {
 export function RewardsDashboardApp() {
   const [stats, setStats] = useState<StatsResponse>(emptyStats);
   const [price, setPrice] = useState<PriceResponse>(emptyPrice);
-  const [now, setNow] = useState(() => Date.now());
+  const [now, setNow] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -495,12 +496,13 @@ export function RewardsDashboardApp() {
   }, []);
 
   useEffect(() => {
+    setNow(Date.now());
     const timer = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(timer);
   }, []);
 
-  const nextDropMs = Math.max(Date.parse(stats.nextDropTime) || 0, fallbackNextDropMs());
-  const countdown = formatCountdown(Math.max(0, Math.ceil((nextDropMs - now) / 1000)));
+  const nextDropMs = now ? Math.max(Date.parse(stats.nextDropTime) || 0, fallbackNextDropMs()) : 0;
+  const countdown = now ? formatCountdown(Math.max(0, Math.ceil((nextDropMs - now) / 1000))) : "--:--";
   const totalAnsemDistributed = rewardTotalAmount(stats.totalRewardTotals, ["ANSEM"]);
   const totalAiDistributed = rewardTotalAmount(stats.totalRewardTotals, ["AI", "AI6900"]);
   const transactionCount = stats.recentRewards.filter((reward) => reward.txSig).length;
