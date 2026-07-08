@@ -37,11 +37,11 @@ type PriceResponse = {
   updatedAt: string;
 };
 
-const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/Begwork_";
+const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/Hood6900_";
 const CA =
   process.env.NEXT_PUBLIC_CA?.trim() ||
   process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ||
-  "8RKuuDHZ8P8FDsGgPeG31LdeLfRii9P8GFxidzGWpump";
+  "SOON";
 const BUY_URL =
   process.env.NEXT_PUBLIC_BUY_URL?.trim() ||
   "https://pump.fun";
@@ -73,23 +73,23 @@ const emptyPrice: PriceResponse = {
 };
 
 const terminalLines = [
-  "New BegWorker verified...",
+  "Hood rail online...",
   "Creator fees received...",
-  "Buying $ANSEM...",
-  "Bounty payout queued...",
-  "Reward epoch completed...",
+  "Buying HoodX...",
+  "HoodWorker payout queued...",
+  "Stock reward epoch completed...",
   "Waiting for next epoch..."
 ];
 const feeRails = [
-  ["50%", "Community Bounties", "Funds new BegWork challenges."],
-  ["50%", "Verified BegWorkers", "Rewards contributors after successful participation."]
+  ["50%", "HoodX Stock", "Swaps into HoodX rewards for Hood 6900 holders."],
+  ["50%", "Verified HoodWorkers", "Rewards timeline traders, posters, and launch workers."]
 ];
 const activeBounties = [
-  { title: "Tattoo BLACK BULL", reward: "2 SOL", category: "Stunt", status: "Open", countdown: "23:41", entries: "0" },
-  { title: "Best Ansem Edit", reward: "0.5 SOL", category: "Edit", status: "Open", countdown: "11:08", entries: "0" },
-  { title: "Funniest Reply", reward: "100k $ANSEM", category: "Reply", status: "Judging", countdown: "04:52", entries: "0" },
-  { title: "Best Raid", reward: "0.5 SOL", category: "Raid", status: "Open", countdown: "17:30", entries: "0" },
-  { title: "Best Video", reward: "250k $ANSEM", category: "Video", status: "Open", countdown: "35:15", entries: "0" }
+  { title: "Best HoodX Bullpost", reward: "HoodX", category: "Timeline", status: "Open", countdown: "23:41", entries: "0" },
+  { title: "Robin Hood Edit", reward: "HoodX", category: "Edit", status: "Open", countdown: "11:08", entries: "0" },
+  { title: "Funniest Stock Reply", reward: "HoodX", category: "Reply", status: "Judging", countdown: "04:52", entries: "0" },
+  { title: "Green Candle Raid", reward: "HoodX", category: "Raid", status: "Open", countdown: "17:30", entries: "0" },
+  { title: "Best Trading Clip", reward: "HoodX", category: "Video", status: "Open", countdown: "35:15", entries: "0" }
 ];
 const memeImages = [
   "/brand/memes/ai-meme-1.png",
@@ -162,12 +162,15 @@ function rewardTotalAmount(totals: RewardTotal[], keys: string[]) {
 
 function displayAsset(asset: string | undefined) {
   const key = assetKey(asset);
-  if (key === "BEG") return "$BEG";
-  if (key === "BULLSTR") return "$BEG";
-  if (key === "AI6900") return "$BEG";
-  if (key === "AI") return "$BEG";
-  if (key === "ANSEM") return "$ANSEM";
-  return asset ? `$${asset.replace(/^\$/, "")}` : "$BEG";
+  if (key === "HOOD6900") return "$HOOD6900";
+  if (key === "HOOD") return "$HOOD6900";
+  if (key === "BEG") return "$HOOD6900";
+  if (key === "BULLSTR") return "$HOOD6900";
+  if (key === "AI6900") return "$HOOD6900";
+  if (key === "AI") return "$HOOD6900";
+  if (key === "ANSEM") return "HOODX";
+  if (key === "HOODX") return "HOODX";
+  return asset ? asset.replace(/^\$/, "") : "$HOOD6900";
 }
 
 function IndexChart() {
@@ -230,8 +233,8 @@ function MemeConveyor() {
   const belt = [...memeImages, ...memeImages];
 
   return (
-    <motion.section className="ai-meme-section" aria-label="Begwork meme conveyor" {...fadeUp}>
-      <div className="ai-meme-conveyor" aria-label="Begwork meme gallery">
+    <motion.section className="ai-meme-section" aria-label="Hood 6900 meme conveyor" {...fadeUp}>
+      <div className="ai-meme-conveyor" aria-label="Hood 6900 meme gallery">
         <div className="ai-meme-track">
           {belt.map((src, index) => (
             <figure className="ai-meme-card" key={`${src}-${index}`}>
@@ -287,13 +290,13 @@ export function AnsemIndexApp() {
       <AnimatedBackground />
 
       <header className="ai-nav">
-        <a className="ai-brand" href="#top" aria-label="Begwork home">
-          <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-          <span>Begwork</span>
+        <a className="ai-brand" href="#top" aria-label="Hood 6900 home">
+          <span className="ai-brand-mark"><img src="/brand/robin-hood-logo.jpg" alt="" /></span>
+          <span>Hood 6900</span>
         </a>
         <nav aria-label="Primary navigation">
           <a href="/dashboard">Dashboard</a>
-          <a href="#bounties">Bounties</a>
+          <a href="#bounties">Missions</a>
           <a href="#treasury">Treasury</a>
           <a href="#faq">FAQ</a>
         </nav>
@@ -306,30 +309,29 @@ export function AnsemIndexApp() {
       <main>
         <section className="ai-hero" id="top">
           <motion.div className="ai-hero-copy" {...fadeUp}>
-            <img className="ai-hero-logo" src="/brand/begwork-icon.png" alt="" />
-            <span className="ai-kicker">BEGWORK ECONOMY</span>
-            <h1>Begwork</h1>
+            <img className="ai-hero-logo" src="/brand/robin-hood-logo.jpg" alt="" />
+            <span className="ai-kicker">ROBINHOOD CODED</span>
+            <h1>Hood 6900</h1>
             <p>
-              The protocol funding the BegWork economy.
+              Robinhood vibes with 6900 energy.
               <br />
-              Ansem made working for attention one of the biggest metas on CT.
-              Instead of paying influencers, BegWork funds the community.
-              Complete bounties. Grow the Black Bull economy. Earn SOL and $ANSEM.
+              Creator fees route into HoodX stock-token rewards and verified
+              timeline work. Hold, post, raid, and let the green machine run.
             </p>
             <div className="ai-actions">
-              <a href="#bounties">View Bounties</a>
+              <a href="#bounties">View Missions</a>
               <a href="#how">How It Works</a>
             </div>
           </motion.div>
 
           <motion.aside id="next-bounty" className="ai-hero-panel ai-next-bounty" initial={{ opacity: 0, x: 28, filter: "blur(12px)" }} animate={{ opacity: 1, x: 0, filter: "blur(0px)" }} transition={{ ...smoothTransition, duration: 0.8, delay: 0.15 }}>
             <div className="ai-hero-metric">
-              <span>Next Bounty</span>
-              <strong>Best Ansem Edit</strong>
+              <span>Next Mission</span>
+              <strong>HoodX Stock Drop</strong>
             </div>
             <div className="ai-hero-metric">
               <span>Reward</span>
-              <strong>0.5 SOL</strong>
+              <strong>HoodX</strong>
             </div>
             <div className="ai-hero-metric">
               <span>Time Remaining</span>
@@ -337,7 +339,7 @@ export function AnsemIndexApp() {
             </div>
             <div className="ai-hero-metric">
               <span>Category</span>
-              <strong>Edit</strong>
+              <strong>Stock</strong>
             </div>
             <div className="ai-hero-metric">
               <span>Entries</span>
@@ -348,8 +350,8 @@ export function AnsemIndexApp() {
 
         <motion.section className="ai-section" id="bounties" {...fadeUp}>
           <div className="ai-section-head">
-            <span className="ai-kicker">ACTIVE BEGWORK</span>
-            <h2>Complete bounties. Compete for attention. Win rewards.</h2>
+            <span className="ai-kicker">ACTIVE HOODWORK</span>
+            <h2>Post the thesis. Move the timeline. Earn the stock.</h2>
           </div>
           <div className="ai-bounty-grid">
             {activeBounties.map((bounty) => (
@@ -370,22 +372,22 @@ export function AnsemIndexApp() {
         </motion.section>
 
         <motion.section className="ai-thesis" id="how" {...fadeUp}>
-          <span className="ai-kicker">WHY BEGWORK EXISTS</span>
-          <h2>Attention became work.</h2>
+          <span className="ai-kicker">WHY HOOD 6900 EXISTS</span>
+          <h2>The timeline became the trading floor.</h2>
           <p>
-            One reply became worth more than a paid ad. People started making edits,
-            posting memes, raiding timelines, and competing for attention.
+            Everyone wanted the green app. Hood 6900 turns that energy into an
+            on-chain reward loop for holders and verified workers.
           </p>
           <p>
-            BegWork funds that behavior. The more the community builds, the stronger
-            the ecosystem becomes.
+            HoodX rewards go where the work happens: holders, posters, raiders,
+            and the people pushing the chart into the timeline.
           </p>
         </motion.section>
 
         <motion.section className="ai-section" id="treasury" {...fadeUp}>
           <div className="ai-section-head">
-            <span className="ai-kicker">HOW THE TREASURY WORKS</span>
-            <h2>The treasury supports the BegWork economy.</h2>
+            <span className="ai-kicker">HOW THE HOOD RAILS WORK</span>
+            <h2>Creator fees become HoodX rewards.</h2>
           </div>
           <div className="ai-rail-grid">
             {feeRails.map(([value, title, copy]) => (
@@ -401,23 +403,23 @@ export function AnsemIndexApp() {
         <motion.section className="ai-section" id="transactions" {...fadeUp}>
           <div className="ai-section-head split">
             <div>
-              <span className="ai-kicker">LIVE WINNERS</span>
-              <h2>Recent BegWorkers</h2>
+              <span className="ai-kicker">LIVE REWARDS</span>
+              <h2>Recent HoodWorkers</h2>
             </div>
           </div>
           <div className="ai-table ai-transactions">
             <div className="ai-transaction-head">
               <span>Wallet</span>
-              <span>Bounty</span>
+              <span>Mission</span>
               <span>Reward</span>
               <span>Time</span>
               <span>Proof</span>
             </div>
             {stats.recentRewards.length ? (
               stats.recentRewards.slice(0, 12).map((reward) => (
-                <div className="ai-transaction-row" key={`${reward.epoch}-${reward.wallet}-${reward.time}-${reward.rewardAsset ?? "ANSEM"}`}>
+                <div className="ai-transaction-row" key={`${reward.epoch}-${reward.wallet}-${reward.time}-${reward.rewardAsset ?? "HOODX"}`}>
                   <span className="mono">{compactAddress(reward.wallet)}</span>
-                  <span>BegWork reward</span>
+                  <span>Hood reward</span>
                   <span className="mono">{formatToken(reward.rewardAmount, displayAsset(reward.rewardAsset), 4)}</span>
                   <span>{formatTime(reward.time)}</span>
                   {reward.txSig ? (
@@ -428,7 +430,7 @@ export function AnsemIndexApp() {
                 </div>
               ))
             ) : (
-              <div className="ai-empty">No winners yet.</div>
+              <div className="ai-empty">No HoodX rewards yet.</div>
             )}
           </div>
         </motion.section>
@@ -436,8 +438,8 @@ export function AnsemIndexApp() {
         <motion.section className="ai-section" id="price" {...fadeUp}>
           <div className="ai-section-head split">
             <div>
-              <span className="ai-kicker">$BEG PRICE</span>
-              <h2>Live $BEG Chart</h2>
+              <span className="ai-kicker">$HOOD6900 PRICE</span>
+              <h2>Live $HOOD6900 Chart</h2>
             </div>
             <span className="ai-status">DEXSCREENER</span>
           </div>
@@ -445,7 +447,7 @@ export function AnsemIndexApp() {
             <IndexChart />
             <div className="ai-performance-zero">{formatUsd(price.priceUsd)}</div>
             <div className="ai-price-meta">
-              <span>$BEG / USD</span>
+              <span>$HOOD6900 / USD</span>
               <strong>{price.priceChange24h >= 0 ? "+" : ""}{formatNumber(price.priceChange24h, 2)}% 24H</strong>
               {price.url ? <a href={price.url} target="_blank" rel="noreferrer">Open chart</a> : null}
             </div>
@@ -461,19 +463,19 @@ export function AnsemIndexApp() {
         <motion.section className="ai-section" id="faq" {...fadeUp}>
           <div className="ai-section-head">
             <span className="ai-kicker">FAQ</span>
-            <h2>Begwork Questions</h2>
+            <h2>Hood 6900 Questions</h2>
           </div>
           <div className="ai-faq">
             {[
               [
-                "What is BegWork?",
-                "BegWork is the economy for earning through attention, contribution, and community work around Ansem."
+                "What is Hood 6900?",
+                "Hood 6900 is the Robinhood-coded reward loop for holders and verified timeline workers."
               ],
-              ["How do I earn?", "Complete open bounties, post proof, and compete for rewards when your contribution grows the Black Bull economy."],
-              ["What kind of work counts?", "Edits, replies, raids, memes, videos, clips, and bold CT stunts can become BegWork."],
-              ["How does the treasury work?", "The treasury funds community bounties and rewards verified BegWorkers after successful participation."],
-              ["Where do winners show?", "Recent BegWorkers appear in the winners table with proof links once rewards settle."],
-              ["What is the ticker?", "The ticker is $BEG."]
+              ["How do I earn?", "Hold Hood 6900 or complete verified HoodWork missions when they open."],
+              ["What kind of work counts?", "Edits, replies, raids, trading clips, green-candle posts, and timeline work can qualify."],
+              ["How does the treasury work?", "Creator fees buy HoodX and fund verified HoodWorkers after successful participation."],
+              ["Where do winners show?", "Recent HoodWorkers appear in the winners table with proof links once rewards settle."],
+              ["What is the ticker?", "The ticker is $HOOD6900 unless the source symbol is configured differently."]
             ].map(([question, answer]) => (
               <details key={question}>
                 <summary>{question}</summary>
@@ -486,14 +488,14 @@ export function AnsemIndexApp() {
 
       <footer className="ai-footer">
         <div className="ai-footer-brand">
-          <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-          <span>Begwork</span>
+          <span className="ai-brand-mark"><img src="/brand/robin-hood-logo.jpg" alt="" /></span>
+          <span>Hood 6900</span>
         </div>
         <div className="ai-footer-links">
           <a href={COMMUNITY_URL} target="_blank" rel="noreferrer">X</a>
           <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">DEXSCREENER</a>
           <a href={PUMP_URL} target="_blank" rel="noreferrer">PUMP.FUN</a>
-          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $BEG</a>
+          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $HOOD6900</a>
         </div>
       </footer>
     </div>
@@ -535,13 +537,13 @@ export function RewardsDashboardApp() {
 
   const nextDropMs = now ? Math.max(Date.parse(stats.nextDropTime) || 0, fallbackNextDropMs()) : 0;
   const countdown = now ? formatCountdown(Math.max(0, Math.ceil((nextDropMs - now) / 1000))) : "--:--";
-  const totalAnsemDistributed = rewardTotalAmount(stats.totalRewardTotals, ["ANSEM"]);
+  const totalHoodxDistributed = rewardTotalAmount(stats.totalRewardTotals, ["HOODX", "ANSEM"]);
   const transactionCount = stats.recentRewards.filter((reward) => reward.txSig).length;
   const dashboardMetrics = [
-    { label: "50% ANSEM swap", value: formatToken(totalAnsemDistributed, "$ANSEM") },
-    { label: "50% bounty wallet", value: "$ANSEM" },
+    { label: "50% HoodX stock", value: formatToken(totalHoodxDistributed, "HOODX") },
+    { label: "50% HoodWorker rail", value: "HOODX" },
     { label: "CA", value: compactAddress(CA) },
-    { label: "$BEG price", value: formatUsd(price.priceUsd) },
+    { label: "$HOOD6900 price", value: formatUsd(price.priceUsd) },
     { label: "Next epoch", value: countdown },
     { label: "Reward txs", value: formatNumber(transactionCount, 0) }
   ];
@@ -551,14 +553,14 @@ export function RewardsDashboardApp() {
       <AnimatedBackground />
 
       <header className="ai-nav">
-        <a className="ai-brand" href="/" aria-label="Begwork home">
-          <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-          <span>Begwork</span>
+        <a className="ai-brand" href="/" aria-label="Hood 6900 home">
+          <span className="ai-brand-mark"><img src="/brand/robin-hood-logo.jpg" alt="" /></span>
+          <span>Hood 6900</span>
         </a>
         <nav aria-label="Dashboard navigation">
           <a href="/">Home</a>
           <a href="#transactions">Transactions</a>
-          <a href="#price">$BEG Price</a>
+          <a href="#price">$HOOD6900 Price</a>
         </nav>
         <div className="ai-nav-meta">
           <span className="ai-ca-chip">CA: {CA}</span>
@@ -571,7 +573,7 @@ export function RewardsDashboardApp() {
           <div className="ai-section-head split">
             <div>
               <span className="ai-kicker">LIVE DASHBOARD</span>
-              <h1>Begwork Dashboard</h1>
+              <h1>Hood 6900 Dashboard</h1>
             </div>
             <span className="ai-status">AUTO REFRESH</span>
           </div>
@@ -602,7 +604,7 @@ export function RewardsDashboardApp() {
             </div>
             {stats.recentRewards.length ? (
               stats.recentRewards.map((reward) => (
-                <div className="ai-transaction-row" key={`${reward.epoch}-${reward.wallet}-${reward.time}-${reward.rewardAsset ?? "ANSEM"}`}>
+                <div className="ai-transaction-row" key={`${reward.epoch}-${reward.wallet}-${reward.time}-${reward.rewardAsset ?? "HOODX"}`}>
                   <span>{formatTime(reward.time)}</span>
                   <span className="mono">{compactAddress(reward.wallet)}</span>
                   <span>{displayAsset(reward.rewardAsset)}</span>
@@ -623,8 +625,8 @@ export function RewardsDashboardApp() {
         <motion.section className="ai-section" id="price" {...fadeUp}>
           <div className="ai-section-head split">
             <div>
-              <span className="ai-kicker">$BEG PRICE</span>
-              <h2>Live $BEG Chart</h2>
+              <span className="ai-kicker">$HOOD6900 PRICE</span>
+              <h2>Live $HOOD6900 Chart</h2>
             </div>
             <span className="ai-status">DEXSCREENER</span>
           </div>
@@ -632,7 +634,7 @@ export function RewardsDashboardApp() {
             <IndexChart />
             <div className="ai-performance-zero">{formatUsd(price.priceUsd)}</div>
             <div className="ai-price-meta">
-              <span>$BEG / USD</span>
+              <span>$HOOD6900 / USD</span>
               <strong>{price.priceChange24h >= 0 ? "+" : ""}{formatNumber(price.priceChange24h, 2)}% 24H</strong>
               {price.url ? <a href={price.url} target="_blank" rel="noreferrer">Open chart</a> : null}
             </div>
@@ -642,14 +644,14 @@ export function RewardsDashboardApp() {
 
       <footer className="ai-footer">
         <div className="ai-footer-brand">
-          <span className="ai-brand-mark"><img src="/brand/ai6900-logo.png" alt="" /></span>
-          <span>Begwork</span>
+          <span className="ai-brand-mark"><img src="/brand/robin-hood-logo.jpg" alt="" /></span>
+          <span>Hood 6900</span>
         </div>
         <div className="ai-footer-links">
           <a href={COMMUNITY_URL} target="_blank" rel="noreferrer">X</a>
           <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">DEXSCREENER</a>
           <a href={PUMP_URL} target="_blank" rel="noreferrer">PUMP.FUN</a>
-          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $BEG</a>
+          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $HOOD6900</a>
         </div>
       </footer>
     </div>

@@ -3,29 +3,29 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://begwork.xyz"),
-  title: "Begwork",
-  description: "Begwork routes creator fees through a 50/50 reward system for $BEG.",
+  metadataBase: new URL("https://hood6900.xyz"),
+  title: "Hood 6900",
+  description: "Hood 6900 routes creator fees into HoodX stock-token rewards and verified HoodWorker payouts.",
   openGraph: {
-    title: "Begwork",
-    description: "Begwork routes creator fees through a 50/50 reward system for $BEG.",
-    url: "https://begwork.xyz",
-    siteName: "Begwork",
+    title: "Hood 6900",
+    description: "Hood 6900 routes creator fees into HoodX stock-token rewards and verified HoodWorker payouts.",
+    url: "https://hood6900.xyz",
+    siteName: "Hood 6900",
     images: [
       {
-        url: "https://begwork.xyz/logo.png",
+        url: "https://hood6900.xyz/logo.png",
         width: 1200,
         height: 630,
-        alt: "Begwork"
+        alt: "Hood 6900"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Begwork",
-    description: "Begwork routes creator fees through a 50/50 reward system for $BEG.",
-    images: ["https://begwork.xyz/logo.png"]
+    title: "Hood 6900",
+    description: "Hood 6900 routes creator fees into HoodX stock-token rewards and verified HoodWorker payouts.",
+    images: ["https://hood6900.xyz/logo.png"]
   },
   icons: {
     icon: [
