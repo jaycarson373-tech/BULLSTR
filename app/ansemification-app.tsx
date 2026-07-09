@@ -313,7 +313,7 @@ export function AnsemIndexApp() {
     const load = async () => {
       const [nextStats, nextPrice] = await Promise.all([
         getJson<StatsResponse>("/api/stats", emptyStats),
-        getJson<PriceResponse>("/api/ansem-price", emptyPrice)
+        getJson<PriceResponse>("/api/hood-price", emptyPrice)
       ]);
 
       if (!active) return;
@@ -579,7 +579,7 @@ export function RewardsDashboardApp() {
     const load = async () => {
       const [nextStats, nextPrice] = await Promise.all([
         getJson<StatsResponse>("/api/stats", emptyStats),
-        getJson<PriceResponse>("/api/ansem-price", emptyPrice)
+        getJson<PriceResponse>("/api/hood-price", emptyPrice)
       ]);
 
       if (!active) return;

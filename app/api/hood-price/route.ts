@@ -17,8 +17,6 @@ type DexResponse = {
   pairs?: DexPair[];
 };
 
-const DEFAULT_ANSEM_MINT = "9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump";
-
 function emptyPrice() {
   return {
     priceUsd: 0,
@@ -29,7 +27,13 @@ function emptyPrice() {
 }
 
 export async function GET() {
-  const mint = process.env.REWARD_TOKEN_MINT ?? process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT ?? DEFAULT_ANSEM_MINT;
+  const mint =
+    process.env.HOOD6900_TOKEN_MINT ??
+    process.env.NEXT_PUBLIC_HOOD6900_TOKEN_MINT ??
+    process.env.SOURCE_TOKEN_MINT ??
+    process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT;
+
+  if (!mint) return NextResponse.json(emptyPrice());
 
   try {
     const response = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${mint}`, {
@@ -53,7 +57,7 @@ export async function GET() {
       updatedAt: new Date().toISOString()
     });
   } catch (error) {
-    console.warn("ANSEM price route failed", error);
+    console.warn("HOOD6900 price route failed", error);
     return NextResponse.json(emptyPrice());
   }
 }
