@@ -2,21 +2,33 @@ import type { Metadata } from "next";
 import { AppPolish } from "./app-polish";
 import "./globals.css";
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hoodstrategy.xyz";
+const SITE_DESCRIPTION = "Hood Strategy runs live HoodX holder rewards, Hood chain picks, airdrop receipts, and on-chain strategy rails.";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://hood6900.xyz"),
-  title: "HOOD6900",
-  description: "The memecoin of the Hood. Robinhood built the chain. The trenches built the meme.",
+  metadataBase: new URL(SITE_URL),
+  title: "Hood Strategy",
+  description: SITE_DESCRIPTION,
   openGraph: {
-    title: "HOOD6900",
-    description: "Every 5 minutes creator fees buy back HOODx. 100% airdrops HOODx to 100K+ holders. 0% side fund.",
-    url: "https://hood6900.xyz",
-    siteName: "HOOD6900",
+    title: "Hood Strategy",
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: "Hood Strategy",
+    images: [
+      {
+        url: `${SITE_URL}/brand/site-preview.png`,
+        width: 1200,
+        height: 630,
+        alt: "Hood Strategy"
+      }
+    ],
     type: "website"
   },
   twitter: {
-    card: "summary",
-    title: "HOOD6900",
-    description: "The memecoin of the Hood."
+    card: "summary_large_image",
+    title: "Hood Strategy",
+    description: SITE_DESCRIPTION,
+    images: [`${SITE_URL}/brand/site-preview.png`]
   },
   icons: {
     icon: [

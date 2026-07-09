@@ -1,5 +1,5 @@
-import { RewardsDashboardApp } from "../hood6900-app";
+import { redirect } from "next/navigation";
 
 export default function DashboardPage() {
-  return <RewardsDashboardApp />;
+  redirect("/");
 }
