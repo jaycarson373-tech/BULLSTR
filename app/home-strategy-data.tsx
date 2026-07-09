@@ -175,7 +175,7 @@ function statusLabel(status: string) {
 
 export function useProtocolData() {
   const [stats, setStats] = useState<StatsResponse | null>(null);
-  const [now, setNow] = useState(() => Date.now());
+  const [now, setNow] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -196,6 +196,7 @@ export function useProtocolData() {
   }, []);
 
   useEffect(() => {
+    setNow(Date.now());
     const timer = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(timer);
   }, []);
@@ -206,7 +207,7 @@ export function useProtocolData() {
 export function HeroCountdown() {
   const { stats, now } = useProtocolData();
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
-  const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "--:--";
+  const countdown = nextDropTime && now ? formatCountdown(nextDropTime - now) : "--:--";
   const totalDistributed = stats ? formatRewardTotals(stats.totalRewardTotals, "Awaiting first drop") : "Awaiting first drop";
   const hoodxAirdropped = stats ? rewardTotalAmount(stats.totalRewardTotals, REWARD_SYMBOL) : 0;
 
@@ -244,7 +245,7 @@ export function LiveProtocolDashboard() {
   const { stats, now } = useProtocolData();
   const rounds = stats?.roundHistory ?? [];
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
-  const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "--:--";
+  const countdown = nextDropTime && now ? formatCountdown(nextDropTime - now) : "--:--";
   const latestRound = rounds[0];
   const totalRewardAirdropped = stats ? rewardTotalAmount(stats.totalRewardTotals, REWARD_SYMBOL) : 0;
   const totalRewardBought = rounds.reduce((sum, round) => sum + (Number.isFinite(round.rewardBought) ? round.rewardBought : 0), 0);
@@ -349,7 +350,7 @@ export function RobinhoodHoldingsPanel() {
 export function RobinhoodRunnerPanel() {
   const { now } = useProtocolData();
   const nextRunnerPickAt = Math.ceil(now / RUNNER_PICK_INTERVAL_MS) * RUNNER_PICK_INTERVAL_MS;
-  const runnerCountdown = formatLongCountdown(nextRunnerPickAt - now);
+  const runnerCountdown = now ? formatLongCountdown(nextRunnerPickAt - now) : "--:--:--";
   const runnerPositions = [
     ["Cashcat", "1,000,000", "Runner basket"],
     ["DIH", "1,000,000", "Runner basket"]
