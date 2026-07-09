@@ -55,7 +55,7 @@ type RobinhoodHoldings = {
   rewardTokenBalance: number | null;
   sourceSymbol: string;
   rewardSymbol: string;
-  updatedAt: string;
+  updatedAt: string | null;
 };
 
 const emptyStats: StatsResponse = {
@@ -75,7 +75,7 @@ const emptyStats: StatsResponse = {
     rewardTokenBalance: null,
     sourceSymbol: "HoodX",
     rewardSymbol: "HoodX",
-    updatedAt: new Date().toISOString()
+    updatedAt: null
   },
   nextDropTime: new Date().toISOString(),
   roundHistory: [],
@@ -173,6 +173,52 @@ function statusLabel(status: string) {
   return status.replace(/_/g, " ");
 }
 
+function LiveBadge() {
+  return (
+    <span className="live-badge" aria-label="Live data">
+      <span />
+      Live
+    </span>
+  );
+}
+
+function AnimatedStat({ value }: { value: string }) {
+  const [display, setDisplay] = useState(value);
+
+  useEffect(() => {
+    const match = value.match(/^(\d[\d,]*(?:\.\d+)?)(.*)$/);
+    if (!match) {
+      setDisplay(value);
+      return;
+    }
+
+    const target = Number(match[1].replace(/,/g, ""));
+    const suffix = match[2] ?? "";
+    if (!Number.isFinite(target) || target === 0) {
+      setDisplay(value);
+      return;
+    }
+
+    const decimals = match[1].includes(".") ? Math.min(4, match[1].split(".")[1]?.length ?? 0) : 0;
+    const start = performance.now();
+    const duration = 850;
+    let frame = 0;
+
+    const tick = (time: number) => {
+      const progress = Math.min(1, (time - start) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = target * eased;
+      setDisplay(`${current.toLocaleString(undefined, { maximumFractionDigits: decimals })}${suffix}`);
+      if (progress < 1) frame = window.requestAnimationFrame(tick);
+    };
+
+    frame = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frame);
+  }, [value]);
+
+  return <>{display}</>;
+}
+
 export function useProtocolData() {
   const [stats, setStats] = useState<StatsResponse | null>(null);
   const [now, setNow] = useState(0);
@@ -214,27 +260,27 @@ export function HeroCountdown() {
   return (
     <div className="hero-countdown" aria-live="polite">
       <span>Next Strategy Drop</span>
-      <strong>{countdown}</strong>
+      <strong className="countdown-value">{countdown}</strong>
       <div className="hero-total-distributed">
         <span>{`Total $${REWARD_SYMBOL} Airdropped`}</span>
-        <b>{totalDistributed}</b>
+        <b><AnimatedStat value={totalDistributed} /></b>
       </div>
       <div className="hero-mini-dashboard">
         <div>
           <span>{REWARD_SYMBOL} Airdropped</span>
-          <b>{hoodxAirdropped > 0 ? `${formatNumber(hoodxAirdropped, 2)} ${REWARD_SYMBOL}` : "0"}</b>
+          <b><AnimatedStat value={hoodxAirdropped > 0 ? `${formatNumber(hoodxAirdropped, 2)} ${REWARD_SYMBOL}` : "0"} /></b>
         </div>
         <div>
           <span>{SOURCE_SYMBOL} Eligible</span>
-          <b>0</b>
+          <b><AnimatedStat value="0" /></b>
         </div>
         <div>
           <span>Total Epochs</span>
-          <b>{stats ? formatCount(stats.totalEpochs) : "0"}</b>
+          <b><AnimatedStat value={stats ? formatCount(stats.totalEpochs) : "0"} /></b>
         </div>
         <div>
           <span>Eligible Holders</span>
-          <b>0</b>
+          <b><AnimatedStat value="0" /></b>
         </div>
       </div>
     </div>
@@ -253,7 +299,7 @@ export function LiveProtocolDashboard() {
   return (
     <section className="section live-section airdrop-section" id="dashboard">
       <div className="container">
-        <div className="section-kicker">Machine readout</div>
+        <div className="section-kicker live-kicker"><span>Machine readout</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>The Hood Strategy dashboard lives here.</h2>
           <p>Live values come from the existing reward backend. If the backend has not settled data yet, this stays quiet instead of inventing numbers.</p>
@@ -275,7 +321,7 @@ export function HoodChart() {
   return (
     <section className="section hood-chart-section" id="chart">
       <div className="container">
-        <div className="section-kicker">HOOD chart</div>
+        <div className="section-kicker live-kicker"><span>HOOD chart</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>Live HOOD chart.</h2>
           <p>Set NEXT_PUBLIC_HOOD_CHART_EMBED_URL to embed the exact DexScreener pair. Until then, this section links directly to the live chart surface.</p>
@@ -319,7 +365,7 @@ export function RobinhoodHoldingsPanel() {
   return (
     <section className="section robinhood-holdings-section" id="holdings">
       <div className="container">
-        <div className="section-kicker">Robinhood holdings</div>
+        <div className="section-kicker live-kicker"><span>Robinhood holdings</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>Total holdings from the Robinhood wallet.</h2>
           <p>Balances come from the configured Robinhood/bagholder wallet and refresh through the same live stats route.</p>
@@ -332,7 +378,7 @@ export function RobinhoodHoldingsPanel() {
           {rows.map(([label, value]) => (
             <div key={label}>
               <span>{label}</span>
-              <strong>{value}</strong>
+              <strong><AnimatedStat value={value} /></strong>
             </div>
           ))}
           <div>
@@ -353,7 +399,7 @@ export function RobinhoodRunnerPanel() {
   return (
     <section className="section runner-section" id="runners">
       <div className="container">
-        <div className="section-kicker">Robinhood runners</div>
+        <div className="section-kicker live-kicker"><span>Robinhood runners</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>Runner basket, winner clock, receipts.</h2>
           <p>The Robinhood side shows the tracked early Hood chain positions, the next 2 hour pick window, and exactly what each winner receives once the backend settles it.</p>
@@ -361,19 +407,19 @@ export function RobinhoodRunnerPanel() {
         <div className="runner-layout">
           <div className="runner-countdown-card">
             <span>Next runner winner</span>
-            <strong>{runnerCountdown}</strong>
+            <strong className="countdown-value">{runnerCountdown}</strong>
             <p>One active verified holder gets picked when the runner window closes.</p>
           </div>
           <div className="runner-position-grid">
             <article className="runner-position-card">
               <span>Runner basket</span>
               <strong>Awaiting live positions</strong>
-              <b>0</b>
+              <b><AnimatedStat value="0" /></b>
             </article>
             <article className="runner-position-card">
               <span>Next prize</span>
               <strong>Awaiting settlement</strong>
-              <b>0</b>
+              <b><AnimatedStat value="0" /></b>
             </article>
           </div>
         </div>
@@ -416,7 +462,7 @@ function MetricCard({
   return (
     <article className={strong ? "metric-card metric-card-strong" : muted ? "metric-card metric-card-muted" : "metric-card"}>
       <span>{label}</span>
-      <strong>{value}</strong>
+      <strong><AnimatedStat value={value} /></strong>
     </article>
   );
 }
@@ -484,7 +530,7 @@ export function HoodWalletBoard() {
   return (
     <section className="section bull-board-section" id="wallet-board">
       <div className="container">
-        <div className="section-kicker">Holder board</div>
+        <div className="section-kicker live-kicker"><span>Holder board</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>Hood Strategy wallets.</h2>
           <p>The board is reset for the Hood Strategy launch and starts clean until the next live reward epoch settles.</p>
@@ -525,7 +571,7 @@ export function RecentAirdrops() {
   return (
     <section className="section recent-airdrops-section" id="airdrops">
       <div className="container">
-        <div className="section-kicker">Recent drops</div>
+        <div className="section-kicker live-kicker"><span>Recent drops</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>Receipts or it did not happen.</h2>
           <p>Settled reward transfers from the live backend. Failed or skipped attempts are not counted.</p>
@@ -628,7 +674,7 @@ export function AirdropHistory() {
   return (
     <section className="section history-section" id="airdrops-history">
       <div className="container">
-        <div className="section-kicker">Airdrop history</div>
+        <div className="section-kicker live-kicker"><span>Airdrop history</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>{REWARD_SYMBOL} Distributions</h2>
           <p>Settled airdrops only. Failed or skipped worker attempts are not counted.</p>

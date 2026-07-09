@@ -50,6 +50,14 @@ export default function Page() {
 
       <main>
         <section className="hero hood-hero" id="top">
+          <div className="hero-particles" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
           <div className="hero-shade" />
           <div className="container hero-inner">
             <div className="hero-copy-stack">
