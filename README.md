@@ -1,11 +1,11 @@
-# Hood Strategy
+# Hood 6900
 
-Source token: `$HOOD`
-Reward asset: `$HOOD`
+Source token: `$HOOD6900`
+Reward asset: `HoodX`
 
-Hood Strategy is a 50/50 reward loop:
+Hood 6900 is a 50/50 reward loop:
 
-- 50% of usable rewards buys HOOD Stock and airdrops it automatically to wallets holding 1M+ tokens.
+- 50% of usable rewards buys HoodX Stock and airdrops it automatically to wallets holding 1M+ $HOOD6900 tokens.
 - 50% funds verified Hood memecoin holders, early movers, active X users, and live draw prizes.
 - Live draw winners must respond on X within 24 hours and prove ownership of the selected wallet.
 - Verified holders can add an ETH wallet after proving wallet ownership.
@@ -38,11 +38,11 @@ npm run build
 ## Environment
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME="Hood Strategy"
-NEXT_PUBLIC_SOURCE_SYMBOL=HOOD
-NEXT_PUBLIC_REWARD_SYMBOL=HOOD
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=<HOOD_MINT>
-NEXT_PUBLIC_X_URL=https://x.com/HOODSTR_
+NEXT_PUBLIC_PROJECT_NAME="Hood 6900"
+NEXT_PUBLIC_SOURCE_SYMBOL=HOOD6900
+NEXT_PUBLIC_REWARD_SYMBOL=HoodX
+NEXT_PUBLIC_SOURCE_TOKEN_MINT=<HOOD6900_MINT>
+NEXT_PUBLIC_X_URL=https://x.com/Hood6900_
 NEXT_PUBLIC_BUY_URL=https://pump.fun
 NEXT_PUBLIC_DEXSCREENER_URL=<DEXSCREENER_PAIR_OR_TOKEN_URL>
 NEXT_PUBLIC_FIRST_AIRDROP_AT=<OPTIONAL_ISO_TIME>
@@ -54,8 +54,8 @@ SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
 
 REWARD_MODE=token
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=<HOOD_MINT>
-REWARD_TOKEN_MINT=<HOOD_REWARD_MINT>
+SOURCE_TOKEN_MINT=<HOOD6900_MINT>
+REWARD_TOKEN_MINT=<HOODX_REWARD_MINT>
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET>
 
 CLAIM_ENABLED=false

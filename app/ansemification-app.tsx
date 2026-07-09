@@ -62,9 +62,9 @@ type PriceResponse = {
   updatedAt: string;
 };
 
-const PROJECT_NAME = "Hood Strategy";
-const LOGO_SRC = "/brand/hood-strategy-logo.png";
-const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/HOODSTR_";
+const PROJECT_NAME = "Hood 6900";
+const LOGO_SRC = "/brand/robin-hood-logo.jpg";
+const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/Hood6900_";
 const CA =
   process.env.NEXT_PUBLIC_CA?.trim() ||
   process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ||
@@ -113,21 +113,21 @@ const emptyPrice: PriceResponse = {
 const terminalLines = [
   "Hood rail online...",
   "Creator fees received...",
-  "Buying HOOD Stock...",
+  "Buying HoodX Stock...",
   "Verified holder draw queued...",
   "Stock reward epoch completed...",
   "Waiting for next epoch..."
 ];
 const feeRails = [
-  ["50%", "Automatic HOOD Stock", "Airdrops HOOD rewards to wallets holding 1M+ tokens."],
+  ["50%", "Automatic HoodX Stock", "Airdrops HoodX rewards to wallets holding 1M+ $HOOD6900 tokens."],
   ["50%", "Verified Holder Draws", "Funds early Hood memecoin holders, active X users, and live draw winners."]
 ];
 const activeBounties = [
-  { title: "Verified Holder Draw", reward: "HOOD", category: "Wallet", status: "Open", countdown: "23:41", entries: "0" },
-  { title: "Early Mover Draw", reward: "HOOD", category: "Early", status: "Open", countdown: "11:08", entries: "0" },
-  { title: "Active X Claim", reward: "HOOD", category: "X.com", status: "Judging", countdown: "04:52", entries: "0" },
-  { title: "Hood Memecoin Holder", reward: "HOOD", category: "Chain", status: "Open", countdown: "17:30", entries: "0" },
-  { title: "24 Hour Claim Window", reward: "HOOD", category: "Proof", status: "Open", countdown: "35:15", entries: "0" }
+  { title: "Verified Holder Draw", reward: "HOOD6900", category: "Wallet", status: "Open", countdown: "23:41", entries: "0" },
+  { title: "Early Mover Draw", reward: "HOOD6900", category: "Early", status: "Open", countdown: "11:08", entries: "0" },
+  { title: "Active X Claim", reward: "HOOD6900", category: "X.com", status: "Judging", countdown: "04:52", entries: "0" },
+  { title: "Hood Memecoin Holder", reward: "HOOD6900", category: "Chain", status: "Open", countdown: "17:30", entries: "0" },
+  { title: "24 Hour Claim Window", reward: "HOOD6900", category: "Proof", status: "Open", countdown: "35:15", entries: "0" }
 ];
 const memeImages = [
   "/brand/memes/ai-meme-1.png",
@@ -200,15 +200,15 @@ function rewardTotalAmount(totals: RewardTotal[], keys: string[]) {
 
 function displayAsset(asset: string | undefined) {
   const key = assetKey(asset);
-  if (key === "HOOD6900") return "$HOOD";
-  if (key === "HOOD") return "$HOOD";
-  if (key === "BEG") return "$HOOD";
-  if (key === "BULLSTR") return "$HOOD";
-  if (key === "AI6900") return "$HOOD";
-  if (key === "AI") return "$HOOD";
-  if (key === "ANSEM") return "HOODx";
-  if (key === "HOODX") return "HOODx";
-  return asset ? asset.replace(/^\$/, "") : "$HOOD";
+  if (key === "HOOD6900") return "$HOOD6900";
+  if (key === "HOOD") return "$HOOD6900";
+  if (key === "BEG") return "$HOOD6900";
+  if (key === "BULLSTR") return "$HOOD6900";
+  if (key === "AI6900") return "$HOOD6900";
+  if (key === "AI") return "$HOOD6900";
+  if (key === "ANSEM") return "HoodX";
+  if (key === "HOODX") return "HoodX";
+  return asset ? asset.replace(/^\$/, "") : "$HOOD6900";
 }
 
 function formatRewardTotals(totals: RewardTotal[] | undefined, empty = "Awaiting") {
@@ -284,8 +284,8 @@ function MemeConveyor() {
   const belt = [...memeImages, ...memeImages];
 
   return (
-    <motion.section className="ai-meme-section" aria-label="Hood Strategy meme conveyor" {...fadeUp}>
-      <div className="ai-meme-conveyor" aria-label="Hood Strategy meme gallery">
+    <motion.section className="ai-meme-section" aria-label="Hood 6900 meme conveyor" {...fadeUp}>
+      <div className="ai-meme-conveyor" aria-label="Hood 6900 meme gallery">
         <div className="ai-meme-track">
           {belt.map((src, index) => (
             <figure className="ai-meme-card" key={`${src}-${index}`}>
@@ -341,7 +341,7 @@ export function AnsemIndexApp() {
       <AnimatedBackground />
 
       <header className="ai-nav">
-        <a className="ai-brand" href="#top" aria-label="Hood Strategy home">
+        <a className="ai-brand" href="#top" aria-label="Hood 6900 home">
           <span className="ai-brand-mark"><img src={LOGO_SRC} alt="" /></span>
           <span>{PROJECT_NAME}</span>
         </a>
@@ -361,12 +361,12 @@ export function AnsemIndexApp() {
         <section className="ai-hero" id="top">
           <motion.div className="ai-hero-copy" {...fadeUp}>
             <img className="ai-hero-logo" src={LOGO_SRC} alt="" />
-            <span className="ai-kicker">HOOD STRATEGY PROTOCOL</span>
-            <h1>Hood Strategy</h1>
+            <span className="ai-kicker">HOOD 6900 PROTOCOL</span>
+            <h1>Hood 6900</h1>
             <p>
-              Real airdrops. Verified holders. Neon proof.
+              AI6900-coded hood rails. Real drops. Verified holders.
               <br />
-              50% of rewards airdrop HOOD Stock automatically to 1M+ token holders.
+              50% of rewards airdrop HoodX Stock automatically to 1M+ $HOOD6900 token holders.
               The other 50% funds verified Hood memecoin holders, early movers,
               and live draw prizes with 24-hour X claim windows.
             </p>
@@ -383,7 +383,7 @@ export function AnsemIndexApp() {
             </div>
             <div className="ai-hero-metric">
               <span>Reward</span>
-              <strong>HOOD</strong>
+              <strong>HOOD6900</strong>
             </div>
             <div className="ai-hero-metric">
               <span>Time Remaining</span>
@@ -424,14 +424,14 @@ export function AnsemIndexApp() {
         </motion.section>
 
         <motion.section className="ai-thesis" id="how" {...fadeUp}>
-          <span className="ai-kicker">WHY HOOD STRATEGY EXISTS</span>
-          <h2>The Hood needs proof before prizes.</h2>
+          <span className="ai-kicker">WHY HOOD 6900 EXISTS</span>
+          <h2>AI6900 velocity with proof before prizes.</h2>
           <p>
-            Hood Strategy turns the green-app energy into a real on-chain
+            Hood 6900 turns AI6900-style energy into a real on-chain
             reward loop for holders and verified early movers.
           </p>
           <p>
-            Holders above 1M tokens get automatic airdrops. Verified holders
+            Holders above 1M $HOOD6900 get automatic HoodX airdrops. Verified holders
             can add an ETH wallet after proving ownership, then live draw
             winners have 24 hours to respond on X and claim.
           </p>
@@ -483,7 +483,7 @@ export function AnsemIndexApp() {
                 </div>
               ))
             ) : (
-              <div className="ai-empty">No HOOD rewards yet.</div>
+              <div className="ai-empty">No HoodX rewards yet.</div>
             )}
           </div>
         </motion.section>
@@ -491,8 +491,8 @@ export function AnsemIndexApp() {
         <motion.section className="ai-section" id="price" {...fadeUp}>
           <div className="ai-section-head split">
             <div>
-              <span className="ai-kicker">$HOOD PRICE</span>
-              <h2>Live $HOOD Chart</h2>
+              <span className="ai-kicker">$HOOD6900 PRICE</span>
+              <h2>Live $HOOD6900 Chart</h2>
             </div>
             <span className="ai-status">DEXSCREENER</span>
           </div>
@@ -500,7 +500,7 @@ export function AnsemIndexApp() {
             <IndexChart />
             <div className="ai-performance-zero">{formatUsd(price.priceUsd)}</div>
             <div className="ai-price-meta">
-              <span>$HOOD / USD</span>
+              <span>$HOOD6900 / USD</span>
               <strong>{price.priceChange24h >= 0 ? "+" : ""}{formatNumber(price.priceChange24h, 2)}% 24H</strong>
               {price.url ? <a href={price.url} target="_blank" rel="noreferrer">Open chart</a> : null}
             </div>
@@ -516,15 +516,15 @@ export function AnsemIndexApp() {
         <motion.section className="ai-section" id="faq" {...fadeUp}>
           <div className="ai-section-head">
             <span className="ai-kicker">FAQ</span>
-            <h2>Hood Strategy Questions</h2>
+            <h2>Hood 6900 Questions</h2>
           </div>
           <div className="ai-faq">
             {[
               [
-                "What is Hood Strategy?",
-                "Hood Strategy is the 50/50 reward loop for automatic holder airdrops and verified Hood community draws."
+                "What is Hood 6900?",
+                "Hood 6900 is the AI6900-coded 50/50 reward loop for automatic HoodX holder airdrops and verified community draws."
               ],
-              ["How do I earn?", "Hold 1M+ HOOD for automatic airdrops, or verify ownership for the live draw rail."],
+              ["How do I earn?", "Hold 1M+ $HOOD6900 for automatic airdrops, or verify ownership for the live draw rail."],
               ["What kind of verification counts?", "Hood memecoin ownership, wallet ownership proof, active X participation, and early mover status can qualify."],
               ["How does the treasury work?", "50% routes to automatic holder drops and 50% funds verified holder draws."],
               ["Where do winners show?", "Recent verified rewards appear in the table with proof links once rewards settle."],
@@ -548,7 +548,7 @@ export function AnsemIndexApp() {
           <a href={COMMUNITY_URL} target="_blank" rel="noreferrer">X</a>
           <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">DEXSCREENER</a>
           <a href={PUMP_URL} target="_blank" rel="noreferrer">PUMP.FUN</a>
-          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $HOOD</a>
+          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $HOOD6900</a>
         </div>
       </footer>
     </div>
@@ -595,10 +595,10 @@ export function RewardsDashboardApp() {
   const totalHoodDistributed = rewardTotalAmount(stats.totalRewardTotals, ["HOODX", "HOOD6900", "ANSEM", "HOOD"]);
   const transactionCount = stats.recentRewards.filter((reward) => reward.txSig).length;
   const dashboardMetrics = [
-    { label: "50% HOOD stock", value: formatToken(totalHoodDistributed, "HOOD") },
-    { label: "50% verified draws", value: "HOOD" },
+    { label: "50% HoodX stock", value: formatToken(totalHoodDistributed, "HoodX") },
+    { label: "50% verified draws", value: "HOOD6900" },
     { label: "CA", value: compactAddress(CA) },
-    { label: "$HOOD price", value: formatUsd(price.priceUsd) },
+    { label: "$HOOD6900 price", value: formatUsd(price.priceUsd) },
     { label: "Next epoch", value: countdown },
     { label: "Reward txs", value: formatNumber(transactionCount, 0) }
   ];
@@ -608,7 +608,7 @@ export function RewardsDashboardApp() {
       <AnimatedBackground />
 
       <header className="ai-nav">
-        <a className="ai-brand" href="/" aria-label="Hood Strategy home">
+        <a className="ai-brand" href="/" aria-label="Hood 6900 home">
           <span className="ai-brand-mark"><img src={LOGO_SRC} alt="" /></span>
           <span>{PROJECT_NAME}</span>
         </a>
@@ -616,7 +616,7 @@ export function RewardsDashboardApp() {
           <a href="/">Home</a>
           <a href="#reward-split">50/50</a>
           <a href="#transactions">Transactions</a>
-          <a href="#price">$HOOD Price</a>
+          <a href="#price">$HOOD6900 Price</a>
         </nav>
         <div className="ai-nav-meta">
           <span className="ai-ca-chip">CA: {CA}</span>
@@ -629,7 +629,7 @@ export function RewardsDashboardApp() {
           <div className="ai-section-head split">
             <div>
               <span className="ai-kicker">LIVE DASHBOARD</span>
-              <h1>Hood Strategy Dashboard</h1>
+              <h1>Hood 6900 Dashboard</h1>
             </div>
             <span className="ai-status">AUTO REFRESH</span>
           </div>
@@ -702,12 +702,12 @@ export function RewardsDashboardApp() {
                   <strong>{formatBalance(stats.rewardWallet.solBalance, "SOL")}</strong>
                 </div>
                 <div>
-                  <span>HOOD Owned</span>
-                  <strong>{formatBalance(stats.rewardWallet.sourceTokenBalance, "HOOD")}</strong>
+                  <span>HOOD6900 Owned</span>
+                  <strong>{formatBalance(stats.rewardWallet.sourceTokenBalance, "HOOD6900")}</strong>
                 </div>
                 <div>
-                  <span>HOODx Owned</span>
-                  <strong>{formatBalance(stats.rewardWallet.rewardTokenBalance, "HOODx")}</strong>
+                  <span>HoodX Owned</span>
+                  <strong>{formatBalance(stats.rewardWallet.rewardTokenBalance, "HoodX")}</strong>
                 </div>
                 <div>
                   <span>Next Draw</span>
@@ -767,7 +767,7 @@ export function RewardsDashboardApp() {
             </div>
             {stats.recentRewards.length ? (
               stats.recentRewards.map((reward) => (
-                <div className="ai-transaction-row" key={`${reward.epoch}-${reward.wallet}-${reward.time}-${reward.rewardAsset ?? "HOOD"}`}>
+            <div className="ai-transaction-row" key={`${reward.epoch}-${reward.wallet}-${reward.time}-${reward.rewardAsset ?? "HOOD6900"}`}>
                   <span>{formatTime(reward.time)}</span>
                   <span className="mono">{compactAddress(reward.wallet)}</span>
                   <span>{displayAsset(reward.rewardAsset)}</span>
@@ -788,8 +788,8 @@ export function RewardsDashboardApp() {
         <motion.section className="ai-section" id="price" {...fadeUp}>
           <div className="ai-section-head split">
             <div>
-              <span className="ai-kicker">$HOOD PRICE</span>
-              <h2>Live $HOOD Chart</h2>
+              <span className="ai-kicker">$HOOD6900 PRICE</span>
+              <h2>Live $HOOD6900 Chart</h2>
             </div>
             <span className="ai-status">DEXSCREENER</span>
           </div>
@@ -797,7 +797,7 @@ export function RewardsDashboardApp() {
             <IndexChart />
             <div className="ai-performance-zero">{formatUsd(price.priceUsd)}</div>
             <div className="ai-price-meta">
-              <span>$HOOD / USD</span>
+              <span>$HOOD6900 / USD</span>
               <strong>{price.priceChange24h >= 0 ? "+" : ""}{formatNumber(price.priceChange24h, 2)}% 24H</strong>
               {price.url ? <a href={price.url} target="_blank" rel="noreferrer">Open chart</a> : null}
             </div>
@@ -814,7 +814,7 @@ export function RewardsDashboardApp() {
           <a href={COMMUNITY_URL} target="_blank" rel="noreferrer">X</a>
           <a href={DEXSCREENER_URL} target="_blank" rel="noreferrer">DEXSCREENER</a>
           <a href={PUMP_URL} target="_blank" rel="noreferrer">PUMP.FUN</a>
-          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $HOOD</a>
+          <a href={BUY_URL} target="_blank" rel="noreferrer">BUY $HOOD6900</a>
         </div>
       </footer>
     </div>

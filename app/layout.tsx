@@ -3,29 +3,29 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://hoodstrategy.fun"),
-  title: "Hood Strategy",
-  description: "Hood Strategy routes rewards into automatic HOOD holder airdrops and verified holder live draws.",
+  metadataBase: new URL("https://hood6900.xyz"),
+  title: "Hood 6900",
+  description: "Hood 6900 routes creator fees into HoodX stock rewards and verified holder draws with AI6900 energy.",
   openGraph: {
-    title: "Hood Strategy",
-    description: "50% automatic HOOD Stock drops for 1M+ holders and 50% verified holder live draws.",
-    url: "https://hoodstrategy.fun",
-    siteName: "Hood Strategy",
+    title: "Hood 6900",
+    description: "50% HoodX stock drops for 1M+ holders and 50% verified holder live draws.",
+    url: "https://hood6900.xyz",
+    siteName: "Hood 6900",
     images: [
       {
-        url: "/brand/hood-strategy-logo.png",
+        url: "/brand/robin-hood-logo.jpg",
         width: 1200,
         height: 630,
-        alt: "Hood Strategy"
+        alt: "Hood 6900"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hood Strategy",
-    description: "Automatic HOOD Stock airdrops and verified holder live draws.",
-    images: ["/brand/hood-strategy-logo.png"]
+    title: "Hood 6900",
+    description: "HoodX stock airdrops and verified holder live draws.",
+    images: ["/brand/robin-hood-logo.jpg"]
   },
   icons: {
     icon: [
