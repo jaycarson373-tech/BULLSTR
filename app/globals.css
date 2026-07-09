@@ -76,8 +76,44 @@ h2 {
   overflow: hidden;
   background:
     radial-gradient(circle at 16% 8%, rgba(198, 255, 0, 0.12), transparent 26rem),
-    radial-gradient(circle at 90% 16%, rgba(141, 255, 0, 0.08), transparent 22rem),
+    radial-gradient(circle at 90% 16%, rgba(0, 255, 188, 0.08), transparent 22rem),
+    radial-gradient(circle at 64% 70%, rgba(199, 0, 255, 0.07), transparent 30rem),
     #020400;
+}
+
+.page::before {
+  position: fixed;
+  inset: -20%;
+  z-index: 0;
+  pointer-events: none;
+  content: "";
+  background:
+    radial-gradient(circle at 24% 18%, rgba(198, 255, 0, 0.18), transparent 18rem),
+    radial-gradient(circle at 78% 24%, rgba(0, 255, 188, 0.12), transparent 20rem),
+    radial-gradient(circle at 50% 78%, rgba(199, 0, 255, 0.1), transparent 24rem);
+  filter: blur(14px);
+  opacity: 0.78;
+  animation: neon-drift 18s ease-in-out infinite alternate;
+}
+
+.page::after {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  content: "";
+  background:
+    linear-gradient(rgba(198, 255, 0, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 188, 0.028) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.86), transparent 72%);
+  opacity: 0.38;
+}
+
+main,
+.footer {
+  position: relative;
+  z-index: 1;
 }
 
 .container {
@@ -200,9 +236,22 @@ h2 {
   overflow: hidden;
   padding: 136px 0 70px;
   background:
-    linear-gradient(90deg, rgba(2, 4, 0, 0.98), rgba(2, 4, 0, 0.22) 48%, rgba(2, 4, 0, 0.9)),
-    linear-gradient(180deg, rgba(2, 4, 0, 0.05), rgba(2, 4, 0, 0.86)),
-    url("/brand/hood-strategy-banner.jpg") center / cover no-repeat;
+    radial-gradient(circle at 78% 16%, rgba(198, 255, 0, 0.16), transparent 22rem),
+    radial-gradient(circle at 68% 62%, rgba(0, 255, 188, 0.1), transparent 24rem),
+    radial-gradient(circle at 22% 84%, rgba(199, 0, 255, 0.08), transparent 28rem),
+    linear-gradient(135deg, rgba(2, 4, 0, 0.98), rgba(3, 16, 5, 0.82) 48%, rgba(2, 4, 0, 0.96));
+}
+
+.hero::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background:
+    linear-gradient(115deg, transparent 0 34%, rgba(198, 255, 0, 0.08) 42%, transparent 52%),
+    linear-gradient(72deg, transparent 0 58%, rgba(0, 255, 188, 0.055) 64%, transparent 74%);
+  opacity: 0.72;
+  transform: translateX(-8%);
+  animation: neon-sweep 11s ease-in-out infinite alternate;
 }
 
 .hero::after {
@@ -217,8 +266,10 @@ h2 {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 68% 16%, rgba(198, 255, 0, 0.2), transparent 24%),
-    linear-gradient(90deg, rgba(2, 4, 0, 0.9), rgba(2, 4, 0, 0.14) 56%, rgba(2, 4, 0, 0.82));
+    radial-gradient(circle at 72% 18%, rgba(198, 255, 0, 0.18), transparent 24%),
+    radial-gradient(circle at 84% 62%, rgba(0, 255, 188, 0.08), transparent 28%),
+    linear-gradient(90deg, rgba(2, 4, 0, 0.96), rgba(2, 4, 0, 0.42) 56%, rgba(2, 4, 0, 0.84));
+  animation: pulse-glow 9s ease-in-out infinite alternate;
 }
 
 .hero-inner {
@@ -466,10 +517,43 @@ h2 {
   border: 1px solid rgba(198, 255, 0, 0.16);
   border-radius: 10px;
   background:
-    linear-gradient(135deg, rgba(198, 255, 0, 0.1), transparent 36%),
-    linear-gradient(180deg, rgba(2, 4, 0, 0.4), rgba(2, 4, 0, 0.9)),
-    url("/brand/hood-strategy-banner.jpg") center / cover no-repeat;
+    radial-gradient(circle at 22% 20%, rgba(198, 255, 0, 0.16), transparent 16rem),
+    radial-gradient(circle at 88% 64%, rgba(0, 255, 188, 0.11), transparent 18rem),
+    linear-gradient(135deg, rgba(198, 255, 0, 0.08), transparent 36%),
+    linear-gradient(180deg, rgba(3, 11, 2, 0.92), rgba(2, 4, 0, 0.98));
   padding: clamp(24px, 6vw, 64px);
+}
+
+@keyframes neon-drift {
+  from {
+    transform: translate3d(-1.5%, -1%, 0) scale(1);
+  }
+
+  to {
+    transform: translate3d(1.5%, 1%, 0) scale(1.04);
+  }
+}
+
+@keyframes neon-sweep {
+  from {
+    transform: translateX(-10%);
+    opacity: 0.38;
+  }
+
+  to {
+    transform: translateX(8%);
+    opacity: 0.78;
+  }
+}
+
+@keyframes pulse-glow {
+  from {
+    opacity: 0.82;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .hood-chart-fallback span {

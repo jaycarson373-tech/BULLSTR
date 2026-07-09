@@ -197,7 +197,7 @@ export function useProtocolData() {
 export function HeroCountdown() {
   const { stats, now } = useProtocolData();
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
-  const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
+  const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "--:--";
   const totalDistributed = stats ? formatRewardTotals(stats.totalRewardTotals, "Awaiting first drop") : "Awaiting first drop";
   const hoodxAirdropped = stats ? rewardTotalAmount(stats.totalRewardTotals, REWARD_SYMBOL) : 0;
 
@@ -216,15 +216,15 @@ export function HeroCountdown() {
         </div>
         <div>
           <span>{SOURCE_SYMBOL} Eligible</span>
-          <b>{stats?.eligibleBullstrHeld ? formatNumber(stats.eligibleBullstrHeld, 0) : "0"}</b>
+          <b>0</b>
         </div>
         <div>
           <span>Total Epochs</span>
-          <b>{stats ? formatCount(stats.totalEpochs) : "Loading"}</b>
+          <b>{stats ? formatCount(stats.totalEpochs) : "0"}</b>
         </div>
         <div>
           <span>Eligible Holders</span>
-          <b>{stats ? formatCount(stats.latestEligibleHolders) : "Loading"}</b>
+          <b>0</b>
         </div>
       </div>
     </div>
@@ -235,7 +235,7 @@ export function LiveProtocolDashboard() {
   const { stats, now } = useProtocolData();
   const rounds = stats?.roundHistory ?? [];
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
-  const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
+  const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "--:--";
   const latestRound = rounds[0];
   const totalRewardAirdropped = stats ? rewardTotalAmount(stats.totalRewardTotals, REWARD_SYMBOL) : 0;
   const totalRewardBought = rounds.reduce((sum, round) => sum + (Number.isFinite(round.rewardBought) ? round.rewardBought : 0), 0);
@@ -253,7 +253,7 @@ export function LiveProtocolDashboard() {
           <MetricCard label="Total Airdropped" value={totalRewardAirdropped > 0 ? formatAmount(totalRewardAirdropped, REWARD_SYMBOL, 2) : stats ? formatRewardTotals(stats.totalRewardTotals) : "Loading"} />
           <MetricCard label="Last Epoch" value={latestRound ? `#${latestRound.epoch} ${statusLabel(latestRound.status)}` : "Awaiting epoch"} />
           <MetricCard label="Next Epoch Timer" value={countdown} />
-          <MetricCard label="Eligible Holders" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} />
+          <MetricCard label="Eligible Holders" value="0" />
           <MetricCard label="Recent TX" value={latestRound?.txSig ? compactAddress(latestRound.txSig) : "Awaiting tx"} muted />
         </div>
       </div>
@@ -409,6 +409,44 @@ export function RewardExplanation() {
               <p>{copy}</p>
             </article>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function HoodWalletBoard() {
+  return (
+    <section className="section bull-board-section" id="wallet-board">
+      <div className="container">
+        <div className="section-kicker">Holder board</div>
+        <div className="section-head split-head">
+          <h2>Hood Strategy wallets.</h2>
+          <p>The board is reset for the Hood Strategy launch and starts clean until the next live reward epoch settles.</p>
+        </div>
+        <div className="history-card bull-board-card">
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Wallet</th>
+                  <th>${SOURCE_SYMBOL} Held</th>
+                  <th>Share</th>
+                  <th>Total {REWARD_SYMBOL} Earned</th>
+                  <th>Last Airdrop</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Awaiting wallets</td>
+                  <td>0</td>
+                  <td>0%</td>
+                  <td>0 {REWARD_SYMBOL}</td>
+                  <td>Awaiting airdrop</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
