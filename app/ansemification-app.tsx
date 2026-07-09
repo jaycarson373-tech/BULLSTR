@@ -64,7 +64,7 @@ type PriceResponse = {
 
 const PROJECT_NAME = "HOOD6900";
 const LOGO_SRC = "/brand/hood6900-logo.jpg";
-const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/Hood6900_";
+const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/HOOD6900_";
 const CA =
   process.env.NEXT_PUBLIC_CA?.trim() ||
   process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ||
