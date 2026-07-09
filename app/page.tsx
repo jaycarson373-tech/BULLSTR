@@ -11,10 +11,8 @@ import {
   RewardExplanation
 } from "./home-strategy-data";
 
-const HOOD_CA = "D5exVALkCSzqFNtRMARdRF4VuQffyM8LrbTFrpqBpump";
 const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/HoodStrategy_";
-const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim() || `https://pump.fun/coin/${HOOD_CA}`;
-const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || HOOD_CA;
+const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim() || "https://pump.fun";
 
 export default function Page() {
   return (
@@ -75,9 +73,6 @@ export default function Page() {
                 <a className="cta" href={BUY_URL} target="_blank" rel="noreferrer">
                   Enter Strategy
                 </a>
-                <a className="cta secondary ca-copy-button" href="#rails">
-                  CA: {CA}
-                </a>
               </div>
             </div>
             <HeroCountdown />
@@ -137,7 +132,6 @@ export default function Page() {
             <a href={BUY_URL} target="_blank" rel="noreferrer">
               Buy
             </a>
-            <span>{CA}</span>
           </div>
         </div>
       </footer>

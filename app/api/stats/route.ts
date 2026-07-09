@@ -86,7 +86,6 @@ type RobinhoodHoldings = {
 
 const PUMP_PROGRAM_ID = new PublicKey("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P");
 const PUMP_AMM_PROGRAM_ID = new PublicKey("pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA");
-const DEFAULT_HOOD_MINT = "D5exVALkCSzqFNtRMARdRF4VuQffyM8LrbTFrpqBpump";
 const DEFAULT_BONUS_WALLET_PUBLIC_KEY = "51PVdNdsEiMSreFtp7RWXiHVrCdbu8Mq8cR3vNp7SR5s";
 const LIVE_ELIGIBLE_CACHE_MS = 90_000;
 
@@ -179,7 +178,7 @@ function toNumber(value: unknown) {
 }
 
 function sourceTokenMint() {
-  const value = process.env.SOURCE_TOKEN_MINT ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_HOOD_MINT;
+  const value = process.env.SOURCE_TOKEN_MINT ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT;
   if (!value) return null;
   try {
     return new PublicKey(value);
