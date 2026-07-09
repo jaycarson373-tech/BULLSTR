@@ -619,7 +619,7 @@ h3 {
 
 .feeding-section,
 .airdrop-section {
-  --section-art: url("/brand/bull-strategy-logo.png");
+  --section-art: url("/brand/hood6900-logo.jpg");
   --section-art-position: center 45%;
   --section-art-speed: -0.01;
   background:
@@ -700,7 +700,7 @@ h3 {
 }
 
 .reward-explainer-section {
-  --section-art: url("/brand/bull-strategy-logo.png");
+  --section-art: url("/brand/hood6900-logo.jpg");
   --section-art-position: center 48%;
   --section-art-speed: -0.014;
   background:
@@ -809,7 +809,7 @@ h3 {
 }
 
 .path-section {
-  --section-art: url("/brand/bull-strategy-logo.png");
+  --section-art: url("/brand/hood6900-logo.jpg");
   --section-art-position: center 45%;
   --section-art-speed: -0.018;
   overflow: hidden;
@@ -925,7 +925,7 @@ h3 {
 }
 
 .black-bull-section {
-  --section-art: url("/brand/bull-strategy-logo.png");
+  --section-art: url("/brand/hood6900-logo.jpg");
   --section-art-position: center 50%;
   --section-art-speed: -0.016;
   overflow: hidden;
@@ -935,8 +935,8 @@ h3 {
     #020202;
 }
 
-.ansem-section {
-  --section-art: url("/brand/bull-strategy-logo.png");
+.hood-section {
+  --section-art: url("/brand/hood6900-logo.jpg");
   --section-art-position: center 48%;
   --section-art-speed: -0.014;
   overflow: hidden;
@@ -1089,7 +1089,7 @@ h3 {
   letter-spacing: 0.04em;
 }
 
-.ansem-section .black-bull-portrait {
+.hood-section .black-bull-portrait {
   aspect-ratio: 1.35;
 }
 
@@ -1119,7 +1119,7 @@ h3 {
   border-color: rgba(20, 92, 36, 0.24);
 }
 
-.bagwork-balance {
+.holder-balance {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
@@ -1131,7 +1131,7 @@ h3 {
   padding: 15px 18px;
 }
 
-.bagwork-balance span {
+.holder-balance span {
   color: var(--accent);
   font-size: 0.74rem;
   font-weight: 900;
@@ -1139,7 +1139,7 @@ h3 {
   text-transform: uppercase;
 }
 
-.bagwork-balance strong {
+.holder-balance strong {
   color: var(--ivory);
   font-size: clamp(1.18rem, 2vw, 1.55rem);
   font-weight: 950;
@@ -1199,7 +1199,7 @@ h3 {
 }
 
 .conviction-section {
-  --section-art: url("/brand/bull-strategy-logo.png");
+  --section-art: url("/brand/hood6900-logo.jpg");
   --section-art-position: center 48%;
   --section-art-speed: -0.013;
 }
@@ -1475,7 +1475,7 @@ h3 {
 }
 
 .eligibility-section {
-  --section-art: url("/brand/bull-strategy-logo.png");
+  --section-art: url("/brand/hood6900-logo.jpg");
   --section-art-position: center 50%;
   --section-art-speed: -0.012;
 }
@@ -1554,7 +1554,7 @@ h3 {
 }
 
 .lookup-section {
-  --section-art: url("/brand/bull-strategy-logo.png");
+  --section-art: url("/brand/hood6900-logo.jpg");
   --section-art-position: center 48%;
   --section-art-speed: -0.01;
 }
@@ -1595,13 +1595,13 @@ h3 {
 }
 
 .history-section {
-  --section-art: url("/brand/bull-strategy-logo.png");
+  --section-art: url("/brand/hood6900-logo.jpg");
   --section-art-position: center 46%;
   --section-art-speed: -0.012;
 }
 
 .bull-board-section {
-  --section-art: url("/brand/bull-strategy-logo.png");
+  --section-art: url("/brand/hood6900-logo.jpg");
   --section-art-position: center 46%;
   --section-art-speed: -0.01;
   background:
@@ -1612,7 +1612,7 @@ h3 {
 
 .recent-feedings-section,
 .recent-airdrops-section {
-  --section-art: url("/brand/bull-strategy-logo.png");
+  --section-art: url("/brand/hood6900-logo.jpg");
   --section-art-position: center 42%;
   --section-art-speed: -0.012;
   background:
@@ -1674,7 +1674,7 @@ td a,
 }
 
 .philosophy-section {
-  --section-art: url("/brand/bull-strategy-logo.png");
+  --section-art: url("/brand/hood6900-logo.jpg");
   --section-art-position: center 50%;
   --section-art-speed: -0.014;
   background:
@@ -1708,7 +1708,7 @@ td a,
 }
 
 .faq-section {
-  --section-art: url("/brand/bull-strategy-logo.png");
+  --section-art: url("/brand/hood6900-logo.jpg");
   --section-art-position: center 46%;
   --section-art-speed: -0.01;
 }
@@ -2321,7 +2321,7 @@ td a,
   }
 }
 
-/* Legacy green theme overrides kept below for older components; Ansemification overrides are appended later. */
+/* Legacy green theme overrides kept below for older components; HOOD6900 overrides are appended later. */
 :root {
   --black: #020403;
   --charcoal: #06100a;
@@ -2470,7 +2470,7 @@ td a,
     linear-gradient(180deg, rgba(2, 4, 3, 0.12), rgba(2, 4, 3, 0.84));
 }
 
-.bull-logo-hero {
+.hood-logo-hero {
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -2481,7 +2481,7 @@ td a,
   perspective: 900px;
 }
 
-.bull-logo-hero::before {
+.hood-logo-hero::before {
   display: none;
 }
 
@@ -2561,8 +2561,8 @@ td a,
   transform: none;
 }
 
-.why-ansem-section {
-  --section-art: url("/brand/bull-strategy-logo.png");
+.why-hood-section {
+  --section-art: url("/brand/hood6900-logo.jpg");
   --section-art-position: right 10vw center;
   --section-art-size: min(44vw, 620px) auto;
   --section-art-speed: -0.01;
@@ -2572,27 +2572,27 @@ td a,
     linear-gradient(180deg, rgba(2, 4, 3, 0.98), rgba(5, 10, 7, 0.98));
 }
 
-.why-ansem-grid {
+.why-hood-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.68fr);
   gap: 42px;
   align-items: start;
 }
 
-.why-ansem-copy h2 {
+.why-hood-copy h2 {
   max-width: 780px;
 }
 
-.why-ansem-copy .lore-copy {
+.why-hood-copy .lore-copy {
   max-width: 860px;
 }
 
-.ansem-proof-grid {
+.hood-proof-grid {
   display: grid;
   gap: 12px;
 }
 
-.ansem-proof-card {
+.hood-proof-card {
   border: 1px solid rgba(57, 255, 20, 0.18);
   border-radius: 18px;
   background:
@@ -2602,7 +2602,7 @@ td a,
   box-shadow: 0 20px 70px rgba(0, 0, 0, 0.24);
 }
 
-.ansem-proof-card span {
+.hood-proof-card span {
   color: var(--green);
   font-size: 0.76rem;
   font-weight: 900;
@@ -2610,7 +2610,7 @@ td a,
   text-transform: uppercase;
 }
 
-.ansem-proof-card strong {
+.hood-proof-card strong {
   display: block;
   margin-top: 18px;
   color: var(--accent);
@@ -2619,7 +2619,7 @@ td a,
   text-transform: uppercase;
 }
 
-.ansem-proof-card p {
+.hood-proof-card p {
   margin-top: 14px;
   color: var(--faint);
   font-size: 0.98rem;
@@ -2772,7 +2772,7 @@ td a,
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .why-ansem-grid {
+  .why-hood-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -2790,7 +2790,7 @@ td a,
     width: min(92vw, 430px);
   }
 
-  .bull-logo-hero::before {
+  .hood-logo-hero::before {
     width: min(106vw, 520px);
   }
 
@@ -2815,7 +2815,7 @@ td a,
   }
 }
 
-/* Ansemification rebrand */
+/* HOOD6900 rebrand */
 :root {
   --black: #050403;
   --charcoal: #0d0b08;
@@ -2885,7 +2885,7 @@ select {
 .bg-stone,
 .hero-clouds,
 .hero-fog,
-.bull-logo-hero,
+.hood-logo-hero,
 .black-bull-glow {
   display: none !important;
 }
@@ -3015,26 +3015,26 @@ td a,
   display: none;
 }
 
-.ansem-two-column {
+.hood-two-column {
   display: grid;
   grid-template-columns: minmax(260px, 0.75fr) minmax(0, 1fr);
   gap: clamp(28px, 7vw, 96px);
   align-items: start;
 }
 
-.ansem-section,
+.hood-section,
 .machine-section,
 .lore-section {
   padding: 108px 0;
 }
 
-.ansem-steps {
+.hood-steps {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
 }
 
-.ansem-steps article,
+.hood-steps article,
 .metric-card,
 .history-card,
 .reward-flow-card,
@@ -3051,19 +3051,19 @@ td a,
   box-shadow: none;
 }
 
-.ansem-steps article {
+.hood-steps article {
   min-height: 220px;
   padding: 24px;
 }
 
-.ansem-steps span,
+.hood-steps span,
 .section-kicker,
 .metric-card-strong strong,
 .reward-flow-card::before {
   color: var(--accent);
 }
 
-.ansem-steps strong {
+.hood-steps strong {
   display: block;
   margin-top: 42px;
   color: var(--ivory);
@@ -3071,7 +3071,7 @@ td a,
   line-height: 0.95;
 }
 
-.ansem-steps p {
+.hood-steps p {
   margin-top: 16px;
   color: var(--faint);
   line-height: 1.55;
@@ -3123,10 +3123,10 @@ td a,
 }
 
 @media (max-width: 1080px) {
-  .ansem-two-column,
+  .hood-two-column,
   .dashboard-grid,
   .reward-flow,
-  .ansem-steps {
+  .hood-steps {
     grid-template-columns: 1fr;
   }
 }
@@ -3142,8 +3142,8 @@ td a,
   }
 }
 
-/* Premium Ansemification app */
-.ansem-app {
+/* Premium HOOD6900 app */
+.hood-app {
   --app-bg: #020503;
   --app-panel: rgba(8, 15, 10, 0.66);
   --app-panel-strong: rgba(9, 18, 12, 0.82);
@@ -3163,12 +3163,12 @@ td a,
   isolation: isolate;
 }
 
-.ansem-app::before {
+.hood-app::before {
   position: fixed;
   inset: 0;
   z-index: -3;
   content: "";
-  background-image: url("/brand/ansem-avatar-wall.jpg");
+  background-image: url("/brand/backgrounds/hood6900-bg-1.jpg");
   background-position: center;
   background-size: cover;
   opacity: 0.5;
@@ -3176,7 +3176,7 @@ td a,
   pointer-events: none;
 }
 
-.ansem-app::after {
+.hood-app::after {
   position: fixed;
   inset: 0;
   z-index: -2;
@@ -3189,12 +3189,12 @@ td a,
   pointer-events: none;
 }
 
-.ansem-app main {
+.hood-app main {
   position: relative;
   z-index: 1;
 }
 
-.ansem-app main::before {
+.hood-app main::before {
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -3206,10 +3206,10 @@ td a,
     linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
   background-size: 96px 96px;
   mask-image: linear-gradient(180deg, transparent, black 12%, black 88%, transparent);
-  animation: ansemGridFloat 34s linear infinite;
+  animation: hoodGridFloat 34s linear infinite;
 }
 
-.ansem-app main::after {
+.hood-app main::after {
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -3222,10 +3222,10 @@ td a,
   filter: blur(1px);
   opacity: 0.72;
   pointer-events: none;
-  animation: ansemOutlineFloat 18s ease-in-out infinite alternate;
+  animation: hoodOutlineFloat 18s ease-in-out infinite alternate;
 }
 
-.ansem-nav {
+.hood-nav {
   position: sticky;
   top: 0;
   z-index: 30;
@@ -3240,19 +3240,19 @@ td a,
   backdrop-filter: blur(18px);
 }
 
-.ansem-brand,
-.ansem-nav-links {
+.hood-brand,
+.hood-nav-links {
   display: inline-flex;
   align-items: center;
 }
 
-.ansem-brand {
+.hood-brand {
   gap: 12px;
   font-weight: 900;
   letter-spacing: -0.02em;
 }
 
-.ansem-logo {
+.hood-logo {
   display: grid;
   width: 54px;
   height: 54px;
@@ -3265,32 +3265,32 @@ td a,
   overflow: hidden;
 }
 
-.ansem-logo img {
+.hood-logo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.ansem-nav-links {
+.hood-nav-links {
   gap: 18px;
 }
 
-.ansem-nav-actions {
+.hood-nav-actions {
   display: inline-flex;
   align-items: center;
   gap: 10px;
 }
 
-.ansem-nav-links a,
-.ansem-nav-actions a,
-.ansem-nav-actions span {
+.hood-nav-links a,
+.hood-nav-actions a,
+.hood-nav-actions span {
   color: var(--app-muted);
   font-size: 0.82rem;
   font-weight: 800;
   transition: color 180ms ease, transform 180ms ease;
 }
 
-.ansem-nav-actions span {
+.hood-nav-actions span {
   border: 1px solid var(--app-border);
   border-radius: 999px;
   background: rgba(244, 255, 241, 0.045);
@@ -3298,7 +3298,7 @@ td a,
   white-space: nowrap;
 }
 
-.ansem-nav-actions a {
+.hood-nav-actions a {
   display: grid;
   width: 38px;
   height: 38px;
@@ -3308,33 +3308,33 @@ td a,
   background: rgba(244, 255, 241, 0.045);
 }
 
-.ansem-nav-links a:hover,
-.ansem-nav-actions a:hover {
+.hood-nav-links a:hover,
+.hood-nav-actions a:hover {
   color: var(--app-green);
   transform: translateY(-1px);
 }
 
-.ansem-hero,
-.ansem-section {
+.hood-hero,
+.hood-section {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
 }
 
-.ansem-hero {
+.hood-hero {
   display: grid;
   min-height: calc(100svh - 76px);
   align-items: center;
   padding: clamp(72px, 13vw, 154px) 0 54px;
 }
 
-.ansem-hero-copy {
+.hood-hero-copy {
   display: grid;
   max-width: 780px;
   gap: 22px;
-  animation: ansemRise 640ms ease both;
+  animation: hoodRise 640ms ease both;
 }
 
-.ansem-pill,
+.hood-pill,
 .section-label {
   display: inline-flex;
   width: fit-content;
@@ -3347,7 +3347,7 @@ td a,
   text-transform: uppercase;
 }
 
-.ansem-hero h1 {
+.hood-hero h1 {
   color: var(--app-text);
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: clamp(4.4rem, 14vw, 10.5rem);
@@ -3358,7 +3358,7 @@ td a,
   text-shadow: 0 28px 100px rgba(0, 0, 0, 0.58);
 }
 
-.ansem-hero p {
+.hood-hero p {
   max-width: 650px;
   color: var(--app-muted);
   font-size: clamp(1.2rem, 2.6vw, 2.15rem);
@@ -3367,14 +3367,14 @@ td a,
   line-height: 1.08;
 }
 
-.ansem-hero-actions,
+.hood-hero-actions,
 .result-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
 
-.ansem-button {
+.hood-button {
   display: inline-flex;
   min-height: 48px;
   align-items: center;
@@ -3388,39 +3388,39 @@ td a,
   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
 }
 
-.ansem-button:hover {
+.hood-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 18px 70px rgba(124, 255, 107, 0.17);
 }
 
-.ansem-button.primary {
+.hood-button.primary {
   border-color: rgba(124, 255, 107, 0.62);
   background: linear-gradient(135deg, var(--app-green), var(--app-green-2));
   color: #031006;
 }
 
-.ansem-button.secondary,
-.ansem-button.ghost {
+.hood-button.secondary,
+.hood-button.ghost {
   background: rgba(244, 255, 241, 0.055);
   backdrop-filter: blur(18px);
 }
 
-.ansem-button.ghost {
+.hood-button.ghost {
   color: var(--app-muted);
 }
 
-.ansem-section {
+.hood-section {
   padding: clamp(46px, 8vw, 96px) 0;
 }
 
-.ansem-grid-four {
+.hood-grid-four {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
 }
 
 .glass-card,
-.ansem-metric-card,
+.hood-metric-card,
 .upload-dropzone,
 .comparison-card,
 .empty-panel,
@@ -3436,17 +3436,17 @@ td a,
   backdrop-filter: blur(22px);
 }
 
-.ansem-metric-card {
+.hood-metric-card {
   display: grid;
   min-height: 154px;
   align-content: space-between;
   gap: 14px;
   padding: 22px;
   transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
-  animation: ansemRise 620ms ease both;
+  animation: hoodRise 620ms ease both;
 }
 
-.ansem-metric-card:hover,
+.hood-metric-card:hover,
 .premium-step:hover,
 .glass-card:hover {
   transform: translateY(-3px);
@@ -3456,15 +3456,15 @@ td a,
     0 0 44px rgba(124, 255, 107, 0.08);
 }
 
-.ansem-metric-card:nth-child(2) {
+.hood-metric-card:nth-child(2) {
   animation-delay: 80ms;
 }
 
-.ansem-metric-card:nth-child(3) {
+.hood-metric-card:nth-child(3) {
   animation-delay: 160ms;
 }
 
-.ansem-metric-card:nth-child(4) {
+.hood-metric-card:nth-child(4) {
   animation-delay: 240ms;
 }
 
@@ -3472,13 +3472,13 @@ td a,
   font-size: 1.35rem;
 }
 
-.ansem-metric-card small {
+.hood-metric-card small {
   color: var(--app-muted);
   font-size: 0.8rem;
   font-weight: 850;
 }
 
-.ansem-metric-card strong {
+.hood-metric-card strong {
   color: var(--app-text);
   font-size: clamp(2rem, 4vw, 3.45rem);
   font-weight: 950;
@@ -3578,7 +3578,7 @@ td a,
   border-radius: 999px;
   background: radial-gradient(circle, rgba(124, 255, 107, 0.72), rgba(124, 255, 107, 0.08) 62%, transparent 64%);
   box-shadow: 0 0 64px rgba(124, 255, 107, 0.28);
-  animation: ansemPulse 1.1s ease-in-out infinite;
+  animation: hoodPulse 1.1s ease-in-out infinite;
 }
 
 .comparison-card {
@@ -3674,7 +3674,7 @@ td a,
   align-content: space-between;
   padding: 24px;
   transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
-  animation: ansemRise 620ms ease both;
+  animation: hoodRise 620ms ease both;
 }
 
 .premium-step:not(:last-child)::after {
@@ -3715,7 +3715,7 @@ td a,
   line-height: 1.16;
 }
 
-.ansem-footer {
+.hood-footer {
   position: relative;
   z-index: 1;
   display: grid;
@@ -3726,7 +3726,7 @@ td a,
   padding: 34px 0 44px;
 }
 
-.ansem-footer-copy {
+.hood-footer-copy {
   max-width: 900px;
   color: var(--app-muted);
   font-size: clamp(1rem, 1.8vw, 1.28rem);
@@ -3735,22 +3735,22 @@ td a,
   line-height: 1.35;
 }
 
-.ansem-footer-row,
-.ansem-footer-links {
+.hood-footer-row,
+.hood-footer-links {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.ansem-footer-row {
+.hood-footer-row {
   justify-content: space-between;
 }
 
-.ansem-footer-links {
+.hood-footer-links {
   flex-wrap: wrap;
 }
 
-.ansem-footer-links a {
+.hood-footer-links a {
   color: var(--app-muted);
   font-size: 0.8rem;
   font-weight: 900;
@@ -3759,16 +3759,16 @@ td a,
   transition: color 180ms ease, transform 180ms ease;
 }
 
-.ansem-footer-links a:hover {
+.hood-footer-links a:hover {
   color: var(--app-green);
   transform: translateY(-1px);
 }
 
-.ansem-footer-trade {
+.hood-footer-trade {
   justify-content: flex-end;
 }
 
-@keyframes ansemPulse {
+@keyframes hoodPulse {
   0%,
   100% {
     transform: scale(0.92);
@@ -3781,7 +3781,7 @@ td a,
   }
 }
 
-@keyframes ansemGridFloat {
+@keyframes hoodGridFloat {
   from {
     background-position: 0 0, 0 0;
   }
@@ -3791,7 +3791,7 @@ td a,
   }
 }
 
-@keyframes ansemOutlineFloat {
+@keyframes hoodOutlineFloat {
   from {
     transform: translate3d(-12px, 8px, 0) scale(1);
   }
@@ -3801,7 +3801,7 @@ td a,
   }
 }
 
-@keyframes ansemRise {
+@keyframes hoodRise {
   from {
     opacity: 0;
     transform: translateY(18px);
@@ -3814,24 +3814,24 @@ td a,
 }
 
 @media (max-width: 900px) {
-  .ansem-nav {
+  .hood-nav {
     position: relative;
     flex-wrap: wrap;
     padding: 14px 0;
   }
 
-  .ansem-nav-links,
-  .ansem-nav-actions {
+  .hood-nav-links,
+  .hood-nav-actions {
     width: 100%;
     justify-content: space-between;
     gap: 10px;
   }
 
-  .ansem-nav-actions {
+  .hood-nav-actions {
     justify-content: flex-start;
   }
 
-  .ansem-grid-four,
+  .hood-grid-four,
   .upload-layout,
   .premium-steps {
     grid-template-columns: 1fr;
@@ -3845,32 +3845,32 @@ td a,
     transform: rotate(90deg);
   }
 
-  .ansem-footer-row {
+  .hood-footer-row {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .ansem-footer-trade {
+  .hood-footer-trade {
     justify-content: flex-start;
   }
 }
 
 @media (max-width: 560px) {
-  .ansem-hero,
-  .ansem-section {
+  .hood-hero,
+  .hood-section {
     width: min(100% - 24px, 1180px);
   }
 
-  .ansem-hero {
+  .hood-hero {
     min-height: auto;
     padding-top: 74px;
   }
 
-  .ansem-hero h1 {
+  .hood-hero h1 {
     font-size: clamp(3.55rem, 21vw, 5.4rem);
   }
 
-  .ansem-button {
+  .hood-button {
     width: 100%;
   }
 

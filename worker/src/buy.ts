@@ -151,9 +151,5 @@ export async function buyToken(
 }
 
 export async function buyReward(epochId: string, explicitReserveLamports?: bigint, maxSwapLamports?: bigint) {
-  return buyToken(epochId, config.rewardTokenMint, "HOOD", explicitReserveLamports, maxSwapLamports);
-}
-
-export async function buyIndexToken(epochId: string, explicitReserveLamports?: bigint, maxSwapLamports?: bigint) {
-  return buyToken(epochId, config.sourceTokenMint, "HOOD", explicitReserveLamports, maxSwapLamports);
+  return buyToken(epochId, config.rewardTokenMint, "HOODx", explicitReserveLamports, maxSwapLamports);
 }

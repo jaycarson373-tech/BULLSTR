@@ -9,7 +9,7 @@ HOOD6900 is the memecoin of the Hood.
 - The trenches built the meme.
 - Every 5 minutes creator fees buy back HOODx.
 - 100% airdrops HOODx to eligible 100K+ holders.
-- 0% goes to side wallets.
+- 0% goes anywhere else.
 - Sell once and lose future eligibility.
 
 ## Current Implementation
@@ -18,8 +18,7 @@ HOOD6900 is the memecoin of the Hood.
 2. Snapshot source-token holders with at least `ELIGIBILITY_MIN`.
 3. Weight selected holders by raw token balance.
 4. Use `SWAP_BALANCE_BPS=10000` for automatic holder airdrops.
-5. Use `SIDE_WALLET_BPS=0` so no reward share leaves the holder rail.
-6. Store epochs, snapshots, reward pools, and payouts in Supabase.
+5. Store epochs, snapshots, reward pools, and payouts in Supabase.
 
 ## Local Development
 
@@ -72,11 +71,7 @@ MAX_HOLDER_PCT=5
 EXCLUDE_WALLETS=
 
 SWAP_BALANCE_BPS=10000
-INDEX_AIRDROP_BPS=0
 SWAP_SLIPPAGE_BPS=300
-SIDE_WALLET_BPS=0
-SIDE_WALLET_PUBLIC_KEY=
-INDEX_HOLDER_LIMIT=200
 
 MIN_SOL_RESERVE=0.4
 AIRDROP_SOL_RESERVE=0.4

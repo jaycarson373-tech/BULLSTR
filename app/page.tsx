@@ -1,5 +1,5 @@
-import { AnsemIndexApp } from "./ansemification-app";
+import { Hood6900App } from "./hood6900-app";
 
 export default function Page() {
-  return <AnsemIndexApp />;
+  return <Hood6900App />;
 }

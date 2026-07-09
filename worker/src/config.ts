@@ -66,14 +66,8 @@ if (rewardMode === "token" && !configuredRewardTokenMint) {
   throw new Error("Missing required env REWARD_TOKEN_MINT when REWARD_MODE=token");
 }
 const swapBalanceBps = Math.min(10_000, Math.max(1, intEnv("SWAP_BALANCE_BPS", 10000)));
-const indexAirdropBps = Math.min(10_000, Math.max(0, intEnv("INDEX_AIRDROP_BPS", 0)));
-const sideWalletBps = Math.min(10_000, Math.max(0, intEnv("SIDE_WALLET_BPS", 0)));
-if (swapBalanceBps + indexAirdropBps + sideWalletBps > 10_000) {
-  throw new Error(
-    `SWAP_BALANCE_BPS + INDEX_AIRDROP_BPS + SIDE_WALLET_BPS cannot exceed 10000; got ${
-      swapBalanceBps + indexAirdropBps + sideWalletBps
-    }`
-  );
+if (swapBalanceBps > 10_000) {
+  throw new Error(`SWAP_BALANCE_BPS cannot exceed 10000; got ${swapBalanceBps}`);
 }
 
 export const config = {
@@ -96,15 +90,10 @@ export const config = {
   excludeWallets: optionalWallets("EXCLUDE_WALLETS"),
 
   swapBalanceBps,
-  indexAirdropBps,
-  sideWalletBps,
-  sideWalletPublicKey: optionalPublicKeyEnv("SIDE_WALLET_PUBLIC_KEY"),
   minSolReserve: Math.max(0, numberEnv("MIN_SOL_RESERVE", 0.3)),
   airdropSolReserve: Math.max(0.05, numberEnv("AIRDROP_SOL_RESERVE", 0.05)),
   airdropBatchSize: Math.max(1, intEnv("AIRDROP_BATCH_SIZE", 4)),
   airdropRewardBps: Math.min(10_000, Math.max(1, intEnv("AIRDROP_REWARD_BPS", 10000))),
-  indexHolderLimit: Math.max(1, intEnv("INDEX_HOLDER_LIMIT", 10_000)),
-  indexWalletsPerEpoch: Math.max(1, intEnv("INDEX_WALLETS_PER_EPOCH", 50)),
   swapSlippageBps: Math.max(1, intEnv("SWAP_SLIPPAGE_BPS", 300)),
   priorityFeeSol: numberEnv("PRIORITY_FEE_SOL", 0.000001),
   minRewardRawToAirdrop: BigInt(Math.max(0, intEnv("MIN_REWARD_RAW_TO_AIRDROP", 1))),

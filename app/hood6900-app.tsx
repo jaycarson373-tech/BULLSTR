@@ -131,15 +131,6 @@ const activeBounties = [
   { title: "0% side fund", reward: "Pure", category: "04", status: "Open", countdown: "0%", entries: "Leak" },
   { title: "Repeat", reward: "HOODx", category: "05", status: "Open", countdown: "Forever", entries: "Loop" }
 ];
-const memeImages = [
-  "/brand/memes/ai-meme-1.png",
-  "/brand/memes/ai-meme-2.png",
-  "/brand/memes/ai-meme-3.png",
-  "/brand/memes/ai-meme-4.png",
-  "/brand/memes/ai-meme-5.png",
-  "/brand/memes/ai-meme-6.png"
-];
-
 const smoothTransition: Transition = { duration: 0.7, ease: [0.22, 1, 0.36, 1] };
 
 const fadeUp = {
@@ -203,13 +194,6 @@ function rewardTotalAmount(totals: RewardTotal[], keys: string[]) {
 function displayAsset(asset: string | undefined) {
   const key = assetKey(asset);
   if (key === "HOODX") return "HOODx";
-  if (key === "ANSEM") return "HOODx";
-  if (key === "HOOD6900") return "HOODx";
-  if (key === "HOOD") return "HOODx";
-  if (key === "BEG") return "HOODx";
-  if (key === "BULLSTR") return "HOODx";
-  if (key === "AI6900") return "HOODx";
-  if (key === "AI") return "HOODx";
   return asset ? asset.replace(/^\$/, "") : "HOODx";
 }
 
@@ -282,27 +266,7 @@ function TerminalActivity() {
   );
 }
 
-function MemeConveyor() {
-  const belt = [...memeImages, ...memeImages];
-
-  return (
-    <motion.section className="ai-meme-section" aria-label="Hood 6900 meme conveyor" {...fadeUp}>
-      <div className="ai-meme-conveyor" aria-label="Hood 6900 meme gallery">
-        <div className="ai-meme-track">
-          {belt.map((src, index) => (
-            <figure className="ai-meme-card" key={`${src}-${index}`}>
-              <a href={src} download>
-                <img src={src} alt="" loading="lazy" />
-              </a>
-            </figure>
-          ))}
-        </div>
-      </div>
-    </motion.section>
-  );
-}
-
-export function AnsemIndexApp() {
+export function Hood6900App() {
   const [stats, setStats] = useState<StatsResponse>(emptyStats);
   const [price, setPrice] = useState<PriceResponse>(emptyPrice);
   const [now, setNow] = useState(0);
@@ -377,7 +341,7 @@ export function AnsemIndexApp() {
               <br />
               100% is automatically airdropped as HOODx to eligible holders.
               <br />
-              0% goes to side wallets.
+              0% goes anywhere else.
               <br />
               Hold 100K+. Stay eligible. Sell once and you're out.
             </p>
@@ -592,7 +556,7 @@ export function RewardsDashboardApp() {
 
   const nextDropMs = now ? Math.max(Date.parse(stats.nextDropTime) || 0, fallbackNextDropMs()) : 0;
   const countdown = now ? formatCountdown(Math.max(0, Math.ceil((nextDropMs - now) / 1000))) : "--:--";
-  const totalHoodDistributed = rewardTotalAmount(stats.totalRewardTotals, ["HOODX", "HOOD6900", "ANSEM", "HOOD"]);
+  const totalHoodDistributed = rewardTotalAmount(stats.totalRewardTotals, ["HOODX"]);
   const transactionCount = stats.recentRewards.filter((reward) => reward.txSig).length;
   const latestDrop = stats.holderEpochDrops[0];
   const totalAirdropped = stats.holderEpochDrops.reduce((sum, drop) => sum + drop.totalSent, 0);
@@ -722,7 +686,7 @@ export function RewardsDashboardApp() {
                 </div>
               </div>
               <div className="hood-claim-rule">
-                100% goes to holder airdrops. 0% goes to side wallets. Sell once and you're out.
+                100% goes to holder airdrops. 0% goes anywhere else. Sell once and you're out.
               </div>
               <div className="hood-epoch-list compact">
                 {stats.drawProofs.length ? (
