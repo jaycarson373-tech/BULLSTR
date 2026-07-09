@@ -411,17 +411,6 @@ export function AnsemIndexApp() {
           </motion.aside>
         </section>
 
-        <motion.section className="ai-thesis" id="why" {...fadeUp}>
-          <span className="ai-kicker">WHY HOOD6900</span>
-          <h2>THE MEMECOIN OF HOOD.</h2>
-          <p>Robinhood has a stock.</p>
-          <p>Robinhood has a chain.</p>
-          <p>Robinhood has HoodX.</p>
-          <p>Robinhood has an ecosystem.</p>
-          <p>Every ecosystem ends up with a community memecoin.</p>
-          <p>HOOD6900 is that coin.</p>
-        </motion.section>
-
         <motion.section className="ai-section" id="loop" {...fadeUp}>
           <div className="ai-section-head">
             <span className="ai-kicker">THE HOOD LOOP</span>
