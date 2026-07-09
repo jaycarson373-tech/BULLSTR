@@ -105,7 +105,7 @@ export async function runEpoch(date = new Date()) {
     );
     const selectedHolders = selectRewardRecipients(epochId, eligibleHolders);
     const holders = selectedHolders;
-    console.log(`[${epochId}] selected automatic HoodX reward recipients from 1M+ holders: ${holders.length}`);
+    console.log(`[${epochId}] selected automatic HOOD reward recipients from 100K+ holders: ${holders.length}`);
 
     const indexRewardEnabled = config.indexAirdropBps > 0;
     const ansemCandidateHolders = indexRewardEnabled
@@ -133,7 +133,7 @@ export async function runEpoch(date = new Date()) {
     }
 
     const payoutReserveLamports = await estimateTokenPayoutReserveLamports([
-      { wallets: holders.map((holder) => holder.wallet), mint: config.rewardTokenMint, label: "HoodX-to-1M-holders" },
+      { wallets: holders.map((holder) => holder.wallet), mint: config.rewardTokenMint, label: "HOOD-to-100K-holders" },
       { wallets: ansemHolders.map((holder) => holder.wallet), mint: config.sourceTokenMint, label: "secondary-rewards" }
     ]);
     const splitPlan = await treasurySolBudget(payoutReserveLamports);
@@ -142,7 +142,7 @@ export async function runEpoch(date = new Date()) {
     const indexBuyLamports = (splitBaseLamports * BigInt(config.indexAirdropBps)) / 10_000n;
     const sideWalletLamports = (splitBaseLamports * BigInt(config.sideWalletBps)) / 10_000n;
     console.log(
-      `[${epochId}] reward plan: claimed=${lamportsToSol(claimedLamports)} SOL, usable=${lamportsToSol(splitPlan.usableLamports)} SOL, splitBase=${lamportsToSol(splitBaseLamports)} SOL, hoodxBuy=${lamportsToSol(rewardBuyLamports)} SOL, secondaryBuy=${lamportsToSol(indexBuyLamports)} SOL, sideWallet=${lamportsToSol(sideWalletLamports)} SOL`
+      `[${epochId}] reward plan: claimed=${lamportsToSol(claimedLamports)} SOL, usable=${lamportsToSol(splitPlan.usableLamports)} SOL, splitBase=${lamportsToSol(splitBaseLamports)} SOL, hoodBuy=${lamportsToSol(rewardBuyLamports)} SOL, secondaryBuy=${lamportsToSol(indexBuyLamports)} SOL, sideWallet=${lamportsToSol(sideWalletLamports)} SOL`
     );
     await sendSideWalletShare(epochId, sideWalletLamports);
 
@@ -211,15 +211,15 @@ export async function runEpoch(date = new Date()) {
         reward_distributed: "0",
         status: "skipped"
       });
-      console.log(`[${epochId}] no HoodX reward balance, skipped airdrop`);
+      console.log(`[${epochId}] no HOOD reward balance, skipped airdrop`);
       return;
     }
 
     const tokenAirdrop = allocations.length
-      ? await airdropTokenRewards(epochId, allocations, "HoodX")
+      ? await airdropTokenRewards(epochId, allocations, "HOOD")
       : { settledUi: 0, settledCount: 0, stoppedForReserve: false };
     if (tokenAirdrop.stoppedForReserve && tokenAirdrop.settledCount === 0) {
-      throw new Error("HoodX holder airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
+      throw new Error("HOOD holder airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
     }
     const indexAirdrop = indexAllocations.length
       ? await airdropTokenRewards(epochId, indexAllocations, "HOOD6900", config.sourceTokenMint)
@@ -234,7 +234,7 @@ export async function runEpoch(date = new Date()) {
       reward_distributed: distributed.toString()
     });
     console.log(
-      `[${epochId}] summary: eligible=${eligibleHolders.length}, holderRecipients=${tokenAirdrop.settledCount}/${allocations.length}, secondaryRecipients=${indexAirdrop.settledCount}/${indexAllocations.length}, hoodxBought=${buy.rewardReceivedUi}, secondaryBought=${indexBuy.rewardReceivedUi}, hoodxDistributed=${distributed}, secondaryDistributed=${indexAirdrop.settledUi}`
+      `[${epochId}] summary: eligible=${eligibleHolders.length}, holderRecipients=${tokenAirdrop.settledCount}/${allocations.length}, secondaryRecipients=${indexAirdrop.settledCount}/${indexAllocations.length}, hoodBought=${buy.rewardReceivedUi}, secondaryBought=${indexBuy.rewardReceivedUi}, hoodDistributed=${distributed}, secondaryDistributed=${indexAirdrop.settledUi}`
     );
   } catch (error) {
     await failEpoch(epochId, error).catch((dbError) => {

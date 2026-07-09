@@ -2,12 +2,12 @@ import { runEpoch } from "./epoch.js";
 import { config } from "./config.js";
 import { msUntilNextEpoch } from "./time.js";
 
-console.log(`Hood 6900 worker started. Schedule: every ${config.epochMinutes} minutes.`);
+console.log(`HOOD6900 worker started. Schedule: every ${config.epochMinutes} minutes.`);
 console.log(
   `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
 );
 console.log(
-  `Reward split: ${config.swapBalanceBps / 100}% claimed SOL buys HoodX for automatic 1M+ holder airdrops, ${config.sideWalletBps / 100}% to side wallet, ${config.indexAirdropBps / 100}% secondary buyback leg.`
+  `Reward split: ${config.swapBalanceBps / 100}% claimed SOL buys HOOD for automatic 100K+ holder airdrops, ${config.sideWalletBps / 100}% to side wallet, ${config.indexAirdropBps / 100}% secondary buyback leg.`
 );
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
 console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} source tokens`);

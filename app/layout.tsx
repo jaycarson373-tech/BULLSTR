@@ -4,19 +4,19 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hood6900.xyz"),
-  title: "Hood 6900",
-  description: "Hood 6900 routes creator fees into HoodX buys and automatic airdrops for 1M+ holders with AI6900 energy.",
+  title: "HOOD6900",
+  description: "The memecoin of the Hood. Robinhood built the chain. The trenches built the meme.",
   openGraph: {
-    title: "Hood 6900",
-    description: "100% HoodX buys and automatic airdrops for wallets holding 1M+ $HOOD6900.",
+    title: "HOOD6900",
+    description: "Every 5 minutes creator fees buy back HOOD. 100% airdrops to 100K+ holders. 0% side fund.",
     url: "https://hood6900.xyz",
-    siteName: "Hood 6900",
+    siteName: "HOOD6900",
     type: "website"
   },
   twitter: {
     card: "summary",
-    title: "Hood 6900",
-    description: "HoodX stock airdrops for 1M+ $HOOD6900 holders."
+    title: "HOOD6900",
+    description: "The memecoin of the Hood."
   },
   icons: {
     icon: [
