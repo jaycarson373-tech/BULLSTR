@@ -303,7 +303,9 @@ export function RobinhoodHoldingsPanel() {
   const rows = [
     ["SOL", formatSol(holdings?.solBalance)],
     [sourceSymbol, formatAmount(holdings?.sourceTokenBalance ?? 0, sourceSymbol)],
-    ...(sameReward ? [] : [[rewardSymbol, formatAmount(holdings?.rewardTokenBalance ?? 0, rewardSymbol)]])
+    ...(sameReward ? [] : [[rewardSymbol, formatAmount(holdings?.rewardTokenBalance ?? 0, rewardSymbol)]]),
+    ["Cashcat", "1,000,000 Cashcat"],
+    ["DIH", "1,000,000 DIH"]
   ];
 
   return (
