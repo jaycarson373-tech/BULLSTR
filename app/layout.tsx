@@ -11,21 +11,12 @@ export const metadata: Metadata = {
     description: "100% HoodX buys and automatic airdrops for wallets holding 1M+ $HOOD6900.",
     url: "https://hood6900.xyz",
     siteName: "Hood 6900",
-    images: [
-      {
-        url: "/brand/robin-hood-logo.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Hood 6900"
-      }
-    ],
     type: "website"
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Hood 6900",
-    description: "HoodX stock airdrops for 1M+ $HOOD6900 holders.",
-    images: ["/brand/robin-hood-logo.jpg"]
+    description: "HoodX stock airdrops for 1M+ $HOOD6900 holders."
   },
   icons: {
     icon: [

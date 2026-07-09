@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 
 const scenes = [
   { image: "/brand/backgrounds/ai6900-bg-1.jpg", className: "is-hero" },
-  { image: "/brand/robin-hood-logo.jpg", className: "is-bull" },
+  { image: "/brand/hood6900-logo.png", className: "is-bull" },
   { image: "/brand/backgrounds/ai6900-live-2.jpg", className: "is-vortex" },
   { image: "/brand/backgrounds/ai6900-bg-5.jpg", className: "is-mountains" }
 ];

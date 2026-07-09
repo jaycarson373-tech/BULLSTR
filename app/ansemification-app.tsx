@@ -63,7 +63,7 @@ type PriceResponse = {
 };
 
 const PROJECT_NAME = "Hood 6900";
-const LOGO_SRC = "/brand/robin-hood-logo.jpg";
+const LOGO_SRC = "/brand/hood6900-logo.png";
 const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/Hood6900_";
 const CA =
   process.env.NEXT_PUBLIC_CA?.trim() ||
