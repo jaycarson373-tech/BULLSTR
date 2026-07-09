@@ -31,7 +31,8 @@ export async function GET() {
     process.env.HOOD6900_TOKEN_MINT ??
     process.env.NEXT_PUBLIC_HOOD6900_TOKEN_MINT ??
     process.env.SOURCE_TOKEN_MINT ??
-    process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT;
+    process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ??
+    "FTAat9Wt3wHkLkjHXXifJG6TmbUH5yVVWEfAGBhMpump";
 
   if (!mint) return NextResponse.json(emptyPrice());
 

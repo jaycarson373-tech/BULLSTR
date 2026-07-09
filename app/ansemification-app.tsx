@@ -68,7 +68,7 @@ const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/HOOD6900_"
 const CA =
   process.env.NEXT_PUBLIC_CA?.trim() ||
   process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ||
-  "SOON";
+  "FTAat9Wt3wHkLkjHXXifJG6TmbUH5yVVWEfAGBhMpump";
 const BUY_URL =
   process.env.NEXT_PUBLIC_BUY_URL?.trim() ||
   "https://pump.fun";
