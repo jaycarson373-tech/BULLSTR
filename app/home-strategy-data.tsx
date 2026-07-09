@@ -88,6 +88,7 @@ const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HoodX";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HoodX";
 const HOOD_CHART_URL = process.env.NEXT_PUBLIC_HOOD_CHART_URL?.trim() || process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || `https://dexscreener.com/solana/${HOOD_CA}`;
 const HOOD_CHART_EMBED_URL = process.env.NEXT_PUBLIC_HOOD_CHART_EMBED_URL?.trim() || "";
+const RUNNER_PICK_INTERVAL_MS = 2 * 60 * 60 * 1000;
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -156,6 +157,14 @@ function formatCountdown(ms: number) {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+}
+
+function formatLongCountdown(ms: number) {
+  const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 }
 
 function statusLabel(status: string) {
@@ -337,6 +346,69 @@ export function RobinhoodHoldingsPanel() {
   );
 }
 
+export function RobinhoodRunnerPanel() {
+  const { now } = useProtocolData();
+  const nextRunnerPickAt = Math.ceil(now / RUNNER_PICK_INTERVAL_MS) * RUNNER_PICK_INTERVAL_MS;
+  const runnerCountdown = formatLongCountdown(nextRunnerPickAt - now);
+  const runnerPositions = [
+    ["Cashcat", "1,000,000", "Runner basket"],
+    ["DIH", "1,000,000", "Runner basket"]
+  ];
+  const runnerWinners = [
+    ["Next verified holder", "Pending", "Winner locks after the 2 hour runner cycle"]
+  ];
+
+  return (
+    <section className="section runner-section" id="runners">
+      <div className="container">
+        <div className="section-kicker">Robinhood runners</div>
+        <div className="section-head split-head">
+          <h2>Runner basket, winner clock, receipts.</h2>
+          <p>The Robinhood side shows the tracked early Hood chain positions, the next 2 hour pick window, and exactly what each winner receives once the backend settles it.</p>
+        </div>
+        <div className="runner-layout">
+          <div className="runner-countdown-card">
+            <span>Next runner winner</span>
+            <strong>{runnerCountdown}</strong>
+            <p>One active verified holder gets picked when the runner window closes.</p>
+          </div>
+          <div className="runner-position-grid">
+            {runnerPositions.map(([name, amount, status]) => (
+              <article className="runner-position-card" key={name}>
+                <span>{status}</span>
+                <strong>{name}</strong>
+                <b>{amount}</b>
+              </article>
+            ))}
+          </div>
+        </div>
+        <div className="history-card runner-winner-card">
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Winner</th>
+                  <th>What They Won</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {runnerWinners.map(([winner, prize, status]) => (
+                  <tr key={winner}>
+                    <td>{winner}</td>
+                    <td>{prize}</td>
+                    <td>{status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function MetricCard({
   label,
   value,
@@ -470,9 +542,9 @@ export function RecentAirdrops() {
             <table>
               <thead>
                 <tr>
-                  <th>Wallet</th>
+                  <th>Winner</th>
                   <th>Reward Type</th>
-                  <th>Reward Received</th>
+                  <th>What They Won</th>
                   <th>Time</th>
                   <th>TX Link</th>
                 </tr>

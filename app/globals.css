@@ -7,6 +7,8 @@
   --panel-strong: rgba(5, 12, 0, 0.94);
   --accent: #c6ff00;
   --accent-soft: #8dff00;
+  --cyan: #00ffbc;
+  --violet: #c700ff;
   --ivory: #f5ffe5;
   --muted: rgba(224, 255, 178, 0.72);
   --faint: rgba(245, 255, 229, 0.72);
@@ -106,8 +108,10 @@ h2 {
     linear-gradient(rgba(198, 255, 0, 0.035) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 255, 188, 0.028) 1px, transparent 1px);
   background-size: 64px 64px;
+  background-position: 0 0;
   mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.86), transparent 72%);
   opacity: 0.38;
+  animation: grid-crawl 24s linear infinite;
 }
 
 main,
@@ -188,12 +192,13 @@ main,
   font-size: 0.78rem;
   font-weight: 800;
   text-transform: uppercase;
-  transition: color 160ms ease;
+  transition: color 160ms ease, text-shadow 160ms ease;
 }
 
 .nav-links a:hover,
 .footer-links a:hover {
   color: var(--accent);
+  text-shadow: 0 0 18px rgba(198, 255, 0, 0.58);
 }
 
 .cta,
@@ -210,12 +215,21 @@ main,
   padding: 0 20px;
   font-weight: 900;
   box-shadow: 0 18px 58px rgba(198, 255, 0, 0.18);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background 180ms ease;
 }
 
 .cta.secondary,
 .mini-button {
   background: rgba(198, 255, 0, 0.055);
   color: var(--ivory);
+}
+
+.cta:hover,
+.mini-button:hover,
+.lookup-card button:hover {
+  border-color: rgba(0, 255, 188, 0.78);
+  box-shadow: 0 0 0 1px rgba(198, 255, 0, 0.32), 0 0 34px rgba(198, 255, 0, 0.36), 0 0 70px rgba(0, 255, 188, 0.18);
+  transform: translateY(-2px);
 }
 
 .x-button {
@@ -323,6 +337,7 @@ main,
 }
 
 .hero-countdown {
+  position: relative;
   display: grid;
   gap: 14px;
   border: 1px solid var(--border);
@@ -331,6 +346,14 @@ main,
     linear-gradient(180deg, rgba(198, 255, 0, 0.06), rgba(198, 255, 0, 0.012)),
     rgba(4, 9, 0, 0.9);
   padding: 28px;
+  box-shadow: 0 0 0 1px rgba(198, 255, 0, 0.04), 0 24px 90px rgba(0, 0, 0, 0.36);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.hero-countdown:hover {
+  border-color: rgba(198, 255, 0, 0.5);
+  box-shadow: 0 0 34px rgba(198, 255, 0, 0.2), 0 0 78px rgba(0, 255, 188, 0.1);
+  transform: translateY(-3px);
 }
 
 .hero-countdown span,
@@ -415,7 +438,8 @@ main,
 .reward-flow,
 .share-example,
 .dashboard-grid,
-.robinhood-holdings-card {
+.robinhood-holdings-card,
+.runner-position-grid {
   display: grid;
   gap: 14px;
 }
@@ -433,6 +457,17 @@ main,
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.runner-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.runner-position-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .robinhood-holdings-card {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
@@ -444,12 +479,35 @@ main,
 .history-card,
 .lookup-card,
 .robinhood-holdings-card div,
-.hood-chart-card {
+.hood-chart-card,
+.runner-countdown-card,
+.runner-position-card {
+  position: relative;
   border: 1px solid rgba(198, 255, 0, 0.18);
   border-radius: 14px;
   background:
     linear-gradient(180deg, rgba(198, 255, 0, 0.06), rgba(198, 255, 0, 0.012)),
     var(--panel);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background 180ms ease;
+}
+
+.hood-rail-grid article:hover,
+.metric-card:hover,
+.share-card:hover,
+.reward-flow-card:hover,
+.history-card:hover,
+.lookup-card:hover,
+.robinhood-holdings-card div:hover,
+.hood-chart-card:hover,
+.runner-countdown-card:hover,
+.runner-position-card:hover {
+  border-color: rgba(198, 255, 0, 0.58);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(198, 255, 0, 0.12), transparent 12rem),
+    linear-gradient(180deg, rgba(198, 255, 0, 0.08), rgba(0, 255, 188, 0.018)),
+    var(--panel-strong);
+  box-shadow: 0 0 0 1px rgba(198, 255, 0, 0.1), 0 0 32px rgba(198, 255, 0, 0.18), 0 0 80px rgba(0, 255, 188, 0.08);
+  transform: translateY(-3px);
 }
 
 .hood-rail-grid article {
@@ -476,12 +534,52 @@ main,
 .metric-card,
 .share-card,
 .reward-flow-card,
-.robinhood-holdings-card div {
+.robinhood-holdings-card div,
+.runner-countdown-card,
+.runner-position-card {
   display: grid;
   min-height: 150px;
   align-content: space-between;
   gap: 20px;
   padding: 20px;
+}
+
+.runner-countdown-card {
+  min-height: 238px;
+}
+
+.runner-countdown-card span,
+.runner-position-card span {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.runner-countdown-card strong {
+  color: var(--accent);
+  font-size: clamp(3.1rem, 7vw, 6rem);
+  font-weight: 950;
+  line-height: 0.9;
+  text-shadow: 0 0 26px rgba(198, 255, 0, 0.4);
+}
+
+.runner-countdown-card p {
+  color: var(--faint);
+  line-height: 1.6;
+}
+
+.runner-position-card strong {
+  color: var(--ivory);
+  font-size: clamp(1.6rem, 3vw, 2.8rem);
+  line-height: 0.95;
+}
+
+.runner-position-card b {
+  color: var(--accent);
+  font-size: clamp(2rem, 4vw, 4.2rem);
+  line-height: 0.9;
 }
 
 .reward-flow-card strong {
@@ -556,6 +654,16 @@ main,
   }
 }
 
+@keyframes grid-crawl {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 64px 64px;
+  }
+}
+
 .hood-chart-fallback span {
   color: var(--accent);
   font-size: 0.82rem;
@@ -603,6 +711,15 @@ td {
 td a {
   color: var(--accent);
   font-weight: 800;
+}
+
+tbody tr {
+  transition: background 160ms ease, box-shadow 160ms ease;
+}
+
+tbody tr:hover {
+  background: rgba(198, 255, 0, 0.045);
+  box-shadow: inset 3px 0 0 rgba(198, 255, 0, 0.72);
 }
 
 .lookup-card {
@@ -674,7 +791,9 @@ td a {
   .reward-flow,
   .share-example,
   .dashboard-grid,
-  .robinhood-holdings-card {
+  .robinhood-holdings-card,
+  .runner-layout,
+  .runner-position-grid {
     grid-template-columns: 1fr;
   }
 }
