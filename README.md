@@ -1,6 +1,6 @@
 # Hood Strategy
 
-Contract address: set in environment after the new CA is ready.
+Contract address: `3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump`
 X: `https://x.com/HoodStrategy_`
 
 Hood Strategy is the live HoodX holder rewards site:
@@ -44,12 +44,12 @@ Copy `.env.example` and fill in the live mints and keys.
 NEXT_PUBLIC_PROJECT_NAME="Hood Strategy"
 NEXT_PUBLIC_SOURCE_SYMBOL=HoodX
 NEXT_PUBLIC_REWARD_SYMBOL=HoodX
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=<SOURCE_TOKEN_MINT>
-NEXT_PUBLIC_CA=<SOURCE_TOKEN_MINT>
+NEXT_PUBLIC_SOURCE_TOKEN_MINT=3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
+NEXT_PUBLIC_CA=3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
 NEXT_PUBLIC_X_URL=https://x.com/HoodStrategy_
-NEXT_PUBLIC_BUY_URL=https://pump.fun/coin/<SOURCE_TOKEN_MINT>
-NEXT_PUBLIC_DEXSCREENER_URL=https://dexscreener.com/solana/<SOURCE_TOKEN_MINT>
-NEXT_PUBLIC_HOOD_CHART_URL=https://dexscreener.com/solana/<SOURCE_TOKEN_MINT>
+NEXT_PUBLIC_BUY_URL=https://pump.fun/coin/3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
+NEXT_PUBLIC_DEXSCREENER_URL=https://dexscreener.com/solana/3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
+NEXT_PUBLIC_HOOD_CHART_URL=https://dexscreener.com/solana/3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
 NEXT_PUBLIC_HOOD_CHART_EMBED_URL=<OPTIONAL_DEXSCREENER_EMBED_URL>
 NEXT_PUBLIC_FIRST_AIRDROP_AT=<OPTIONAL_ISO_TIME>
 
@@ -60,7 +60,7 @@ SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
 
 REWARD_MODE=token
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=<SOURCE_TOKEN_MINT>
+SOURCE_TOKEN_MINT=3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
 REWARD_TOKEN_MINT=<REWARD_TOKEN_MINT>
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET>
 
