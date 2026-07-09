@@ -261,7 +261,7 @@ async function tokenBalanceOrNull(connection: Connection, wallet: PublicKey, min
 
 async function robinhoodHoldingsOrNull(): Promise<RobinhoodHoldings> {
   const wallet = bagholderWalletPublicKey();
-  const sourceSymbol = symbolEnv("SOURCE_SYMBOL", "HoodX");
+  const sourceSymbol = symbolEnv("SOURCE_SYMBOL", "HPUMP");
   const rewardSymbol = symbolEnv("REWARD_SYMBOL", sourceSymbol);
   const empty = {
     wallet: wallet?.toBase58() ?? null,
@@ -312,12 +312,12 @@ function payoutTime(row: Pick<PayoutRow, "updated_at" | "created_at" | "epoch_id
 }
 
 function rewardAsset(row: Pick<PayoutRow, "reward_asset">) {
-  return row.reward_asset?.trim() || "HoodX";
+  return row.reward_asset?.trim() || "HPUMP";
 }
 
 function rewardAssetRank(asset: string) {
   const upper = asset.toUpperCase();
-  if (upper === "HOODX") return 0;
+  if (upper === "HPUMP") return 0;
   if (upper === "HOOD") return 1;
   if (upper === "SOL") return 2;
   return 3;
@@ -619,7 +619,7 @@ export async function GET() {
       const claim = claimsByEpoch.get(epochId);
       const buy = buysByEpoch.get(epochId);
       const payoutSummary = payoutsByEpoch.get(epochId);
-      const hoodxSummary = payoutSummary?.rewardTotals.get("HoodX") ?? payoutSummary?.rewardTotals.get("HOODX");
+      const hpumpSummary = payoutSummary?.rewardTotals.get("HPUMP");
       return {
         epoch: displayEpochById.get(epochId) ?? realEpochCount - index,
         status: row?.status === "completed" ? "completed" : "settled",
@@ -627,8 +627,8 @@ export async function GET() {
         duration: durationLabel(row?.started_at ?? null, row?.completed_at ?? payoutSummary?.latestTime ?? null),
         claimedSol: toNumber(claim?.amount_claimed),
         rewardBought: toNumber(row?.reward_bought),
-        normalRewardsSent: hoodxSummary?.normalRewardAmount ?? 0,
-        distributedPump: hoodxSummary?.rewardAmount ?? 0,
+        normalRewardsSent: hpumpSummary?.normalRewardAmount ?? 0,
+        distributedPump: hpumpSummary?.rewardAmount ?? 0,
         rewardTotals: serializeRewardTotals(payoutSummary?.rewardTotals),
         txSig: payoutSummary?.latestTxSig ?? claim?.tx_sig ?? buy?.tx_sig ?? null
       };
@@ -636,7 +636,7 @@ export async function GET() {
 
     const recentRewards = payoutRows.slice(0, 50).map((row) => ({
       epoch: displayEpochById.get(row.epoch_id) ?? epochNumber(row.epoch_id, 0),
-      rewardAsset: row.reward_asset ?? "HoodX",
+      rewardAsset: row.reward_asset ?? "HPUMP",
       wallet: row.wallet,
       rewardAmount: toNumber(row.reward_amount),
       normalRewardAmount: toNumber(row.normal_reward_amount),

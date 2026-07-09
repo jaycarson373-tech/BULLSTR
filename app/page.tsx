@@ -21,11 +21,11 @@ export default function Page() {
     <div className="page hood-strategy-page">
       <header className="nav">
         <div className="container nav-inner">
-          <a className="brand" href="#top" aria-label="Hood Strategy home">
+          <a className="brand" href="#top" aria-label="Hood Pump home">
             <img className="brand-logo" src="/brand/hood-strategy-logo-source.png" alt="" />
             <span>
-              Hood Strategy
-              <small>HoodX engine</small>
+              Hood Pump
+              <small>HPUMP access</small>
             </span>
           </a>
           <nav className="nav-links" aria-label="Primary navigation">
@@ -33,9 +33,9 @@ export default function Page() {
             <a href="#chart">Chart</a>
             <a href="#dashboard">Live</a>
             <a href="#holdings">Holdings</a>
-            <a href="#runners">Runners</a>
+            <a href="#runners">Launches</a>
             <a href="#wallet-board">Board</a>
-            <a href="#airdrops">Drops</a>
+            <a href="#airdrops">Access</a>
           </nav>
           <div className="nav-actions">
             <a className="mini-button x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open X">
@@ -61,19 +61,19 @@ export default function Page() {
           <div className="hero-shade" />
           <div className="container hero-inner">
             <div className="hero-copy-stack">
-              <div className="section-kicker">Hood Strategy</div>
+              <div className="section-kicker">HPUMP</div>
               <h1>
                 <span>Hood</span>
-                <span>Strategy</span>
+                <span>Pump</span>
               </h1>
-              <p className="hero-subtitle">HoodX airdrops every 5 minutes. Early Hood chain picks every 2 hours.</p>
+              <p className="hero-subtitle">Creator fees fund a fresh Robin Hood token launch every week.</p>
               <p className="hero-lead">
-                The 50/50 engine splits rewards between active HoodX holders and the Robinhood runner basket,
-                with a live pick countdown, winner receipts, and on-chain reward history kept on the page.
+                Hood Pump routes creator fees into weekly launch rails. Holders with 1M+ HPUMP get presale
+                access, live countdowns, launch receipts, and the holder board kept on the page.
               </p>
               <div className="hero-actions">
                 <a className="cta" href={BUY_URL} target="_blank" rel="noreferrer">
-                  Enter Strategy
+                  Enter Presale
                 </a>
               </div>
             </div>
@@ -83,25 +83,24 @@ export default function Page() {
 
         <section className="section hood-rails-section" id="rails">
           <div className="container">
-            <div className="section-kicker">50/50 thing</div>
+            <div className="section-kicker">Weekly launch engine</div>
             <div className="section-head split-head">
-              <h2>Half to HoodX holders. Half to early Hood chain picks.</h2>
+              <h2>All creator fees go toward launching a token on Robin Hood every week.</h2>
               <p>
-                The page keeps the split obvious: holder airdrops run on the fast five-minute rail,
-                while the Robinhood runner basket highlights early Hood chain positions and picks one winner every two hours.
-                Holders must be active in C to verify.
+                Hood Pump keeps the launch path obvious: fees build the weekly launch pool, 1M+ HPUMP
+                holders get presale access, and live sections track countdowns, receipts, and holder status.
               </p>
             </div>
             <div className="hood-rail-grid">
               <article>
-                <span>50%</span>
-                <strong>HoodX Holder Airdrop</strong>
-                <p>Airdrops active HoodX holders every 5 minutes through the live reward backend. Must be active in C to verify.</p>
+                <span>100%</span>
+                <strong>Creator Fee Launch Pool</strong>
+                <p>Creator fees are routed into the weekly Robin Hood launch engine instead of fake scoreboard numbers.</p>
               </article>
               <article>
-                <span>50%</span>
-                <strong>Robinhood Runners</strong>
-                <p>Tracks early Hood chain runner positions and picks one verified holder every 2 hours for the next prize.</p>
+                <span>1M+</span>
+                <strong>Holder Presale Access</strong>
+                <p>Wallets holding at least 1M HPUMP qualify for presale access when each weekly launch window opens.</p>
               </article>
             </div>
           </div>
@@ -123,8 +122,8 @@ export default function Page() {
           <div className="footer-brand">
             <img className="brand-logo" src="/brand/hood-strategy-logo-source.png" alt="" />
             <div>
-              <strong>Hood Strategy</strong>
-              <p>HoodX rewards. Hood chain picks.</p>
+              <strong>Hood Pump</strong>
+              <p>HPUMP holders. Weekly Robin Hood launches.</p>
             </div>
           </div>
           <div className="footer-links">

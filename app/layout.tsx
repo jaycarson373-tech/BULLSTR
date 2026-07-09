@@ -3,30 +3,30 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hoodstrategy.xyz";
-const SITE_DESCRIPTION = "Hood Strategy runs live HoodX holder rewards, Hood chain picks, airdrop receipts, and on-chain strategy rails.";
+const SITE_DESCRIPTION = "Hood Pump uses creator fees to launch a token on Robin Hood every week, with 1M+ HPUMP holders getting presale access.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Hood Strategy",
+  title: "Hood Pump",
   description: SITE_DESCRIPTION,
   openGraph: {
-    title: "Hood Strategy",
+    title: "Hood Pump",
     description: SITE_DESCRIPTION,
     url: SITE_URL,
-    siteName: "Hood Strategy",
+    siteName: "Hood Pump",
     images: [
       {
         url: `${SITE_URL}/brand/site-preview.png`,
         width: 1200,
         height: 630,
-        alt: "Hood Strategy"
+        alt: "Hood Pump"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hood Strategy",
+    title: "Hood Pump",
     description: SITE_DESCRIPTION,
     images: [`${SITE_URL}/brand/site-preview.png`]
   },

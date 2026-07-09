@@ -73,8 +73,8 @@ const emptyStats: StatsResponse = {
     solBalance: null,
     sourceTokenBalance: null,
     rewardTokenBalance: null,
-    sourceSymbol: "HoodX",
-    rewardSymbol: "HoodX",
+    sourceSymbol: "HPUMP",
+    rewardSymbol: "HPUMP",
     updatedAt: null
   },
   nextDropTime: new Date().toISOString(),
@@ -84,8 +84,8 @@ const emptyStats: StatsResponse = {
 
 const REFRESH_MS = 12_000;
 const DEFAULT_CA = "3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HoodX";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HoodX";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HPUMP";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HPUMP";
 const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || DEFAULT_CA;
 const HOOD_CHART_URL = process.env.NEXT_PUBLIC_HOOD_CHART_URL?.trim() || process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || (CA ? `https://dexscreener.com/solana/${CA}` : "https://dexscreener.com/solana");
 const HOOD_CHART_EMBED_URL = process.env.NEXT_PUBLIC_HOOD_CHART_EMBED_URL?.trim() || "";
@@ -255,32 +255,32 @@ export function HeroCountdown() {
   const { stats, now } = useProtocolData();
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime && now ? formatCountdown(nextDropTime - now) : "--:--";
-  const totalDistributed = stats ? formatRewardTotals(stats.totalRewardTotals, "Awaiting first drop") : "Awaiting first drop";
-  const hoodxAirdropped = stats ? rewardTotalAmount(stats.totalRewardTotals, REWARD_SYMBOL) : 0;
+  const totalDistributed = stats ? formatRewardTotals(stats.totalRewardTotals, "Awaiting first launch") : "Awaiting first launch";
+  const hpumpDeployed = stats ? rewardTotalAmount(stats.totalRewardTotals, REWARD_SYMBOL) : 0;
 
   return (
     <div className="hero-countdown" aria-live="polite">
-      <span>Next Strategy Drop</span>
+      <span>Next Weekly Launch</span>
       <strong className="countdown-value">{countdown}</strong>
       <div className="hero-total-distributed">
-        <span>{`Total $${REWARD_SYMBOL} Airdropped`}</span>
+        <span>{`Total $${REWARD_SYMBOL} Deployed`}</span>
         <b><AnimatedStat value={totalDistributed} /></b>
       </div>
       <div className="hero-mini-dashboard">
         <div>
-          <span>{REWARD_SYMBOL} Airdropped</span>
-          <b><AnimatedStat value={hoodxAirdropped > 0 ? `${formatNumber(hoodxAirdropped, 2)} ${REWARD_SYMBOL}` : "0"} /></b>
+          <span>{REWARD_SYMBOL} Deployed</span>
+          <b><AnimatedStat value={hpumpDeployed > 0 ? `${formatNumber(hpumpDeployed, 2)} ${REWARD_SYMBOL}` : "0"} /></b>
         </div>
         <div>
-          <span>{SOURCE_SYMBOL} Eligible</span>
+          <span>{SOURCE_SYMBOL} Presale Eligible</span>
           <b><AnimatedStat value="0" /></b>
         </div>
         <div>
-          <span>Total Epochs</span>
+          <span>Total Windows</span>
           <b><AnimatedStat value={stats ? formatCount(stats.totalEpochs) : "0"} /></b>
         </div>
         <div>
-          <span>Eligible Holders</span>
+          <span>1M+ Holders</span>
           <b><AnimatedStat value="0" /></b>
         </div>
       </div>
@@ -302,15 +302,15 @@ export function LiveProtocolDashboard() {
       <div className="container">
         <div className="section-kicker live-kicker"><span>Machine readout</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>The Hood Strategy dashboard lives here.</h2>
-          <p>Live values come from the existing reward backend. If the backend has not settled data yet, this stays quiet instead of inventing numbers.</p>
+          <h2>The Hood Pump launch dashboard lives here.</h2>
+          <p>Live values come from the existing backend. If the backend has not settled data yet, this stays quiet instead of inventing numbers.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
-          <MetricCard label={`Total $${REWARD_SYMBOL} Bought`} value={totalRewardBought > 0 ? formatAmount(totalRewardBought, REWARD_SYMBOL, 4) : "Awaiting live distribution"} strong />
-          <MetricCard label="Total Airdropped" value={totalRewardAirdropped > 0 ? formatAmount(totalRewardAirdropped, REWARD_SYMBOL, 2) : stats ? formatRewardTotals(stats.totalRewardTotals) : "Loading"} />
-          <MetricCard label="Last Epoch" value={latestRound ? `#${latestRound.epoch} ${statusLabel(latestRound.status)}` : "Awaiting epoch"} />
-          <MetricCard label="Next Epoch Timer" value={countdown} />
-          <MetricCard label="Eligible Holders" value="0" />
+          <MetricCard label="Creator Fees Routed" value={totalRewardBought > 0 ? formatAmount(totalRewardBought, REWARD_SYMBOL, 4) : "Awaiting live routing"} strong />
+          <MetricCard label="Weekly Launch Pool" value={totalRewardAirdropped > 0 ? formatAmount(totalRewardAirdropped, REWARD_SYMBOL, 2) : stats ? formatRewardTotals(stats.totalRewardTotals, "Awaiting live routing") : "Loading"} />
+          <MetricCard label="Last Window" value={latestRound ? `#${latestRound.epoch} ${statusLabel(latestRound.status)}` : "Awaiting window"} />
+          <MetricCard label="Next Launch Timer" value={countdown} />
+          <MetricCard label="1M+ Holders" value="0" />
           <MetricCard label="Recent TX" value={latestRound?.txSig ? compactAddress(latestRound.txSig) : "Awaiting tx"} muted />
         </div>
       </div>
@@ -322,28 +322,28 @@ export function HoodChart() {
   return (
     <section className="section hood-chart-section" id="chart">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>HOOD chart</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>HPUMP chart</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Live HOOD chart.</h2>
+          <h2>Live HPUMP chart.</h2>
           <p>Set NEXT_PUBLIC_HOOD_CHART_EMBED_URL to embed the exact DexScreener pair. Until then, this section links directly to the live chart surface.</p>
         </div>
         <div className="hood-chart-card">
           {HOOD_CHART_EMBED_URL ? (
             <iframe
-              title="HOOD live chart"
+              title="HPUMP live chart"
               src={HOOD_CHART_EMBED_URL}
               loading="lazy"
               allow="clipboard-write"
             />
           ) : (
             <div className="hood-chart-fallback">
-              <span>HOOD</span>
+              <span>HPUMP</span>
               <strong>Chart ready</strong>
               <p>Add the DexScreener embed URL in env to show the live candle view here.</p>
             </div>
           )}
           <a className="cta" href={HOOD_CHART_URL} target="_blank" rel="noreferrer">
-            Open HOOD chart
+            Open HPUMP chart
           </a>
         </div>
       </div>
@@ -366,10 +366,10 @@ export function RobinhoodHoldingsPanel() {
   return (
     <section className="section robinhood-holdings-section" id="holdings">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>Robinhood holdings</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>Robin Hood holdings</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Total holdings from the Robinhood wallet.</h2>
-          <p>Balances come from the configured Robinhood/bagholder wallet and refresh through the same live stats route.</p>
+          <h2>Total holdings from the Robin Hood wallet.</h2>
+          <p>Balances come from the configured Robin Hood/bagholder wallet and refresh through the same live stats route.</p>
         </div>
         <div className="robinhood-holdings-card">
           <div>
@@ -400,26 +400,26 @@ export function RobinhoodRunnerPanel() {
   return (
     <section className="section runner-section" id="runners">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>Robinhood runners</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>Robin Hood launches</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Runner basket, winner clock, receipts.</h2>
-          <p>The Robinhood side shows the tracked early Hood chain positions, the next 2 hour pick window, and exactly what each winner receives once the backend settles it.</p>
+          <h2>Launch pool, presale clock, receipts.</h2>
+          <p>The Robin Hood side shows the tracked weekly launch pool, the next access window, and exactly when 1M+ holders can enter presale.</p>
         </div>
         <div className="runner-layout">
           <div className="runner-countdown-card">
-            <span>Next runner winner</span>
+            <span>Next presale window</span>
             <strong className="countdown-value">{runnerCountdown}</strong>
-            <p>One active verified holder gets picked when the runner window closes.</p>
+            <p>1M+ HPUMP holders get presale access when the weekly window opens.</p>
           </div>
           <div className="runner-position-grid">
             <article className="runner-position-card">
-              <span>Runner basket</span>
-              <strong>Awaiting live positions</strong>
+              <span>Launch pool</span>
+              <strong>Awaiting live routing</strong>
               <b><AnimatedStat value="0" /></b>
             </article>
             <article className="runner-position-card">
-              <span>Next prize</span>
-              <strong>Awaiting settlement</strong>
+              <span>Presale access</span>
+              <strong>1M+ HPUMP required</strong>
               <b><AnimatedStat value="0" /></b>
             </article>
           </div>
@@ -429,16 +429,16 @@ export function RobinhoodRunnerPanel() {
             <table>
               <thead>
                 <tr>
-                  <th>Winner</th>
-                  <th>What They Won</th>
+                  <th>Wallet</th>
+                  <th>Access</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>Awaiting winner</td>
-                  <td>0</td>
-                  <td>Awaiting live runner settlement</td>
+                  <td>Awaiting wallet</td>
+                  <td>Presale access</td>
+                  <td>Awaiting weekly launch window</td>
                 </tr>
               </tbody>
             </table>
@@ -474,10 +474,10 @@ export function PermanentEligibility() {
       <div className="container warning-layout">
         <div>
           <div className="section-kicker">Eligibility</div>
-          <h2>{`Hold $${SOURCE_SYMBOL} and let the machine work.`}</h2>
+          <h2>{`Hold 1M+ $${SOURCE_SYMBOL} and get presale access.`}</h2>
         </div>
         <div className="eligibility-flow">
-          {["Hold", "Creator fees", `$${REWARD_SYMBOL} buys`, "Airdrop epoch", "On-chain receipt"].map((item, index) => (
+          {["Hold 1M+", "Creator fees", "Weekly launch pool", "Presale access", "On-chain receipt"].map((item, index) => (
             <article className="eligibility-card" key={item}>
               <span>{index + 1}</span>
               <strong>{item}</strong>
@@ -495,14 +495,14 @@ export function RewardExplanation() {
       <div className="container">
           <div className="section-kicker">How it works</div>
         <div className="section-head split-head">
-          <h2>Three steps. Hold the strategy, let the rails work.</h2>
-          <p>Hold HoodX, let fees buy rewards, receive the Hood Strategy drop when epochs settle.</p>
+          <h2>Three steps. Hold HPUMP, let creator fees launch.</h2>
+          <p>Hold 1M+ HPUMP, let creator fees build the weekly Robin Hood launch pool, and get presale access when the window opens.</p>
         </div>
         <div className="reward-flow">
           {[
-            `Hold $${SOURCE_SYMBOL}`,
-            `Fees buy $${REWARD_SYMBOL}`,
-            "Holders get paid"
+            `Hold 1M+ $${SOURCE_SYMBOL}`,
+            "Creator fees route",
+            "Presale access opens"
           ].map((item) => (
             <article className="reward-flow-card" key={item}>
               <strong>{item}</strong>
@@ -511,8 +511,8 @@ export function RewardExplanation() {
         </div>
         <div className="share-example">
           {[
-            ["Input", "Creator fees", "the machine eats"],
-            ["Output", `$${REWARD_SYMBOL}`, "reward token appears"],
+            ["Input", "Creator fees", "weekly launch fuel"],
+            ["Access", "1M+ holders", "presale window opens"],
             ["Receipts", "On-chain", "no fake scoreboard"]
           ].map(([holder, multiplier, copy]) => (
             <article className="share-card" key={holder}>
@@ -533,8 +533,8 @@ export function HoodWalletBoard() {
       <div className="container">
         <div className="section-kicker live-kicker"><span>Holder board</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Hood Strategy wallets.</h2>
-          <p>The board is reset for the Hood Strategy launch and starts clean until the next live reward epoch settles.</p>
+          <h2>Hood Pump wallets.</h2>
+          <p>The board is reset for the Hood Pump launch and starts clean until the next live presale window settles.</p>
         </div>
         <div className="history-card bull-board-card">
           <div className="table-wrap">
@@ -544,8 +544,8 @@ export function HoodWalletBoard() {
                   <th>Wallet</th>
                   <th>${SOURCE_SYMBOL} Held</th>
                   <th>Share</th>
-                  <th>Total {REWARD_SYMBOL} Earned</th>
-                  <th>Last Airdrop</th>
+                  <th>Total {REWARD_SYMBOL} Routed</th>
+                  <th>Last Access</th>
                 </tr>
               </thead>
               <tbody>
@@ -554,7 +554,7 @@ export function HoodWalletBoard() {
                   <td>0</td>
                   <td>0%</td>
                   <td>0 {REWARD_SYMBOL}</td>
-                  <td>Awaiting airdrop</td>
+                  <td>Awaiting presale</td>
                 </tr>
               </tbody>
             </table>
@@ -572,19 +572,19 @@ export function RecentAirdrops() {
   return (
     <section className="section recent-airdrops-section" id="airdrops">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>Recent drops</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>Recent access</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>Receipts or it did not happen.</h2>
-          <p>Settled reward transfers from the live backend. Failed or skipped attempts are not counted.</p>
+          <p>Settled launch and access records from the live backend. Failed or skipped attempts are not counted.</p>
         </div>
         <div className="history-card">
           <div className="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Winner</th>
-                  <th>Reward Type</th>
-                  <th>What They Won</th>
+                  <th>Wallet</th>
+                  <th>Access Type</th>
+                  <th>What Opened</th>
                   <th>Time</th>
                   <th>TX Link</th>
                 </tr>
@@ -610,7 +610,7 @@ export function RecentAirdrops() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5}>Awaiting settled reward airdrops.</td>
+                    <td colSpan={5}>Awaiting settled presale access records.</td>
                   </tr>
                 )}
               </tbody>
@@ -636,9 +636,9 @@ export function HolderLookup() {
       <div className="container split-section">
         <div>
           <div className="section-kicker">Holder lookup</div>
-          <h2>Check your Hood Strategy status.</h2>
+          <h2>Check your Hood Pump status.</h2>
           <p className="lead">
-            Wallet-level status uses the live holder-state tracker after the first tracked epoch.
+            Wallet-level status uses the live holder-state tracker after the first tracked launch window.
           </p>
         </div>
         <form className="lookup-card" onSubmit={handleSubmit}>
@@ -656,7 +656,7 @@ export function HolderLookup() {
             {submitted ? (
               <>
                 <strong>{compactAddress(wallet)}</strong>
-                <span>Awaiting live backend integration for wallet-level Hood Strategy status.</span>
+                <span>Awaiting live backend integration for wallet-level Hood Pump status.</span>
               </>
             ) : (
               <span>Enter a wallet to check eligibility once lookup integration is live.</span>
@@ -675,21 +675,21 @@ export function AirdropHistory() {
   return (
     <section className="section history-section" id="airdrops-history">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>Airdrop history</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>Access history</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>{REWARD_SYMBOL} Distributions</h2>
-          <p>Settled airdrops only. Failed or skipped worker attempts are not counted.</p>
+          <h2>{REWARD_SYMBOL} Launch Records</h2>
+          <p>Settled launch/access records only. Failed or skipped worker attempts are not counted.</p>
         </div>
         <div className="history-card">
           <div className="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Epoch</th>
-                  <th>{REWARD_SYMBOL} Bought</th>
+                  <th>Window</th>
+                  <th>{REWARD_SYMBOL} Routed</th>
                   <th>Recipients</th>
                   <th>Weight</th>
-                  <th>Total Distributed</th>
+                  <th>Total Routed</th>
                   <th>Transaction</th>
                 </tr>
               </thead>
@@ -715,7 +715,7 @@ export function AirdropHistory() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6}>Awaiting settled reward airdrops.</td>
+                    <td colSpan={6}>Awaiting settled launch records.</td>
                   </tr>
                 )}
               </tbody>

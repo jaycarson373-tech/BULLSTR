@@ -1,25 +1,24 @@
-# Hood Strategy
+# Hood Pump
 
 Contract address: `3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump`
 X: `https://x.com/HoodStrategySol`
 
-Hood Strategy is the live HoodX holder rewards site:
+Hood Pump is the HPUMP holder access site:
 
-- 50% of usable rewards are routed to active HoodX holders every 5 minutes.
-- 50% buys early Hood chain tokens and picks one holder every 2 hours for an extra airdrop.
-- Holders must be active in C to verify.
-- The dashboard reads settled epochs, payouts, holders, wallet holdings, and recent drops from Supabase.
+- Creator fees fund a new Robin Hood token launch every week.
+- Holders with 1M+ HPUMP get presale access.
+- Live sections track the launch countdown, access records, holders, wallet holdings, and on-chain receipts.
+- The dashboard reads settled windows, payouts, holders, wallet holdings, and recent records from Supabase.
 
-The site should feel fast, neon, and unmistakably Hood Strategy.
+The site should feel fast, neon, and unmistakably Hood Pump.
 
 ## Current Implementation
 
 1. Claim creator fees into the treasury.
 2. Snapshot source-token holders with at least `ELIGIBILITY_MIN`.
-3. Weight selected holders by raw HoodX balance.
-4. Use `SWAP_BALANCE_BPS=5000` for the 5-minute HoodX holder airdrop rail.
-5. Use `INDEX_AIRDROP_BPS=5000` for early Hood chain token picks.
-6. Store epochs, snapshots, reward pools, wallet holdings, and payouts in Supabase.
+3. Use `ELIGIBILITY_MIN=1000000` for 1M+ HPUMP presale access.
+4. Route creator fees into the weekly Robin Hood launch pool.
+5. Store windows, snapshots, launch pools, wallet holdings, and records in Supabase.
 
 ## Local Development
 
@@ -41,9 +40,9 @@ npm run build
 Copy `.env.example` and fill in the live mints and keys.
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME="Hood Strategy"
-NEXT_PUBLIC_SOURCE_SYMBOL=HoodX
-NEXT_PUBLIC_REWARD_SYMBOL=HoodX
+NEXT_PUBLIC_PROJECT_NAME="Hood Pump"
+NEXT_PUBLIC_SOURCE_SYMBOL=HPUMP
+NEXT_PUBLIC_REWARD_SYMBOL=HPUMP
 NEXT_PUBLIC_SOURCE_TOKEN_MINT=3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
 NEXT_PUBLIC_CA=3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
 NEXT_PUBLIC_X_URL=https://x.com/HoodStrategySol
@@ -74,8 +73,8 @@ MAX_WALLETS_PER_EPOCH=200
 MAX_HOLDER_PCT=5
 EXCLUDE_WALLETS=
 
-SWAP_BALANCE_BPS=5000
-INDEX_AIRDROP_BPS=5000
+SWAP_BALANCE_BPS=10000
+INDEX_AIRDROP_BPS=0
 SWAP_SLIPPAGE_BPS=300
 SIDE_WALLET_BPS=0
 INDEX_HOLDER_LIMIT=200
