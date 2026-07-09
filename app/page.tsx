@@ -1,6 +1,5 @@
 import {
   AirdropHistory,
-  BullBoard,
   HeroCountdown,
   HoodChart,
   HolderLookup,
@@ -32,7 +31,6 @@ export default function Page() {
             <a href="#chart">Chart</a>
             <a href="#dashboard">Live</a>
             <a href="#holdings">Holdings</a>
-            <a href="#bull-board">Board</a>
             <a href="#airdrops">Drops</a>
           </nav>
           <div className="nav-actions">
@@ -104,7 +102,6 @@ export default function Page() {
         <HoodChart />
         <LiveProtocolDashboard />
         <RobinhoodHoldingsPanel />
-        <BullBoard />
         <RecentAirdrops />
         <AirdropHistory />
         <HolderLookup />

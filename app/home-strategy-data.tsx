@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 type RewardTotal = {
   rewardAsset: string;
@@ -58,31 +58,6 @@ type RobinhoodHoldings = {
   updatedAt: string;
 };
 
-type HoldersResponse = {
-  topHolders: Array<{
-    rank: number;
-    address: string;
-    balance: number;
-    percentage: string;
-    currentHoldTime: string | null;
-    currentStreak: number | null;
-    totalRewardEarned: number;
-    lastAirdropAt: string | null;
-    permanentlyIneligible: boolean;
-    ineligibleReason: string | null;
-  }>;
-  fallenBulls?: Array<{
-    address: string;
-    balance: number;
-    currentStreak: number | null;
-    totalRewardEarned: number;
-    lastAirdropAt: string | null;
-    ineligibleReason: string;
-    ineligibleAt: string | null;
-    lastSeenAt: string | null;
-  }>;
-};
-
 const emptyStats: StatsResponse = {
   currentEpoch: 0,
   totalEpochs: 0,
@@ -107,7 +82,6 @@ const emptyStats: StatsResponse = {
   recentRewards: []
 };
 
-const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12_000;
 const HOOD_CA = "D5exVALkCSzqFNtRMARdRF4VuQffyM8LrbTFrpqBpump";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HoodX";
@@ -192,21 +166,16 @@ function statusLabel(status: string) {
 
 export function useProtocolData() {
   const [stats, setStats] = useState<StatsResponse | null>(null);
-  const [holders, setHolders] = useState<HoldersResponse | null>(null);
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     let active = true;
 
     const load = async () => {
-      const [nextStats, nextHolders] = await Promise.all([
-        getJson<StatsResponse>("/api/stats", emptyStats),
-        getJson<HoldersResponse>("/api/holders", emptyHolders)
-      ]);
+      const nextStats = await getJson<StatsResponse>("/api/stats", emptyStats);
 
       if (!active) return;
       setStats(nextStats);
-      setHolders(nextHolders);
     };
 
     load();
@@ -222,7 +191,7 @@ export function useProtocolData() {
     return () => window.clearInterval(timer);
   }, []);
 
-  return { stats, holders, now };
+  return { stats, now };
 }
 
 export function HeroCountdown() {
@@ -438,69 +407,6 @@ export function RewardExplanation() {
               <p>{copy}</p>
             </article>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function BullBoard() {
-  const { stats, holders } = useProtocolData();
-  const recentRewards = stats?.recentRewards ?? [];
-
-  const earnedByWallet = useMemo(() => {
-    const totals = new Map<string, number>();
-    for (const reward of recentRewards) {
-      totals.set(reward.wallet, (totals.get(reward.wallet) ?? 0) + reward.rewardAmount);
-    }
-    return totals;
-  }, [recentRewards]);
-
-  const rows = holders?.topHolders ?? [];
-
-  return (
-    <section className="section bull-board-section" id="bull-board">
-      <div className="container">
-        <div className="section-kicker">Holder board</div>
-        <div className="section-head split-head">
-          <h2>Hood Strategy wallets.</h2>
-          <p>A simple holder table for balance, share, earned rewards, and latest reward activity.</p>
-        </div>
-        <div className="history-card bull-board-card">
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Wallet</th>
-                  <th>${SOURCE_SYMBOL} Held</th>
-                  <th>Share</th>
-                  <th>Total {REWARD_SYMBOL} Earned</th>
-                  <th>Last Airdrop</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.length ? (
-                  rows.slice(0, 25).map((holder) => {
-                    const lastReward = recentRewards.find((reward) => reward.wallet === holder.address);
-                    const recentEarned = holder.totalRewardEarned ?? earnedByWallet.get(holder.address) ?? 0;
-                    return (
-                      <tr key={holder.address}>
-                        <td>{compactAddress(holder.address)}</td>
-                        <td>{formatNumber(holder.balance, 0)}</td>
-                        <td>{holder.percentage}%</td>
-                        <td>{recentEarned > 0 ? formatAmount(recentEarned, REWARD_SYMBOL) : "Awaiting holder totals"}</td>
-                        <td>{holder.lastAirdropAt ? formatDate(holder.lastAirdropAt) : lastReward ? formatDate(lastReward.time) : "Awaiting airdrop"}</td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    <td colSpan={5}>Awaiting holder data.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
         </div>
       </div>
     </section>
