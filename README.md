@@ -1,7 +1,7 @@
 # Hood Strategy
 
 Contract address: `3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump`
-X: `https://x.com/HoodStrategy_`
+X: `https://x.com/HoodStrategySol`
 
 Hood Strategy is the live HoodX holder rewards site:
 
@@ -46,7 +46,7 @@ NEXT_PUBLIC_SOURCE_SYMBOL=HoodX
 NEXT_PUBLIC_REWARD_SYMBOL=HoodX
 NEXT_PUBLIC_SOURCE_TOKEN_MINT=3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
 NEXT_PUBLIC_CA=3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
-NEXT_PUBLIC_X_URL=https://x.com/HoodStrategy_
+NEXT_PUBLIC_X_URL=https://x.com/HoodStrategySol
 NEXT_PUBLIC_BUY_URL=https://pump.fun/coin/3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
 NEXT_PUBLIC_DEXSCREENER_URL=https://dexscreener.com/solana/3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
 NEXT_PUBLIC_HOOD_CHART_URL=https://dexscreener.com/solana/3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
