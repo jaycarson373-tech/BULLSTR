@@ -108,12 +108,7 @@ export async function recordBuy(
 function payoutMetadataFields(metadata: PayoutMetadata | undefined, rewardAmountRaw: string, rewardAmount: string) {
   return {
     normal_reward_amount_raw: metadata?.normalRewardAmountRaw ?? rewardAmountRaw,
-    normal_reward_amount: metadata?.normalRewardAmount ?? rewardAmount,
-    golden_bonus_reward_raw: "0",
-    golden_bonus_reward: "0",
-    golden_multiplier: 1,
-    is_golden: false,
-    golden_capped: false
+    normal_reward_amount: metadata?.normalRewardAmount ?? rewardAmount
   };
 }
 

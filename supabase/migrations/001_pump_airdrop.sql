@@ -4,15 +4,6 @@ create table if not exists epochs (
   eligible_count integer not null default 0,
   reward_bought numeric not null default 0,
   reward_distributed numeric not null default 0,
-  golden_winner_wallet text,
-  golden_base_reward numeric not null default 0,
-  golden_base_reward_raw text not null default '0',
-  golden_bonus_reward numeric not null default 0,
-  golden_bonus_reward_raw text not null default '0',
-  golden_multiplier integer not null default 10,
-  golden_capped boolean not null default false,
-  golden_snapshot_hash text,
-  golden_tx_sig text,
   started_at timestamptz not null default now(),
   completed_at timestamptz,
   error text
@@ -51,11 +42,6 @@ create table if not exists payouts (
   reward_amount_raw text not null,
   normal_reward_amount numeric not null default 0,
   normal_reward_amount_raw text not null default '0',
-  golden_bonus_reward numeric not null default 0,
-  golden_bonus_reward_raw text not null default '0',
-  golden_multiplier integer not null default 1,
-  is_golden boolean not null default false,
-  golden_capped boolean not null default false,
   idempotency_key text not null unique,
   status text not null check (status in ('planned', 'settled', 'failed', 'dry_run')),
   tx_sig text,
@@ -68,7 +54,6 @@ create table if not exists payouts (
 create index if not exists epochs_started_at_idx on epochs(started_at desc);
 create index if not exists snapshots_epoch_balance_idx on snapshots(epoch_id, source_balance desc);
 create index if not exists payouts_epoch_status_idx on payouts(epoch_id, status);
-create index if not exists payouts_epoch_golden_idx on payouts(epoch_id, is_golden);
 
 alter table epochs enable row level security;
 alter table claims enable row level security;
