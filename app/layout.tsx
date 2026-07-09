@@ -5,10 +5,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://hood6900.xyz"),
   title: "Hood 6900",
-  description: "Hood 6900 routes creator fees into HoodX stock rewards and verified holder draws with AI6900 energy.",
+  description: "Hood 6900 routes creator fees into HoodX buys and automatic airdrops for 1M+ holders with AI6900 energy.",
   openGraph: {
     title: "Hood 6900",
-    description: "50% HoodX stock drops for 1M+ holders and 50% verified holder live draws.",
+    description: "100% HoodX buys and automatic airdrops for wallets holding 1M+ $HOOD6900.",
     url: "https://hood6900.xyz",
     siteName: "Hood 6900",
     images: [
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Hood 6900",
-    description: "HoodX stock airdrops and verified holder live draws.",
+    description: "HoodX stock airdrops for 1M+ $HOOD6900 holders.",
     images: ["/brand/robin-hood-logo.jpg"]
   },
   icons: {

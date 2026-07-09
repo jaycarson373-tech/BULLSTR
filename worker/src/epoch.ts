@@ -83,9 +83,7 @@ export async function runEpoch(date = new Date()) {
       claim.txSig && treasuryBalanceAfterClaim > treasuryBalanceBeforeClaim
         ? treasuryBalanceAfterClaim - treasuryBalanceBeforeClaim
         : 0n;
-    console.log(
-      `[${epochId}] claimed fee delta available for 50/50 split: ${lamportsToSol(claimedLamports)} SOL`
-    );
+    console.log(`[${epochId}] claimed fee delta available for holder airdrops: ${lamportsToSol(claimedLamports)} SOL`);
     if (claim.txSig && claimedLamports > 0n) {
       await recordClaim(epochId, lamportsToSol(claimedLamports).toString(), claim.txSig);
     }
@@ -107,7 +105,7 @@ export async function runEpoch(date = new Date()) {
     );
     const selectedHolders = selectRewardRecipients(epochId, eligibleHolders);
     const holders = selectedHolders;
-    console.log(`[${epochId}] selected automatic HOOD reward recipients from 1M+ holders: ${holders.length}`);
+    console.log(`[${epochId}] selected automatic HoodX reward recipients from 1M+ holders: ${holders.length}`);
 
     const indexRewardEnabled = config.indexAirdropBps > 0;
     const ansemCandidateHolders = indexRewardEnabled
@@ -116,9 +114,11 @@ export async function runEpoch(date = new Date()) {
     const ansemHolders = indexRewardEnabled
       ? selectRewardRecipients(`${epochId}:index`, ansemCandidateHolders, config.indexWalletsPerEpoch)
       : [];
-    console.log(
-      `[${epochId}] selected verified-holder draw recipients: ${ansemHolders.length}/${ansemCandidateHolders.length}`
-    );
+    if (indexRewardEnabled) {
+      console.log(
+        `[${epochId}] selected secondary reward recipients: ${ansemHolders.length}/${ansemCandidateHolders.length}`
+      );
+    }
 
     if (!holders.length && !ansemHolders.length && config.sideWalletBps <= 0) {
       await recordBuy(epochId, "0", "0", "0", null);
@@ -133,8 +133,8 @@ export async function runEpoch(date = new Date()) {
     }
 
     const payoutReserveLamports = await estimateTokenPayoutReserveLamports([
-      { wallets: holders.map((holder) => holder.wallet), mint: config.rewardTokenMint, label: "HOOD-to-1M-holders" },
-      { wallets: ansemHolders.map((holder) => holder.wallet), mint: config.sourceTokenMint, label: "HOOD-to-verified-draws" }
+      { wallets: holders.map((holder) => holder.wallet), mint: config.rewardTokenMint, label: "HoodX-to-1M-holders" },
+      { wallets: ansemHolders.map((holder) => holder.wallet), mint: config.sourceTokenMint, label: "secondary-rewards" }
     ]);
     const splitPlan = await treasurySolBudget(payoutReserveLamports);
     const splitBaseLamports = claimedLamports < splitPlan.usableLamports ? claimedLamports : splitPlan.usableLamports;
@@ -142,7 +142,7 @@ export async function runEpoch(date = new Date()) {
     const indexBuyLamports = (splitBaseLamports * BigInt(config.indexAirdropBps)) / 10_000n;
     const sideWalletLamports = (splitBaseLamports * BigInt(config.sideWalletBps)) / 10_000n;
     console.log(
-      `[${epochId}] split plan: claimed=${lamportsToSol(claimedLamports)} SOL, usable=${lamportsToSol(splitPlan.usableLamports)} SOL, splitBase=${lamportsToSol(splitBaseLamports)} SOL, holderBuy=${lamportsToSol(rewardBuyLamports)} SOL, verifiedDrawBuy=${lamportsToSol(indexBuyLamports)} SOL, drawWallet=${lamportsToSol(sideWalletLamports)} SOL`
+      `[${epochId}] reward plan: claimed=${lamportsToSol(claimedLamports)} SOL, usable=${lamportsToSol(splitPlan.usableLamports)} SOL, splitBase=${lamportsToSol(splitBaseLamports)} SOL, hoodxBuy=${lamportsToSol(rewardBuyLamports)} SOL, secondaryBuy=${lamportsToSol(indexBuyLamports)} SOL, sideWallet=${lamportsToSol(sideWalletLamports)} SOL`
     );
     await sendSideWalletShare(epochId, sideWalletLamports);
 
@@ -196,7 +196,7 @@ export async function runEpoch(date = new Date()) {
       `[${epochId}] reward pool: ${rewardPoolRaw.toString()} raw of ${availableRewardRaw.toString()} raw treasury balance (${config.airdropRewardBps} bps)`
     );
     console.log(
-      `[${epochId}] verified draw pool: ${indexPoolRaw.toString()} raw of ${availableIndexRaw.toString()} raw treasury balance (${config.airdropRewardBps} bps)`
+      `[${epochId}] secondary reward pool: ${indexPoolRaw.toString()} raw of ${availableIndexRaw.toString()} raw treasury balance (${config.airdropRewardBps} bps)`
     );
     const allocations = rewardPoolRaw > config.minRewardRawToAirdrop ? await computeAllocations(holders, rewardPoolRaw) : [];
     const indexAllocations =
@@ -211,21 +211,21 @@ export async function runEpoch(date = new Date()) {
         reward_distributed: "0",
         status: "skipped"
       });
-      console.log(`[${epochId}] no HOOD reward balance, skipped airdrop`);
+      console.log(`[${epochId}] no HoodX reward balance, skipped airdrop`);
       return;
     }
 
     const tokenAirdrop = allocations.length
-      ? await airdropTokenRewards(epochId, allocations, "HOOD")
+      ? await airdropTokenRewards(epochId, allocations, "HoodX")
       : { settledUi: 0, settledCount: 0, stoppedForReserve: false };
     if (tokenAirdrop.stoppedForReserve && tokenAirdrop.settledCount === 0) {
-      throw new Error("HOOD holder airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
+      throw new Error("HoodX holder airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
     }
     const indexAirdrop = indexAllocations.length
-      ? await airdropTokenRewards(epochId, indexAllocations, "HOOD", config.sourceTokenMint)
+      ? await airdropTokenRewards(epochId, indexAllocations, "HOOD6900", config.sourceTokenMint)
       : { settledUi: 0, settledCount: 0, stoppedForReserve: false };
     if (indexAirdrop.stoppedForReserve && indexAirdrop.settledCount === 0) {
-      throw new Error("Verified draw airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
+      throw new Error("Secondary airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
     }
     const distributed = tokenAirdrop.settledUi;
     await completeEpoch(epochId, {
@@ -234,7 +234,7 @@ export async function runEpoch(date = new Date()) {
       reward_distributed: distributed.toString()
     });
     console.log(
-      `[${epochId}] summary: eligible=${eligibleHolders.length}, holderRecipients=${tokenAirdrop.settledCount}/${allocations.length}, verifiedDrawRecipients=${indexAirdrop.settledCount}/${indexAllocations.length}, holderBought=${buy.rewardReceivedUi}, verifiedDrawBought=${indexBuy.rewardReceivedUi}, holderDistributed=${distributed}, verifiedDrawDistributed=${indexAirdrop.settledUi}`
+      `[${epochId}] summary: eligible=${eligibleHolders.length}, holderRecipients=${tokenAirdrop.settledCount}/${allocations.length}, secondaryRecipients=${indexAirdrop.settledCount}/${indexAllocations.length}, hoodxBought=${buy.rewardReceivedUi}, secondaryBought=${indexBuy.rewardReceivedUi}, hoodxDistributed=${distributed}, secondaryDistributed=${indexAirdrop.settledUi}`
     );
   } catch (error) {
     await failEpoch(epochId, error).catch((dbError) => {

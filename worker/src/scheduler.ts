@@ -7,7 +7,7 @@ console.log(
   `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
 );
 console.log(
-  `Reward split: ${config.swapBalanceBps / 100}% claimed SOL to automatic HOOD holder drops, ${config.sideWalletBps / 100}% claimed SOL to verified-holder draws, ${config.indexAirdropBps / 100}% secondary HOOD buyback leg.`
+  `Reward split: ${config.swapBalanceBps / 100}% claimed SOL buys HoodX for automatic 1M+ holder airdrops, ${config.sideWalletBps / 100}% to side wallet, ${config.indexAirdropBps / 100}% secondary buyback leg.`
 );
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
 console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} source tokens`);

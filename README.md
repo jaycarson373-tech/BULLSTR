@@ -3,21 +3,18 @@
 Source token: `$HOOD6900`
 Reward asset: `HoodX`
 
-Hood 6900 is a 50/50 reward loop:
+Hood 6900 is a 100% holder-airdrop reward loop:
 
-- 50% of usable rewards buys HoodX Stock and airdrops it automatically to wallets holding 1M+ $HOOD6900 tokens.
-- 50% funds verified Hood memecoin holders, early movers, active X users, and live draw prizes.
-- Live draw winners must respond on X within 24 hours and prove ownership of the selected wallet.
-- Verified holders can add an ETH wallet after proving wallet ownership.
-- The site shows reward proof, holder activity, draw status, and Solscan links as rewards settle.
+- 100% of usable rewards buys HoodX Stock and airdrops it automatically to wallets holding 1M+ $HOOD6900 tokens.
+- The site shows reward proof, holder activity, epoch status, and Solscan links as rewards settle.
 
 ## Current Implementation
 
 1. Claim creator fees into the treasury.
 2. Snapshot source-token holders with at least `ELIGIBILITY_MIN`.
 3. Weight selected holders by raw token balance.
-4. Use `SWAP_BALANCE_BPS=5000` for the automatic holder reward rail.
-5. Use `SIDE_WALLET_BPS=5000` for verified-holder draws and claim prizes.
+4. Use `SWAP_BALANCE_BPS=10000` for the automatic holder reward rail.
+5. Use `SIDE_WALLET_BPS=0` so no reward share leaves the holder-airdrop rail by default.
 6. Store epochs, snapshots, reward pools, and payouts in Supabase.
 
 ## Local Development
@@ -68,11 +65,11 @@ MAX_WALLETS_PER_EPOCH=200
 MAX_HOLDER_PCT=5
 EXCLUDE_WALLETS=
 
-SWAP_BALANCE_BPS=5000
+SWAP_BALANCE_BPS=10000
 INDEX_AIRDROP_BPS=0
 SWAP_SLIPPAGE_BPS=300
-SIDE_WALLET_BPS=5000
-SIDE_WALLET_PUBLIC_KEY=<VERIFIED_DRAW_REWARD_WALLET>
+SIDE_WALLET_BPS=0
+SIDE_WALLET_PUBLIC_KEY=
 INDEX_HOLDER_LIMIT=200
 
 MIN_SOL_RESERVE=0.4

@@ -114,20 +114,19 @@ const terminalLines = [
   "Hood rail online...",
   "Creator fees received...",
   "Buying HoodX Stock...",
-  "Verified holder draw queued...",
+  "1M+ holder snapshot queued...",
   "Stock reward epoch completed...",
   "Waiting for next epoch..."
 ];
 const feeRails = [
-  ["50%", "Automatic HoodX Stock", "Airdrops HoodX rewards to wallets holding 1M+ $HOOD6900 tokens."],
-  ["50%", "Verified Holder Draws", "Funds early Hood memecoin holders, active X users, and live draw winners."]
+  ["100%", "Automatic HoodX Stock", "Buys HoodX and airdrops it to wallets holding 1M+ $HOOD6900 tokens."]
 ];
 const activeBounties = [
-  { title: "Verified Holder Draw", reward: "HOOD6900", category: "Wallet", status: "Open", countdown: "23:41", entries: "0" },
-  { title: "Early Mover Draw", reward: "HOOD6900", category: "Early", status: "Open", countdown: "11:08", entries: "0" },
-  { title: "Active X Claim", reward: "HOOD6900", category: "X.com", status: "Judging", countdown: "04:52", entries: "0" },
-  { title: "Hood Memecoin Holder", reward: "HOOD6900", category: "Chain", status: "Open", countdown: "17:30", entries: "0" },
-  { title: "24 Hour Claim Window", reward: "HOOD6900", category: "Proof", status: "Open", countdown: "35:15", entries: "0" }
+  { title: "1M+ Holder Epoch", reward: "HoodX", category: "Snapshot", status: "Open", countdown: "23:41", entries: "0" },
+  { title: "Automatic HoodX Buy", reward: "HoodX", category: "Treasury", status: "Open", countdown: "11:08", entries: "0" },
+  { title: "Holder Airdrop Proof", reward: "HoodX", category: "Solscan", status: "Open", countdown: "04:52", entries: "0" },
+  { title: "Epoch Reward Ledger", reward: "HoodX", category: "Chain", status: "Open", countdown: "17:30", entries: "0" },
+  { title: "Next Holder Snapshot", reward: "HoodX", category: "Proof", status: "Open", countdown: "35:15", entries: "0" }
 ];
 const memeImages = [
   "/brand/memes/ai-meme-1.png",
@@ -366,9 +365,8 @@ export function AnsemIndexApp() {
             <p>
               AI6900-coded hood rails. Real drops. Verified holders.
               <br />
-              50% of rewards airdrop HoodX Stock automatically to 1M+ $HOOD6900 token holders.
-              The other 50% funds verified Hood memecoin holders, early movers,
-              and live draw prizes with 24-hour X claim windows.
+              100% of rewards buy HoodX Stock and airdrop it automatically to
+              holders with 1M+ $HOOD6900 tokens.
             </p>
             <div className="ai-actions">
               <a href="#bounties">Verified Holders</a>
@@ -378,12 +376,12 @@ export function AnsemIndexApp() {
 
           <motion.aside id="next-bounty" className="ai-hero-panel ai-next-bounty" initial={{ opacity: 0, x: 28, filter: "blur(12px)" }} animate={{ opacity: 1, x: 0, filter: "blur(0px)" }} transition={{ ...smoothTransition, duration: 0.8, delay: 0.15 }}>
             <div className="ai-hero-metric">
-              <span>Next Draw</span>
-              <strong>Verified Holder Draw</strong>
+              <span>Next Airdrop</span>
+              <strong>1M+ Holder Epoch</strong>
             </div>
             <div className="ai-hero-metric">
               <span>Reward</span>
-              <strong>HOOD6900</strong>
+              <strong>HoodX</strong>
             </div>
             <div className="ai-hero-metric">
               <span>Time Remaining</span>
@@ -391,7 +389,7 @@ export function AnsemIndexApp() {
             </div>
             <div className="ai-hero-metric">
               <span>Category</span>
-              <strong>Wallet Proof</strong>
+              <strong>Holder Snapshot</strong>
             </div>
             <div className="ai-hero-metric">
               <span>Entries</span>
@@ -402,8 +400,8 @@ export function AnsemIndexApp() {
 
         <motion.section className="ai-section" id="bounties" {...fadeUp}>
           <div className="ai-section-head">
-            <span className="ai-kicker">VERIFIED HOLDERS</span>
-            <h2>Prove the wallet. Stay active on X. Claim the draw.</h2>
+            <span className="ai-kicker">HOLDER AIRDROPS</span>
+            <h2>Hold 1M+ $HOOD6900. Every epoch buys HoodX for holders.</h2>
           </div>
           <div className="ai-bounty-grid">
             {activeBounties.map((bounty) => (
@@ -425,22 +423,21 @@ export function AnsemIndexApp() {
 
         <motion.section className="ai-thesis" id="how" {...fadeUp}>
           <span className="ai-kicker">WHY HOOD 6900 EXISTS</span>
-          <h2>AI6900 velocity with proof before prizes.</h2>
+          <h2>AI6900 velocity for 1M+ holders.</h2>
           <p>
             Hood 6900 turns AI6900-style energy into a real on-chain
-            reward loop for holders and verified early movers.
+            reward loop for holders.
           </p>
           <p>
-            Holders above 1M $HOOD6900 get automatic HoodX airdrops. Verified holders
-            can add an ETH wallet after proving ownership, then live draw
-            winners have 24 hours to respond on X and claim.
+            Holders above 1M $HOOD6900 get automatic HoodX airdrops each epoch,
+            with transaction proof once rewards settle.
           </p>
         </motion.section>
 
         <motion.section className="ai-section" id="treasury" {...fadeUp}>
           <div className="ai-section-head">
             <span className="ai-kicker">HOW THE HOOD RAILS WORK</span>
-            <h2>Creator fees become 50/50 Hood rewards.</h2>
+            <h2>Creator fees become 100% HoodX holder rewards.</h2>
           </div>
           <div className="ai-rail-grid">
             {feeRails.map(([value, title, copy]) => (
@@ -457,7 +454,7 @@ export function AnsemIndexApp() {
           <div className="ai-section-head split">
             <div>
               <span className="ai-kicker">LIVE REWARDS</span>
-              <h2>Recent Verified Rewards</h2>
+              <h2>Recent HoodX Airdrops</h2>
             </div>
           </div>
           <div className="ai-table ai-transactions">
@@ -522,13 +519,13 @@ export function AnsemIndexApp() {
             {[
               [
                 "What is Hood 6900?",
-                "Hood 6900 is the AI6900-coded 50/50 reward loop for automatic HoodX holder airdrops and verified community draws."
+                "Hood 6900 is the AI6900-coded reward loop that buys HoodX and airdrops it to 1M+ $HOOD6900 holders."
               ],
-              ["How do I earn?", "Hold 1M+ $HOOD6900 for automatic airdrops, or verify ownership for the live draw rail."],
-              ["What kind of verification counts?", "Hood memecoin ownership, wallet ownership proof, active X participation, and early mover status can qualify."],
-              ["How does the treasury work?", "50% routes to automatic holder drops and 50% funds verified holder draws."],
-              ["Where do winners show?", "Recent verified rewards appear in the table with proof links once rewards settle."],
-              ["How do draw winners claim?", "Winners must respond on X within 24 hours and prove ownership of the selected wallet."]
+              ["How do I earn?", "Hold 1M+ $HOOD6900 for automatic HoodX airdrops."],
+              ["What kind of verification counts?", "The holder snapshot checks wallets holding at least 1M $HOOD6900."],
+              ["How does the treasury work?", "100% routes to HoodX buys for automatic holder drops."],
+              ["Where do airdrops show?", "Recent HoodX airdrops appear in the table with proof links once rewards settle."],
+              ["Do holders need to claim?", "No. Eligible holder drops are sent automatically when the epoch settles."]
             ].map(([question, answer]) => (
               <details key={question}>
                 <summary>{question}</summary>
@@ -590,13 +587,11 @@ export function RewardsDashboardApp() {
 
   const nextDropMs = now ? Math.max(Date.parse(stats.nextDropTime) || 0, fallbackNextDropMs()) : 0;
   const countdown = now ? formatCountdown(Math.max(0, Math.ceil((nextDropMs - now) / 1000))) : "--:--";
-  const nextDrawMs = now ? Date.parse(stats.nextDrawTime) || 0 : 0;
-  const drawCountdown = nextDrawMs ? formatCountdown(Math.max(0, Math.ceil((nextDrawMs - now) / 1000))) : "--:--";
   const totalHoodDistributed = rewardTotalAmount(stats.totalRewardTotals, ["HOODX", "HOOD6900", "ANSEM", "HOOD"]);
   const transactionCount = stats.recentRewards.filter((reward) => reward.txSig).length;
   const dashboardMetrics = [
-    { label: "50% HoodX stock", value: formatToken(totalHoodDistributed, "HoodX") },
-    { label: "50% verified draws", value: "HOOD6900" },
+    { label: "100% HoodX buys", value: formatToken(totalHoodDistributed, "HoodX") },
+    { label: "1M+ holders", value: formatNumber(stats.latestEligibleHolders, 0) },
     { label: "CA", value: compactAddress(CA) },
     { label: "$HOOD6900 price", value: formatUsd(price.priceUsd) },
     { label: "Next epoch", value: countdown },
@@ -614,7 +609,7 @@ export function RewardsDashboardApp() {
         </a>
         <nav aria-label="Dashboard navigation">
           <a href="/">Home</a>
-          <a href="#reward-split">50/50</a>
+          <a href="#reward-split">Airdrops</a>
           <a href="#transactions">Transactions</a>
           <a href="#price">$HOOD6900 Price</a>
         </nav>
@@ -646,17 +641,17 @@ export function RewardsDashboardApp() {
         <motion.section className="ai-section" id="reward-split" {...fadeUp}>
           <div className="ai-section-head split">
             <div>
-              <span className="ai-kicker">50 / 50 REWARD DASHBOARD</span>
-              <h2>HOODx drops on the left. Reward wallet draws on the right.</h2>
+              <span className="ai-kicker">100% HOLDER AIRDROP DASHBOARD</span>
+              <h2>Every reward epoch buys HoodX and airdrops 1M+ holders.</h2>
             </div>
-            <span className="ai-status">2H DRAW WINDOW</span>
+            <span className="ai-status">1M+ HOLDERS</span>
           </div>
 
           <div className="hood-split-dashboard">
             <article className="hood-split-panel">
               <div className="hood-split-panel-head">
-                <span>Left Rail</span>
-                <h3>HOODx airdrops each epoch</h3>
+                <span>Holder Rail</span>
+                <h3>HoodX airdrops each epoch</h3>
                 <p>Automatic holder drops show exactly how much was sent and link to settled transaction proof.</p>
               </div>
               <div className="hood-epoch-list">
@@ -668,7 +663,7 @@ export function RewardsDashboardApp() {
                         <span>{formatTime(drop.time)}</span>
                       </div>
                       <div>
-                        <strong>{formatRewardTotals(drop.rewardTotals, formatToken(drop.totalSent, "HOODx", 2))}</strong>
+                        <strong>{formatRewardTotals(drop.rewardTotals, formatToken(drop.totalSent, "HoodX", 2))}</strong>
                         <span>{drop.recipients.toLocaleString()} recipients</span>
                       </div>
                       {drop.txSig ? (
@@ -681,16 +676,16 @@ export function RewardsDashboardApp() {
                     </div>
                   ))
                 ) : (
-                  <div className="hood-empty-proof">Awaiting settled HOODx epoch drops.</div>
+                  <div className="hood-empty-proof">Awaiting settled HoodX epoch drops.</div>
                 )}
               </div>
             </article>
 
             <article className="hood-split-panel">
               <div className="hood-split-panel-head">
-                <span>Right Rail</span>
-                <h3>Reward wallet + verified draws</h3>
-                <p>Every {formatNumber(stats.drawIntervalHours, 0)} hours, a random holder can win {formatNumber(stats.drawRewardPct, 2)}% of the reward wallet after X activity and wallet-ownership verification.</p>
+                <span>Reward Wallet</span>
+                <h3>HoodX inventory for holder drops</h3>
+                <p>The reward wallet tracks the HoodX balance available for automatic airdrops to 1M+ $HOOD6900 holders.</p>
               </div>
               <div className="hood-wallet-grid">
                 <div>
@@ -710,8 +705,8 @@ export function RewardsDashboardApp() {
                   <strong>{formatBalance(stats.rewardWallet.rewardTokenBalance, "HoodX")}</strong>
                 </div>
                 <div>
-                  <span>Next Draw</span>
-                  <strong>{drawCountdown}</strong>
+                  <span>Next Airdrop</span>
+                  <strong>{countdown}</strong>
                 </div>
                 <div>
                   <span>Eligible Pool</span>
@@ -719,7 +714,7 @@ export function RewardsDashboardApp() {
                 </div>
               </div>
               <div className="hood-claim-rule">
-                Winner must be active on X/x.com, reply within 24 hours, prove wallet ownership, then send the claim wallet.
+                100% of usable rewards goes to HoodX buys for eligible holder airdrops. No manual claim is needed.
               </div>
               <div className="hood-epoch-list compact">
                 {stats.drawProofs.length ? (
@@ -743,7 +738,7 @@ export function RewardsDashboardApp() {
                     </div>
                   ))
                 ) : (
-                  <div className="hood-empty-proof">Verified draw transaction proof will appear after claims settle.</div>
+                  <div className="hood-empty-proof">Holder airdrop transaction proof will appear after epochs settle.</div>
                 )}
               </div>
             </article>
