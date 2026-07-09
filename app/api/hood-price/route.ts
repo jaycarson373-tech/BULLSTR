@@ -28,11 +28,15 @@ function emptyPrice() {
 
 export async function GET() {
   const mint =
+    process.env.REWARD_TOKEN_MINT ??
+    process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT ??
+    process.env.HOODX_TOKEN_MINT ??
+    process.env.NEXT_PUBLIC_HOODX_TOKEN_MINT ??
     process.env.HOOD6900_TOKEN_MINT ??
     process.env.NEXT_PUBLIC_HOOD6900_TOKEN_MINT ??
     process.env.SOURCE_TOKEN_MINT ??
     process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ??
-    "FTAat9Wt3wHkLkjHXXifJG6TmbUH5yVVWEfAGBhMpump";
+    "XsvNBAYkrDRNhA7wPHQfX3ZUXZyZLdnCQDfHZ56bzpg";
 
   if (!mint) return NextResponse.json(emptyPrice());
 
@@ -58,7 +62,7 @@ export async function GET() {
       updatedAt: new Date().toISOString()
     });
   } catch (error) {
-    console.warn("HOOD6900 price route failed", error);
+    console.warn("HOODx price route failed", error);
     return NextResponse.json(emptyPrice());
   }
 }

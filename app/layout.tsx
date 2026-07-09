@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "The memecoin of the Hood. Robinhood built the chain. The trenches built the meme.",
   openGraph: {
     title: "HOOD6900",
-    description: "Every 5 minutes creator fees buy back HOOD. 100% airdrops to 100K+ holders. 0% side fund.",
+    description: "Every 5 minutes creator fees buy back HOODx. 100% airdrops HOODx to 100K+ holders. 0% side fund.",
     url: "https://hood6900.xyz",
     siteName: "HOOD6900",
     type: "website"

@@ -113,23 +113,23 @@ const emptyPrice: PriceResponse = {
 const terminalLines = [
   "Robinhood built the chain.",
   "The trenches built the meme.",
-  "Creator fees buy back HOOD.",
-  "100% airdrops to holders.",
+  "Creator fees buy back HOODx.",
+  "100% airdrops HOODx to holders.",
   "0% goes anywhere else.",
   "Sell once and you're out."
 ];
 const feeRails = [
-  ["5 MIN", "Every epoch", "Creator fees buy back HOOD."],
-  ["100%", "Holder airdrops", "Automatic HOOD to eligible holders."],
+  ["5 MIN", "Every epoch", "Creator fees buy back HOODx."],
+  ["100%", "Holder airdrops", "Automatic HOODx to eligible holders."],
   ["0%", "Side fund", "Nothing leaves the holder rail."],
   ["REPEAT", "The Hood loop", "Buy. Airdrop. Grow. Repeat."]
 ];
 const activeBounties = [
   { title: "Every 5 minutes", reward: "Fees in", category: "01", status: "Open", countdown: "00:05", entries: "Loop" },
-  { title: "Creator fees buy back HOOD", reward: "Buyback", category: "02", status: "Open", countdown: "100%", entries: "Holders" },
-  { title: "100% airdropped to holders", reward: "Auto", category: "03", status: "Open", countdown: "100K+", entries: "Eligible" },
+  { title: "Creator fees buy back HOODx", reward: "Buyback", category: "02", status: "Open", countdown: "100%", entries: "Holders" },
+  { title: "100% airdropped as HOODx to holders", reward: "Auto", category: "03", status: "Open", countdown: "100K+", entries: "Eligible" },
   { title: "0% side fund", reward: "Pure", category: "04", status: "Open", countdown: "0%", entries: "Leak" },
-  { title: "Repeat", reward: "HOOD", category: "05", status: "Open", countdown: "Forever", entries: "Loop" }
+  { title: "Repeat", reward: "HOODx", category: "05", status: "Open", countdown: "Forever", entries: "Loop" }
 ];
 const memeImages = [
   "/brand/memes/ai-meme-1.png",
@@ -202,15 +202,15 @@ function rewardTotalAmount(totals: RewardTotal[], keys: string[]) {
 
 function displayAsset(asset: string | undefined) {
   const key = assetKey(asset);
-  if (key === "HOOD6900") return "HOOD";
-  if (key === "HOOD") return "HOOD";
-  if (key === "BEG") return "HOOD";
-  if (key === "BULLSTR") return "HOOD";
-  if (key === "AI6900") return "HOOD";
-  if (key === "AI") return "HOOD";
-  if (key === "ANSEM") return "HOOD";
-  if (key === "HOODX") return "HOOD";
-  return asset ? asset.replace(/^\$/, "") : "HOOD";
+  if (key === "HOODX") return "HOODx";
+  if (key === "ANSEM") return "HOODx";
+  if (key === "HOOD6900") return "HOODx";
+  if (key === "HOOD") return "HOODx";
+  if (key === "BEG") return "HOODx";
+  if (key === "BULLSTR") return "HOODx";
+  if (key === "AI6900") return "HOODx";
+  if (key === "AI") return "HOODx";
+  return asset ? asset.replace(/^\$/, "") : "HOODx";
 }
 
 function formatRewardTotals(totals: RewardTotal[] | undefined, empty = "Awaiting") {
@@ -373,9 +373,9 @@ export function AnsemIndexApp() {
               <br />
               HOOD6900 is the community token for the Hood ecosystem.
               <br />
-              Every 5 minutes creator fees buy back HOOD.
+              Every 5 minutes creator fees buy back HOODx.
               <br />
-              100% is automatically airdropped to eligible holders.
+              100% is automatically airdropped as HOODx to eligible holders.
               <br />
               0% goes to side wallets.
               <br />
@@ -437,7 +437,7 @@ export function AnsemIndexApp() {
         <motion.section className="ai-section" id="hold" {...fadeUp}>
           <div className="ai-section-head">
             <span className="ai-kicker">WHY HOLD</span>
-            <h2>Hold 100K+. Receive HOOD every epoch.</h2>
+            <h2>Hold 100K+. Receive HOODx every epoch.</h2>
           </div>
           <div className="ai-rail-grid">
             {feeRails.map(([value, title, copy]) => (
@@ -462,7 +462,7 @@ export function AnsemIndexApp() {
           <div className="ai-section-head split">
             <div>
               <span className="ai-kicker">LIVE REWARDS</span>
-              <h2>Recent HOOD Airdrops</h2>
+              <h2>Recent HOODx Airdrops</h2>
             </div>
           </div>
           <div className="ai-table ai-transactions">
@@ -477,7 +477,7 @@ export function AnsemIndexApp() {
               stats.recentRewards.slice(0, 12).map((reward) => (
                 <div className="ai-transaction-row" key={`${reward.epoch}-${reward.wallet}-${reward.time}-${reward.rewardAsset ?? "HOOD"}`}>
                   <span className="mono">{compactAddress(reward.wallet)}</span>
-                  <span>HOOD reward</span>
+                  <span>HOODx reward</span>
                   <span className="mono">{formatToken(reward.rewardAmount, displayAsset(reward.rewardAsset), 4)}</span>
                   <span>{formatTime(reward.time)}</span>
                   {reward.txSig ? (
@@ -488,7 +488,7 @@ export function AnsemIndexApp() {
                 </div>
               ))
             ) : (
-              <div className="ai-empty">No HOOD rewards yet.</div>
+              <div className="ai-empty">No HOODx rewards yet.</div>
             )}
           </div>
         </motion.section>
@@ -596,10 +596,10 @@ export function RewardsDashboardApp() {
   const transactionCount = stats.recentRewards.filter((reward) => reward.txSig).length;
   const latestDrop = stats.holderEpochDrops[0];
   const totalAirdropped = stats.holderEpochDrops.reduce((sum, drop) => sum + drop.totalSent, 0);
-  const latestBuyback = latestDrop ? formatRewardTotals(latestDrop.rewardTotals, formatToken(latestDrop.totalSent, "HOOD", 2)) : "Awaiting";
+  const latestBuyback = latestDrop ? formatRewardTotals(latestDrop.rewardTotals, formatToken(latestDrop.totalSent, "HOODx", 2)) : "Awaiting";
   const dashboardMetrics = [
-    { label: "Total HOOD Bought", value: formatToken(totalHoodDistributed, "HOOD") },
-    { label: "Total HOOD Airdropped", value: formatToken(totalAirdropped, "HOOD") },
+    { label: "Total HOODx Bought", value: formatToken(totalHoodDistributed, "HOODx") },
+    { label: "Total HOODx Airdropped", value: formatToken(totalAirdropped, "HOODx") },
     { label: "Eligible Holders", value: formatNumber(stats.latestEligibleHolders, 0) },
     { label: "Side Fund", value: "0%" },
     { label: "Next Buyback", value: countdown },
@@ -650,7 +650,7 @@ export function RewardsDashboardApp() {
           <div className="ai-section-head split">
             <div>
               <span className="ai-kicker">THE HOOD BOARD</span>
-              <h2>Every 5 minutes. Buy back HOOD. Reward holders. 100/0.</h2>
+              <h2>Every 5 minutes. Buy back HOODx. Reward holders. 100/0.</h2>
             </div>
             <span className="ai-status">100K+ HOLDERS</span>
           </div>
@@ -659,7 +659,7 @@ export function RewardsDashboardApp() {
             <article className="hood-split-panel">
               <div className="hood-split-panel-head">
                 <span>100% Holder Rail</span>
-                <h3>HOOD airdrops each epoch</h3>
+                <h3>HOODx airdrops each epoch</h3>
                 <p>No claiming. No staking. No locking. Just hold 100K+.</p>
               </div>
               <div className="hood-epoch-list">
@@ -671,7 +671,7 @@ export function RewardsDashboardApp() {
                         <span>{formatTime(drop.time)}</span>
                       </div>
                       <div>
-                        <strong>{formatRewardTotals(drop.rewardTotals, formatToken(drop.totalSent, "HOOD", 2))}</strong>
+                        <strong>{formatRewardTotals(drop.rewardTotals, formatToken(drop.totalSent, "HOODx", 2))}</strong>
                         <span>{drop.recipients.toLocaleString()} recipients</span>
                       </div>
                       {drop.txSig ? (
@@ -684,7 +684,7 @@ export function RewardsDashboardApp() {
                     </div>
                   ))
                 ) : (
-                  <div className="hood-empty-proof">Awaiting settled HOOD epoch drops.</div>
+                  <div className="hood-empty-proof">Awaiting settled HOODx epoch drops.</div>
                 )}
               </div>
             </article>
@@ -693,7 +693,7 @@ export function RewardsDashboardApp() {
               <div className="hood-split-panel-head">
                 <span>0% Side Fund</span>
                 <h3>Nothing leaves the holder rail</h3>
-                <p>Creator fees buy HOOD. HOOD goes to eligible holders. That's the loop.</p>
+                <p>Creator fees buy HOODx. HOODx goes to eligible holders. That's the loop.</p>
               </div>
               <div className="hood-wallet-grid">
                 <div>
@@ -705,12 +705,12 @@ export function RewardsDashboardApp() {
                   <strong>{formatBalance(stats.rewardWallet.solBalance, "SOL")}</strong>
                 </div>
                 <div>
-                  <span>HOOD Owned</span>
-                  <strong>{formatBalance(stats.rewardWallet.sourceTokenBalance, "HOOD")}</strong>
+                  <span>HOOD6900 Held</span>
+                  <strong>{formatBalance(stats.rewardWallet.sourceTokenBalance, "HOOD6900")}</strong>
                 </div>
                 <div>
                   <span>Airdrop Pool</span>
-                  <strong>{formatBalance(stats.rewardWallet.rewardTokenBalance, "HOOD")}</strong>
+                  <strong>{formatBalance(stats.rewardWallet.rewardTokenBalance, "HOODx")}</strong>
                 </div>
                 <div>
                   <span>Next Buyback</span>
@@ -757,7 +757,7 @@ export function RewardsDashboardApp() {
           <div className="ai-section-head split">
             <div>
               <span className="ai-kicker">SETTLED REWARDS</span>
-              <h2>HOOD Receipts</h2>
+              <h2>HOODx Receipts</h2>
             </div>
           </div>
           <div className="ai-table ai-transactions">
@@ -792,7 +792,7 @@ export function RewardsDashboardApp() {
           <div className="ai-section-head split">
             <div>
               <span className="ai-kicker">$HOOD6900 PRICE</span>
-              <h2>Live HOOD Chart</h2>
+              <h2>Live HOODx Chart</h2>
             </div>
             <span className="ai-status">DEXSCREENER</span>
           </div>
@@ -800,7 +800,7 @@ export function RewardsDashboardApp() {
             <IndexChart />
             <div className="ai-performance-zero">{formatUsd(price.priceUsd)}</div>
             <div className="ai-price-meta">
-              <span>HOOD / USD</span>
+              <span>HOODx / USD</span>
               <strong>{price.priceChange24h >= 0 ? "+" : ""}{formatNumber(price.priceChange24h, 2)}% 24H</strong>
               {price.url ? <a href={price.url} target="_blank" rel="noreferrer">Open chart</a> : null}
             </div>

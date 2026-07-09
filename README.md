@@ -1,14 +1,14 @@
 # HOOD6900
 
 Source token: `$HOOD6900`
-Reward asset: `HOOD`
+Reward asset: `HOODx`
 
 HOOD6900 is the memecoin of the Hood.
 
 - Robinhood built the chain.
 - The trenches built the meme.
-- Every 5 minutes creator fees buy back HOOD.
-- 100% airdrops to eligible 100K+ holders.
+- Every 5 minutes creator fees buy back HOODx.
+- 100% airdrops HOODx to eligible 100K+ holders.
 - 0% goes to side wallets.
 - Sell once and lose future eligibility.
 
@@ -41,7 +41,8 @@ npm run build
 ```bash
 NEXT_PUBLIC_PROJECT_NAME="HOOD6900"
 NEXT_PUBLIC_SOURCE_SYMBOL=HOOD6900
-NEXT_PUBLIC_REWARD_SYMBOL=HOOD
+NEXT_PUBLIC_REWARD_SYMBOL=HOODx
+NEXT_PUBLIC_REWARD_TOKEN_MINT=XsvNBAYkrDRNhA7wPHQfX3ZUXZyZLdnCQDfHZ56bzpg
 NEXT_PUBLIC_SOURCE_TOKEN_MINT=FTAat9Wt3wHkLkjHXXifJG6TmbUH5yVVWEfAGBhMpump
 NEXT_PUBLIC_HOOD6900_TOKEN_MINT=FTAat9Wt3wHkLkjHXXifJG6TmbUH5yVVWEfAGBhMpump
 NEXT_PUBLIC_X_URL=https://x.com/HOOD6900_
@@ -57,7 +58,7 @@ SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
 REWARD_MODE=token
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
 SOURCE_TOKEN_MINT=FTAat9Wt3wHkLkjHXXifJG6TmbUH5yVVWEfAGBhMpump
-REWARD_TOKEN_MINT=<HOOD_REWARD_MINT>
+REWARD_TOKEN_MINT=XsvNBAYkrDRNhA7wPHQfX3ZUXZyZLdnCQDfHZ56bzpg
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET>
 
 CLAIM_ENABLED=false
