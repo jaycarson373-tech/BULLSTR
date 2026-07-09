@@ -1,4 +1,4 @@
-import { VersionedTransaction } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, VersionedTransaction } from "@solana/web3.js";
 import { config, treasuryKeypair } from "./config.js";
 import { connection } from "./solana.js";
 import { getClaim, recordClaim } from "./db.js";
@@ -24,9 +24,25 @@ export async function claimFees(epochId: string): Promise<ClaimResult> {
   }
 
   const treasury = treasuryKeypair();
+  const treasuryBalance = await connection.getBalance(treasury.publicKey, "confirmed");
 
   if (!config.claimEnabled) {
     console.log(`[${epochId}] [DRY-RUN] would claim creator fees`);
+    await safeRecordClaim(epochId, "0", null);
+    return { txSig: null, amountClaimed: "0" };
+  }
+
+  if (treasuryBalance <= 0) {
+    console.log(`[${epochId}] creator-fee claim skipped: treasury wallet has 0 SOL`);
+    await safeRecordClaim(epochId, "0", null);
+    return { txSig: null, amountClaimed: "0" };
+  }
+
+  const priorityFeeLamports = Math.ceil(config.priorityFeeSol * LAMPORTS_PER_SOL);
+  if (treasuryBalance <= priorityFeeLamports) {
+    console.log(
+      `[${epochId}] creator-fee claim skipped: treasury SOL is below priority-fee budget (${treasuryBalance} lamports <= ${priorityFeeLamports} lamports)`
+    );
     await safeRecordClaim(epochId, "0", null);
     return { txSig: null, amountClaimed: "0" };
   }
