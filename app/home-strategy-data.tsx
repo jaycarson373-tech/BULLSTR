@@ -313,9 +313,7 @@ export function RobinhoodHoldingsPanel() {
   const rows = [
     ["SOL", formatSol(holdings?.solBalance)],
     [sourceSymbol, formatAmount(holdings?.sourceTokenBalance ?? 0, sourceSymbol)],
-    ...(sameReward ? [] : [[rewardSymbol, formatAmount(holdings?.rewardTokenBalance ?? 0, rewardSymbol)]]),
-    ["Cashcat", "1,000,000 Cashcat"],
-    ["DIH", "1,000,000 DIH"]
+    ...(sameReward ? [] : [[rewardSymbol, formatAmount(holdings?.rewardTokenBalance ?? 0, rewardSymbol)]])
   ];
 
   return (
@@ -351,13 +349,6 @@ export function RobinhoodRunnerPanel() {
   const { now } = useProtocolData();
   const nextRunnerPickAt = Math.ceil(now / RUNNER_PICK_INTERVAL_MS) * RUNNER_PICK_INTERVAL_MS;
   const runnerCountdown = now ? formatLongCountdown(nextRunnerPickAt - now) : "--:--:--";
-  const runnerPositions = [
-    ["Cashcat", "1,000,000", "Runner basket"],
-    ["DIH", "1,000,000", "Runner basket"]
-  ];
-  const runnerWinners = [
-    ["Next verified holder", "Pending", "Winner locks after the 2 hour runner cycle"]
-  ];
 
   return (
     <section className="section runner-section" id="runners">
@@ -374,13 +365,16 @@ export function RobinhoodRunnerPanel() {
             <p>One active verified holder gets picked when the runner window closes.</p>
           </div>
           <div className="runner-position-grid">
-            {runnerPositions.map(([name, amount, status]) => (
-              <article className="runner-position-card" key={name}>
-                <span>{status}</span>
-                <strong>{name}</strong>
-                <b>{amount}</b>
-              </article>
-            ))}
+            <article className="runner-position-card">
+              <span>Runner basket</span>
+              <strong>Awaiting live positions</strong>
+              <b>0</b>
+            </article>
+            <article className="runner-position-card">
+              <span>Next prize</span>
+              <strong>Awaiting settlement</strong>
+              <b>0</b>
+            </article>
           </div>
         </div>
         <div className="history-card runner-winner-card">
@@ -394,13 +388,11 @@ export function RobinhoodRunnerPanel() {
                 </tr>
               </thead>
               <tbody>
-                {runnerWinners.map(([winner, prize, status]) => (
-                  <tr key={winner}>
-                    <td>{winner}</td>
-                    <td>{prize}</td>
-                    <td>{status}</td>
-                  </tr>
-                ))}
+                <tr>
+                  <td>Awaiting winner</td>
+                  <td>0</td>
+                  <td>Awaiting live runner settlement</td>
+                </tr>
               </tbody>
             </table>
           </div>
