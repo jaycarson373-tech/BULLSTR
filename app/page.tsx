@@ -10,7 +10,13 @@ import {
   RobinhoodRunnerPanel,
   RewardExplanation
 } from "./home-strategy-data";
-import { LAUNCH_CADENCE_COPY, LAUNCH_CADENCE_TITLE, SNAPSHOT_TIMING_COPY, SNAPSHOT_WINDOW_COPY } from "./hood-pump-config";
+import {
+  LAUNCH_CADENCE_COPY,
+  LAUNCH_CADENCE_TITLE,
+  SNAPSHOT_TIMING_COPY,
+  SNAPSHOT_WINDOW_COPY,
+  TAX_SPLIT_COPY
+} from "./hood-pump-config";
 
 const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/HoodStrategySol";
 const DEFAULT_CA = "3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump";
@@ -70,7 +76,7 @@ export default function Page() {
                 <span>Hood</span>
                 <span>Pump</span>
               </h1>
-              <p className="hero-subtitle">Creator fees fund a fresh Robin Hood token launch {LAUNCH_CADENCE_COPY}.</p>
+              <p className="hero-subtitle">Creator fees fund Robin Hood launches with a clear {TAX_SPLIT_COPY} model.</p>
               <p className="hero-lead">
                 Hood Pump routes creator fees into launch rails. Holders with 2.5M+ HPUMP get presale
                 access, with the first window opening in 1 day and the snapshot window that {SNAPSHOT_TIMING_COPY}.
@@ -89,17 +95,18 @@ export default function Page() {
           <div className="container">
             <div className="section-kicker">{LAUNCH_CADENCE_TITLE}</div>
             <div className="section-head split-head">
-              <h2>All creator fees go toward launching a token on Robin Hood {LAUNCH_CADENCE_COPY}.</h2>
+              <h2>Creator fees power launches, liquidity, and holder airdrops {LAUNCH_CADENCE_COPY}.</h2>
               <p>
-                Hood Pump keeps the launch path obvious: fees build the launch pool, 2.5M+ HPUMP
-                holders get presale access, and live sections track countdowns, wallet verification, receipts, and holder status.
+                Hood Pump keeps the launch path obvious: tax-token flow splits into liquidity and airdrops,
+                2.5M+ HPUMP holders get presale access, and live sections track countdowns, wallet verification,
+                receipts, and holder status.
               </p>
             </div>
             <div className="hood-rail-grid">
               <article>
-                <span>100%</span>
-                <strong>Creator Fee Launch Pool</strong>
-                <p>Creator fees are routed into the {LAUNCH_CADENCE_COPY} Robin Hood launch engine instead of fake scoreboard numbers.</p>
+                <span>50/50</span>
+                <strong>Liquidity and Airdrops</strong>
+                <p>Creator fees follow the tax-token split: 50% launch liquidity and 50% holder airdrops.</p>
               </article>
               <article>
                 <span>2.5M+</span>

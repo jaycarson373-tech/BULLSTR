@@ -2,13 +2,21 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import {
+  FIRST_COIN_REVEAL_COPY,
+  FIRST_COIN_REVEAL_HOURS_BEFORE,
   LAUNCH_CADENCE_COPY,
   LAUNCH_POOL_LABEL,
   SNAPSHOT_LOCKS_HOURS_BEFORE,
   SNAPSHOT_OPENS_HOURS_BEFORE,
   SNAPSHOT_TIMING_COPY,
-  SNAPSHOT_WINDOW_COPY
+  SNAPSHOT_WINDOW_COPY,
+  TAX_SPLIT_COPY
 } from "./hood-pump-config";
+
+type SolanaProvider = {
+  isPhantom?: boolean;
+  connect: () => Promise<{ publicKey?: { toBase58?: () => string; toString?: () => string } }>;
+};
 
 type RewardTotal = {
   rewardAsset: string;
@@ -66,6 +74,18 @@ type RobinhoodHoldings = {
   updatedAt: string | null;
 };
 
+type TopHolder = {
+  rank: number;
+  address: string;
+  balance: number;
+  percentage: string;
+};
+
+type HoldersResponse = {
+  topHolders: TopHolder[];
+  uniqueHolders: number;
+};
+
 const emptyStats: StatsResponse = {
   currentEpoch: 0,
   totalEpochs: 0,
@@ -103,6 +123,11 @@ const PRESALE_MIN_HOLDING = "2.5M+";
 const FIRST_PRESALE_AT = process.env.NEXT_PUBLIC_FIRST_PRESALE_AT?.trim() || "";
 const SOLANA_ADDRESS_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 const ETH_ADDRESS_RE = /^0x[a-fA-F0-9]{40}$/;
+
+function getSolanaProvider() {
+  if (typeof window === "undefined") return null;
+  return (window as Window & { solana?: SolanaProvider }).solana ?? null;
+}
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -289,12 +314,37 @@ export function useProtocolData() {
   return { stats, now };
 }
 
+function useHolderData() {
+  const [holders, setHolders] = useState<HoldersResponse | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    const load = async () => {
+      const nextHolders = await getJson<HoldersResponse>("/api/holders", { topHolders: [], uniqueHolders: 0 });
+
+      if (!active) return;
+      setHolders(nextHolders);
+    };
+
+    load();
+    const refreshTimer = window.setInterval(load, REFRESH_MS);
+    return () => {
+      active = false;
+      window.clearInterval(refreshTimer);
+    };
+  }, []);
+
+  return holders;
+}
+
 function usePresaleSchedule() {
   const [firstPresaleAt] = useState(firstPresaleTime);
   const snapshotOpensAt = firstPresaleAt - SNAPSHOT_OPENS_HOURS_BEFORE * HOUR_MS;
   const snapshotLocksAt = firstPresaleAt - SNAPSHOT_LOCKS_HOURS_BEFORE * HOUR_MS;
+  const firstCoinRevealAt = firstPresaleAt - FIRST_COIN_REVEAL_HOURS_BEFORE * HOUR_MS;
 
-  return { firstPresaleAt, snapshotOpensAt, snapshotLocksAt };
+  return { firstPresaleAt, snapshotOpensAt, snapshotLocksAt, firstCoinRevealAt };
 }
 
 export function HeroCountdown() {
@@ -360,7 +410,7 @@ export function LiveProtocolDashboard() {
           <MetricCard label="Last Window" value={latestRound ? `#${latestRound.epoch} ${statusLabel(latestRound.status)}` : "Awaiting window"} />
           <MetricCard label="First Presale Timer" value={countdown} />
           <MetricCard label="Snapshot Window" value={`${formatDateTime(snapshotOpensAt)} - ${formatDateTime(snapshotLocksAt)}`} />
-          <MetricCard label="Minimum Hold" value={`${PRESALE_MIN_HOLDING} ${SOURCE_SYMBOL}`} muted />
+          <MetricCard label="Tax Token Split" value={TAX_SPLIT_COPY} muted />
         </div>
       </div>
     </section>
@@ -545,7 +595,7 @@ export function RewardExplanation() {
           <div className="section-kicker">How it works</div>
         <div className="section-head split-head">
           <h2>Three steps. Hold HPUMP, submit addresses, enter presale.</h2>
-          <p>Hold {PRESALE_MIN_HOLDING} HPUMP, keep that balance through the pre-presale snapshot, submit your Sol wallet, and add the ETH address for allocation.</p>
+          <p>Hold {PRESALE_MIN_HOLDING} HPUMP, keep that balance through the pre-presale snapshot, submit your Sol wallet, and add the ETH address for allocation. The tax-token model uses {TAX_SPLIT_COPY}.</p>
         </div>
         <div className="reward-flow">
           {[
@@ -561,7 +611,7 @@ export function RewardExplanation() {
         </div>
         <div className="share-example">
           {[
-            ["Input", "Creator fees", `${LAUNCH_CADENCE_COPY} launch fuel`],
+            ["Input", "Creator fees", TAX_SPLIT_COPY],
             ["Access", `${PRESALE_MIN_HOLDING} holders`, "presale window opens"],
             ["Receipts", "On-chain", "no fake scoreboard"]
           ].map(([holder, multiplier, copy]) => (
@@ -673,19 +723,52 @@ export function RecentAirdrops() {
 }
 
 export function HolderLookup() {
-  const { firstPresaleAt, snapshotOpensAt, snapshotLocksAt } = usePresaleSchedule();
+  const { now } = useProtocolData();
+  const holders = useHolderData();
+  const { firstPresaleAt, snapshotOpensAt, snapshotLocksAt, firstCoinRevealAt } = usePresaleSchedule();
   const [solWallet, setSolWallet] = useState("");
   const [ethWallet, setEthWallet] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [walletStatus, setWalletStatus] = useState("");
   const cleanSolWallet = solWallet.trim();
   const cleanEthWallet = ethWallet.trim();
   const solLooksValid = SOLANA_ADDRESS_RE.test(cleanSolWallet);
   const ethLooksValid = ETH_ADDRESS_RE.test(cleanEthWallet);
-  const canVerify = solLooksValid && ethLooksValid;
+  const canSubmit = solLooksValid && ethLooksValid;
+  const presaleCountdown = now ? formatLongCountdown(firstPresaleAt - now) : "--:--:--";
+  const revealCountdown = now ? formatLongCountdown(firstCoinRevealAt - now) : "--:--:--";
+  const displayedHolders = holders?.topHolders.slice(0, 8) ?? [];
+  const submittedMatchesTopHolder =
+    submitted && canSubmit && displayedHolders.some((holder) => holder.address === cleanSolWallet);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitted(true);
+  };
+
+  const connectSolWallet = async () => {
+    const provider = getSolanaProvider();
+
+    if (!provider) {
+      setWalletStatus("No Solana wallet extension detected. Paste your Sol wallet manually.");
+      return;
+    }
+
+    try {
+      const response = await provider.connect();
+      const publicKey = response.publicKey?.toBase58?.() ?? response.publicKey?.toString?.() ?? "";
+
+      if (!publicKey) {
+        setWalletStatus("Wallet connected, but no public address was returned. Paste it manually.");
+        return;
+      }
+
+      setSolWallet(publicKey);
+      setSubmitted(false);
+      setWalletStatus("Sol wallet connected read-only. No signature was requested.");
+    } catch {
+      setWalletStatus("Wallet connection was cancelled. You can still paste the Sol wallet manually.");
+    }
   };
 
   return (
@@ -698,9 +781,24 @@ export function HolderLookup() {
             You need {PRESALE_MIN_HOLDING} HPUMP in the Sol wallet at the snapshot. Do not go under that amount before
             the snapshot window, which opens {formatDateTime(snapshotOpensAt)} and locks by {formatDateTime(snapshotLocksAt)}.
           </p>
+          <div className="presale-countdown-grid" aria-label="First coin countdowns">
+            <article>
+              <span>First coin reveal</span>
+              <strong className="countdown-value">{revealCountdown}</strong>
+              <p>Reveal is scheduled {FIRST_COIN_REVEAL_COPY}.</p>
+            </article>
+            <article>
+              <span>First presale opens</span>
+              <strong className="countdown-value">{presaleCountdown}</strong>
+              <p>Only wallets still holding {PRESALE_MIN_HOLDING} HPUMP at lock are eligible.</p>
+            </article>
+          </div>
         </div>
         <form className="lookup-card" onSubmit={handleSubmit}>
-          <p className="lookup-reassurance">No wallet signature required - this only saves your receiving address for the airdrop.</p>
+          <p className="lookup-reassurance">
+            No wallet signature required - connect is read-only and only fills your public Sol address.
+            We suggest using a burner ETH receiving wallet for the first presale allocation.
+          </p>
           <label htmlFor="sol-wallet">Solana wallet holding HPUMP</label>
           <div className="lookup-row">
             <input
@@ -710,7 +808,9 @@ export function HolderLookup() {
               placeholder="Paste Sol wallet"
               spellCheck={false}
             />
+            <button type="button" className="secondary-action" onClick={connectSolWallet}>Connect Sol</button>
           </div>
+          {walletStatus ? <p className="wallet-status">{walletStatus}</p> : null}
           <label htmlFor="eth-wallet">ETH address for presale allocation</label>
           <div className="lookup-row">
             <input
@@ -725,14 +825,28 @@ export function HolderLookup() {
           <div className="verification-grid" aria-label="Presale requirements">
             <span>{PRESALE_MIN_HOLDING} HPUMP minimum</span>
             <span>{SNAPSHOT_WINDOW_COPY}</span>
-            <span>ETH address required</span>
+            <span>{TAX_SPLIT_COPY}</span>
+          </div>
+          <div className="tax-token-strip" aria-label="Tax token mechanics">
+            <article>
+              <span>50%</span>
+              <strong>Launch liquidity</strong>
+            </article>
+            <article>
+              <span>50%</span>
+              <strong>Holder airdrops</strong>
+            </article>
+            <article>
+              <span>2.5M+</span>
+              <strong>Snapshot minimum</strong>
+            </article>
           </div>
           <div className="lookup-result">
             {submitted ? (
               <>
-                <strong>{canVerify ? "Address format saved for presale review" : "Submission needs attention"}</strong>
+                <strong>{canSubmit ? "Address format saved for presale review" : "Submission needs attention"}</strong>
                 <span>
-                  {canVerify
+                  {canSubmit
                     ? `${compactAddress(cleanSolWallet)} is ready for the ${formatDateTime(firstPresaleAt)} presale review. Final eligibility is determined by the live ${PRESALE_MIN_HOLDING} HPUMP snapshot.`
                     : "Enter a valid Solana wallet and a valid 0x ETH address before the snapshot locks."}
                 </span>
@@ -740,6 +854,55 @@ export function HolderLookup() {
             ) : (
               <span>Submit before snapshot. Holding less than {PRESALE_MIN_HOLDING} HPUMP at lock means no presale access.</span>
             )}
+          </div>
+          <div className="presale-holder-list">
+            <div>
+              <strong>Verified wallets</strong>
+              <span>Top HPUMP holders show here with ETH counterpart status. Connected rows upgrade to Verified HPumper.</span>
+            </div>
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Sol wallet</th>
+                    <th>{SOURCE_SYMBOL} held</th>
+                    <th>ETH receiver</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {submitted && canSubmit && !submittedMatchesTopHolder ? (
+                    <tr className="verified-holder-row">
+                      <td>Pending</td>
+                      <td>{compactAddress(cleanSolWallet)}</td>
+                      <td>Awaiting live holder match</td>
+                      <td>{compactAddress(cleanEthWallet)}</td>
+                      <td>Verified HPumper</td>
+                    </tr>
+                  ) : null}
+                  {displayedHolders.length ? (
+                    displayedHolders.map((holder) => {
+                      const isVerified = submitted && canSubmit && holder.address === cleanSolWallet;
+                      return (
+                        <tr className={isVerified ? "verified-holder-row" : undefined} key={holder.address}>
+                          <td>#{holder.rank}</td>
+                          <td>{compactAddress(holder.address)}</td>
+                          <td>{formatNumber(holder.balance, 0)}</td>
+                          <td>{isVerified ? compactAddress(cleanEthWallet) : "Not connected"}</td>
+                          <td>{isVerified ? "Verified HPumper" : "HPUMP holder"}</td>
+                        </tr>
+                      );
+                    })
+                  ) : null}
+                  {!displayedHolders.length && !(submitted && canSubmit) ? (
+                    <tr>
+                      <td className="placeholder-cell" colSpan={5}>Awaiting live top-holder data.</td>
+                    </tr>
+                  ) : null}
+                </tbody>
+              </table>
+            </div>
           </div>
         </form>
       </div>
