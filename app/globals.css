@@ -912,6 +912,7 @@ tbody tr:hover {
 
 .lookup-card input {
   min-width: 0;
+  min-height: 54px;
   border: 1px solid rgba(198, 255, 0, 0.18);
   border-radius: 10px;
   background: rgba(2, 4, 0, 0.8);
@@ -919,10 +920,31 @@ tbody tr:hover {
   padding: 0 14px;
 }
 
+.verification-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.verification-grid span {
+  border: 1px solid rgba(198, 255, 0, 0.18);
+  border-radius: 10px;
+  background: rgba(198, 255, 0, 0.045);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1.25;
+  padding: 12px;
+  text-transform: uppercase;
+}
+
 .lookup-result {
   display: grid;
   gap: 6px;
+  border-top: 1px solid rgba(198, 255, 0, 0.14);
   color: var(--faint);
+  padding-top: 14px;
 }
 
 .lookup-result strong {
@@ -1051,6 +1073,10 @@ tbody tr:hover {
   }
 
   .lookup-row {
+    grid-template-columns: 1fr;
+  }
+
+  .verification-grid {
     grid-template-columns: 1fr;
   }
 

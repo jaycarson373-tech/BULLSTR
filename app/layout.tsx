@@ -3,7 +3,7 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hoodstrategy.xyz";
-const SITE_DESCRIPTION = "Hood Pump uses creator fees to launch a token on Robin Hood every week, with 1M+ HPUMP holders getting presale access.";
+const SITE_DESCRIPTION = "Hood Pump uses creator fees to launch a token on Robin Hood every week, with 2.5M+ HPUMP holders getting presale access after the pre-launch snapshot.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

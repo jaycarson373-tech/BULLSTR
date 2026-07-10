@@ -6,8 +6,10 @@ X: `https://x.com/HoodStrategySol`
 Hood Pump is the HPUMP holder access site:
 
 - Creator fees fund a new Robin Hood token launch every week.
-- Holders with 1M+ HPUMP get presale access.
-- Live sections track the launch countdown, access records, holders, wallet holdings, and on-chain receipts.
+- Holders with 2.5M+ HPUMP get presale access.
+- The first presale defaults to 24 hours from page load unless `NEXT_PUBLIC_FIRST_PRESALE_AT` is set.
+- The eligibility snapshot runs 2-4 hours before presale; wallets must not drop under 2.5M HPUMP before lock.
+- Live sections track the launch countdown, wallet verification, access records, holders, wallet holdings, and on-chain receipts.
 - The dashboard reads settled windows, payouts, holders, wallet holdings, and recent records from Supabase.
 
 The site should feel fast, neon, and unmistakably Hood Pump.
@@ -16,7 +18,7 @@ The site should feel fast, neon, and unmistakably Hood Pump.
 
 1. Claim creator fees into the treasury.
 2. Snapshot source-token holders with at least `ELIGIBILITY_MIN`.
-3. Use `ELIGIBILITY_MIN=1000000` for 1M+ HPUMP presale access.
+3. Use `ELIGIBILITY_MIN=2500000` for 2.5M+ HPUMP presale access.
 4. Route creator fees into the weekly Robin Hood launch pool.
 5. Store windows, snapshots, launch pools, wallet holdings, and records in Supabase.
 
@@ -50,7 +52,7 @@ NEXT_PUBLIC_BUY_URL=https://pump.fun/coin/3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc
 NEXT_PUBLIC_DEXSCREENER_URL=https://dexscreener.com/solana/3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
 NEXT_PUBLIC_HOOD_CHART_URL=https://dexscreener.com/solana/3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
 NEXT_PUBLIC_HOOD_CHART_EMBED_URL=<OPTIONAL_DEXSCREENER_EMBED_URL>
-NEXT_PUBLIC_FIRST_AIRDROP_AT=<OPTIONAL_ISO_TIME>
+NEXT_PUBLIC_FIRST_PRESALE_AT=<OPTIONAL_ISO_TIME>
 
 NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<SUPABASE_ANON_KEY>
@@ -68,7 +70,7 @@ BUY_ENABLED=false
 AIRDROP_ENABLED=false
 
 EPOCH_MINUTES=5
-ELIGIBILITY_MIN=1000000
+ELIGIBILITY_MIN=2500000
 MAX_WALLETS_PER_EPOCH=200
 MAX_HOLDER_PCT=5
 EXCLUDE_WALLETS=

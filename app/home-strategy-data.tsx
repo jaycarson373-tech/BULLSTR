@@ -89,7 +89,13 @@ const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HPUMP";
 const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || DEFAULT_CA;
 const HOOD_CHART_URL = process.env.NEXT_PUBLIC_HOOD_CHART_URL?.trim() || process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || (CA ? `https://dexscreener.com/solana/${CA}` : "https://dexscreener.com/solana");
 const HOOD_CHART_EMBED_URL = process.env.NEXT_PUBLIC_HOOD_CHART_EMBED_URL?.trim() || "";
-const RUNNER_PICK_INTERVAL_MS = 2 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+const HOUR_MS = 60 * 60 * 1000;
+const PRESALE_MIN_HOLDING = "2.5M+";
+const PRESALE_MIN_HOLDING_RAW = 2_500_000;
+const FIRST_PRESALE_AT = process.env.NEXT_PUBLIC_FIRST_PRESALE_AT?.trim() || "";
+const SOLANA_ADDRESS_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+const ETH_ADDRESS_RE = /^0x[a-fA-F0-9]{40}$/;
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -153,6 +159,18 @@ function formatDate(value: string) {
   return Number.isNaN(date.getTime()) ? "Awaiting" : date.toLocaleString();
 }
 
+function formatDateTime(value: number) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? "Awaiting schedule"
+    : date.toLocaleString(undefined, {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit"
+      });
+}
+
 function formatCountdown(ms: number) {
   const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
   const minutes = Math.floor(totalSeconds / 60);
@@ -166,6 +184,11 @@ function formatLongCountdown(ms: number) {
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
   return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+}
+
+function firstPresaleTime() {
+  const configured = FIRST_PRESALE_AT ? Date.parse(FIRST_PRESALE_AT) : 0;
+  return Number.isFinite(configured) && configured > Date.now() ? configured : Date.now() + DAY_MS;
 }
 
 function statusLabel(status: string) {
@@ -251,20 +274,27 @@ export function useProtocolData() {
   return { stats, now };
 }
 
+function usePresaleSchedule() {
+  const [firstPresaleAt] = useState(firstPresaleTime);
+  const snapshotOpensAt = firstPresaleAt - 4 * HOUR_MS;
+  const snapshotLocksAt = firstPresaleAt - 2 * HOUR_MS;
+
+  return { firstPresaleAt, snapshotOpensAt, snapshotLocksAt };
+}
+
 export function HeroCountdown() {
   const { stats, now } = useProtocolData();
-  const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
-  const countdown = nextDropTime && now ? formatCountdown(nextDropTime - now) : "--:--";
-  const totalDistributed = stats ? formatRewardTotals(stats.totalRewardTotals, "Awaiting first launch") : "Awaiting first launch";
+  const { firstPresaleAt, snapshotOpensAt, snapshotLocksAt } = usePresaleSchedule();
+  const countdown = firstPresaleAt && now ? formatLongCountdown(firstPresaleAt - now) : "--:--:--";
   const hpumpDeployed = stats ? rewardTotalAmount(stats.totalRewardTotals, REWARD_SYMBOL) : 0;
 
   return (
     <div className="hero-countdown" aria-live="polite">
-      <span>Next Weekly Launch</span>
+      <span>First Presale Opens In</span>
       <strong className="countdown-value">{countdown}</strong>
       <div className="hero-total-distributed">
-        <span>{`Total $${REWARD_SYMBOL} Deployed`}</span>
-        <b><AnimatedStat value={totalDistributed} /></b>
+        <span>Snapshot Window</span>
+        <b>{formatDateTime(snapshotOpensAt)} - {formatDateTime(snapshotLocksAt)}</b>
       </div>
       <div className="hero-mini-dashboard">
         <div>
@@ -276,12 +306,12 @@ export function HeroCountdown() {
           <b><AnimatedStat value="0" /></b>
         </div>
         <div>
-          <span>Total Windows</span>
-          <b><AnimatedStat value={stats ? formatCount(stats.totalEpochs) : "0"} /></b>
+          <span>Minimum Hold</span>
+          <b>{PRESALE_MIN_HOLDING}</b>
         </div>
         <div>
-          <span>1M+ Holders</span>
-          <b><AnimatedStat value="0" /></b>
+          <span>Do Not Drop Below</span>
+          <b>{PRESALE_MIN_HOLDING}</b>
         </div>
       </div>
     </div>
@@ -290,9 +320,9 @@ export function HeroCountdown() {
 
 export function LiveProtocolDashboard() {
   const { stats, now } = useProtocolData();
+  const { firstPresaleAt, snapshotOpensAt, snapshotLocksAt } = usePresaleSchedule();
   const rounds = stats?.roundHistory ?? [];
-  const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
-  const countdown = nextDropTime && now ? formatCountdown(nextDropTime - now) : "--:--";
+  const countdown = firstPresaleAt && now ? formatLongCountdown(firstPresaleAt - now) : "--:--:--";
   const latestRound = rounds[0];
   const totalRewardAirdropped = stats ? rewardTotalAmount(stats.totalRewardTotals, REWARD_SYMBOL) : 0;
   const totalRewardBought = rounds.reduce((sum, round) => sum + (Number.isFinite(round.rewardBought) ? round.rewardBought : 0), 0);
@@ -309,9 +339,9 @@ export function LiveProtocolDashboard() {
           <MetricCard label="Creator Fees Routed" value={totalRewardBought > 0 ? formatAmount(totalRewardBought, REWARD_SYMBOL, 4) : "Awaiting live routing"} strong />
           <MetricCard label="Weekly Launch Pool" value={totalRewardAirdropped > 0 ? formatAmount(totalRewardAirdropped, REWARD_SYMBOL, 2) : stats ? formatRewardTotals(stats.totalRewardTotals, "Awaiting live routing") : "Loading"} />
           <MetricCard label="Last Window" value={latestRound ? `#${latestRound.epoch} ${statusLabel(latestRound.status)}` : "Awaiting window"} />
-          <MetricCard label="Next Launch Timer" value={countdown} />
-          <MetricCard label="1M+ Holders" value="0" />
-          <MetricCard label="Recent TX" value={latestRound?.txSig ? compactAddress(latestRound.txSig) : "Awaiting tx"} muted />
+          <MetricCard label="First Presale Timer" value={countdown} />
+          <MetricCard label="Snapshot Window" value={`${formatDateTime(snapshotOpensAt)} - ${formatDateTime(snapshotLocksAt)}`} />
+          <MetricCard label="Minimum Hold" value={`${PRESALE_MIN_HOLDING} ${SOURCE_SYMBOL}`} muted />
         </div>
       </div>
     </section>
@@ -394,8 +424,8 @@ export function RobinhoodHoldingsPanel() {
 
 export function RobinhoodRunnerPanel() {
   const { now } = useProtocolData();
-  const nextRunnerPickAt = Math.ceil(now / RUNNER_PICK_INTERVAL_MS) * RUNNER_PICK_INTERVAL_MS;
-  const runnerCountdown = now ? formatLongCountdown(nextRunnerPickAt - now) : "--:--:--";
+  const { firstPresaleAt, snapshotOpensAt, snapshotLocksAt } = usePresaleSchedule();
+  const runnerCountdown = now ? formatLongCountdown(firstPresaleAt - now) : "--:--:--";
 
   return (
     <section className="section runner-section" id="runners">
@@ -403,24 +433,24 @@ export function RobinhoodRunnerPanel() {
         <div className="section-kicker live-kicker"><span>Robin Hood launches</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>Launch pool, presale clock, receipts.</h2>
-          <p>The Robin Hood side shows the tracked weekly launch pool, the next access window, and exactly when 1M+ holders can enter presale.</p>
+          <p>The Robin Hood side shows the tracked weekly launch pool, the first presale clock, and exactly when {PRESALE_MIN_HOLDING} holders can enter.</p>
         </div>
         <div className="runner-layout">
           <div className="runner-countdown-card">
             <span>Next presale window</span>
             <strong className="countdown-value">{runnerCountdown}</strong>
-            <p>1M+ HPUMP holders get presale access when the weekly window opens.</p>
+            <p>Snapshot runs 2-4 hours before the presale. Hold at least {PRESALE_MIN_HOLDING} HPUMP and do not go below before it locks.</p>
           </div>
           <div className="runner-position-grid">
             <article className="runner-position-card">
-              <span>Launch pool</span>
-              <strong>Awaiting live routing</strong>
-              <b><AnimatedStat value="0" /></b>
+              <span>Snapshot opens</span>
+              <strong>{formatDateTime(snapshotOpensAt)}</strong>
+              <b>2-4H before</b>
             </article>
             <article className="runner-position-card">
-              <span>Presale access</span>
-              <strong>1M+ HPUMP required</strong>
-              <b><AnimatedStat value="0" /></b>
+              <span>Snapshot locks</span>
+              <strong>{formatDateTime(snapshotLocksAt)}</strong>
+              <b>{PRESALE_MIN_HOLDING} HPUMP required</b>
             </article>
           </div>
         </div>
@@ -438,7 +468,7 @@ export function RobinhoodRunnerPanel() {
                 <tr>
                   <td>Awaiting wallet</td>
                   <td>Presale access</td>
-                  <td>Awaiting weekly launch window</td>
+                  <td>Verify Sol wallet and add ETH destination before snapshot</td>
                 </tr>
               </tbody>
             </table>
@@ -474,10 +504,10 @@ export function PermanentEligibility() {
       <div className="container warning-layout">
         <div>
           <div className="section-kicker">Eligibility</div>
-          <h2>{`Hold 1M+ $${SOURCE_SYMBOL} and get presale access.`}</h2>
+          <h2>{`Hold ${PRESALE_MIN_HOLDING} $${SOURCE_SYMBOL} and get presale access.`}</h2>
         </div>
         <div className="eligibility-flow">
-          {["Hold 1M+", "Creator fees", "Weekly launch pool", "Presale access", "On-chain receipt"].map((item, index) => (
+          {[`Hold ${PRESALE_MIN_HOLDING}`, "Verify Sol wallet", "Add ETH address", "Snapshot 2-4H before", "Presale access"].map((item, index) => (
             <article className="eligibility-card" key={item}>
               <span>{index + 1}</span>
               <strong>{item}</strong>
@@ -495,14 +525,14 @@ export function RewardExplanation() {
       <div className="container">
           <div className="section-kicker">How it works</div>
         <div className="section-head split-head">
-          <h2>Three steps. Hold HPUMP, let creator fees launch.</h2>
-          <p>Hold 1M+ HPUMP, let creator fees build the weekly Robin Hood launch pool, and get presale access when the window opens.</p>
+          <h2>Three steps. Hold HPUMP, verify, enter presale.</h2>
+          <p>Hold {PRESALE_MIN_HOLDING} HPUMP, keep that balance through the 2-4 hour pre-presale snapshot, verify your Sol wallet, and add the ETH address for allocation.</p>
         </div>
         <div className="reward-flow">
           {[
-            `Hold 1M+ $${SOURCE_SYMBOL}`,
-            "Creator fees route",
-            "Presale access opens"
+            `Hold ${PRESALE_MIN_HOLDING} $${SOURCE_SYMBOL}`,
+            "Verify Sol + ETH",
+            "Snapshot locks access"
           ].map((item) => (
             <article className="reward-flow-card" key={item}>
               <strong>{item}</strong>
@@ -512,7 +542,7 @@ export function RewardExplanation() {
         <div className="share-example">
           {[
             ["Input", "Creator fees", "weekly launch fuel"],
-            ["Access", "1M+ holders", "presale window opens"],
+            ["Access", `${PRESALE_MIN_HOLDING} holders`, "presale window opens"],
             ["Receipts", "On-chain", "no fake scoreboard"]
           ].map(([holder, multiplier, copy]) => (
             <article className="share-card" key={holder}>
@@ -623,43 +653,71 @@ export function RecentAirdrops() {
 }
 
 export function HolderLookup() {
-  const [wallet, setWallet] = useState("");
+  const { firstPresaleAt, snapshotOpensAt, snapshotLocksAt } = usePresaleSchedule();
+  const [solWallet, setSolWallet] = useState("");
+  const [ethWallet, setEthWallet] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const cleanSolWallet = solWallet.trim();
+  const cleanEthWallet = ethWallet.trim();
+  const solLooksValid = SOLANA_ADDRESS_RE.test(cleanSolWallet);
+  const ethLooksValid = ETH_ADDRESS_RE.test(cleanEthWallet);
+  const canVerify = solLooksValid && ethLooksValid;
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSubmitted(Boolean(wallet.trim()));
+    setSubmitted(true);
   };
 
   return (
     <section className="section lookup-section" id="lookup">
       <div className="container split-section">
         <div>
-          <div className="section-kicker">Holder lookup</div>
-          <h2>Check your Hood Pump status.</h2>
+          <div className="section-kicker">Presale verification</div>
+          <h2>Verify your Sol wallet. Add your ETH destination.</h2>
           <p className="lead">
-            Wallet-level status uses the live holder-state tracker after the first tracked launch window.
+            You need {PRESALE_MIN_HOLDING} HPUMP in the Sol wallet at the snapshot. Do not go under that amount before
+            the snapshot window, which opens {formatDateTime(snapshotOpensAt)} and locks by {formatDateTime(snapshotLocksAt)}.
           </p>
         </div>
         <form className="lookup-card" onSubmit={handleSubmit}>
-          <label htmlFor="wallet">Wallet address</label>
+          <label htmlFor="sol-wallet">Solana wallet holding HPUMP</label>
           <div className="lookup-row">
             <input
-              id="wallet"
-              value={wallet}
-              onChange={(event) => setWallet(event.target.value)}
-              placeholder="Paste wallet address"
+              id="sol-wallet"
+              value={solWallet}
+              onChange={(event) => setSolWallet(event.target.value)}
+              placeholder="Paste Sol wallet"
+              spellCheck={false}
             />
-            <button type="submit">Lookup</button>
+          </div>
+          <label htmlFor="eth-wallet">ETH address for presale allocation</label>
+          <div className="lookup-row">
+            <input
+              id="eth-wallet"
+              value={ethWallet}
+              onChange={(event) => setEthWallet(event.target.value)}
+              placeholder="0x..."
+              spellCheck={false}
+            />
+            <button type="submit">Verify</button>
+          </div>
+          <div className="verification-grid" aria-label="Presale requirements">
+            <span>{PRESALE_MIN_HOLDING} HPUMP minimum</span>
+            <span>Snapshot 2-4H before presale</span>
+            <span>ETH address required</span>
           </div>
           <div className="lookup-result">
             {submitted ? (
               <>
-                <strong>{compactAddress(wallet)}</strong>
-                <span>Awaiting live backend integration for wallet-level Hood Pump status.</span>
+                <strong>{canVerify ? "Format verified for presale review" : "Verification needs attention"}</strong>
+                <span>
+                  {canVerify
+                    ? `${compactAddress(cleanSolWallet)} is ready for the ${formatDateTime(firstPresaleAt)} presale review. Final eligibility is determined by the live ${PRESALE_MIN_HOLDING} HPUMP snapshot.`
+                    : "Enter a valid Solana wallet and a valid 0x ETH address before the snapshot locks."}
+                </span>
               </>
             ) : (
-              <span>Enter a wallet to check eligibility once lookup integration is live.</span>
+              <span>Verify before snapshot. Holding less than {PRESALE_MIN_HOLDING} HPUMP at lock means no presale access.</span>
             )}
           </div>
         </form>

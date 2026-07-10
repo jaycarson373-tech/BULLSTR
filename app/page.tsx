@@ -68,8 +68,8 @@ export default function Page() {
               </h1>
               <p className="hero-subtitle">Creator fees fund a fresh Robin Hood token launch every week.</p>
               <p className="hero-lead">
-                Hood Pump routes creator fees into weekly launch rails. Holders with 1M+ HPUMP get presale
-                access, live countdowns, launch receipts, and the holder board kept on the page.
+                Hood Pump routes creator fees into weekly launch rails. Holders with 2.5M+ HPUMP get presale
+                access, with the first window opening in 1 day and the snapshot locking 2-4 hours before it goes live.
               </p>
               <div className="hero-actions">
                 <a className="cta" href={BUY_URL} target="_blank" rel="noreferrer">
@@ -87,8 +87,8 @@ export default function Page() {
             <div className="section-head split-head">
               <h2>All creator fees go toward launching a token on Robin Hood every week.</h2>
               <p>
-                Hood Pump keeps the launch path obvious: fees build the weekly launch pool, 1M+ HPUMP
-                holders get presale access, and live sections track countdowns, receipts, and holder status.
+                Hood Pump keeps the launch path obvious: fees build the weekly launch pool, 2.5M+ HPUMP
+                holders get presale access, and live sections track countdowns, wallet verification, receipts, and holder status.
               </p>
             </div>
             <div className="hood-rail-grid">
@@ -98,9 +98,9 @@ export default function Page() {
                 <p>Creator fees are routed into the weekly Robin Hood launch engine instead of fake scoreboard numbers.</p>
               </article>
               <article>
-                <span>1M+</span>
+                <span>2.5M+</span>
                 <strong>Holder Presale Access</strong>
-                <p>Wallets holding at least 1M HPUMP qualify for presale access when each weekly launch window opens.</p>
+                <p>Wallets holding at least 2.5M HPUMP qualify only if they stay above the minimum through the 2-4 hour pre-presale snapshot.</p>
               </article>
             </div>
           </div>
