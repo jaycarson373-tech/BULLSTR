@@ -312,6 +312,10 @@ export function HeroCountdown() {
         <b>{formatDateTime(snapshotOpensAt)} - {formatDateTime(snapshotLocksAt)}</b>
       </div>
       <div className="hero-mini-dashboard">
+        <div className="treasury-mini-card">
+          <span>Treasury Balance</span>
+          <b>0 SOL</b>
+        </div>
         <div>
           <span>{REWARD_SYMBOL} Deployed</span>
           <b><AnimatedStat value={hpumpDeployed > 0 ? `${formatNumber(hpumpDeployed, 2)} ${REWARD_SYMBOL}` : "0"} /></b>
