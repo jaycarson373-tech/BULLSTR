@@ -1,7 +1,7 @@
 # Hood Pump
 
-Contract address: `3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump`
-X: `https://x.com/HoodStrategySol`
+Contract address: `HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump`
+X: `https://x.com/HoodPump_`
 
 Hood Pump is the HPUMP holder access site:
 
@@ -45,12 +45,12 @@ Copy `.env.example` and fill in the live mints and keys.
 NEXT_PUBLIC_PROJECT_NAME="Hood Pump"
 NEXT_PUBLIC_SOURCE_SYMBOL=HPUMP
 NEXT_PUBLIC_REWARD_SYMBOL=HPUMP
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
-NEXT_PUBLIC_CA=3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
-NEXT_PUBLIC_X_URL=https://x.com/HoodStrategySol
-NEXT_PUBLIC_BUY_URL=https://pump.fun/coin/3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
-NEXT_PUBLIC_DEXSCREENER_URL=https://dexscreener.com/solana/3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
-NEXT_PUBLIC_HOOD_CHART_URL=https://dexscreener.com/solana/3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
+NEXT_PUBLIC_SOURCE_TOKEN_MINT=HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump
+NEXT_PUBLIC_CA=HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump
+NEXT_PUBLIC_X_URL=https://x.com/HoodPump_
+NEXT_PUBLIC_BUY_URL=https://pump.fun/coin/HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump
+NEXT_PUBLIC_DEXSCREENER_URL=https://dexscreener.com/solana/HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump
+NEXT_PUBLIC_HOOD_CHART_URL=https://dexscreener.com/solana/HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump
 NEXT_PUBLIC_HOOD_CHART_EMBED_URL=<OPTIONAL_DEXSCREENER_EMBED_URL>
 NEXT_PUBLIC_LAUNCH_CADENCE_DAYS=7
 NEXT_PUBLIC_SNAPSHOT_OPENS_HOURS_BEFORE=4
@@ -64,7 +64,7 @@ SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
 
 REWARD_MODE=token
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump
+SOURCE_TOKEN_MINT=HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump
 REWARD_TOKEN_MINT=<REWARD_TOKEN_MINT>
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET>
 

@@ -111,7 +111,7 @@ const emptyStats: StatsResponse = {
 };
 
 const REFRESH_MS = 12_000;
-const DEFAULT_CA = "3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump";
+const DEFAULT_CA = "HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HPUMP";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HPUMP";
 const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || DEFAULT_CA;

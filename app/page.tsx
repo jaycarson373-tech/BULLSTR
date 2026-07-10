@@ -18,8 +18,8 @@ import {
   TAX_SPLIT_COPY
 } from "./hood-pump-config";
 
-const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/HoodStrategySol";
-const DEFAULT_CA = "3kB163vCjwSFxUPj2zTyTaRPqmCRoQ4wLwa7kc7fpump";
+const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/HoodPump_";
+const DEFAULT_CA = "HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump";
 const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || DEFAULT_CA;
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim() || (CA ? `https://pump.fun/coin/${CA}` : "https://pump.fun");
 
