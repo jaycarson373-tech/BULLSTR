@@ -535,6 +535,20 @@ main,
   padding: 12px;
 }
 
+.hero-mini-dashboard .treasury-mini-card {
+  grid-column: 1 / -1;
+  min-height: 96px;
+  border-color: rgba(198, 255, 0, 0.32);
+  background:
+    radial-gradient(circle at 24% 0%, rgba(198, 255, 0, 0.14), transparent 11rem),
+    rgba(2, 4, 0, 0.72);
+}
+
+.treasury-mini-card b {
+  font-size: clamp(2rem, 5vw, 4.2rem);
+  line-height: 0.9;
+}
+
 .section {
   position: relative;
   overflow: hidden;
