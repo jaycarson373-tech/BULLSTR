@@ -101,7 +101,7 @@ h2 {
     radial-gradient(circle at 78% 24%, rgba(0, 255, 188, 0.12), transparent 20rem),
     radial-gradient(circle at 50% 78%, rgba(199, 0, 255, 0.1), transparent 24rem);
   filter: saturate(1.08);
-  opacity: 0.5;
+  opacity: 0.6;
   animation: market-bg-drift 22s ease-in-out infinite alternate;
 }
 
