@@ -1,6 +1,14 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import {
+  LAUNCH_CADENCE_COPY,
+  LAUNCH_POOL_LABEL,
+  SNAPSHOT_LOCKS_HOURS_BEFORE,
+  SNAPSHOT_OPENS_HOURS_BEFORE,
+  SNAPSHOT_TIMING_COPY,
+  SNAPSHOT_WINDOW_COPY
+} from "./hood-pump-config";
 
 type RewardTotal = {
   rewardAsset: string;
@@ -92,7 +100,6 @@ const HOOD_CHART_EMBED_URL = process.env.NEXT_PUBLIC_HOOD_CHART_EMBED_URL?.trim(
 const DAY_MS = 24 * 60 * 60 * 1000;
 const HOUR_MS = 60 * 60 * 1000;
 const PRESALE_MIN_HOLDING = "2.5M+";
-const PRESALE_MIN_HOLDING_RAW = 2_500_000;
 const FIRST_PRESALE_AT = process.env.NEXT_PUBLIC_FIRST_PRESALE_AT?.trim() || "";
 const SOLANA_ADDRESS_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 const ETH_ADDRESS_RE = /^0x[a-fA-F0-9]{40}$/;
@@ -148,6 +155,14 @@ function formatRewardTotals(totals: RewardTotal[] | undefined, empty = "Awaiting
   return liveTotals
     .map((total) => `${formatNumber(total.rewardAmount, rewardDecimals(total.rewardAsset))} ${total.rewardAsset}`)
     .join(" / ");
+}
+
+function isPlaceholderValue(value: string) {
+  return /^(Awaiting|Loading|--)/i.test(value);
+}
+
+function DisplayValue({ value }: { value: string }) {
+  return <span className={isPlaceholderValue(value) ? "placeholder-value" : undefined}>{value}</span>;
 }
 
 function rewardTotalAmount(totals: RewardTotal[] | undefined, asset: string) {
@@ -276,8 +291,8 @@ export function useProtocolData() {
 
 function usePresaleSchedule() {
   const [firstPresaleAt] = useState(firstPresaleTime);
-  const snapshotOpensAt = firstPresaleAt - 4 * HOUR_MS;
-  const snapshotLocksAt = firstPresaleAt - 2 * HOUR_MS;
+  const snapshotOpensAt = firstPresaleAt - SNAPSHOT_OPENS_HOURS_BEFORE * HOUR_MS;
+  const snapshotLocksAt = firstPresaleAt - SNAPSHOT_LOCKS_HOURS_BEFORE * HOUR_MS;
 
   return { firstPresaleAt, snapshotOpensAt, snapshotLocksAt };
 }
@@ -337,7 +352,7 @@ export function LiveProtocolDashboard() {
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
           <MetricCard label="Creator Fees Routed" value={totalRewardBought > 0 ? formatAmount(totalRewardBought, REWARD_SYMBOL, 4) : "Awaiting live routing"} strong />
-          <MetricCard label="Weekly Launch Pool" value={totalRewardAirdropped > 0 ? formatAmount(totalRewardAirdropped, REWARD_SYMBOL, 2) : stats ? formatRewardTotals(stats.totalRewardTotals, "Awaiting live routing") : "Loading"} />
+          <MetricCard label={LAUNCH_POOL_LABEL} value={totalRewardAirdropped > 0 ? formatAmount(totalRewardAirdropped, REWARD_SYMBOL, 2) : stats ? formatRewardTotals(stats.totalRewardTotals, "Awaiting live routing") : "Loading"} />
           <MetricCard label="Last Window" value={latestRound ? `#${latestRound.epoch} ${statusLabel(latestRound.status)}` : "Awaiting window"} />
           <MetricCard label="First Presale Timer" value={countdown} />
           <MetricCard label="Snapshot Window" value={`${formatDateTime(snapshotOpensAt)} - ${formatDateTime(snapshotLocksAt)}`} />
@@ -433,19 +448,19 @@ export function RobinhoodRunnerPanel() {
         <div className="section-kicker live-kicker"><span>Robin Hood launches</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>Launch pool, presale clock, receipts.</h2>
-          <p>The Robin Hood side shows the tracked weekly launch pool, the first presale clock, and exactly when {PRESALE_MIN_HOLDING} holders can enter.</p>
+          <p>The Robin Hood side shows the tracked launch pool, the first presale clock, and exactly when {PRESALE_MIN_HOLDING} holders can enter.</p>
         </div>
         <div className="runner-layout">
           <div className="runner-countdown-card">
             <span>Next presale window</span>
             <strong className="countdown-value">{runnerCountdown}</strong>
-            <p>Snapshot runs 2-4 hours before the presale. Hold at least {PRESALE_MIN_HOLDING} HPUMP and do not go below before it locks.</p>
+            <p>The {SNAPSHOT_WINDOW_COPY} {SNAPSHOT_TIMING_COPY}. Hold at least {PRESALE_MIN_HOLDING} HPUMP and do not go below before it locks.</p>
           </div>
           <div className="runner-position-grid">
             <article className="runner-position-card">
               <span>Snapshot opens</span>
               <strong>{formatDateTime(snapshotOpensAt)}</strong>
-              <b>2-4H before</b>
+              <b>{SNAPSHOT_WINDOW_COPY}</b>
             </article>
             <article className="runner-position-card">
               <span>Snapshot locks</span>
@@ -468,7 +483,7 @@ export function RobinhoodRunnerPanel() {
                 <tr>
                   <td>Awaiting wallet</td>
                   <td>Presale access</td>
-                  <td>Verify Sol wallet and add ETH destination before snapshot</td>
+                  <td>Submit Sol wallet and add ETH destination before snapshot</td>
                 </tr>
               </tbody>
             </table>
@@ -493,7 +508,7 @@ function MetricCard({
   return (
     <article className={strong ? "metric-card metric-card-strong" : muted ? "metric-card metric-card-muted" : "metric-card"}>
       <span>{label}</span>
-      <strong><AnimatedStat value={value} /></strong>
+      <strong>{isPlaceholderValue(value) ? <DisplayValue value={value} /> : <AnimatedStat value={value} />}</strong>
     </article>
   );
 }
@@ -507,7 +522,7 @@ export function PermanentEligibility() {
           <h2>{`Hold ${PRESALE_MIN_HOLDING} $${SOURCE_SYMBOL} and get presale access.`}</h2>
         </div>
         <div className="eligibility-flow">
-          {[`Hold ${PRESALE_MIN_HOLDING}`, "Verify Sol wallet", "Add ETH address", "Snapshot 2-4H before", "Presale access"].map((item, index) => (
+          {[`Hold ${PRESALE_MIN_HOLDING}`, "Submit Sol wallet", "Add ETH address", SNAPSHOT_WINDOW_COPY, "Presale access"].map((item, index) => (
             <article className="eligibility-card" key={item}>
               <span>{index + 1}</span>
               <strong>{item}</strong>
@@ -525,23 +540,24 @@ export function RewardExplanation() {
       <div className="container">
           <div className="section-kicker">How it works</div>
         <div className="section-head split-head">
-          <h2>Three steps. Hold HPUMP, verify, enter presale.</h2>
-          <p>Hold {PRESALE_MIN_HOLDING} HPUMP, keep that balance through the 2-4 hour pre-presale snapshot, verify your Sol wallet, and add the ETH address for allocation.</p>
+          <h2>Three steps. Hold HPUMP, submit addresses, enter presale.</h2>
+          <p>Hold {PRESALE_MIN_HOLDING} HPUMP, keep that balance through the pre-presale snapshot, submit your Sol wallet, and add the ETH address for allocation.</p>
         </div>
         <div className="reward-flow">
           {[
             `Hold ${PRESALE_MIN_HOLDING} $${SOURCE_SYMBOL}`,
-            "Verify Sol + ETH",
+            "Submit Sol + ETH",
             "Snapshot locks access"
-          ].map((item) => (
+          ].map((item, index) => (
             <article className="reward-flow-card" key={item}>
+              <span>{index + 1}</span>
               <strong>{item}</strong>
             </article>
           ))}
         </div>
         <div className="share-example">
           {[
-            ["Input", "Creator fees", "weekly launch fuel"],
+            ["Input", "Creator fees", `${LAUNCH_CADENCE_COPY} launch fuel`],
             ["Access", `${PRESALE_MIN_HOLDING} holders`, "presale window opens"],
             ["Receipts", "On-chain", "no fake scoreboard"]
           ].map(([holder, multiplier, copy]) => (
@@ -579,7 +595,7 @@ export function HoodWalletBoard() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
+                <tr className="placeholder-row">
                   <td>Awaiting wallets</td>
                   <td>0</td>
                   <td>0%</td>
@@ -640,7 +656,7 @@ export function RecentAirdrops() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5}>Awaiting settled presale access records.</td>
+                    <td className="placeholder-cell" colSpan={5}>Awaiting settled presale access records.</td>
                   </tr>
                 )}
               </tbody>
@@ -673,13 +689,14 @@ export function HolderLookup() {
       <div className="container split-section">
         <div>
           <div className="section-kicker">Presale verification</div>
-          <h2>Verify your Sol wallet. Add your ETH destination.</h2>
+          <h2>Submit your Sol wallet. Add your ETH destination.</h2>
           <p className="lead">
             You need {PRESALE_MIN_HOLDING} HPUMP in the Sol wallet at the snapshot. Do not go under that amount before
             the snapshot window, which opens {formatDateTime(snapshotOpensAt)} and locks by {formatDateTime(snapshotLocksAt)}.
           </p>
         </div>
         <form className="lookup-card" onSubmit={handleSubmit}>
+          <p className="lookup-reassurance">No wallet signature required - this only saves your receiving address for the airdrop.</p>
           <label htmlFor="sol-wallet">Solana wallet holding HPUMP</label>
           <div className="lookup-row">
             <input
@@ -699,17 +716,17 @@ export function HolderLookup() {
               placeholder="0x..."
               spellCheck={false}
             />
-            <button type="submit">Verify</button>
+            <button type="submit">Save Address</button>
           </div>
           <div className="verification-grid" aria-label="Presale requirements">
             <span>{PRESALE_MIN_HOLDING} HPUMP minimum</span>
-            <span>Snapshot 2-4H before presale</span>
+            <span>{SNAPSHOT_WINDOW_COPY}</span>
             <span>ETH address required</span>
           </div>
           <div className="lookup-result">
             {submitted ? (
               <>
-                <strong>{canVerify ? "Format verified for presale review" : "Verification needs attention"}</strong>
+                <strong>{canVerify ? "Address format saved for presale review" : "Submission needs attention"}</strong>
                 <span>
                   {canVerify
                     ? `${compactAddress(cleanSolWallet)} is ready for the ${formatDateTime(firstPresaleAt)} presale review. Final eligibility is determined by the live ${PRESALE_MIN_HOLDING} HPUMP snapshot.`
@@ -717,7 +734,7 @@ export function HolderLookup() {
                 </span>
               </>
             ) : (
-              <span>Verify before snapshot. Holding less than {PRESALE_MIN_HOLDING} HPUMP at lock means no presale access.</span>
+              <span>Submit before snapshot. Holding less than {PRESALE_MIN_HOLDING} HPUMP at lock means no presale access.</span>
             )}
           </div>
         </form>
@@ -773,7 +790,7 @@ export function AirdropHistory() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6}>Awaiting settled launch records.</td>
+                    <td className="placeholder-cell" colSpan={6}>Awaiting settled launch records.</td>
                   </tr>
                 )}
               </tbody>
