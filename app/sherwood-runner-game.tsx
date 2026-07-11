@@ -150,7 +150,10 @@ export function SherwoodRunnerGame() {
   return (
     <section className="section sherwood-section" id="sherwood">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>Sherwood run</span><span className="live-dot" /></div>
+        <div className="sherwood-brand-strip">
+          <img src="/brand/sherwood-fire-logo.png" alt="" />
+          <div className="section-kicker live-kicker"><span>Sherwood run</span><span className="live-dot" /></div>
+        </div>
         <div className="section-head split-head">
           <h2>Play the Robin Hood run. Boost the real holder airdrop.</h2>
           <p>
@@ -158,6 +161,7 @@ export function SherwoodRunnerGame() {
             get multiplier weight inside the existing Bullstr/Supabase airdrop worker.
           </p>
         </div>
+        <div className="sherwood-banner" aria-hidden="true" />
         <div className="sherwood-layout">
           <div className="sherwood-game-card">
             <div className="sherwood-hud">
