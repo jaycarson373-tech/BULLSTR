@@ -23,16 +23,36 @@ type LeaderboardRow = {
 
 const SHERWOOD_PRIZE_BPS = [1500, 1000, 900, 800, 700, 700, 600, 600, 600, 500, 500, 500, 400, 400, 300] as const;
 
-function supabaseConfig() {
+function supabaseReadConfig() {
   const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const key =
+    process.env.SUPABASE_SERVICE_ROLE ??
+    process.env.SUPABASE_SERVICE_ROLE_KEY ??
+    process.env.SUPABASE_SERVICE_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) return null;
   return { url, key };
 }
 
-function client() {
-  const config = supabaseConfig();
-  if (!config) throw new Error("Supabase service-role configuration is missing.");
+function supabaseWriteConfig() {
+  const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key =
+    process.env.SUPABASE_SERVICE_ROLE ??
+    process.env.SUPABASE_SERVICE_ROLE_KEY ??
+    process.env.SUPABASE_SERVICE_KEY;
+  if (!url || !key) return null;
+  return { url, key };
+}
+
+function readClient() {
+  const config = supabaseReadConfig();
+  if (!config) throw new Error("Supabase read configuration is missing.");
+  return createClient(config.url, config.key, { auth: { persistSession: false } });
+}
+
+function writeClient() {
+  const config = supabaseWriteConfig();
+  if (!config) throw new Error("Missing SUPABASE_SERVICE_ROLE in the Vercel server environment.");
   return createClient(config.url, config.key, { auth: { persistSession: false } });
 }
 
@@ -61,7 +81,7 @@ function currentSeasonStart() {
   return new Date(Math.floor(Date.now() / seasonMs) * seasonMs).toISOString();
 }
 
-async function leaderboard(db = client()) {
+async function leaderboard(db = readClient()) {
   const { data, error } = await db
     .from("sherwood_runs")
     .select("wallet,player_name,score,distance,created_at")
@@ -138,7 +158,7 @@ export async function POST(request: Request) {
     const distance = Math.max(0, Math.min(999999, Math.floor(Number(body.distance) || 0)));
     const playerName = normalizePlayerName(body.playerName ?? body.name);
     const now = new Date().toISOString();
-    const db = client();
+    const db = writeClient();
 
     const { data: existing, error: existingError } = await db
       .from("sherwood_scores")

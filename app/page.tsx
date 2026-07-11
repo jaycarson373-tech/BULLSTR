@@ -52,7 +52,6 @@ export default function Page() {
             </div>
             <HomeAirdropStats />
             <p className="hero-disclaimer">Cheaters will be blacklisted from all airdrops.</p>
-            <CopyCaChip ca={CA} className="hero-ca-chip" />
             <SherwoodRunnerGame />
           </div>
         </section>
