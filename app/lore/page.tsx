@@ -60,7 +60,7 @@ export default function LorePage() {
               <article className="lore-card">
                 <span>The Wallets</span>
                 <strong>Submit after.</strong>
-                <p>After a run, submit one main Solana wallet and optional extra wallets. Each valid wallet receives the run score.</p>
+                <p>After a run, submit one Solana wallet. That wallet gets the run score and can earn the active 6-hour leaderboard multiplier.</p>
               </article>
               <article className="lore-card">
                 <span>The Board</span>

@@ -44,11 +44,6 @@ function normalizeWallet(value: unknown) {
   }
 }
 
-function normalizeWallets(value: unknown) {
-  const raw = Array.isArray(value) ? value : String(value ?? "").split(/[\n, ]+/);
-  return Array.from(new Set(raw.map(normalizeWallet).filter(Boolean) as string[])).slice(0, 8);
-}
-
 function normalizePlayerName(value: unknown) {
   const name = String(value ?? "").trim().replace(/\s+/g, " ");
   if (!name) return "Outlaw";
@@ -141,9 +136,9 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const wallets = normalizeWallets(body.wallets ?? [body.wallet]);
-    if (!wallets.length) {
-      return NextResponse.json({ error: "Enter at least one valid Solana wallet." }, { status: 400 });
+    const wallet = normalizeWallet(body.wallet ?? (Array.isArray(body.wallets) ? body.wallets[0] : body.wallets));
+    if (!wallet) {
+      return NextResponse.json({ error: "Enter one valid Solana wallet." }, { status: 400 });
     }
 
     const score = Math.max(0, Math.min(999999, Math.floor(Number(body.score) || 0)));
@@ -152,43 +147,41 @@ export async function POST(request: Request) {
     const now = new Date().toISOString();
     const db = client();
 
-    for (const wallet of wallets) {
-      const { data: existing, error: existingError } = await db
-        .from("sherwood_scores")
-        .select("best_score,best_distance,runs")
-        .eq("wallet", wallet)
-        .maybeSingle();
-      if (existingError) throw existingError;
+    const { data: existing, error: existingError } = await db
+      .from("sherwood_scores")
+      .select("best_score,best_distance,runs")
+      .eq("wallet", wallet)
+      .maybeSingle();
+    if (existingError) throw existingError;
 
-      const currentScore = Number(existing?.best_score ?? 0);
-      const currentDistance = Number(existing?.best_distance ?? 0);
-      const nextBestScore = Math.max(currentScore, score);
-      const nextBestDistance = Math.max(currentDistance, distance);
-      const nextRuns = Number(existing?.runs ?? 0) + 1;
+    const currentScore = Number(existing?.best_score ?? 0);
+    const currentDistance = Number(existing?.best_distance ?? 0);
+    const nextBestScore = Math.max(currentScore, score);
+    const nextBestDistance = Math.max(currentDistance, distance);
+    const nextRuns = Number(existing?.runs ?? 0) + 1;
 
-      const { error: scoreError } = await db.from("sherwood_scores").upsert(
-        {
-          wallet,
-          player_name: playerName,
-          best_score: nextBestScore,
-          best_distance: nextBestDistance,
-          runs: nextRuns,
-          updated_at: now
-        },
-        { onConflict: "wallet" }
-      );
-      if (scoreError) throw scoreError;
-
-      const { error: runError } = await db.from("sherwood_runs").insert({
+    const { error: scoreError } = await db.from("sherwood_scores").upsert(
+      {
         wallet,
         player_name: playerName,
-        score,
-        distance
-      });
-      if (runError) throw runError;
-    }
+        best_score: nextBestScore,
+        best_distance: nextBestDistance,
+        runs: nextRuns,
+        updated_at: now
+      },
+      { onConflict: "wallet" }
+    );
+    if (scoreError) throw scoreError;
 
-    return NextResponse.json({ leaderboard: await leaderboard(db), submitted: wallets.length });
+    const { error: runError } = await db.from("sherwood_runs").insert({
+      wallet,
+      player_name: playerName,
+      score,
+      distance
+    });
+    if (runError) throw runError;
+
+    return NextResponse.json({ leaderboard: await leaderboard(db), submitted: 1 });
   } catch (error) {
     console.error("sherwood score submit failed", error);
     return NextResponse.json(

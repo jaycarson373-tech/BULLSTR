@@ -38,9 +38,8 @@ export function SherwoodRunnerGame() {
   const [hud, setHud] = useState<Hud>({ playing: false, finished: false, score: 0, distance: 0, speed: 1 });
   const [playerName, setPlayerName] = useState("");
   const [primaryWallet, setPrimaryWallet] = useState("");
-  const [extraWallets, setExtraWallets] = useState("");
   const [board, setBoard] = useState<BoardRow[]>([]);
-  const [status, setStatus] = useState("Play first, then submit wallets for leaderboard weight.");
+  const [status, setStatus] = useState("Play first, then submit one wallet for leaderboard weight.");
   const [submitting, setSubmitting] = useState(false);
 
   const syncHud = useCallback((force = false) => {
@@ -148,26 +147,25 @@ export function SherwoodRunnerGame() {
       return;
     }
 
-    const wallets = parseWallets(primaryWallet, extraWallets);
-    if (!wallets.length) {
-      setStatus("Paste at least one valid Solana wallet.");
+    const wallet = parseWallet(primaryWallet);
+    if (!wallet) {
+      setStatus("Paste one valid Solana wallet.");
       return;
     }
 
     setSubmitting(true);
-    setStatus(`Submitting ${wallets.length} wallet${wallets.length === 1 ? "" : "s"} to Sherwood...`);
+    setStatus("Submitting score to Sherwood...");
     try {
       const response = await fetch("/api/sherwood", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ wallets, playerName: name, score: hud.score, distance: hud.distance })
+        body: JSON.stringify({ wallet, playerName: name, score: hud.score, distance: hud.distance })
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Sherwood submit failed.");
       setBoard(data.leaderboard ?? []);
       setPlayerName("");
       setPrimaryWallet("");
-      setExtraWallets("");
       setStatus("Saved for the active 6-hour board. If this wallet is a 1M+ holder, its rank can boost the next HoodX drops.");
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Sherwood submit failed.");
@@ -201,7 +199,7 @@ export function SherwoodRunnerGame() {
                 <h3>{hud.finished ? "Run complete" : "Sherwood Run"}</h3>
                 <p>
                   {hud.finished
-                    ? `You collected ${hud.score} gold coins across ${hud.distance}m. Submit wallets to save it.`
+                    ? `You collected ${hud.score} gold coins across ${hud.distance}m. Submit one wallet to save it.`
                     : "Press space, tap, or click to flap. Collect the gold coin in each Sherwood tree gate."}
                 </p>
                 <button type="button" className="cta">{hud.finished ? "Run again" : "Start run"}</button>
@@ -230,15 +228,6 @@ export function SherwoodRunnerGame() {
             value={primaryWallet}
             onChange={(event) => setPrimaryWallet(event.target.value)}
             placeholder="Paste Solana wallet"
-            spellCheck={false}
-          />
-          <label htmlFor="sherwood-extra-wallets">Extra wallets</label>
-          <textarea
-            id="sherwood-extra-wallets"
-            value={extraWallets}
-            onChange={(event) => setExtraWallets(event.target.value)}
-            placeholder="Optional: one per line"
-            rows={3}
             spellCheck={false}
           />
           <button type="button" className="cta" disabled={submitting} onClick={submitRun}>Submit score</button>
@@ -400,8 +389,9 @@ async function loadLeaderboard() {
   return (data.leaderboard ?? []) as BoardRow[];
 }
 
-function parseWallets(primary: string, extras: string) {
-  return Array.from(new Set([primary, ...extras.split(/[\n, ]+/)].map((wallet) => wallet.trim()).filter((wallet) => SOLANA_ADDRESS_RE.test(wallet)))).slice(0, 8);
+function parseWallet(wallet: string) {
+  const trimmed = wallet.trim();
+  return SOLANA_ADDRESS_RE.test(trimmed) ? trimmed : "";
 }
 
 function compactAddress(address: string) {
