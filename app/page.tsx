@@ -20,6 +20,10 @@ function MainNav() {
           <a href="/lore">Lore</a>
         </nav>
         <div className="nav-actions">
+          <a className="ca-chip nav-ca-chip" href={`https://dexscreener.com/solana/${CA}`} target="_blank" rel="noreferrer" aria-label="Open Sherwood Run contract address on DexScreener">
+            <span>CA</span>
+            <b>{CA}</b>
+          </a>
           <a className="mini-button x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open X community">
             X
           </a>

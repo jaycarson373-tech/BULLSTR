@@ -568,6 +568,21 @@ main,
   white-space: nowrap;
 }
 
+.nav-ca-chip {
+  max-width: 188px;
+  min-height: 42px;
+  border-radius: 4px;
+  padding: 0 10px;
+}
+
+.nav-ca-chip span {
+  font-size: 0.62rem;
+}
+
+.nav-ca-chip b {
+  font-size: 0.68rem;
+}
+
 .hero {
   position: relative;
   display: grid;

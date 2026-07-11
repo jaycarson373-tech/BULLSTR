@@ -1,3 +1,5 @@
+const DEFAULT_CA = "E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump";
+const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || DEFAULT_CA;
 const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/SherwoodRun";
 
 function SubpageNav() {
@@ -14,6 +16,10 @@ function SubpageNav() {
           <a href="/leaderboard">Leaderboard</a>
           <a href="/lore">Lore</a>
         </nav>
+        <a className="ca-chip nav-ca-chip" href={`https://dexscreener.com/solana/${CA}`} target="_blank" rel="noreferrer" aria-label="Open Sherwood Run contract address on DexScreener">
+          <span>CA</span>
+          <b>{CA}</b>
+        </a>
         <a className="mini-button x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open X community">
           X
         </a>
