@@ -532,6 +532,7 @@ main,
 }
 
 .ca-chip {
+  appearance: none;
   display: inline-flex;
   max-width: min(46vw, 420px);
   min-height: 50px;
@@ -542,6 +543,8 @@ main,
   border-radius: 12px;
   background: rgba(2, 4, 0, 0.72);
   color: var(--text);
+  cursor: pointer;
+  font: inherit;
   padding: 0 14px;
   box-shadow: 0 0 28px rgba(198, 255, 0, 0.1);
   transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;

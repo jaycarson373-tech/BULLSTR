@@ -1,3 +1,4 @@
+import { CopyCaChip } from "./ca-copy-chip";
 import { HomeAirdropStats } from "./home-strategy-data";
 import { HowItWorksPrompt, SherwoodRunnerGame } from "./sherwood-runner-game";
 
@@ -20,10 +21,7 @@ function MainNav() {
           <a href="/lore">Lore</a>
         </nav>
         <div className="nav-actions">
-          <a className="ca-chip nav-ca-chip" href={`https://dexscreener.com/solana/${CA}`} target="_blank" rel="noreferrer" aria-label="Open Sherwood Run contract address on DexScreener">
-            <span>CA</span>
-            <b>{CA}</b>
-          </a>
+          <CopyCaChip ca={CA} className="nav-ca-chip" />
           <a className="mini-button x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open X community">
             X
           </a>
@@ -54,10 +52,7 @@ export default function Page() {
             </div>
             <HomeAirdropStats />
             <p className="hero-disclaimer">Cheaters will be blacklisted from all airdrops.</p>
-            <a className="ca-chip hero-ca-chip" href={`https://dexscreener.com/solana/${CA}`} target="_blank" rel="noreferrer" aria-label="Open Sherwood Run contract address on DexScreener">
-              <span>CA</span>
-              <b>{CA}</b>
-            </a>
+            <CopyCaChip ca={CA} className="hero-ca-chip" />
             <SherwoodRunnerGame />
           </div>
         </section>

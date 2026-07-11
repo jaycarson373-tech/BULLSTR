@@ -1,3 +1,4 @@
+import { CopyCaChip } from "../ca-copy-chip";
 import { SherwoodLeaderboard } from "../sherwood-runner-game";
 
 const DEFAULT_CA = "E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump";
@@ -18,10 +19,7 @@ function SubpageNav() {
           <a href="/leaderboard">Leaderboard</a>
           <a href="/lore">Lore</a>
         </nav>
-        <a className="ca-chip nav-ca-chip" href={`https://dexscreener.com/solana/${CA}`} target="_blank" rel="noreferrer" aria-label="Open Sherwood Run contract address on DexScreener">
-          <span>CA</span>
-          <b>{CA}</b>
-        </a>
+        <CopyCaChip ca={CA} className="nav-ca-chip" />
         <a className="mini-button x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open X community">
           X
         </a>
