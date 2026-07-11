@@ -535,6 +535,20 @@ main,
   padding: 12px;
 }
 
+.hero-mini-dashboard .treasury-mini-card {
+  grid-column: 1 / -1;
+  min-height: 96px;
+  border-color: rgba(198, 255, 0, 0.32);
+  background:
+    radial-gradient(circle at 24% 0%, rgba(198, 255, 0, 0.14), transparent 11rem),
+    rgba(2, 4, 0, 0.72);
+}
+
+.treasury-mini-card b {
+  font-size: clamp(2rem, 5vw, 4.2rem);
+  line-height: 0.9;
+}
+
 .section {
   position: relative;
   overflow: hidden;
@@ -570,7 +584,9 @@ main,
 .share-example,
 .dashboard-grid,
 .robinhood-holdings-card,
-.runner-position-grid {
+.runner-position-grid,
+.presale-countdown-grid,
+.tax-token-strip {
   display: grid;
   gap: 18px;
 }
@@ -616,6 +632,15 @@ main,
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.presale-countdown-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 28px;
+}
+
+.tax-token-strip {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .robinhood-holdings-card {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
@@ -629,7 +654,9 @@ main,
 .robinhood-holdings-card div,
 .hood-chart-card,
 .runner-countdown-card,
-.runner-position-card {
+.runner-position-card,
+.presale-countdown-grid article,
+.tax-token-strip article {
   position: relative;
   border: 1px solid rgba(198, 255, 0, 0.24);
   border-radius: 16px;
@@ -663,7 +690,9 @@ main,
 .robinhood-holdings-card div:hover,
 .hood-chart-card:hover,
 .runner-countdown-card:hover,
-.runner-position-card:hover {
+.runner-position-card:hover,
+.presale-countdown-grid article:hover,
+.tax-token-strip article:hover {
   border-color: rgba(198, 255, 0, 0.58);
   background:
     radial-gradient(circle at 50% 0%, rgba(198, 255, 0, 0.12), transparent 12rem),
@@ -699,7 +728,9 @@ main,
 .reward-flow-card,
 .robinhood-holdings-card div,
 .runner-countdown-card,
-.runner-position-card {
+.runner-position-card,
+.presale-countdown-grid article,
+.tax-token-strip article {
   display: grid;
   min-height: 158px;
   align-content: space-between;
@@ -712,7 +743,8 @@ main,
 }
 
 .runner-countdown-card span,
-.runner-position-card span {
+.runner-position-card span,
+.presale-countdown-grid article span {
   color: var(--muted);
   font-size: 0.74rem;
   font-weight: 900;
@@ -731,6 +763,19 @@ main,
 .runner-countdown-card p {
   color: var(--faint);
   line-height: 1.6;
+}
+
+.presale-countdown-grid strong {
+  color: var(--accent);
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  font-weight: 950;
+  line-height: 0.9;
+  text-shadow: 0 0 24px rgba(198, 255, 0, 0.42);
+}
+
+.presale-countdown-grid p {
+  color: var(--faint);
+  line-height: 1.5;
 }
 
 .runner-position-card strong {
@@ -1056,6 +1101,12 @@ tbody tr:hover {
   padding: 12px 14px;
 }
 
+.wallet-status {
+  color: var(--text-faint);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
 .verification-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1085,6 +1136,63 @@ tbody tr:hover {
 
 .lookup-result strong {
   color: var(--accent);
+}
+
+.secondary-action {
+  background: rgba(198, 255, 0, 0.065) !important;
+  color: var(--text) !important;
+}
+
+.tax-token-strip article {
+  min-height: 112px;
+  gap: 8px;
+  padding: 16px;
+}
+
+.tax-token-strip span {
+  color: var(--accent);
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 950;
+  line-height: 0.9;
+}
+
+.tax-token-strip strong {
+  color: var(--text-soft);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.presale-holder-list {
+  display: grid;
+  gap: 14px;
+  border-top: 1px solid rgba(198, 255, 0, 0.14);
+  padding-top: 16px;
+}
+
+.presale-holder-list > div:first-child {
+  display: grid;
+  gap: 6px;
+}
+
+.presale-holder-list > div:first-child strong {
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+.presale-holder-list > div:first-child span {
+  color: var(--text-faint);
+  line-height: 1.45;
+}
+
+.presale-holder-list table {
+  min-width: 760px;
+}
+
+.verified-holder-row td {
+  color: var(--accent);
+  background: rgba(198, 255, 0, 0.055);
 }
 
 .footer {
@@ -1127,7 +1235,9 @@ tbody tr:hover {
   .dashboard-grid,
   .robinhood-holdings-card,
   .runner-layout,
-  .runner-position-grid {
+  .runner-position-grid,
+  .presale-countdown-grid,
+  .tax-token-strip {
     grid-template-columns: 1fr;
   }
 

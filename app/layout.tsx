@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { AppPolish } from "./app-polish";
-import { LAUNCH_CADENCE_COPY } from "./hood-pump-config";
+import { LAUNCH_CADENCE_COPY, TAX_SPLIT_COPY } from "./hood-pump-config";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hoodstrategy.xyz";
-const SITE_DESCRIPTION = `Hood Pump uses creator fees to launch a token on Robin Hood ${LAUNCH_CADENCE_COPY}, with 2.5M+ HPUMP holders getting presale access after the pre-launch snapshot.`;
+const SITE_DESCRIPTION = `Hood Pump uses ${TAX_SPLIT_COPY} to support Robin Hood launches ${LAUNCH_CADENCE_COPY}, with 2.5M+ HPUMP holders getting presale access after the pre-launch snapshot.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
