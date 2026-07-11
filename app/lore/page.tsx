@@ -35,7 +35,7 @@ export default function LorePage() {
               <p>
                 Sherwood Run pulls from the Robin Hood myth: a hidden camp in Sherwood Forest, a greedy Sheriff guarding
                 the treasury, and fast outlaws taking value back for the people. The site turns that story into a simple
-                runner where play, rank, and holder airdrops connect.
+                flap-style forest game where play, rank, and holder airdrops connect.
               </p>
             </div>
             <div className="lore-grid">
@@ -44,13 +44,13 @@ export default function LorePage() {
                 <strong>Sherwood is the hideout.</strong>
                 <p>
                   Robin Hood stories are built around a forest crew beating an unfair treasury. Sherwood Run keeps that
-                  spirit: the runner breaks through the woods, grabs coins, and climbs the public board.
+                  spirit: the runner flies through the woods, clears tree gates, and climbs the public board.
                 </p>
               </article>
               <article className="lore-card">
                 <span>The Game</span>
-                <strong>Jump for loot.</strong>
-                <p>Press space, tap, or click to jump through Sherwood. Coins increase score. Logs and tree stumps end the run. The speed rises over time.</p>
+                <strong>Flap the forest.</strong>
+                <p>Press space, tap, or click to flap through Sherwood. Each cleared tree gate adds score. The forest gets faster and the gaps tighten over time.</p>
               </article>
               <article className="lore-card">
                 <span>The Wallets</span>

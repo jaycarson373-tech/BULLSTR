@@ -42,7 +42,7 @@ export default function Page() {
                 <span>Run</span>
               </h1>
               <p className="hero-subtitle">
-                Space to jump. Collect coins. Survive longer as the forest gets faster.
+                Space to flap. Clear Sherwood tree gates. The forest gets faster and tighter the longer you survive.
               </p>
               <HowItWorksPrompt />
             </div>

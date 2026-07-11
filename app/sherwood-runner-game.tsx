@@ -80,8 +80,8 @@ export function SherwoodRunnerGame() {
     gameRef.current = createGame();
     resizeCanvas(canvas, gameRef.current);
     gameRef.current.playing = true;
-    gameRef.current.runner.y = gameRef.current.ground - gameRef.current.runner.h;
-    setStatus("Run live. Press space, tap, or click to jump.");
+    gameRef.current.runner.y = canvas.clientHeight * 0.42;
+    setStatus("Flight live. Press space, tap, or click to flap.");
     let last = performance.now();
     const loop = (time: number) => {
       const dt = Math.min(0.033, (time - last) / 1000);
@@ -166,8 +166,8 @@ export function SherwoodRunnerGame() {
     <section className={`sherwood-game-shell${hud.finished ? " has-submit" : " is-game-only"}`} id="play">
       <div className="sherwood-game-card">
         <div className="sherwood-hud">
-          <GameStat label="Coins" value={hud.score.toLocaleString()} />
-          <GameStat label="Run" value={`${hud.distance}m`} />
+          <GameStat label="Score" value={hud.score.toLocaleString()} />
+          <GameStat label="Flight" value={`${hud.distance}m`} />
           <GameStat label="Speed" value={`${hud.speed.toFixed(1)}x`} />
         </div>
         <div className="sherwood-canvas-wrap">
@@ -182,8 +182,8 @@ export function SherwoodRunnerGame() {
                 <h3>{hud.finished ? "Run complete" : "Sherwood Run"}</h3>
                 <p>
                   {hud.finished
-                    ? `You scored ${hud.score} coins across ${hud.distance}m. Submit wallets to save it.`
-                    : "Press space, tap, or click to jump. Grab Sheriff coins. Do not hit logs or stumps."}
+                    ? `You cleared ${hud.score} gates across ${hud.distance}m. Submit wallets to save it.`
+                    : "Press space, tap, or click to flap. Fly through Sherwood tree gates."}
                 </p>
                 <button type="button" className="cta" onClick={startRun}>{hud.finished ? "Run again" : "Start run"}</button>
               </div>
@@ -195,7 +195,7 @@ export function SherwoodRunnerGame() {
       {hud.finished ? (
         <aside className="sherwood-submit-card">
           <h3>Save score</h3>
-          <p>{hud.score.toLocaleString()} coins / {hud.distance.toLocaleString()}m. Add your name and wallet for the multiplier board.</p>
+          <p>{hud.score.toLocaleString()} gates / {hud.distance.toLocaleString()}m. Add your name and wallet for the multiplier board.</p>
           <label htmlFor="sherwood-runner-name">Runner name</label>
           <input
             id="sherwood-runner-name"
@@ -259,11 +259,11 @@ export function HowItWorksPrompt() {
           <ol>
             <li>
               <strong>Play</strong>
-              <span>Press space, tap, or click to jump through Sherwood as the hooded runner.</span>
+              <span>Press space, tap, or click to flap through Sherwood as the hooded runner.</span>
             </li>
             <li>
-              <strong>Collect</strong>
-              <span>Grab coins for score. Logs and stumps end the run.</span>
+              <strong>Clear</strong>
+              <span>Fly through tree gates for score. Hit a trunk, the canopy, or the forest floor and the run ends.</span>
             </li>
             <li>
               <strong>Submit</strong>
@@ -332,7 +332,7 @@ export function SherwoodLeaderboard() {
                   <th>Rank</th>
                   <th>Name</th>
                   <th>Wallet</th>
-                  <th>Best coins</th>
+                  <th>Best score</th>
                   <th>Best run</th>
                   <th>6h runs</th>
                   <th>HoodX multiplier</th>
@@ -397,11 +397,9 @@ function createGame() {
     distance: 0,
     speed: 1,
     ground: 300,
-    obstacleTimer: 1.2,
-    coinTimer: 0.7,
-    runner: { x: 78, y: 0, vy: 0, w: 46, h: 62, grounded: true },
-    obstacles: [] as Array<{ x: number; y: number; w: number; h: number; kind: "log" | "stump" }>,
-    coins: [] as Array<{ x: number; y: number; r: number; taken: boolean }>,
+    obstacleTimer: 0.65,
+    runner: { x: 88, y: 0, vy: 0, w: 44, h: 52 },
+    obstacles: [] as Array<{ x: number; gapY: number; gapH: number; w: number; passed: boolean }>,
     trees: Array.from({ length: 16 }, (_, index) => ({ x: index * 92, h: 60 + Math.random() * 100, layer: index % 3 }))
   };
 }
@@ -412,55 +410,36 @@ function resizeCanvas(canvas: HTMLCanvasElement, game: GameState) {
   canvas.width = Math.max(320, Math.floor(rect.width * ratio));
   canvas.height = Math.max(240, Math.floor(rect.height * ratio));
   canvas.getContext("2d")?.setTransform(ratio, 0, 0, ratio, 0, 0);
-  game.ground = rect.height - 46;
-  game.runner.y = Math.min(game.runner.y || game.ground - game.runner.h, game.ground - game.runner.h);
+  game.ground = rect.height - 30;
+  game.runner.y = game.runner.y || rect.height * 0.42;
 }
 
 function jump(game: GameState) {
-  if (!game.playing || !game.runner.grounded) return;
-  game.runner.vy = -16.8;
-  game.runner.grounded = false;
+  if (!game.playing) return;
+  game.runner.vy = -9.6;
 }
 
 function updateGame(game: GameState, canvas: HTMLCanvasElement, dt: number, endRun: () => void) {
   const w = canvas.clientWidth;
-  game.distance += dt * 22 * game.speed;
-  game.speed = Math.min(4.2, 1 + game.distance / 520);
-  const px = 250 * game.speed;
+  const h = canvas.clientHeight;
+  game.distance += dt * 18 * game.speed;
+  game.speed = Math.min(4.8, 1 + game.distance / 360);
+  const px = 190 * game.speed;
   game.obstacleTimer -= dt;
-  game.coinTimer -= dt;
 
   if (game.obstacleTimer <= 0) {
-    const kind = Math.random() > 0.54 ? "stump" : "log";
-    const width = kind === "log" ? 46 + Math.random() * 24 : 28 + Math.random() * 14;
-    const height = kind === "log" ? 22 + Math.random() * 10 : 36 + Math.random() * 18;
-    game.obstacles.push({ x: w + 40, y: game.ground - height, w: width, h: height, kind });
-    game.obstacleTimer = Math.max(0.58, 1.28 - game.speed * 0.15 + Math.random() * 0.28);
+    const gapH = Math.max(92, 158 - game.speed * 13);
+    const topSafe = 34;
+    const bottomSafe = h - 58 - gapH;
+    const gapY = topSafe + Math.random() * Math.max(20, bottomSafe - topSafe);
+    game.obstacles.push({ x: w + 44, gapY, gapH, w: 58, passed: false });
+    game.obstacleTimer = Math.max(0.92, 1.55 - game.speed * 0.11);
   }
 
-  if (game.coinTimer <= 0) {
-    const arcHeight = 54 + Math.random() * 70;
-    for (let index = 0; index < 4; index += 1) {
-      game.coins.push({
-        x: w + 34 + index * 34,
-        y: game.ground - arcHeight - Math.sin((index / 3) * Math.PI) * 28,
-        r: 8,
-        taken: false
-      });
-    }
-    game.coinTimer = 0.95 + Math.random() * 0.55;
-  }
-
-  game.runner.vy += 37 * dt;
+  game.runner.vy += 28 * dt;
   game.runner.y += game.runner.vy;
-  if (game.runner.y >= game.ground - game.runner.h) {
-    game.runner.y = game.ground - game.runner.h;
-    game.runner.vy = 0;
-    game.runner.grounded = true;
-  }
 
   moveItems(game.obstacles, px, dt);
-  moveItems(game.coins, px, dt);
   game.trees.forEach((tree) => {
     tree.x -= px * dt * (0.16 + tree.layer * 0.12);
     if (tree.x < -90) {
@@ -470,15 +449,15 @@ function updateGame(game: GameState, canvas: HTMLCanvasElement, dt: number, endR
   });
 
   const runnerBox = { x: game.runner.x, y: game.runner.y, w: game.runner.w, h: game.runner.h };
-  game.coins.forEach((coin) => {
-    if (!coin.taken && rectsHit(runnerBox, { x: coin.x - coin.r, y: coin.y - coin.r, w: coin.r * 2, h: coin.r * 2 }, 3)) {
-      coin.taken = true;
-      game.score += 10;
-    }
-  });
-  game.coins = game.coins.filter((coin) => !coin.taken);
+  if (runnerBox.y < 0 || runnerBox.y + runnerBox.h > game.ground) endRun();
   game.obstacles.forEach((obstacle) => {
-    if (rectsHit(runnerBox, obstacle, 7)) endRun();
+    const topTrunk = { x: obstacle.x, y: 0, w: obstacle.w, h: obstacle.gapY };
+    const bottomTrunk = { x: obstacle.x, y: obstacle.gapY + obstacle.gapH, w: obstacle.w, h: game.ground - (obstacle.gapY + obstacle.gapH) };
+    if (rectsHit(runnerBox, topTrunk, 7) || rectsHit(runnerBox, bottomTrunk, 7)) endRun();
+    if (!obstacle.passed && obstacle.x + obstacle.w < runnerBox.x) {
+      obstacle.passed = true;
+      game.score += 1;
+    }
   });
 }
 
@@ -509,16 +488,6 @@ function drawGame(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, game
   ctx.fillRect(0, game.ground, w, h - game.ground);
   ctx.fillStyle = "rgba(198,255,0,.42)";
   for (let x = -40; x < w + 40; x += 30) pixelRect(ctx, x, game.ground + ((x + Math.floor(game.distance * 9)) % 14), 18, 3);
-  game.coins.forEach((coin) => {
-    ctx.fillStyle = "#c6ff00";
-    pixelRect(ctx, coin.x - 6, coin.y - 9, 12, 18);
-    pixelRect(ctx, coin.x - 9, coin.y - 6, 18, 12);
-    ctx.fillStyle = "#f1ff72";
-    pixelRect(ctx, coin.x - 2, coin.y - 7, 4, 4);
-    ctx.fillStyle = "#020400";
-    pixelRect(ctx, coin.x - 2, coin.y - 4, 4, 10);
-    pixelRect(ctx, coin.x - 5, coin.y - 1, 10, 3);
-  });
   game.obstacles.forEach((obstacle) => drawObstacle(ctx, obstacle));
   drawRunner(ctx, game);
 }
@@ -543,30 +512,31 @@ function drawTree(ctx: CanvasRenderingContext2D, game: GameState, tree: GameStat
   pixelRect(ctx, tree.x + 27 * scale, base - tree.h + 18 * scale, 6 * scale, tree.h - 22 * scale);
 }
 
-function drawObstacle(ctx: CanvasRenderingContext2D, obstacle: { x: number; y: number; w: number; h: number; kind: "log" | "stump" }) {
-  if (obstacle.kind === "log") {
-    ctx.fillStyle = "#5d381d";
-    pixelRect(ctx, obstacle.x, obstacle.y + 5, obstacle.w, obstacle.h - 5);
-    ctx.fillStyle = "#8a5426";
-    pixelRect(ctx, obstacle.x + 4, obstacle.y + 7, 10, obstacle.h - 9);
-    pixelRect(ctx, obstacle.x + obstacle.w - 14, obstacle.y + 7, 10, obstacle.h - 9);
-    ctx.fillStyle = "rgba(198,255,0,.25)";
-    pixelRect(ctx, obstacle.x + 16, obstacle.y + 10, obstacle.w - 32, 3);
-    return;
-  }
+function drawObstacle(ctx: CanvasRenderingContext2D, obstacle: { x: number; gapY: number; gapH: number; w: number }) {
+  const trunkX = obstacle.x + 14;
+  const trunkW = obstacle.w - 28;
+  const topH = obstacle.gapY;
+  const bottomY = obstacle.gapY + obstacle.gapH;
+  const h = ctx.canvas.clientHeight;
 
   ctx.fillStyle = "#4c2d16";
-  pixelRect(ctx, obstacle.x + obstacle.w * 0.18, obstacle.y, obstacle.w * 0.64, obstacle.h);
+  pixelRect(ctx, trunkX, 0, trunkW, topH);
+  pixelRect(ctx, trunkX, bottomY, trunkW, h - bottomY);
   ctx.fillStyle = "#7d4a22";
-  pixelRect(ctx, obstacle.x + obstacle.w * 0.1, obstacle.y, obstacle.w * 0.8, 8);
-  ctx.fillStyle = "rgba(198,255,0,.28)";
-  pixelRect(ctx, obstacle.x + obstacle.w * 0.32, obstacle.y + obstacle.h * 0.32, obstacle.w * 0.36, 3);
+  pixelRect(ctx, trunkX + 5, 0, 5, topH);
+  pixelRect(ctx, trunkX + trunkW - 10, bottomY, 5, h - bottomY);
+  ctx.fillStyle = "#1e4c25";
+  pixelRect(ctx, obstacle.x, topH - 18, obstacle.w, 18);
+  pixelRect(ctx, obstacle.x, bottomY, obstacle.w, 18);
+  ctx.fillStyle = "#c6ff00";
+  pixelRect(ctx, obstacle.x + 6, topH - 12, 12, 5);
+  pixelRect(ctx, obstacle.x + obstacle.w - 18, bottomY + 7, 12, 5);
 }
 
 function drawRunner(ctx: CanvasRenderingContext2D, game: GameState) {
   const runner = game.runner;
   ctx.save();
-  ctx.translate(Math.floor(runner.x), Math.floor(runner.y + (runner.grounded ? Math.sin(game.distance * 0.9) * 2 : 0)));
+  ctx.translate(Math.floor(runner.x), Math.floor(runner.y + Math.sin(game.distance * 1.3) * 1.5));
 
   ctx.fillStyle = "#020400";
   pixelRect(ctx, -16, 24, 28, 12);
