@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { AppPolish } from "./app-polish";
-import { LAUNCH_CADENCE_COPY, TAX_SPLIT_COPY } from "./sherwood-config";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sherwoodrun.xyz";
-const SITE_DESCRIPTION = `Sherwood Run uses ${TAX_SPLIT_COPY} to support Sherwood Run launches ${LAUNCH_CADENCE_COPY}, with 2.5M+ Sherwood holders getting presale access after the pre-launch snapshot.`;
+const SITE_DESCRIPTION = "Sherwood Run is a Robin Hood arcade runner where eligible holders receive HoodX every 30 minutes and leaderboard wallets earn a multiplier.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

@@ -240,6 +240,46 @@ export function SherwoodRunnerGame() {
   );
 }
 
+export function HowItWorksPrompt() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="how-it-works-widget">
+      <button type="button" className="how-it-works-trigger" onClick={() => setOpen(true)} aria-haspopup="dialog">
+        <span>?</span>
+        <strong>How It Works</strong>
+      </button>
+      {open ? (
+        <div className="how-it-works-modal" role="dialog" aria-modal="true" aria-label="How Sherwood Run works">
+          <button type="button" className="modal-close" onClick={() => setOpen(false)} aria-label="Close how it works">
+            ×
+          </button>
+          <div className="section-kicker">How It Works</div>
+          <h3>Run, rank, boost the drop.</h3>
+          <ol>
+            <li>
+              <strong>Play</strong>
+              <span>Press space, tap, or click to jump through Sherwood as the hooded runner.</span>
+            </li>
+            <li>
+              <strong>Collect</strong>
+              <span>Grab coins for score. Logs and stumps end the run.</span>
+            </li>
+            <li>
+              <strong>Submit</strong>
+              <span>After the run, enter a name and wallet to save your leaderboard score.</span>
+            </li>
+            <li>
+              <strong>Boost</strong>
+              <span>Every 30 minutes, eligible holders get HoodX. Holder wallets on the leaderboard receive the multiplier.</span>
+            </li>
+          </ol>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export function SherwoodLeaderboard() {
   const [board, setBoard] = useState<BoardRow[]>([]);
   const [stats, setStats] = useState<StatsResponse | null>(null);

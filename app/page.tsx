@@ -1,4 +1,5 @@
-import { SherwoodRunnerGame } from "./sherwood-runner-game";
+import { HomeAirdropStats } from "./home-strategy-data";
+import { HowItWorksPrompt, SherwoodRunnerGame } from "./sherwood-runner-game";
 
 const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/i/communities/2028470502415835347";
 
@@ -43,24 +44,9 @@ export default function Page() {
               <p className="hero-subtitle">
                 Space to jump. Collect coins. Survive longer as the forest gets faster.
               </p>
-              <div className="simple-how-grid" aria-label="How Sherwood Run works">
-                <article>
-                  <span>1</span>
-                  <strong>Play</strong>
-                  <p>Run as a hooded outlaw through Sherwood. Coins are your score. Logs and stumps end the run.</p>
-                </article>
-                <article>
-                  <span>2</span>
-                  <strong>Submit</strong>
-                  <p>After the run, add Solana wallets that should receive the score.</p>
-                </article>
-                <article>
-                  <span>3</span>
-                  <strong>Boost</strong>
-                  <p>Leaderboard wallets get a multiplier when they also qualify as Sherwood holders.</p>
-                </article>
-              </div>
+              <HowItWorksPrompt />
             </div>
+            <HomeAirdropStats />
             <SherwoodRunnerGame />
           </div>
         </section>

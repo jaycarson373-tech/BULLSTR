@@ -312,13 +312,14 @@ function payoutTime(row: Pick<PayoutRow, "updated_at" | "created_at" | "epoch_id
 }
 
 function rewardAsset(row: Pick<PayoutRow, "reward_asset">) {
-  return row.reward_asset?.trim() || "Sherwood";
+  return row.reward_asset?.trim() || "HoodX";
 }
 
 function rewardAssetRank(asset: string) {
   const upper = asset.toUpperCase();
-  if (upper === "SHERWOOD") return 0;
-  if (upper === "SOL") return 1;
+  if (upper === "HOODX") return 0;
+  if (upper === "SHERWOOD") return 1;
+  if (upper === "SOL") return 2;
   return 3;
 }
 
@@ -619,7 +620,7 @@ export async function GET() {
       const claim = claimsByEpoch.get(epochId);
       const buy = buysByEpoch.get(epochId);
       const payoutSummary = payoutsByEpoch.get(epochId);
-      const sherSummary = payoutSummary?.rewardTotals.get("Sherwood");
+      const sherSummary = payoutSummary?.rewardTotals.get("HoodX") ?? payoutSummary?.rewardTotals.get("Sherwood");
       return {
         epoch: displayEpochById.get(epochId) ?? realEpochCount - index,
         status: row?.status === "completed" ? "completed" : "settled",
@@ -636,7 +637,7 @@ export async function GET() {
 
     const recentRewards = payoutRows.slice(0, 50).map((row) => ({
       epoch: displayEpochById.get(row.epoch_id) ?? epochNumber(row.epoch_id, 0),
-      rewardAsset: row.reward_asset ?? "Sherwood",
+      rewardAsset: row.reward_asset ?? "HoodX",
       wallet: row.wallet,
       rewardAmount: toNumber(row.reward_amount),
       normalRewardAmount: toNumber(row.normal_reward_amount),
