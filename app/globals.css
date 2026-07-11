@@ -41,7 +41,8 @@ a {
 }
 
 button,
-input {
+input,
+textarea {
   font: inherit;
 }
 
@@ -623,7 +624,9 @@ main,
 .robinhood-holdings-card,
 .runner-position-grid,
 .presale-countdown-grid,
-.tax-token-strip {
+.tax-token-strip,
+.sherwood-layout,
+.sherwood-hud {
   display: grid;
   gap: 18px;
 }
@@ -665,6 +668,19 @@ main,
   margin-bottom: 18px;
 }
 
+.sherwood-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+  margin-bottom: 18px;
+}
+
+.sherwood-hud {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 12px;
+  border-bottom: 1px solid rgba(198, 255, 0, 0.18);
+  background: rgba(0, 0, 0, 0.24);
+}
+
 .runner-position-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -692,6 +708,9 @@ main,
 .hood-chart-card,
 .runner-countdown-card,
 .runner-position-card,
+.sherwood-game-card,
+.sherwood-submit-card,
+.sherwood-hud div,
 .presale-countdown-grid article,
 .tax-token-strip article {
   position: relative;
@@ -728,6 +747,9 @@ main,
 .hood-chart-card:hover,
 .runner-countdown-card:hover,
 .runner-position-card:hover,
+.sherwood-game-card:hover,
+.sherwood-submit-card:hover,
+.sherwood-hud div:hover,
 .presale-countdown-grid article:hover,
 .tax-token-strip article:hover {
   border-color: rgba(198, 255, 0, 0.58);
@@ -766,6 +788,7 @@ main,
 .robinhood-holdings-card div,
 .runner-countdown-card,
 .runner-position-card,
+.sherwood-hud div,
 .presale-countdown-grid article,
 .tax-token-strip article {
   display: grid;
@@ -777,6 +800,128 @@ main,
 
 .runner-countdown-card {
   min-height: 238px;
+}
+
+.sherwood-game-card {
+  overflow: hidden;
+}
+
+.sherwood-hud div {
+  min-width: 0;
+  min-height: 96px;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.sherwood-hud div:hover {
+  transform: none;
+}
+
+.sherwood-hud span,
+.sherwood-submit-card label {
+  display: block;
+  color: var(--text-soft);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.sherwood-hud strong {
+  display: block;
+  overflow: hidden;
+  margin-top: 4px;
+  color: var(--accent);
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  font-weight: 950;
+  line-height: 0.95;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sherwood-canvas-wrap {
+  position: relative;
+  min-height: 360px;
+  aspect-ratio: 16 / 9;
+}
+
+.sherwood-canvas-wrap canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.sherwood-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(2, 4, 0, 0.62);
+  text-align: center;
+}
+
+.sherwood-overlay > div {
+  width: min(540px, 100%);
+  border: 1px solid rgba(198, 255, 0, 0.32);
+  border-radius: 16px;
+  background: rgba(2, 8, 1, 0.86);
+  padding: 22px;
+  box-shadow: 0 0 38px rgba(198, 255, 0, 0.16);
+}
+
+.sherwood-overlay h3,
+.sherwood-submit-card h3 {
+  margin: 0 0 10px;
+  color: var(--accent);
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 950;
+  line-height: 0.9;
+}
+
+.sherwood-overlay p,
+.sherwood-submit-card p {
+  margin: 0 0 16px;
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+
+.sherwood-submit-card {
+  padding: 20px;
+}
+
+.sherwood-submit-card label {
+  margin: 14px 0 8px;
+}
+
+.sherwood-submit-card input,
+.sherwood-submit-card textarea {
+  width: 100%;
+  border: 1px solid rgba(198, 255, 0, 0.2);
+  border-radius: 12px;
+  background: rgba(2, 4, 0, 0.74);
+  color: var(--text);
+  outline: none;
+}
+
+.sherwood-submit-card input {
+  min-height: 50px;
+  padding: 0 14px;
+}
+
+.sherwood-submit-card textarea {
+  min-height: 128px;
+  padding: 14px;
+  resize: vertical;
+}
+
+.sherwood-submit-card button {
+  width: 100%;
+  margin-top: 14px;
+}
+
+.sherwood-board-card {
+  margin-top: 18px;
 }
 
 .runner-countdown-card span,
@@ -1273,6 +1418,7 @@ tbody tr:hover {
   .robinhood-holdings-card,
   .runner-layout,
   .runner-position-grid,
+  .sherwood-layout,
   .presale-countdown-grid,
   .tax-token-strip {
     grid-template-columns: 1fr;
@@ -1361,8 +1507,13 @@ tbody tr:hover {
 
   .hood-chart-card,
   .hood-chart-card iframe,
-  .hood-chart-fallback {
+  .hood-chart-fallback,
+  .sherwood-canvas-wrap {
     min-height: 360px;
+  }
+
+  .sherwood-hud {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .reward-flow {

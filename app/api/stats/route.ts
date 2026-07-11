@@ -342,8 +342,9 @@ function serializeRewardTotals(totals: Map<string, RewardAssetTotal> | undefined
 }
 
 function nextDropTime() {
-  const fiveMinutes = 300000;
-  return new Date(Math.ceil(Date.now() / fiveMinutes) * fiveMinutes).toISOString();
+  const epochMinutes = Math.max(1, Number(process.env.EPOCH_MINUTES ?? process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 30));
+  const epochMs = epochMinutes * 60_000;
+  return new Date(Math.ceil(Date.now() / epochMs) * epochMs).toISOString();
 }
 
 async function tokenProgramForMint(connection: Connection, mint: PublicKey) {

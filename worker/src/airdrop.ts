@@ -11,7 +11,7 @@ import {
 } from "@solana/spl-token";
 import { config, treasuryKeypair } from "./config.js";
 import { connection } from "./solana.js";
-import { dryRunPayout, failPayout, planPayout, settlePayout } from "./db.js";
+import { dryRunPayout, failPayout, getSherwoodMultiplierMap, planPayout, settlePayout } from "./db.js";
 import type { Holder } from "./snapshot.js";
 
 const AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS = 25_000n;
@@ -81,11 +81,15 @@ function rewardAtaForOwner(owner: PublicKey, tokenProgram: PublicKey, mint = con
 }
 
 async function computeStrategyWeights(holders: Holder[]): Promise<WeightedHolder[]> {
+  const sherwoodMultipliers = await getSherwoodMultiplierMap();
   return holders.map((holder) => {
-    const weight = holder.rawBalance;
+    const holderBps = BigInt(holder.multiplierBps ?? 10_000);
+    const sherwood = sherwoodMultipliers.get(holder.wallet);
+    const sherwoodBps = BigInt(sherwood?.multiplierBps ?? 10_000);
+    const weight = (holder.rawBalance * holderBps * sherwoodBps) / 100_000_000n;
 
     console.log(
-      `[WEIGHT] wallet=${holder.wallet} source=${holder.uiBalance} weight=${weight.toString()}`
+      `[WEIGHT] wallet=${holder.wallet} source=${holder.uiBalance} holderBps=${holderBps.toString()} sherwoodRank=${sherwood?.rank ?? "none"} sherwoodBps=${sherwoodBps.toString()} weight=${weight.toString()}`
     );
 
     return {

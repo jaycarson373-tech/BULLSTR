@@ -10,6 +10,7 @@ import {
   RobinhoodRunnerPanel,
   RewardExplanation
 } from "./home-strategy-data";
+import { SherwoodRunnerGame } from "./sherwood-runner-game";
 import {
   FIRST_LAUNCH_WINDOW_COPY,
   FIRST_SNAPSHOT_COPY,
@@ -40,6 +41,7 @@ export default function Page() {
             <a href="#chart">Chart</a>
             <a href="#dashboard">Live</a>
             <a href="#holdings">Holdings</a>
+            <a href="#sherwood">Game</a>
             <a href="#runners">Launches</a>
             <a href="#wallet-board">Board</a>
             <a href="#airdrops">Access</a>
@@ -125,6 +127,7 @@ export default function Page() {
         <HoodChart />
         <LiveProtocolDashboard />
         <RobinhoodHoldingsPanel />
+        <SherwoodRunnerGame />
         <RobinhoodRunnerPanel />
         <HoodWalletBoard />
         <RecentAirdrops />

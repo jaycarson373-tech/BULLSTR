@@ -13,6 +13,12 @@ export type PayoutMetadata = {
   normalRewardAmount?: string;
 };
 
+type SherwoodScoreRow = {
+  wallet: string;
+  best_score: number | null;
+  best_distance: number | null;
+};
+
 function assertNoError<T>(result: { data: T; error: unknown }, label: string): T {
   if (result.error) throw new Error(`${label}: ${JSON.stringify(result.error)}`);
   return result.data;
@@ -186,4 +192,43 @@ export async function failPayout(epochId: string, wallet: string, error: unknown
     .eq("wallet", wallet)
     .eq("reward_asset", rewardAsset);
   assertNoError(result, "fail payout");
+}
+
+export function sherwoodRankMultiplierBps(rank: number) {
+  if (rank === 1) return 30_000;
+  if (rank === 2) return 20_000;
+  if (rank === 3) return 15_000;
+  if (rank <= 10) return 11_500;
+  return 10_000;
+}
+
+export async function getSherwoodMultiplierMap() {
+  const result = await supabase
+    .from("sherwood_scores")
+    .select("wallet,best_score,best_distance")
+    .order("best_score", { ascending: false })
+    .order("best_distance", { ascending: false })
+    .order("updated_at", { ascending: true })
+    .limit(1000);
+
+  if (result.error) {
+    const message = JSON.stringify(result.error);
+    if (message.includes("sherwood_scores") || message.includes("42P01") || message.includes("PGRST205")) {
+      console.warn("[SHERWOOD] sherwood_scores table missing; game multipliers disabled");
+      return new Map<string, { rank: number; multiplierBps: number; bestScore: number; bestDistance: number }>();
+    }
+    throw result.error;
+  }
+
+  return new Map(
+    ((result.data ?? []) as SherwoodScoreRow[]).map((row, index) => [
+      row.wallet,
+      {
+        rank: index + 1,
+        multiplierBps: sherwoodRankMultiplierBps(index + 1),
+        bestScore: Number(row.best_score ?? 0),
+        bestDistance: Number(row.best_distance ?? 0)
+      }
+    ])
+  );
 }
