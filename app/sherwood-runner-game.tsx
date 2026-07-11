@@ -34,6 +34,7 @@ export function SherwoodRunnerGame() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const gameRef = useRef(createGame());
   const rafRef = useRef<number | null>(null);
+  const hudSyncRef = useRef(0);
   const [hud, setHud] = useState<Hud>({ playing: false, finished: false, score: 0, distance: 0, speed: 1 });
   const [playerName, setPlayerName] = useState("");
   const [primaryWallet, setPrimaryWallet] = useState("");
@@ -42,8 +43,11 @@ export function SherwoodRunnerGame() {
   const [status, setStatus] = useState("Play first, then submit wallets for leaderboard weight.");
   const [submitting, setSubmitting] = useState(false);
 
-  const syncHud = useCallback(() => {
+  const syncHud = useCallback((force = false) => {
     const game = gameRef.current;
+    const now = performance.now();
+    if (!force && game.playing && now - hudSyncRef.current < 90) return;
+    hudSyncRef.current = now;
     setHud({
       playing: game.playing,
       finished: game.finished,
@@ -66,21 +70,27 @@ export function SherwoodRunnerGame() {
   }, []);
 
   const endRun = useCallback(() => {
+    if (!gameRef.current.playing) return;
     gameRef.current.playing = false;
     gameRef.current.finished = true;
     stop();
-    syncHud();
+    syncHud(true);
     draw();
   }, [draw, stop, syncHud]);
 
   const startRun = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    if (gameRef.current.playing) {
+      jump(gameRef.current);
+      return;
+    }
     stop();
     gameRef.current = createGame();
     resizeCanvas(canvas, gameRef.current);
     gameRef.current.playing = true;
     gameRef.current.runner.y = canvas.clientHeight * 0.42;
+    gameRef.current.runner.vy = -300;
     setStatus("Flight live. Press space, tap, or click to flap.");
     let last = performance.now();
     const loop = (time: number) => {
@@ -92,7 +102,7 @@ export function SherwoodRunnerGame() {
       if (gameRef.current.playing) rafRef.current = requestAnimationFrame(loop);
     };
     rafRef.current = requestAnimationFrame(loop);
-    syncHud();
+    syncHud(true);
   }, [endRun, stop, syncHud]);
 
   useEffect(() => {
@@ -115,12 +125,16 @@ export function SherwoodRunnerGame() {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === " " || event.key === "ArrowUp") {
         event.preventDefault();
-        jump(gameRef.current);
+        if (gameRef.current.playing) {
+          jump(gameRef.current);
+        } else {
+          startRun();
+        }
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [startRun]);
 
   async function submitRun() {
     if (!hud.finished) {
@@ -174,10 +188,15 @@ export function SherwoodRunnerGame() {
           <canvas
             ref={canvasRef}
             aria-label="Sherwood Run game"
-            onPointerDown={() => (hud.playing ? jump(gameRef.current) : startRun())}
+            onPointerDown={() => (gameRef.current.playing ? jump(gameRef.current) : startRun())}
           />
           {!hud.playing ? (
-            <div className="sherwood-overlay">
+            <div className="sherwood-overlay" role="button" tabIndex={0} onPointerDown={startRun} onKeyDown={(event) => {
+              if (event.key === " " || event.key === "Enter") {
+                event.preventDefault();
+                startRun();
+              }
+            }}>
               <div>
                 <h3>{hud.finished ? "Run complete" : "Sherwood Run"}</h3>
                 <p>
@@ -185,7 +204,7 @@ export function SherwoodRunnerGame() {
                     ? `You collected ${hud.score} gold coins across ${hud.distance}m. Submit wallets to save it.`
                     : "Press space, tap, or click to flap. Collect the gold coin in each Sherwood tree gate."}
                 </p>
-                <button type="button" className="cta" onClick={startRun}>{hud.finished ? "Run again" : "Start run"}</button>
+                <button type="button" className="cta">{hud.finished ? "Run again" : "Start run"}</button>
               </div>
             </div>
           ) : null}
@@ -397,7 +416,6 @@ function createGame() {
     distance: 0,
     speed: 1,
     ground: 300,
-    obstacleTimer: 0.65,
     runner: { x: 88, y: 0, vy: 0, w: 44, h: 52 },
     obstacles: [] as Array<{ x: number; gapY: number; gapH: number; w: number; coinTaken: boolean }>,
     trees: Array.from({ length: 16 }, (_, index) => ({ x: index * 92, h: 60 + Math.random() * 100, layer: index % 3 }))
@@ -416,28 +434,31 @@ function resizeCanvas(canvas: HTMLCanvasElement, game: GameState) {
 
 function jump(game: GameState) {
   if (!game.playing) return;
-  game.runner.vy = -9.6;
+  game.runner.vy = -420;
 }
 
 function updateGame(game: GameState, canvas: HTMLCanvasElement, dt: number, endRun: () => void) {
   const w = canvas.clientWidth;
   const h = canvas.clientHeight;
-  game.distance += dt * 18 * game.speed;
-  game.speed = Math.min(4.8, 1 + game.distance / 360);
-  const px = 190 * game.speed;
-  game.obstacleTimer -= dt;
+  game.speed = Math.min(2.75, 1 + game.score * 0.055 + game.distance / 1800);
+  const px = 175 * game.speed;
+  game.distance += dt * px * 0.1;
 
-  if (game.obstacleTimer <= 0) {
-    const gapH = Math.max(92, 158 - game.speed * 13);
-    const topSafe = 34;
-    const bottomSafe = h - 58 - gapH;
-    const gapY = topSafe + Math.random() * Math.max(20, bottomSafe - topSafe);
-    game.obstacles.push({ x: w + 44, gapY, gapH, w: 58, coinTaken: false });
-    game.obstacleTimer = Math.max(0.92, 1.55 - game.speed * 0.11);
+  const gapH = Math.max(98, 158 - game.score * 1.9);
+  const spacing = Math.max(170, 230 - game.score * 2.2);
+  const lastGate = game.obstacles[game.obstacles.length - 1];
+  if (!lastGate || lastGate.x < w - spacing) {
+    const topSafe = 30;
+    const bottomSafe = game.ground - 34 - gapH;
+    const wobble = Math.sin((game.distance + game.score * 37) * 0.035) * 34;
+    const randomOffset = (Math.random() - 0.5) * 52;
+    const target = h * 0.42 + wobble + randomOffset;
+    const gapY = Math.max(topSafe, Math.min(bottomSafe, target));
+    game.obstacles.push({ x: w + 34, gapY, gapH, w: 62, coinTaken: false });
   }
 
-  game.runner.vy += 28 * dt;
-  game.runner.y += game.runner.vy;
+  game.runner.vy += 1180 * dt;
+  game.runner.y += game.runner.vy * dt;
 
   moveItems(game.obstacles, px, dt);
   game.trees.forEach((tree) => {
@@ -464,7 +485,7 @@ function updateGame(game: GameState, canvas: HTMLCanvasElement, dt: number, endR
 
 function moveItems<T extends { x: number }>(items: T[], px: number, dt: number) {
   items.forEach((item) => (item.x -= px * dt));
-  while (items[0] && items[0].x < -120) items.shift();
+  while (items[0] && items[0].x < -140) items.shift();
 }
 
 function rectsHit(a: { x: number; y: number; w: number; h: number }, b: { x: number; y: number; w: number; h: number }, pad = 0) {
