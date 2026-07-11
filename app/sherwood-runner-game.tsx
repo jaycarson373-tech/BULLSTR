@@ -139,7 +139,7 @@ export function SherwoodRunnerGame() {
       setBoard(data.leaderboard ?? []);
       setPrimaryWallet("");
       setExtraWallets("");
-      setStatus("Saved. Ranked wallets boost real holder airdrop weight when they also qualify as HPUMP holders.");
+      setStatus("Saved. Ranked wallets boost real holder airdrop weight when they also qualify as SHER holders.");
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Sherwood submit failed.");
     } finally {
@@ -155,7 +155,7 @@ export function SherwoodRunnerGame() {
           <div className="section-kicker live-kicker"><span>Sherwood run</span><span className="live-dot" /></div>
         </div>
         <div className="section-head split-head">
-          <h2>Play the Robin Hood run. Boost the real holder airdrop.</h2>
+          <h2>Play the Sherwood Forest run. Boost the real holder airdrop.</h2>
           <p>
             Jump logs, collect Sheriff coins, shoot tax wagons, then submit Solana wallets. Ranked Sherwood wallets
             get multiplier weight inside the existing Bullstr/Supabase airdrop worker.

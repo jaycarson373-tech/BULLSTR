@@ -13,7 +13,7 @@ import {
   SNAPSHOT_WINDOW_COPY,
   SNAPSHOT_WINDOW_HOURS,
   TAX_SPLIT_COPY
-} from "./hood-pump-config";
+} from "./sherwood-config";
 
 type SolanaProvider = {
   isPhantom?: boolean;
@@ -60,13 +60,13 @@ type StatsResponse = {
   latestEligibleHolders: number;
   eligibleBullstrHeld: number;
   bagholderSolBalance: number | null;
-  robinhoodHoldings?: RobinhoodHoldings;
+  sherwoodHoldings?: SherwoodHoldings;
   nextDropTime: string;
   roundHistory: Round[];
   recentRewards: Reward[];
 };
 
-type RobinhoodHoldings = {
+type SherwoodHoldings = {
   wallet: string | null;
   solBalance: number | null;
   sourceTokenBalance: number | null;
@@ -100,13 +100,13 @@ const emptyStats: StatsResponse = {
   latestEligibleHolders: 0,
   eligibleBullstrHeld: 0,
   bagholderSolBalance: null,
-  robinhoodHoldings: {
+  sherwoodHoldings: {
     wallet: null,
     solBalance: null,
     sourceTokenBalance: null,
     rewardTokenBalance: null,
-    sourceSymbol: "HPUMP",
-    rewardSymbol: "HPUMP",
+    sourceSymbol: "SHER",
+    rewardSymbol: "SHER",
     updatedAt: null
   },
   nextDropTime: new Date().toISOString(),
@@ -115,12 +115,12 @@ const emptyStats: StatsResponse = {
 };
 
 const REFRESH_MS = 12_000;
-const DEFAULT_CA = "HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HPUMP";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HPUMP";
+const DEFAULT_CA = "";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "SHER";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "SHER";
 const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || DEFAULT_CA;
-const HOOD_CHART_URL = process.env.NEXT_PUBLIC_HOOD_CHART_URL?.trim() || process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || (CA ? `https://dexscreener.com/solana/${CA}` : "https://dexscreener.com/solana");
-const HOOD_CHART_EMBED_URL = process.env.NEXT_PUBLIC_HOOD_CHART_EMBED_URL?.trim() || "";
+const SHER_CHART_URL = process.env.NEXT_PUBLIC_SHER_CHART_URL?.trim() || process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || (CA ? `https://dexscreener.com/solana/${CA}` : "https://dexscreener.com/solana");
+const SHER_CHART_EMBED_URL = process.env.NEXT_PUBLIC_SHER_CHART_EMBED_URL?.trim() || "";
 const HOUR_MS = 60 * 60 * 1000;
 const PRESALE_MIN_HOLDING = "2.5M+";
 const FIRST_PRESALE_AT = process.env.NEXT_PUBLIC_FIRST_PRESALE_AT?.trim() || "";
@@ -382,7 +382,7 @@ export function HeroCountdown() {
   const { stats, now } = useProtocolData();
   const { firstPresaleAt, snapshotOpensAt, snapshotLocksAt } = usePresaleSchedule();
   const countdown = snapshotLocksAt && now ? formatLongCountdown(snapshotLocksAt - now) : "--:--:--";
-  const hpumpDeployed = stats ? rewardTotalAmount(stats.totalRewardTotals, REWARD_SYMBOL) : 0;
+  const sherDeployed = stats ? rewardTotalAmount(stats.totalRewardTotals, REWARD_SYMBOL) : 0;
   const eligibleHolders = stats?.latestEligibleHolders ?? 0;
 
   return (
@@ -404,7 +404,7 @@ export function HeroCountdown() {
         </div>
         <div>
           <span>{REWARD_SYMBOL} Deployed</span>
-          <b>{hpumpDeployed > 0 ? <AnimatedStat value={`${formatNumber(hpumpDeployed, 2)} ${REWARD_SYMBOL}`} /> : <DisplayValue value="Awaiting live distribution" />}</b>
+          <b>{sherDeployed > 0 ? <AnimatedStat value={`${formatNumber(sherDeployed, 2)} ${REWARD_SYMBOL}`} /> : <DisplayValue value="Awaiting live distribution" />}</b>
         </div>
         <div>
           <span>{SOURCE_SYMBOL} Presale Eligible</span>
@@ -437,7 +437,7 @@ export function LiveProtocolDashboard() {
       <div className="container">
         <div className="section-kicker live-kicker"><span>Machine readout</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>The Hood Pump launch dashboard lives here.</h2>
+          <h2>The Sherwood Forest launch dashboard lives here.</h2>
           <p>Live values come from the existing backend. If the backend has not settled data yet, this stays quiet instead of inventing numbers.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
@@ -454,32 +454,32 @@ export function LiveProtocolDashboard() {
   );
 }
 
-export function HoodChart() {
+export function SherwoodChart() {
   return (
-    <section className="section hood-chart-section" id="chart">
+    <section className="section sherwood-chart-section" id="chart">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>HPUMP chart</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>SHER chart</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Live HPUMP chart.</h2>
-          <p>Set NEXT_PUBLIC_HOOD_CHART_EMBED_URL to embed the exact DexScreener pair. Until then, this section links directly to the live chart surface.</p>
+          <h2>Live SHER chart.</h2>
+          <p>Set NEXT_PUBLIC_SHER_CHART_EMBED_URL to embed the exact DexScreener pair. Until then, this section links directly to the live chart surface.</p>
         </div>
-        <div className="hood-chart-card">
-          {HOOD_CHART_EMBED_URL ? (
+        <div className="sherwood-chart-card">
+          {SHER_CHART_EMBED_URL ? (
             <iframe
-              title="HPUMP live chart"
-              src={HOOD_CHART_EMBED_URL}
+              title="SHER live chart"
+              src={SHER_CHART_EMBED_URL}
               loading="lazy"
               allow="clipboard-write"
             />
           ) : (
-            <div className="hood-chart-fallback">
-              <span>HPUMP</span>
+            <div className="sherwood-chart-fallback">
+              <span>SHER</span>
               <strong>Chart ready</strong>
               <p>Add the DexScreener embed URL in env to show the live candle view here.</p>
             </div>
           )}
-          <a className="cta" href={HOOD_CHART_URL} target="_blank" rel="noreferrer">
-            Open HPUMP chart
+          <a className="cta" href={SHER_CHART_URL} target="_blank" rel="noreferrer">
+            Open SHER chart
           </a>
         </div>
       </div>
@@ -487,9 +487,9 @@ export function HoodChart() {
   );
 }
 
-export function RobinhoodHoldingsPanel() {
+export function SherwoodHoldingsPanel() {
   const { stats } = useProtocolData();
-  const holdings = stats?.robinhoodHoldings ?? emptyStats.robinhoodHoldings;
+  const holdings = stats?.sherwoodHoldings ?? emptyStats.sherwoodHoldings;
   const sourceSymbol = holdings?.sourceSymbol ?? SOURCE_SYMBOL;
   const rewardSymbol = holdings?.rewardSymbol ?? REWARD_SYMBOL;
   const sameReward = sourceSymbol.toUpperCase() === rewardSymbol.toUpperCase();
@@ -500,14 +500,14 @@ export function RobinhoodHoldingsPanel() {
   ];
 
   return (
-    <section className="section robinhood-holdings-section" id="holdings">
+    <section className="section sherwood-holdings-section" id="holdings">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>Robin Hood holdings</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>Sherwood Forest holdings</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Total holdings from the Robin Hood wallet.</h2>
-          <p>Balances come from the configured Robin Hood/bagholder wallet and refresh through the same live stats route.</p>
+          <h2>Total holdings from the Sherwood Forest wallet.</h2>
+          <p>Balances come from the configured Sherwood Forest/bagholder wallet and refresh through the same live stats route.</p>
         </div>
-        <div className="robinhood-holdings-card">
+        <div className="sherwood-holdings-card">
           <div>
             <span>Wallet</span>
             <strong>{holdings?.wallet ? compactAddress(holdings.wallet) : "Awaiting wallet"}</strong>
@@ -528,7 +528,7 @@ export function RobinhoodHoldingsPanel() {
   );
 }
 
-export function RobinhoodRunnerPanel() {
+export function SherwoodRunnerPanel() {
   const { now } = useProtocolData();
   const { firstPresaleAt, snapshotOpensAt, snapshotLocksAt } = usePresaleSchedule();
   const runnerCountdown = now ? formatLongCountdown(snapshotLocksAt - now) : "--:--:--";
@@ -536,16 +536,16 @@ export function RobinhoodRunnerPanel() {
   return (
     <section className="section runner-section" id="runners">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>Robin Hood launches</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>Sherwood Forest launches</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>Launch pool, snapshot clock, receipts.</h2>
-          <p>The Robin Hood side shows the tracked launch pool, the first snapshot clock, and exactly when {PRESALE_MIN_HOLDING} holders lock eligibility.</p>
+          <p>The Sherwood Forest side shows the tracked launch pool, the first snapshot clock, and exactly when {PRESALE_MIN_HOLDING} holders lock eligibility.</p>
         </div>
         <div className="runner-layout">
           <div className="runner-countdown-card">
             <span>First snapshot locks in</span>
             <strong className="countdown-value">{runnerCountdown}</strong>
-            <p>The {SNAPSHOT_WINDOW_COPY} {SNAPSHOT_TIMING_COPY}. Hold at least {PRESALE_MIN_HOLDING} HPUMP and do not go below before it locks.</p>
+            <p>The {SNAPSHOT_WINDOW_COPY} {SNAPSHOT_TIMING_COPY}. Hold at least {PRESALE_MIN_HOLDING} SHER and do not go below before it locks.</p>
           </div>
           <div className="runner-position-grid">
             <article className="runner-position-card">
@@ -556,7 +556,7 @@ export function RobinhoodRunnerPanel() {
             <article className="runner-position-card">
               <span>Snapshot locks</span>
               <strong>{formatDateTime(snapshotLocksAt)}</strong>
-              <b>{PRESALE_MIN_HOLDING} HPUMP required</b>
+              <b>{PRESALE_MIN_HOLDING} SHER required</b>
             </article>
             <article className="runner-position-card">
               <span>First launch window</span>
@@ -636,8 +636,8 @@ export function RewardExplanation() {
       <div className="container">
           <div className="section-kicker">How it works</div>
         <div className="section-head split-head">
-          <h2>Three steps. Hold HPUMP, submit addresses, enter presale.</h2>
-          <p>Hold {PRESALE_MIN_HOLDING} HPUMP, keep that balance through the pre-presale snapshot, submit your Sol wallet, and add the ETH address for allocation. The tax-token model uses {TAX_SPLIT_COPY}.</p>
+          <h2>Three steps. Hold SHER, submit addresses, enter presale.</h2>
+          <p>Hold {PRESALE_MIN_HOLDING} SHER, keep that balance through the pre-presale snapshot, submit your Sol wallet, and add the ETH address for allocation. The tax-token model uses {TAX_SPLIT_COPY}.</p>
         </div>
         <div className="reward-flow">
           {[
@@ -669,7 +669,7 @@ export function RewardExplanation() {
   );
 }
 
-export function HoodWalletBoard() {
+export function SherwoodWalletBoard() {
   const holders = useHolderData();
   const topHolders = holders?.topHolders.slice(0, 12) ?? [];
 
@@ -678,7 +678,7 @@ export function HoodWalletBoard() {
       <div className="container">
         <div className="section-kicker live-kicker"><span>Holder board</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Hood Pump wallets.</h2>
+          <h2>Sherwood Forest wallets.</h2>
           <p>Top holders come from the live holder route. Empty states mean the backend has not returned holder rows yet.</p>
         </div>
         <div className="history-card bull-board-card">
@@ -835,7 +835,7 @@ export function HolderLookup() {
           <div className="section-kicker">Presale verification</div>
           <h2>Submit your Sol wallet. Add your ETH destination.</h2>
           <p className="lead">
-            You need {PRESALE_MIN_HOLDING} HPUMP in the Sol wallet at the snapshot. Do not go under that amount before
+            You need {PRESALE_MIN_HOLDING} SHER in the Sol wallet at the snapshot. Do not go under that amount before
             the snapshot window, which opens {formatDateTime(snapshotOpensAt)} and locks by {formatDateTime(snapshotLocksAt)}. The first launch window runs {FIRST_LAUNCH_WINDOW_COPY}.
           </p>
           <div className="presale-countdown-grid" aria-label="First coin countdowns">
@@ -847,7 +847,7 @@ export function HolderLookup() {
             <article>
               <span>First snapshot locks</span>
               <strong className="countdown-value">{snapshotCountdown}</strong>
-              <p>Only wallets still holding {PRESALE_MIN_HOLDING} HPUMP at lock are eligible.</p>
+              <p>Only wallets still holding {PRESALE_MIN_HOLDING} SHER at lock are eligible.</p>
             </article>
           </div>
         </div>
@@ -856,7 +856,7 @@ export function HolderLookup() {
             No wallet signature required - connect is read-only and only fills your public Sol address.
             We suggest using a burner ETH receiving wallet for the first presale allocation.
           </p>
-          <label htmlFor="sol-wallet">Solana wallet holding HPUMP</label>
+          <label htmlFor="sol-wallet">Solana wallet holding SHER</label>
           <div className="lookup-row">
             <input
               id="sol-wallet"
@@ -880,7 +880,7 @@ export function HolderLookup() {
             <button type="submit">Save Address</button>
           </div>
           <div className="verification-grid" aria-label="Presale requirements">
-            <span>{PRESALE_MIN_HOLDING} HPUMP minimum</span>
+            <span>{PRESALE_MIN_HOLDING} SHER minimum</span>
             <span>{SNAPSHOT_WINDOW_COPY}</span>
             <span>{TAX_SPLIT_COPY}</span>
           </div>
@@ -904,18 +904,18 @@ export function HolderLookup() {
                 <strong>{canSubmit ? "Address format saved for presale review" : "Submission needs attention"}</strong>
                 <span>
                   {canSubmit
-                    ? `${compactAddress(cleanSolWallet)} is ready for the ${formatDateTime(snapshotLocksAt)} snapshot review. Launch follows ${FIRST_LAUNCH_WINDOW_COPY}. Final eligibility is determined by the live ${PRESALE_MIN_HOLDING} HPUMP snapshot.`
+                    ? `${compactAddress(cleanSolWallet)} is ready for the ${formatDateTime(snapshotLocksAt)} snapshot review. Launch follows ${FIRST_LAUNCH_WINDOW_COPY}. Final eligibility is determined by the live ${PRESALE_MIN_HOLDING} SHER snapshot.`
                     : "Enter a valid Solana wallet and a valid 0x ETH address before the snapshot locks."}
                 </span>
               </>
             ) : (
-              <span>Submit before snapshot. Holding less than {PRESALE_MIN_HOLDING} HPUMP at lock means no presale access.</span>
+              <span>Submit before snapshot. Holding less than {PRESALE_MIN_HOLDING} SHER at lock means no presale access.</span>
             )}
           </div>
           <div className="presale-holder-list">
             <div>
               <strong>Verified wallets</strong>
-              <span>Top HPUMP holders show here with ETH counterpart status. Connected rows upgrade to Verified HPumper.</span>
+              <span>Top SHER holders show here with ETH counterpart status. Connected rows upgrade to Verified Sherwood holder.</span>
             </div>
             <div className="table-wrap">
               <table>
@@ -935,7 +935,7 @@ export function HolderLookup() {
                       <td>{compactAddress(cleanSolWallet)}</td>
                       <td>Awaiting live holder match</td>
                       <td>{compactAddress(cleanEthWallet)}</td>
-                      <td>Verified HPumper</td>
+                      <td>Verified Sherwood holder</td>
                     </tr>
                   ) : null}
                   {displayedHolders.length ? (
@@ -947,7 +947,7 @@ export function HolderLookup() {
                           <td>{compactAddress(holder.address)}</td>
                           <td>{formatNumber(holder.balance, 0)}</td>
                           <td>{isVerified ? compactAddress(cleanEthWallet) : "Not connected"}</td>
-                          <td>{isVerified ? "Verified HPumper" : "HPUMP holder"}</td>
+                          <td>{isVerified ? "Verified Sherwood holder" : "SHER holder"}</td>
                         </tr>
                       );
                     })

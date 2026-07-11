@@ -233,7 +233,7 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
 export async function airdropTokenRewards(
   epochId: string,
   allocations: Allocation[],
-  rewardAsset = "HOOD",
+  rewardAsset = "SHER",
   mint = config.rewardTokenMint
 ): Promise<AirdropResult> {
   const treasury = treasuryKeypair();

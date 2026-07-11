@@ -74,7 +74,7 @@ type ParsedTokenAccountInfo = {
   };
 };
 
-type RobinhoodHoldings = {
+type SherwoodHoldings = {
   wallet: string | null;
   solBalance: number | null;
   sourceTokenBalance: number | null;
@@ -86,7 +86,7 @@ type RobinhoodHoldings = {
 
 const PUMP_PROGRAM_ID = new PublicKey("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P");
 const PUMP_AMM_PROGRAM_ID = new PublicKey("pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA");
-const DEFAULT_SOURCE_TOKEN_MINT = "HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump";
+const DEFAULT_SOURCE_TOKEN_MINT = "";
 const DEFAULT_BONUS_WALLET_PUBLIC_KEY = "51PVdNdsEiMSreFtp7RWXiHVrCdbu8Mq8cR3vNp7SR5s";
 const LIVE_ELIGIBLE_CACHE_MS = 90_000;
 
@@ -259,9 +259,9 @@ async function tokenBalanceOrNull(connection: Connection, wallet: PublicKey, min
   }
 }
 
-async function robinhoodHoldingsOrNull(): Promise<RobinhoodHoldings> {
+async function sherwoodHoldingsOrNull(): Promise<SherwoodHoldings> {
   const wallet = bagholderWalletPublicKey();
-  const sourceSymbol = symbolEnv("SOURCE_SYMBOL", "HPUMP");
+  const sourceSymbol = symbolEnv("SOURCE_SYMBOL", "SHER");
   const rewardSymbol = symbolEnv("REWARD_SYMBOL", sourceSymbol);
   const empty = {
     wallet: wallet?.toBase58() ?? null,
@@ -279,7 +279,7 @@ async function robinhoodHoldingsOrNull(): Promise<RobinhoodHoldings> {
     const connection = new Connection(rpcUrl(), "confirmed");
     const [solLamports, sourceTokenBalance, rewardTokenBalance] = await Promise.all([
       connection.getBalance(wallet, "confirmed").catch((error) => {
-        console.warn("stats route could not fetch robinhood SOL balance", error);
+        console.warn("stats route could not fetch Sherwood wallet SOL balance", error);
         return null;
       }),
       tokenBalanceOrNull(connection, wallet, sourceTokenMint()),
@@ -293,7 +293,7 @@ async function robinhoodHoldingsOrNull(): Promise<RobinhoodHoldings> {
       rewardTokenBalance
     };
   } catch (error) {
-    console.warn("stats route could not fetch robinhood holdings", error);
+    console.warn("stats route could not fetch Sherwood holdings", error);
     return empty;
   }
 }
@@ -312,14 +312,13 @@ function payoutTime(row: Pick<PayoutRow, "updated_at" | "created_at" | "epoch_id
 }
 
 function rewardAsset(row: Pick<PayoutRow, "reward_asset">) {
-  return row.reward_asset?.trim() || "HPUMP";
+  return row.reward_asset?.trim() || "SHER";
 }
 
 function rewardAssetRank(asset: string) {
   const upper = asset.toUpperCase();
-  if (upper === "HPUMP") return 0;
-  if (upper === "HOOD") return 1;
-  if (upper === "SOL") return 2;
+  if (upper === "SHER") return 0;
+  if (upper === "SOL") return 1;
   return 3;
 }
 
@@ -496,7 +495,7 @@ export async function GET() {
 
   if (!config) {
     const latestEligibleHolders = await liveEligibleHolderCountOrNull();
-    const robinhoodHoldings = await robinhoodHoldingsOrNull();
+    const sherwoodHoldings = await sherwoodHoldingsOrNull();
     return NextResponse.json({
       currentEpoch: 0,
       totalEpochs: 0,
@@ -506,8 +505,8 @@ export async function GET() {
       totalRewardTotals: [],
       latestEligibleHolders: latestEligibleHolders ?? 0,
       eligibleBullstrHeld: 0,
-      bagholderSolBalance: robinhoodHoldings.solBalance,
-      robinhoodHoldings,
+      bagholderSolBalance: sherwoodHoldings.solBalance,
+      sherwoodHoldings,
       nextDropTime: nextDropTime(),
       epochHistory: [],
       roundHistory: [],
@@ -620,7 +619,7 @@ export async function GET() {
       const claim = claimsByEpoch.get(epochId);
       const buy = buysByEpoch.get(epochId);
       const payoutSummary = payoutsByEpoch.get(epochId);
-      const hpumpSummary = payoutSummary?.rewardTotals.get("HPUMP");
+      const sherSummary = payoutSummary?.rewardTotals.get("SHER");
       return {
         epoch: displayEpochById.get(epochId) ?? realEpochCount - index,
         status: row?.status === "completed" ? "completed" : "settled",
@@ -628,8 +627,8 @@ export async function GET() {
         duration: durationLabel(row?.started_at ?? null, row?.completed_at ?? payoutSummary?.latestTime ?? null),
         claimedSol: toNumber(claim?.amount_claimed),
         rewardBought: toNumber(row?.reward_bought),
-        normalRewardsSent: hpumpSummary?.normalRewardAmount ?? 0,
-        distributedPump: hpumpSummary?.rewardAmount ?? 0,
+        normalRewardsSent: sherSummary?.normalRewardAmount ?? 0,
+        distributedPump: sherSummary?.rewardAmount ?? 0,
         rewardTotals: serializeRewardTotals(payoutSummary?.rewardTotals),
         txSig: payoutSummary?.latestTxSig ?? claim?.tx_sig ?? buy?.tx_sig ?? null
       };
@@ -637,7 +636,7 @@ export async function GET() {
 
     const recentRewards = payoutRows.slice(0, 50).map((row) => ({
       epoch: displayEpochById.get(row.epoch_id) ?? epochNumber(row.epoch_id, 0),
-      rewardAsset: row.reward_asset ?? "HPUMP",
+      rewardAsset: row.reward_asset ?? "SHER",
       wallet: row.wallet,
       rewardAmount: toNumber(row.reward_amount),
       normalRewardAmount: toNumber(row.normal_reward_amount),
@@ -670,8 +669,8 @@ export async function GET() {
     const latestEligibleHolders =
       storedEligibleHolders > 0 ? storedEligibleHolders : (await liveEligibleHolderCountOrNull()) ?? storedEligibleHolders;
     const eligibleBullstrHeld = holderStates.reduce((sum, row) => sum + toNumber(row.source_balance), 0);
-    const robinhoodHoldings = await robinhoodHoldingsOrNull();
-    const bagholderSolBalance = robinhoodHoldings.solBalance;
+    const sherwoodHoldings = await sherwoodHoldingsOrNull();
+    const bagholderSolBalance = sherwoodHoldings.solBalance;
 
     return NextResponse.json({
       currentEpoch: realEpochCount,
@@ -683,7 +682,7 @@ export async function GET() {
       latestEligibleHolders,
       eligibleBullstrHeld,
       bagholderSolBalance,
-      robinhoodHoldings,
+      sherwoodHoldings,
       nextDropTime: nextDropTime(),
       epochHistory,
       roundHistory,
@@ -692,7 +691,7 @@ export async function GET() {
   } catch (error) {
     console.error("stats route failed", error);
     const latestEligibleHolders = await liveEligibleHolderCountOrNull();
-    const robinhoodHoldings = await robinhoodHoldingsOrNull();
+    const sherwoodHoldings = await sherwoodHoldingsOrNull();
     return NextResponse.json({
       currentEpoch: 0,
       totalEpochs: 0,
@@ -702,8 +701,8 @@ export async function GET() {
       totalRewardTotals: [],
       latestEligibleHolders: latestEligibleHolders ?? 0,
       eligibleBullstrHeld: 0,
-      bagholderSolBalance: robinhoodHoldings.solBalance,
-      robinhoodHoldings,
+      bagholderSolBalance: sherwoodHoldings.solBalance,
+      sherwoodHoldings,
       nextDropTime: nextDropTime(),
       epochHistory: [],
       roundHistory: [],

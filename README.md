@@ -1,26 +1,26 @@
-# Hood Pump
+# Sherwood Forest
 
-Contract address: `HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump`
+Contract address: `<SHER_TOKEN_MINT>`
 X Community: `https://x.com/i/communities/2028470502415835347`
 
-Hood Pump is the HPUMP holder access site:
+Sherwood Forest is the SHER holder access site:
 
-- Creator fees fund a new Robin Hood token launch every 7 days.
-- Holders with 2.5M+ HPUMP get presale access.
+- Creator fees fund a new Sherwood Forest token launch every 7 days.
+- Holders with 2.5M+ SHER get presale access.
 - The first snapshot defaults to 2:00 AM ET on July 11, 2026 unless `NEXT_PUBLIC_FIRST_SNAPSHOT_AT` is set.
 - The first launch window follows 0-4 hours after snapshot lock unless `NEXT_PUBLIC_FIRST_PRESALE_AT` is set.
-- Wallets must not drop under 2.5M HPUMP before snapshot lock.
+- Wallets must not drop under 2.5M SHER before snapshot lock.
 - Live sections track the launch countdown, wallet verification, access records, holders, wallet holdings, and on-chain receipts.
 - The dashboard reads settled windows, payouts, holders, wallet holdings, and recent records from Supabase.
 
-The site should feel fast, neon, and unmistakably Hood Pump.
+The site should feel fast, neon, and unmistakably Sherwood Forest.
 
 ## Current Implementation
 
 1. Claim creator fees into the treasury.
 2. Snapshot source-token holders with at least `ELIGIBILITY_MIN`.
-3. Use `ELIGIBILITY_MIN=2500000` for 2.5M+ HPUMP presale access.
-4. Route creator fees into the Robin Hood launch pool.
+3. Use `ELIGIBILITY_MIN=2500000` for 2.5M+ SHER presale access.
+4. Route creator fees into the Sherwood Forest launch pool.
 5. Store windows, snapshots, launch pools, wallet holdings, and records in Supabase.
 
 ## Local Development
@@ -43,15 +43,15 @@ npm run build
 Copy `.env.example` and fill in the live mints and keys.
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME="Hood Pump"
-NEXT_PUBLIC_SOURCE_SYMBOL=HPUMP
-NEXT_PUBLIC_REWARD_SYMBOL=HPUMP
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump
-NEXT_PUBLIC_CA=HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump
+NEXT_PUBLIC_PROJECT_NAME="Sherwood Forest"
+NEXT_PUBLIC_SOURCE_SYMBOL=SHER
+NEXT_PUBLIC_REWARD_SYMBOL=SHER
+NEXT_PUBLIC_SOURCE_TOKEN_MINT=<SHER_TOKEN_MINT>
+NEXT_PUBLIC_CA=<SHER_TOKEN_MINT>
 NEXT_PUBLIC_X_URL=https://x.com/i/communities/2028470502415835347
-NEXT_PUBLIC_DEXSCREENER_URL=https://dexscreener.com/solana/HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump
-NEXT_PUBLIC_HOOD_CHART_URL=https://dexscreener.com/solana/HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump
-NEXT_PUBLIC_HOOD_CHART_EMBED_URL=<OPTIONAL_DEXSCREENER_EMBED_URL>
+NEXT_PUBLIC_DEXSCREENER_URL=<SHER_DEXSCREENER_URL>
+NEXT_PUBLIC_SHER_CHART_URL=<SHER_DEXSCREENER_URL>
+NEXT_PUBLIC_SHER_CHART_EMBED_URL=<OPTIONAL_DEXSCREENER_EMBED_URL>
 NEXT_PUBLIC_LAUNCH_CADENCE_DAYS=7
 NEXT_PUBLIC_SNAPSHOT_OPENS_HOURS_BEFORE=4
 NEXT_PUBLIC_SNAPSHOT_LOCKS_HOURS_BEFORE=2
@@ -66,7 +66,7 @@ SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
 
 REWARD_MODE=token
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump
+SOURCE_TOKEN_MINT=<SHER_TOKEN_MINT>
 REWARD_TOKEN_MINT=<REWARD_TOKEN_MINT>
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET>
 

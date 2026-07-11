@@ -2,12 +2,12 @@ import { runEpoch } from "./epoch.js";
 import { config } from "./config.js";
 import { msUntilNextEpoch } from "./time.js";
 
-console.log(`Hood Strategy worker started. Schedule: every ${config.epochMinutes} minutes.`);
+console.log(`Sherwood Forest worker started. Schedule: every ${config.epochMinutes} minutes.`);
 console.log(
   `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
 );
 console.log(
-  `Reward split: ${config.swapBalanceBps / 100}% claimed SOL buys HOODx for automatic 100K+ holder airdrops.`
+  `Reward split: ${config.swapBalanceBps / 100}% claimed SOL buys SHER for automatic 100K+ holder airdrops.`
 );
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
 console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} source tokens`);

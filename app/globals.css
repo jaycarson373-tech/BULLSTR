@@ -97,7 +97,7 @@ h2 {
   background:
     linear-gradient(180deg, rgba(2, 4, 0, 0.08), rgba(2, 4, 0, 0.38)),
     linear-gradient(90deg, rgba(2, 4, 0, 0.46), rgba(2, 4, 0, 0.08) 48%, rgba(2, 4, 0, 0.44)),
-    url("/brand/backgrounds/hood-market-grid.png") center / cover no-repeat,
+    url("/brand/sherwood-fire-banner.png") center / cover no-repeat,
     radial-gradient(circle at 24% 18%, rgba(198, 255, 0, 0.18), transparent 18rem),
     radial-gradient(circle at 78% 24%, rgba(0, 255, 188, 0.12), transparent 20rem),
     radial-gradient(circle at 50% 78%, rgba(199, 0, 255, 0.1), transparent 24rem);
@@ -468,8 +468,8 @@ main,
 .lead,
 .section-head p,
 .share-card p,
-.hood-chart-fallback p,
-.hood-rail-grid p,
+.sherwood-chart-fallback p,
+.sherwood-rail-grid p,
 .lookup-card,
 .footer p {
   color: var(--text-soft);
@@ -517,7 +517,7 @@ main,
 .hero-mini-dashboard span,
 .metric-card span,
 .share-card span,
-.robinhood-holdings-card span,
+.sherwood-holdings-card span,
 .lookup-card label {
   color: var(--muted);
   font-size: 0.74rem;
@@ -530,7 +530,7 @@ main,
 .hero-total-distributed b,
 .metric-card strong,
 .share-card strong,
-.robinhood-holdings-card strong {
+.sherwood-holdings-card strong {
   overflow-wrap: anywhere;
   color: var(--accent);
   font-size: clamp(1.3rem, 2.8vw, 2.55rem);
@@ -617,11 +617,11 @@ main,
   align-items: start;
 }
 
-.hood-rail-grid,
+.sherwood-rail-grid,
 .reward-flow,
 .share-example,
 .dashboard-grid,
-.robinhood-holdings-card,
+.sherwood-holdings-card,
 .runner-position-grid,
 .presale-countdown-grid,
 .tax-token-strip,
@@ -631,7 +631,7 @@ main,
   gap: 18px;
 }
 
-.hood-rail-grid {
+.sherwood-rail-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -726,18 +726,18 @@ main,
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.robinhood-holdings-card {
+.sherwood-holdings-card {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
 
-.hood-rail-grid article,
+.sherwood-rail-grid article,
 .metric-card,
 .share-card,
 .reward-flow-card,
 .history-card,
 .lookup-card,
-.robinhood-holdings-card div,
-.hood-chart-card,
+.sherwood-holdings-card div,
+.sherwood-chart-card,
 .runner-countdown-card,
 .runner-position-card,
 .sherwood-game-card,
@@ -769,14 +769,14 @@ main,
   box-shadow: inset 0 1px 0 rgba(245, 255, 229, 0.04), 0 22px 80px rgba(0, 0, 0, 0.22);
 }
 
-.hood-rail-grid article:hover,
+.sherwood-rail-grid article:hover,
 .metric-card:hover,
 .share-card:hover,
 .reward-flow-card:hover,
 .history-card:hover,
 .lookup-card:hover,
-.robinhood-holdings-card div:hover,
-.hood-chart-card:hover,
+.sherwood-holdings-card div:hover,
+.sherwood-chart-card:hover,
 .runner-countdown-card:hover,
 .runner-position-card:hover,
 .sherwood-game-card:hover,
@@ -793,12 +793,12 @@ main,
   transform: translateY(-5px);
 }
 
-.hood-rail-grid article {
+.sherwood-rail-grid article {
   min-height: 300px;
   padding: clamp(24px, 4vw, 42px);
 }
 
-.hood-rail-grid article > span {
+.sherwood-rail-grid article > span {
   display: block;
   color: var(--accent);
   font-size: clamp(4rem, 10vw, 9rem);
@@ -806,7 +806,7 @@ main,
   line-height: 0.82;
 }
 
-.hood-rail-grid strong {
+.sherwood-rail-grid strong {
   display: block;
   margin-top: 28px;
   color: var(--text);
@@ -817,7 +817,7 @@ main,
 .metric-card,
 .share-card,
 .reward-flow-card,
-.robinhood-holdings-card div,
+.sherwood-holdings-card div,
 .runner-countdown-card,
 .runner-position-card,
 .sherwood-hud div,
@@ -1044,24 +1044,24 @@ main,
   box-shadow: none;
 }
 
-.hood-chart-card {
+.sherwood-chart-card {
   display: grid;
   min-height: 520px;
   gap: 16px;
   padding: 0;
 }
 
-.hood-chart-section {
+.sherwood-chart-section {
   background:
     radial-gradient(circle at 50% 0%, rgba(198, 255, 0, 0.12), transparent 28rem),
     linear-gradient(180deg, #010200, #050900 52%, #010200);
 }
 
-.hood-chart-section .container {
+.sherwood-chart-section .container {
   width: min(100%, 1320px);
 }
 
-.hood-chart-card {
+.sherwood-chart-card {
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -1069,14 +1069,14 @@ main,
   backdrop-filter: none;
 }
 
-.hood-chart-card:hover {
+.sherwood-chart-card:hover {
   border-color: transparent;
   background: transparent;
   box-shadow: none;
   transform: none;
 }
 
-.hood-chart-card iframe {
+.sherwood-chart-card iframe {
   width: 100%;
   min-height: 460px;
   border: 0;
@@ -1084,11 +1084,11 @@ main,
   background: #020400;
 }
 
-.hood-chart-card .cta {
+.sherwood-chart-card .cta {
   justify-self: start;
 }
 
-.hood-chart-fallback {
+.sherwood-chart-fallback {
   display: grid;
   min-height: 460px;
   align-content: center;
@@ -1225,14 +1225,14 @@ main,
   }
 }
 
-.hood-chart-fallback span {
+.sherwood-chart-fallback span {
   color: var(--accent);
   font-size: 0.82rem;
   font-weight: 950;
   letter-spacing: 0.14em;
 }
 
-.hood-chart-fallback strong {
+.sherwood-chart-fallback strong {
   color: var(--accent);
   font-size: clamp(3.2rem, 10vw, 8.5rem);
   font-weight: 950;
@@ -1443,11 +1443,11 @@ tbody tr:hover {
   .hero-inner,
   .split-head,
   .split-section,
-  .hood-rail-grid,
+  .sherwood-rail-grid,
   .reward-flow,
   .share-example,
   .dashboard-grid,
-  .robinhood-holdings-card,
+  .sherwood-holdings-card,
   .runner-layout,
   .runner-position-grid,
   .sherwood-layout,
@@ -1533,13 +1533,13 @@ tbody tr:hover {
     font-size: clamp(3.4rem, 18vw, 5.2rem);
   }
 
-  .hood-rail-grid article {
+  .sherwood-rail-grid article {
     min-height: 230px;
   }
 
-  .hood-chart-card,
-  .hood-chart-card iframe,
-  .hood-chart-fallback,
+  .sherwood-chart-card,
+  .sherwood-chart-card iframe,
+  .sherwood-chart-fallback,
   .sherwood-canvas-wrap {
     min-height: 360px;
   }
