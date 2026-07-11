@@ -12,7 +12,7 @@ import {
 } from "./home-strategy-data";
 import {
   FIRST_LAUNCH_WINDOW_COPY,
-  FIRST_SNAPSHOT_HOURS_FROM_NOW,
+  FIRST_SNAPSHOT_COPY,
   LAUNCH_CADENCE_COPY,
   LAUNCH_CADENCE_TITLE,
   SNAPSHOT_WINDOW_COPY,
@@ -81,7 +81,7 @@ export default function Page() {
               <p className="hero-subtitle">Creator fees fund Robin Hood launches with a clear {TAX_SPLIT_COPY} model.</p>
               <p className="hero-lead">
                 Hood Pump routes creator fees into launch rails. Holders with 2.5M+ HPUMP get presale
-                access, with the first snapshot locking in {FIRST_SNAPSHOT_HOURS_FROM_NOW} hours and the first launch window opening {FIRST_LAUNCH_WINDOW_COPY}.
+                access, with the first snapshot locking at {FIRST_SNAPSHOT_COPY} and the first launch window opening {FIRST_LAUNCH_WINDOW_COPY}.
               </p>
               <div className="hero-actions">
                 <a className="cta" href="#lookup">

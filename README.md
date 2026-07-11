@@ -7,7 +7,7 @@ Hood Pump is the HPUMP holder access site:
 
 - Creator fees fund a new Robin Hood token launch every 7 days.
 - Holders with 2.5M+ HPUMP get presale access.
-- The first snapshot defaults to 6 hours from page load unless `NEXT_PUBLIC_FIRST_SNAPSHOT_AT` is set.
+- The first snapshot defaults to 2:00 AM ET on July 11, 2026 unless `NEXT_PUBLIC_FIRST_SNAPSHOT_AT` is set.
 - The first launch window follows 0-4 hours after snapshot lock unless `NEXT_PUBLIC_FIRST_PRESALE_AT` is set.
 - Wallets must not drop under 2.5M HPUMP before snapshot lock.
 - Live sections track the launch countdown, wallet verification, access records, holders, wallet holdings, and on-chain receipts.
@@ -55,9 +55,8 @@ NEXT_PUBLIC_HOOD_CHART_EMBED_URL=<OPTIONAL_DEXSCREENER_EMBED_URL>
 NEXT_PUBLIC_LAUNCH_CADENCE_DAYS=7
 NEXT_PUBLIC_SNAPSHOT_OPENS_HOURS_BEFORE=4
 NEXT_PUBLIC_SNAPSHOT_LOCKS_HOURS_BEFORE=2
-NEXT_PUBLIC_FIRST_SNAPSHOT_HOURS_FROM_NOW=6
 NEXT_PUBLIC_LAUNCH_AFTER_SNAPSHOT_MAX_HOURS=4
-NEXT_PUBLIC_FIRST_SNAPSHOT_AT=<OPTIONAL_ISO_TIME>
+NEXT_PUBLIC_FIRST_SNAPSHOT_AT=2026-07-11T02:00:00-04:00
 NEXT_PUBLIC_FIRST_PRESALE_AT=<OPTIONAL_ISO_TIME>
 
 NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>

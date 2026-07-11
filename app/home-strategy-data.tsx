@@ -5,7 +5,7 @@ import {
   FIRST_COIN_REVEAL_COPY,
   FIRST_COIN_REVEAL_HOURS_BEFORE,
   FIRST_LAUNCH_WINDOW_COPY,
-  FIRST_SNAPSHOT_HOURS_FROM_NOW,
+  FIRST_SNAPSHOT_AT,
   LAUNCH_CADENCE_COPY,
   LAUNCH_AFTER_SNAPSHOT_MAX_HOURS,
   LAUNCH_POOL_LABEL,
@@ -124,7 +124,6 @@ const HOOD_CHART_EMBED_URL = process.env.NEXT_PUBLIC_HOOD_CHART_EMBED_URL?.trim(
 const HOUR_MS = 60 * 60 * 1000;
 const PRESALE_MIN_HOLDING = "2.5M+";
 const FIRST_PRESALE_AT = process.env.NEXT_PUBLIC_FIRST_PRESALE_AT?.trim() || "";
-const FIRST_SNAPSHOT_AT = process.env.NEXT_PUBLIC_FIRST_SNAPSHOT_AT?.trim() || "";
 const SOLANA_ADDRESS_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 const ETH_ADDRESS_RE = /^0x[a-fA-F0-9]{40}$/;
 
@@ -237,10 +236,26 @@ function firstPresaleTime() {
 }
 
 function firstSnapshotLockTime() {
-  const configured = FIRST_SNAPSHOT_AT ? Date.parse(FIRST_SNAPSHOT_AT) : 0;
+  const configured = Date.parse(FIRST_SNAPSHOT_AT);
   return Number.isFinite(configured) && configured > Date.now()
     ? configured
-    : Date.now() + FIRST_SNAPSHOT_HOURS_FROM_NOW * HOUR_MS;
+    : nextEasternTwoAm();
+}
+
+function nextEasternTwoAm() {
+  const now = new Date();
+  const easternNow = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
+  const easternTarget = new Date(easternNow);
+  easternTarget.setHours(2, 0, 0, 0);
+  if (easternTarget.getTime() <= easternNow.getTime()) easternTarget.setDate(easternTarget.getDate() + 1);
+
+  const offset = easternTimeZoneOffset(easternTarget);
+  return Date.parse(`${easternTarget.toISOString().slice(0, 10)}T02:00:00${offset}`);
+}
+
+function easternTimeZoneOffset(date: Date) {
+  const month = date.getMonth();
+  return month >= 2 && month <= 10 ? "-04:00" : "-05:00";
 }
 
 function statusLabel(status: string) {
