@@ -79,6 +79,8 @@ type TopHolder = {
   address: string;
   balance: number;
   percentage: string;
+  totalRewardEarned?: number;
+  lastAirdropAt?: string | null;
 };
 
 type HoldersResponse = {
@@ -161,7 +163,8 @@ function formatCount(value: number) {
 }
 
 function formatSol(value: number | null | undefined) {
-  if (!Number.isFinite(value ?? NaN) || (value ?? 0) <= 0) return "0 SOL";
+  if (value === null || value === undefined || !Number.isFinite(value)) return "Awaiting live balance";
+  if (value <= 0) return "0 SOL";
   return `${(value ?? 0).toLocaleString(undefined, { maximumFractionDigits: 4 })} SOL`;
 }
 
@@ -352,6 +355,7 @@ export function HeroCountdown() {
   const { firstPresaleAt, snapshotOpensAt, snapshotLocksAt } = usePresaleSchedule();
   const countdown = firstPresaleAt && now ? formatLongCountdown(firstPresaleAt - now) : "--:--:--";
   const hpumpDeployed = stats ? rewardTotalAmount(stats.totalRewardTotals, REWARD_SYMBOL) : 0;
+  const eligibleHolders = stats?.latestEligibleHolders ?? 0;
 
   return (
     <div className="hero-countdown" aria-live="polite">
@@ -364,15 +368,15 @@ export function HeroCountdown() {
       <div className="hero-mini-dashboard">
         <div className="treasury-mini-card">
           <span>Treasury Balance</span>
-          <b>0 SOL</b>
+          <b><DisplayValue value={formatSol(stats?.bagholderSolBalance)} /></b>
         </div>
         <div>
           <span>{REWARD_SYMBOL} Deployed</span>
-          <b><AnimatedStat value={hpumpDeployed > 0 ? `${formatNumber(hpumpDeployed, 2)} ${REWARD_SYMBOL}` : "0"} /></b>
+          <b>{hpumpDeployed > 0 ? <AnimatedStat value={`${formatNumber(hpumpDeployed, 2)} ${REWARD_SYMBOL}`} /> : <DisplayValue value="Awaiting live distribution" />}</b>
         </div>
         <div>
           <span>{SOURCE_SYMBOL} Presale Eligible</span>
-          <b><AnimatedStat value="0" /></b>
+          <b>{eligibleHolders > 0 ? <AnimatedStat value={formatCount(eligibleHolders)} /> : <DisplayValue value="Awaiting live holders" />}</b>
         </div>
         <div>
           <span>Minimum Hold</span>
@@ -628,13 +632,16 @@ export function RewardExplanation() {
 }
 
 export function HoodWalletBoard() {
+  const holders = useHolderData();
+  const topHolders = holders?.topHolders.slice(0, 12) ?? [];
+
   return (
     <section className="section bull-board-section" id="wallet-board">
       <div className="container">
         <div className="section-kicker live-kicker"><span>Holder board</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>Hood Pump wallets.</h2>
-          <p>The board is reset for the Hood Pump launch and starts clean until the next live presale window settles.</p>
+          <p>Top holders come from the live holder route. Empty states mean the backend has not returned holder rows yet.</p>
         </div>
         <div className="history-card bull-board-card">
           <div className="table-wrap">
@@ -649,13 +656,25 @@ export function HoodWalletBoard() {
                 </tr>
               </thead>
               <tbody>
-                <tr className="placeholder-row">
-                  <td>Awaiting wallets</td>
-                  <td>0</td>
-                  <td>0%</td>
-                  <td>0 {REWARD_SYMBOL}</td>
-                  <td>Awaiting presale</td>
-                </tr>
+                {topHolders.length ? (
+                  topHolders.map((holder) => (
+                    <tr key={holder.address}>
+                      <td>{compactAddress(holder.address)}</td>
+                      <td>{formatNumber(holder.balance, 0)}</td>
+                      <td>{holder.percentage}%</td>
+                      <td>
+                        {holder.totalRewardEarned && holder.totalRewardEarned > 0
+                          ? formatAmount(holder.totalRewardEarned, REWARD_SYMBOL)
+                          : "Awaiting settled rewards"}
+                      </td>
+                      <td>{holder.lastAirdropAt ? formatDate(holder.lastAirdropAt) : "Awaiting presale"}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr className="placeholder-row">
+                    <td className="placeholder-cell" colSpan={5}>Awaiting live holder data.</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

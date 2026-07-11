@@ -89,19 +89,19 @@ h2 {
 
 .page::before {
   position: fixed;
-  inset: -3%;
+  inset: -4%;
   z-index: 0;
   pointer-events: none;
   content: "";
   background:
-    linear-gradient(180deg, rgba(2, 4, 0, 0.2), rgba(2, 4, 0, 0.72)),
-    linear-gradient(90deg, rgba(2, 4, 0, 0.82), rgba(2, 4, 0, 0.18) 48%, rgba(2, 4, 0, 0.78)),
+    linear-gradient(180deg, rgba(2, 4, 0, 0.08), rgba(2, 4, 0, 0.38)),
+    linear-gradient(90deg, rgba(2, 4, 0, 0.46), rgba(2, 4, 0, 0.08) 48%, rgba(2, 4, 0, 0.44)),
     url("/brand/backgrounds/hood-market-grid.png") center / cover no-repeat,
     radial-gradient(circle at 24% 18%, rgba(198, 255, 0, 0.18), transparent 18rem),
     radial-gradient(circle at 78% 24%, rgba(0, 255, 188, 0.12), transparent 20rem),
     radial-gradient(circle at 50% 78%, rgba(199, 0, 255, 0.1), transparent 24rem);
-  filter: saturate(1.08);
-  opacity: 0.6;
+  filter: saturate(1.12) contrast(1.04);
+  opacity: 0.78;
   animation: market-bg-drift 22s ease-in-out infinite alternate;
 }
 
@@ -261,7 +261,7 @@ main,
     radial-gradient(circle at 78% 16%, rgba(198, 255, 0, 0.16), transparent 22rem),
     radial-gradient(circle at 68% 62%, rgba(0, 255, 188, 0.1), transparent 24rem),
     radial-gradient(circle at 22% 84%, rgba(199, 0, 255, 0.08), transparent 28rem),
-    linear-gradient(135deg, rgba(2, 4, 0, 0.98), rgba(3, 16, 5, 0.82) 48%, rgba(2, 4, 0, 0.96));
+    linear-gradient(135deg, rgba(2, 4, 0, 0.66), rgba(3, 16, 5, 0.42) 48%, rgba(2, 4, 0, 0.62));
 }
 
 .hero::before {
@@ -345,7 +345,7 @@ main,
   background:
     radial-gradient(circle at 72% 18%, rgba(198, 255, 0, 0.18), transparent 24%),
     radial-gradient(circle at 84% 62%, rgba(0, 255, 188, 0.08), transparent 28%),
-    linear-gradient(90deg, rgba(2, 4, 0, 0.96), rgba(2, 4, 0, 0.42) 56%, rgba(2, 4, 0, 0.84));
+    linear-gradient(90deg, rgba(2, 4, 0, 0.64), rgba(2, 4, 0, 0.24) 56%, rgba(2, 4, 0, 0.58));
   animation: pulse-glow 9s ease-in-out infinite alternate;
 }
 
@@ -556,7 +556,7 @@ main,
   background:
     linear-gradient(180deg, rgba(198, 255, 0, 0.055), transparent 1px),
     radial-gradient(circle at 84% 12%, rgba(198, 255, 0, 0.11), transparent 28%),
-    linear-gradient(180deg, rgba(2, 4, 0, 0.95), rgba(5, 10, 0, 0.9));
+    linear-gradient(180deg, rgba(2, 4, 0, 0.7), rgba(5, 10, 0, 0.58));
 }
 
 @supports (animation-timeline: view()) {
