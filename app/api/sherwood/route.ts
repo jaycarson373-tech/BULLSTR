@@ -21,6 +21,8 @@ type LeaderboardRow = {
   latestRunAt: string | null;
 };
 
+const SHERWOOD_PRIZE_BPS = [1500, 1000, 900, 800, 700, 700, 600, 600, 600, 500, 500, 500, 400, 400, 300] as const;
+
 function supabaseConfig() {
   const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -50,22 +52,12 @@ function normalizePlayerName(value: unknown) {
   return name.slice(0, 24);
 }
 
-function rankMultiplier(rank: number) {
-  if (rank === 1) return 10;
-  if (rank === 2) return 5;
-  if (rank === 3) return 3;
-  if (rank === 4) return 2.75;
-  if (rank === 5) return 2.5;
-  if (rank === 6) return 2.25;
-  if (rank === 7) return 2;
-  if (rank === 8) return 1.85;
-  if (rank === 9) return 1.65;
-  if (rank === 10) return 1.5;
-  return 1;
+function rankPrizeBps(rank: number) {
+  return SHERWOOD_PRIZE_BPS[rank - 1] ?? 0;
 }
 
 function currentSeasonStart() {
-  const seasonMs = 6 * 60 * 60 * 1000;
+  const seasonMs = 24 * 60 * 60 * 1000;
   return new Date(Math.floor(Date.now() / seasonMs) * seasonMs).toISOString();
 }
 
@@ -118,8 +110,9 @@ async function leaderboard(db = client()) {
     bestDistance: row.bestDistance,
     runs: row.runs,
     rank: index + 1,
-    multiplier: rankMultiplier(index + 1),
-    season: "6h",
+    prizeBps: rankPrizeBps(index + 1),
+    prizePct: rankPrizeBps(index + 1) / 100,
+    season: "24h",
     updatedAt: row.latestRunAt
   }));
 }

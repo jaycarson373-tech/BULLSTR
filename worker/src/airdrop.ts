@@ -11,7 +11,7 @@ import {
 } from "@solana/spl-token";
 import { config, treasuryKeypair } from "./config.js";
 import { connection } from "./solana.js";
-import { dryRunPayout, failPayout, getSherwoodMultiplierMap, planPayout, settlePayout } from "./db.js";
+import { SHERWOOD_PRIZE_BPS, dryRunPayout, failPayout, getSherwoodLeaderboard, planPayout, settlePayout, sherwoodRankPrizeBps } from "./db.js";
 import type { Holder } from "./snapshot.js";
 
 const AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS = 25_000n;
@@ -39,6 +39,7 @@ type PreparedAllocation = Allocation & {
 
 type WeightedHolder = {
   holder: Holder;
+  baseWeight: bigint;
   weight: bigint;
 };
 
@@ -80,23 +81,45 @@ function rewardAtaForOwner(owner: PublicKey, tokenProgram: PublicKey, mint = con
   );
 }
 
-async function computeStrategyWeights(holders: Holder[]): Promise<WeightedHolder[]> {
-  const sherwoodMultipliers = await getSherwoodMultiplierMap();
-  return holders.map((holder) => {
+export async function selectSherwoodPrizeRecipients(holders: Holder[]): Promise<Holder[]> {
+  const holderByWallet = new Map(holders.map((holder) => [holder.wallet, holder]));
+  const leaderboard = await getSherwoodLeaderboard();
+  const recipients: Holder[] = [];
+
+  for (const entry of leaderboard) {
+    const holder = holderByWallet.get(entry.wallet);
+    if (!holder) continue;
+    const prizeRank = recipients.length + 1;
+    recipients.push({
+      ...holder,
+      leaderboardRank: entry.leaderboardRank,
+      sherwoodRank: prizeRank,
+      prizeBps: sherwoodRankPrizeBps(prizeRank)
+    });
+    if (recipients.length >= SHERWOOD_PRIZE_BPS.length) break;
+  }
+
+  return recipients;
+}
+
+function computeStrategyWeights(holders: Holder[]): WeightedHolder[] {
+  return holders
+    .map((holder) => {
     const holderBps = BigInt(holder.multiplierBps ?? 10_000);
-    const sherwood = sherwoodMultipliers.get(holder.wallet);
-    const sherwoodBps = BigInt(sherwood?.multiplierBps ?? 10_000);
-    const weight = (holder.rawBalance * holderBps * sherwoodBps) / 100_000_000n;
+    const prizeBps = BigInt(holder.prizeBps ?? 0);
+    const weight = (prizeBps * holderBps) / 10_000n;
 
     console.log(
-      `[WEIGHT] wallet=${holder.wallet} source=${holder.uiBalance} holderBps=${holderBps.toString()} sherwoodRank=${sherwood?.rank ?? "none"} sherwoodBps=${sherwoodBps.toString()} weight=${weight.toString()}`
+      `[WEIGHT] wallet=${holder.wallet} source=${holder.uiBalance} leaderboardRank=${holder.leaderboardRank ?? "none"} prizeRank=${holder.sherwoodRank ?? "none"} prizeBps=${prizeBps.toString()} holdBps=${holderBps.toString()} weight=${weight.toString()}`
     );
 
     return {
       holder,
+      baseWeight: prizeBps,
       weight
     };
-  });
+    })
+    .filter((holder) => holder.baseWeight > 0n && holder.weight > 0n);
 }
 
 export async function treasuryRewardBalanceRaw(reserveLamports = 0n, mint = config.rewardTokenMint) {
@@ -123,19 +146,21 @@ export async function computeAllocations(holders: Holder[], rewardRaw: bigint, m
 }
 
 async function computeAllocationsWithDecimals(holders: Holder[], rewardRaw: bigint, decimals: number): Promise<Allocation[]> {
-  const weightedHolders = await computeStrategyWeights(holders);
+  const weightedHolders = computeStrategyWeights(holders);
+  const totalBaseWeight = weightedHolders.reduce((sum, holder) => sum + holder.baseWeight, 0n);
   const totalWeight = weightedHolders.reduce((sum, holder) => sum + holder.weight, 0n);
-  if (totalWeight <= 0n) return [];
+  if (totalBaseWeight <= 0n || totalWeight <= 0n) return [];
 
   return weightedHolders
-    .map(({ holder, weight }) => {
+    .map(({ holder, baseWeight, weight }) => {
       const amount = (rewardRaw * weight) / totalWeight;
+      const normalAmount = (rewardRaw * baseWeight) / totalBaseWeight;
       return {
         wallet: holder.wallet,
         amount,
         uiAmount: rawToUi(amount, decimals),
-        normalAmount: amount,
-        normalUiAmount: rawToUi(amount, decimals)
+        normalAmount,
+        normalUiAmount: rawToUi(normalAmount, decimals)
       };
     })
     .filter((allocation) => allocation.amount > 0n);

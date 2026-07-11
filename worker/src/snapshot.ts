@@ -15,6 +15,9 @@ export type Holder = {
   multiplierBps?: number;
   streakEpochs?: number;
   eligibleSince?: string | null;
+  sherwoodRank?: number;
+  leaderboardRank?: number;
+  prizeBps?: number;
 };
 
 async function tokenProgramForMint(mint: PublicKey) {

@@ -14,12 +14,20 @@ type HolderStateRow = {
   ineligible_reason: string | null;
 };
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 function parseRaw(value: unknown) {
   try {
     return BigInt(String(value ?? "0"));
   } catch {
     return 0n;
   }
+}
+
+function holdMultiplierBps(eligibleSince: string | null | undefined, nowMs: number) {
+  const startedAt = eligibleSince ? Date.parse(eligibleSince) : nowMs;
+  const heldDays = Number.isFinite(startedAt) ? Math.max(0, Math.floor((nowMs - startedAt) / DAY_MS)) : 0;
+  return 10_000 + heldDays * 1_000;
 }
 
 function isMissingHolderStateTable(error: unknown) {
@@ -48,6 +56,7 @@ async function upsertHolderStates(rows: Record<string, unknown>[]) {
 export async function applyHolderState(epochId: string, eligibleHolders: Holder[], currentHolders = eligibleHolders): Promise<Holder[]> {
   try {
     const now = new Date().toISOString();
+    const nowMs = Date.parse(now);
     const states = await getHolderStates();
     const stateByWallet = new Map(states.map((state) => [state.wallet, state]));
     const eligibleByWallet = new Map(eligibleHolders.map((holder) => [holder.wallet, holder]));
@@ -139,11 +148,13 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
       const existing = stateByWallet.get(holder.wallet);
       if (existing?.permanently_ineligible || permanentlyRemoved.has(holder.wallet)) continue;
 
+      const previousRaw = parseRaw(existing?.source_balance_raw);
       const highestRaw = parseRaw(existing?.highest_source_balance_raw);
+      const soldSinceLastSnapshot = Boolean(existing && previousRaw > 0n && holder.rawBalance < previousRaw);
 
-      const nextStreak = existing ? (existing.current_streak_epochs ?? 0) + 1 : 1;
-      const multiplierBps = 10_000;
-      const eligibleSince = existing?.eligible_since ?? now;
+      const nextStreak = soldSinceLastSnapshot ? 1 : existing ? (existing.current_streak_epochs ?? 0) + 1 : 1;
+      const eligibleSince = soldSinceLastSnapshot ? now : existing?.eligible_since ?? now;
+      const multiplierBps = holdMultiplierBps(eligibleSince, nowMs);
       const nextHighest = highestRaw > holder.rawBalance ? highestRaw : holder.rawBalance;
 
       updates.push({

@@ -7,10 +7,10 @@ console.log(
   `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
 );
 console.log(
-  `Reward split: ${config.swapBalanceBps / 100}% claimed SOL buys HoodX for automatic 1M+ holder airdrops.`
+  `Reward split: ${config.swapBalanceBps / 100}% claimed SOL buys HoodX for eligible top-15 leaderboard airdrops.`
 );
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
-console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} source tokens`);
+console.log(`Eligibility gate: top-15 leaderboard wallet must hold ${config.eligibilityMin.toLocaleString()} source tokens`);
 
 async function loop() {
   await runEpoch();

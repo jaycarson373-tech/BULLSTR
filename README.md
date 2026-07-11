@@ -6,8 +6,9 @@ X: `https://x.com/SherwoodRun`
 Sherwood Run is the Sherwood arcade and HoodX airdrop site:
 
 - The game is a pixel Sherwood flapper where players clear tree gates for leaderboard score.
-- Every 30 minutes the worker claims, snapshots eligible 1M+ Sherwood holders, checks the active 6-hour leaderboard, and sends HoodX.
-- Leaderboard wallets can boost matching eligible holder wallets with rank multipliers.
+- Every 30 minutes the worker claims, snapshots the 1M+ Sherwood holder gate, checks the active 24-hour leaderboard, and sends HoodX to the first 15 eligible players.
+- Holding 1M+ Sherwood is only the eligibility gate; the game decides who receives each HoodX drop.
+- Eligible prize winners get a +10% weight bonus for each full day they hold without selling.
 - The dashboard reads settled HoodX windows, payouts, holders, wallet holdings, and recent records from Supabase.
 
 The site should feel fast, neon, and unmistakably Sherwood Run.
@@ -17,7 +18,7 @@ The site should feel fast, neon, and unmistakably Sherwood Run.
 1. Claim creator fees into the treasury.
 2. Snapshot source-token holders with at least `ELIGIBILITY_MIN`.
 3. Use `ELIGIBILITY_MIN=1000000` for 1M+ Sherwood airdrop eligibility.
-4. Check the active 6-hour Sherwood Run leaderboard for matching wallet multipliers.
+4. Check the active 24-hour Sherwood Run leaderboard and fill 15 prize slots from the first eligible wallets.
 5. Store windows, snapshots, HoodX payouts, wallet holdings, and records in Supabase.
 
 ## Local Development

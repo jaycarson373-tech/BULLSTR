@@ -40,7 +40,7 @@ export default function LorePage() {
               <p>
                 Sherwood Run pulls from the Robin Hood myth: a hidden camp in Sherwood Forest, a greedy Sheriff guarding
                 the treasury, and fast outlaws taking value back for the people. The site turns that story into a simple
-                flap-style forest game where play, rank, and holder airdrops connect.
+                flap-style forest game where holding opens the gate, play decides the winners, and HoodX goes to the top eligible outlaws.
               </p>
             </div>
             <div className="lore-grid">
@@ -60,17 +60,17 @@ export default function LorePage() {
               <article className="lore-card">
                 <span>The Wallets</span>
                 <strong>Submit after.</strong>
-                <p>After a run, submit one Solana wallet. That wallet gets the run score and can earn the active 6-hour leaderboard multiplier.</p>
+                <p>After a run, submit one Solana wallet. That wallet gets the run score and must hold 1M+ Sherwood to qualify for HoodX.</p>
               </article>
               <article className="lore-card">
                 <span>The Board</span>
                 <strong>Rank matters.</strong>
-                <p>Top wallets get multiplier tiers from the game leaderboard: first, second, third, top ten, then base weight.</p>
+                <p>The leaderboard resets every 24 hours. Each drop fills 15 prize slots from the first eligible wallets on the board.</p>
               </article>
               <article className="lore-card">
                 <span>The Airdrop</span>
-                <strong>Holders get boosted.</strong>
-                <p>Every 30-minute airdrop checks eligible Sherwood holders and applies leaderboard multipliers to matching wallets.</p>
+                <strong>Winners get paid.</strong>
+                <p>Every 30 minutes, HoodX is split by rank share. Holding 1M+ without selling adds +10% weight per full day.</p>
               </article>
             </div>
           </div>

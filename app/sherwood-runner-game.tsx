@@ -9,7 +9,8 @@ type BoardRow = {
   bestDistance: number;
   runs: number;
   rank: number;
-  multiplier: number;
+  prizeBps?: number;
+  prizePct?: number;
 };
 
 type StatsResponse = {
@@ -166,7 +167,7 @@ export function SherwoodRunnerGame() {
       setBoard(data.leaderboard ?? []);
       setPlayerName("");
       setPrimaryWallet("");
-      setStatus("Saved for the active 6-hour board. If this wallet is a 1M+ holder, its rank can boost the next HoodX drops.");
+      setStatus("Saved for the active 24-hour board. If this wallet holds 1M+ Sherwood and lands in an eligible top-15 slot, it can receive the next HoodX drop.");
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Sherwood submit failed.");
     } finally {
@@ -212,7 +213,7 @@ export function SherwoodRunnerGame() {
       {hud.finished ? (
         <aside className="sherwood-submit-card">
           <h3>Save score</h3>
-          <p>{hud.score.toLocaleString()} gold coins / {hud.distance.toLocaleString()}m. Add your name and wallet for the multiplier board.</p>
+          <p>{hud.score.toLocaleString()} gold coins / {hud.distance.toLocaleString()}m. Add your name and wallet for the 24-hour prize board.</p>
           <label htmlFor="sherwood-runner-name">Runner name</label>
           <input
             id="sherwood-runner-name"
@@ -279,7 +280,7 @@ export function HowItWorksPrompt() {
             </li>
             <li>
               <strong>Boost</strong>
-              <span>#1 gets 10x, #2 gets 5x, #3 gets 3x, and #4-10 scale from 2.75x to 1.5x. Every 30 minutes, eligible 1M+ holders get HoodX; the active 6-hour board adds the matching wallet's best rank.</span>
+              <span>Every 30 minutes, HoodX goes to the first 15 leaderboard wallets that also hold 1M+ Sherwood. Prize slots start at 15% for first and 10% for second, and holding without selling adds +10% weight per day.</span>
             </li>
           </ol>
         </div>
@@ -312,7 +313,7 @@ export function SherwoodLeaderboard() {
         <div className="section-kicker">Leaderboard</div>
         <div className="section-head split-head">
           <h2>Top Sherwood runners.</h2>
-          <p>The board resets every 6 hours. Only wallets that also qualify as 1M+ Sherwood holders receive the HoodX multiplier during each 30-minute airdrop.</p>
+          <p>The board resets every 24 hours. Every 30 minutes, the first 15 leaderboard wallets that also hold 1M+ Sherwood split the HoodX drop; ineligible wallets are skipped for the next eligible player.</p>
         </div>
         <div className="leaderboard-summary">
           <article>
@@ -324,11 +325,11 @@ export function SherwoodLeaderboard() {
             <strong>{recentHits > 0 ? recentHits.toLocaleString() : "Awaiting"}</strong>
           </article>
           <article>
-            <span>Top Multiplier</span>
-            <strong>10x</strong>
+            <span>Top Prize Slot</span>
+            <strong>15%</strong>
           </article>
           <article>
-            <span>Latest Multiplier</span>
+            <span>Hold Bonus</span>
             <strong>{latestReward?.normalRewardAmount && latestReward.normalRewardAmount > 0 ? `${(latestReward.rewardAmount / latestReward.normalRewardAmount).toLocaleString(undefined, { maximumFractionDigits: 2 })}x` : "Awaiting"}</strong>
           </article>
         </div>
@@ -342,8 +343,8 @@ export function SherwoodLeaderboard() {
                   <th>Wallet</th>
                   <th>Best score</th>
                   <th>Best run</th>
-                  <th>6h runs</th>
-                  <th>HoodX multiplier</th>
+                  <th>24h runs</th>
+                  <th>Base prize slot</th>
                 </tr>
               </thead>
               <tbody>
@@ -356,7 +357,7 @@ export function SherwoodLeaderboard() {
                       <td>{row.bestScore.toLocaleString()}</td>
                       <td>{row.bestDistance.toLocaleString()}m</td>
                       <td>{row.runs.toLocaleString()}</td>
-                      <td>{row.multiplier}x</td>
+                      <td>{row.prizePct ? `${row.prizePct}%` : "Next eligible"}</td>
                     </tr>
                   ))
                 ) : (

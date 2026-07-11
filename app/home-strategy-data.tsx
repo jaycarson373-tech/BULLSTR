@@ -226,7 +226,7 @@ export function HomeAirdropStats() {
       </article>
       <article>
         <span>Utility</span>
-        <strong>Claim, snapshot, boost, send</strong>
+        <strong>Play, qualify, split HoodX</strong>
       </article>
     </div>
   );
@@ -244,16 +244,16 @@ export function LiveProtocolDashboard() {
       <div className="container">
         <div className="section-kicker live-kicker"><span>HoodX airdrops</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Every 30 minutes, holders get HoodX.</h2>
-          <p>Each cycle claims, snapshots 1M+ Sherwood holders, checks the current 6-hour leaderboard, and applies the wallet's best rank multiplier before HoodX is sent.</p>
+          <h2>Every 30 minutes, top eligible players get HoodX.</h2>
+          <p>Each cycle claims, snapshots 1M+ Sherwood holders, checks the 24-hour leaderboard, skips ineligible scores, and splits HoodX across the first 15 eligible players.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
           <MetricCard label="Total HoodX Airdropped" value={formatAmount(total, REWARD_SYMBOL)} strong />
           <MetricCard label="Last HoodX Airdrop" value={formatAmount(last, REWARD_SYMBOL)} />
           <MetricCard label="Next Airdrop" value={now ? nextDropCountdown(stats, now) : "30:00"} />
           <MetricCard label="Drop Cadence" value="Every 30 minutes" />
-          <MetricCard label="Eligible Holders" value={latestHolders > 0 ? latestHolders.toLocaleString() : "Awaiting holders"} />
-          <MetricCard label="Leaderboard Boost" value="#1 10x / #2 5x / #3 3x / #4-10 2.75x-1.5x" />
+          <MetricCard label="1M+ Wallet Gate" value={latestHolders > 0 ? latestHolders.toLocaleString() : "Awaiting holders"} />
+          <MetricCard label="Prize Split" value="#1 15% / #2 10% / #3-15 fill the rest" />
           <MetricCard label="Last Hit" value={latestReward ? `${compactAddress(latestReward.wallet)} / ${formatMultiplier(latestReward.rewardAmount, latestReward.normalRewardAmount)} / ${formatAmount(latestReward.rewardAmount, REWARD_SYMBOL)}` : "Awaiting airdrop"} />
         </div>
       </div>
@@ -270,8 +270,8 @@ export function RecentAirdrops() {
       <div className="container">
         <div className="section-kicker live-kicker"><span>Recent HoodX drops</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Holder airdrop receipts.</h2>
-          <p>Only settled HoodX airdrops from the live backend are shown. Empty rows mean no settled payouts are available yet.</p>
+          <h2>Winner airdrop receipts.</h2>
+          <p>Only settled HoodX drops to eligible leaderboard players are shown. Empty rows mean no settled payouts are available yet.</p>
         </div>
         <div className="history-card">
           <div className="table-wrap">
@@ -280,8 +280,8 @@ export function RecentAirdrops() {
                 <tr>
                   <th>Wallet</th>
                   <th>Asset</th>
-                  <th>Base</th>
-                  <th>Multiplier</th>
+                  <th>Base rank share</th>
+                  <th>Hold bonus</th>
                   <th>HoodX Received</th>
                   <th>Time</th>
                   <th>TX Link</th>
@@ -332,7 +332,7 @@ export function AirdropHistory() {
         <div className="section-kicker live-kicker"><span>Airdrop history</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>30-minute HoodX windows.</h2>
-          <p>Each window claims, snapshots eligible 1M+ Sherwood holders, applies the active 6-hour leaderboard multiplier, and records settled payouts.</p>
+          <p>Each window claims, snapshots the 1M+ holder gate, fills the first 15 eligible leaderboard slots, applies the hold-streak bonus, and records settled payouts.</p>
         </div>
         <div className="history-card">
           <div className="table-wrap">

@@ -20,6 +20,15 @@ type SherwoodScoreRow = {
   created_at: string | null;
 };
 
+export const SHERWOOD_PRIZE_BPS = [1500, 1000, 900, 800, 700, 700, 600, 600, 600, 500, 500, 500, 400, 400, 300] as const;
+
+export type SherwoodLeaderboardEntry = {
+  wallet: string;
+  leaderboardRank: number;
+  bestScore: number;
+  bestDistance: number;
+};
+
 function assertNoError<T>(result: { data: T; error: unknown }, label: string): T {
   if (result.error) throw new Error(`${label}: ${JSON.stringify(result.error)}`);
   return result.data;
@@ -195,26 +204,16 @@ export async function failPayout(epochId: string, wallet: string, error: unknown
   assertNoError(result, "fail payout");
 }
 
-export function sherwoodRankMultiplierBps(rank: number) {
-  if (rank === 1) return 100_000;
-  if (rank === 2) return 50_000;
-  if (rank === 3) return 30_000;
-  if (rank === 4) return 27_500;
-  if (rank === 5) return 25_000;
-  if (rank === 6) return 22_500;
-  if (rank === 7) return 20_000;
-  if (rank === 8) return 18_500;
-  if (rank === 9) return 16_500;
-  if (rank === 10) return 15_000;
-  return 10_000;
+export function sherwoodRankPrizeBps(rank: number) {
+  return SHERWOOD_PRIZE_BPS[rank - 1] ?? 0;
 }
 
 function sherwoodSeasonStart() {
-  const seasonMs = 6 * 60 * 60 * 1000;
+  const seasonMs = 24 * 60 * 60 * 1000;
   return new Date(Math.floor(Date.now() / seasonMs) * seasonMs).toISOString();
 }
 
-export async function getSherwoodMultiplierMap() {
+export async function getSherwoodLeaderboard() {
   const result = await supabase
     .from("sherwood_runs")
     .select("wallet,score,distance,created_at")
@@ -227,8 +226,8 @@ export async function getSherwoodMultiplierMap() {
   if (result.error) {
     const message = JSON.stringify(result.error);
     if (message.includes("sherwood_runs") || message.includes("42P01") || message.includes("PGRST205")) {
-      console.warn("[Sherwood] sherwood_runs table missing; game multipliers disabled");
-      return new Map<string, { rank: number; multiplierBps: number; bestScore: number; bestDistance: number }>();
+      console.warn("[Sherwood] sherwood_runs table missing; game prizes disabled");
+      return [] as SherwoodLeaderboardEntry[];
     }
     throw result.error;
   }
@@ -248,18 +247,12 @@ export async function getSherwoodMultiplierMap() {
     }
   }
 
-  return new Map(
-    [...bestByWallet.values()]
-      .sort((a, b) => b.bestScore - a.bestScore || b.bestDistance - a.bestDistance || Date.parse(a.latestRunAt ?? "") - Date.parse(b.latestRunAt ?? ""))
-      .slice(0, 10)
-      .map((row, index) => [
-        row.wallet,
-        {
-          rank: index + 1,
-          multiplierBps: sherwoodRankMultiplierBps(index + 1),
-          bestScore: row.bestScore,
-          bestDistance: row.bestDistance
-        }
-      ])
-  );
+  return [...bestByWallet.values()]
+    .sort((a, b) => b.bestScore - a.bestScore || b.bestDistance - a.bestDistance || Date.parse(a.latestRunAt ?? "") - Date.parse(b.latestRunAt ?? ""))
+    .map((row, index) => ({
+      wallet: row.wallet,
+      leaderboardRank: index + 1,
+      bestScore: row.bestScore,
+      bestDistance: row.bestDistance
+    }));
 }
