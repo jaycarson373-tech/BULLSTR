@@ -38,6 +38,7 @@ export default function Page() {
           </a>
           <nav className="nav-links" aria-label="Primary navigation">
             <a href="#how">How</a>
+            <a href="#lore">Lore</a>
             <a href="#chart">Chart</a>
             <a href="#dashboard">Live</a>
             <a href="#holdings">Holdings</a>
@@ -118,6 +119,49 @@ export default function Page() {
                 <span>2.5M+</span>
                 <strong>Holder Presale Access</strong>
                 <p>Wallets holding at least 2.5M Sherwood qualify only if they stay above the minimum through the {SNAPSHOT_WINDOW_COPY}.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section className="section lore-section" id="lore">
+          <div className="container">
+            <div className="section-kicker">Robin Hood lore</div>
+            <div className="section-head split-head">
+              <h2>Run the forest. Outscore the Sheriff. Share the spoils.</h2>
+              <p>
+                Sherwood Run pulls from the old Robin Hood myth: a hidden camp in Sherwood, a greedy Sheriff guarding the treasury,
+                and fast-moving outlaws taking value back for the people. Here, that legend becomes a playable on-chain arcade loop.
+              </p>
+            </div>
+            <div className="lore-grid">
+              <article className="lore-card lore-card-wide">
+                <span>The Story</span>
+                <strong>Sherwood is the hideout.</strong>
+                <p>
+                  Players sprint through the forest, dodge fallen logs, collect Sheriff coins, and fire arrows at tax wagons.
+                  The higher the loot and distance, the stronger the leaderboard position.
+                </p>
+              </article>
+              <article className="lore-card">
+                <span>The Game</span>
+                <strong>Play first.</strong>
+                <p>Start a run, jump with space or tap, fire with F or release, and chase the best loot score before submitting wallets.</p>
+              </article>
+              <article className="lore-card">
+                <span>The Wallets</span>
+                <strong>Submit after.</strong>
+                <p>After a run, add one main Solana wallet plus optional extra wallets. Each valid wallet receives that run score.</p>
+              </article>
+              <article className="lore-card">
+                <span>The Board</span>
+                <strong>Rank matters.</strong>
+                <p>The leaderboard stores each wallet's best loot, best distance, run count, and multiplier tier from Supabase.</p>
+              </article>
+              <article className="lore-card">
+                <span>The Airdrop</span>
+                <strong>Holders get boosted.</strong>
+                <p>Every 30-minute airdrop checks eligible Sherwood holders, then applies the leaderboard multiplier to matching wallets.</p>
               </article>
             </div>
           </div>
