@@ -241,13 +241,50 @@ main,
 }
 
 .x-button {
-  width: 42px;
   min-width: 42px;
   padding: 0;
 }
 
 .ca-copy-button {
   overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.ca-chip {
+  display: inline-flex;
+  max-width: min(46vw, 420px);
+  min-height: 50px;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(198, 255, 0, 0.34);
+  border-radius: 12px;
+  background: rgba(2, 4, 0, 0.72);
+  color: var(--text);
+  padding: 0 14px;
+  box-shadow: 0 0 28px rgba(198, 255, 0, 0.1);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.ca-chip:hover {
+  border-color: rgba(198, 255, 0, 0.68);
+  box-shadow: 0 0 34px rgba(198, 255, 0, 0.22);
+  transform: translateY(-2px);
+}
+
+.ca-chip span {
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+}
+
+.ca-chip b {
+  overflow: hidden;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .hero {
@@ -1297,11 +1334,16 @@ tbody tr:hover {
   }
 
   .x-button {
-    width: 54px;
+    width: 100%;
   }
 
   .ca-copy-button {
     white-space: normal;
+  }
+
+  .ca-chip {
+    width: 100%;
+    max-width: 100%;
   }
 
   .hero-countdown {

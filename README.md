@@ -1,14 +1,15 @@
 # Hood Pump
 
 Contract address: `HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump`
-X: `https://x.com/HoodPump_`
+X Community: `https://x.com/i/communities/2028470502415835347`
 
 Hood Pump is the HPUMP holder access site:
 
 - Creator fees fund a new Robin Hood token launch every 7 days.
 - Holders with 2.5M+ HPUMP get presale access.
-- The first presale defaults to 24 hours from page load unless `NEXT_PUBLIC_FIRST_PRESALE_AT` is set.
-- The eligibility snapshot opens 4 hours before presale and locks 2 hours before presale; wallets must not drop under 2.5M HPUMP before lock.
+- The first snapshot defaults to 6 hours from page load unless `NEXT_PUBLIC_FIRST_SNAPSHOT_AT` is set.
+- The first launch window follows 0-4 hours after snapshot lock unless `NEXT_PUBLIC_FIRST_PRESALE_AT` is set.
+- Wallets must not drop under 2.5M HPUMP before snapshot lock.
 - Live sections track the launch countdown, wallet verification, access records, holders, wallet holdings, and on-chain receipts.
 - The dashboard reads settled windows, payouts, holders, wallet holdings, and recent records from Supabase.
 
@@ -47,14 +48,16 @@ NEXT_PUBLIC_SOURCE_SYMBOL=HPUMP
 NEXT_PUBLIC_REWARD_SYMBOL=HPUMP
 NEXT_PUBLIC_SOURCE_TOKEN_MINT=HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump
 NEXT_PUBLIC_CA=HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump
-NEXT_PUBLIC_X_URL=https://x.com/HoodPump_
-NEXT_PUBLIC_BUY_URL=https://pump.fun/coin/HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump
+NEXT_PUBLIC_X_URL=https://x.com/i/communities/2028470502415835347
 NEXT_PUBLIC_DEXSCREENER_URL=https://dexscreener.com/solana/HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump
 NEXT_PUBLIC_HOOD_CHART_URL=https://dexscreener.com/solana/HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump
 NEXT_PUBLIC_HOOD_CHART_EMBED_URL=<OPTIONAL_DEXSCREENER_EMBED_URL>
 NEXT_PUBLIC_LAUNCH_CADENCE_DAYS=7
 NEXT_PUBLIC_SNAPSHOT_OPENS_HOURS_BEFORE=4
 NEXT_PUBLIC_SNAPSHOT_LOCKS_HOURS_BEFORE=2
+NEXT_PUBLIC_FIRST_SNAPSHOT_HOURS_FROM_NOW=6
+NEXT_PUBLIC_LAUNCH_AFTER_SNAPSHOT_MAX_HOURS=4
+NEXT_PUBLIC_FIRST_SNAPSHOT_AT=<OPTIONAL_ISO_TIME>
 NEXT_PUBLIC_FIRST_PRESALE_AT=<OPTIONAL_ISO_TIME>
 
 NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>

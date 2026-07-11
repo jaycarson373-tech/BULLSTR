@@ -4,12 +4,14 @@ import { FormEvent, useEffect, useState } from "react";
 import {
   FIRST_COIN_REVEAL_COPY,
   FIRST_COIN_REVEAL_HOURS_BEFORE,
+  FIRST_LAUNCH_WINDOW_COPY,
+  FIRST_SNAPSHOT_HOURS_FROM_NOW,
   LAUNCH_CADENCE_COPY,
+  LAUNCH_AFTER_SNAPSHOT_MAX_HOURS,
   LAUNCH_POOL_LABEL,
-  SNAPSHOT_LOCKS_HOURS_BEFORE,
-  SNAPSHOT_OPENS_HOURS_BEFORE,
   SNAPSHOT_TIMING_COPY,
   SNAPSHOT_WINDOW_COPY,
+  SNAPSHOT_WINDOW_HOURS,
   TAX_SPLIT_COPY
 } from "./hood-pump-config";
 
@@ -119,10 +121,10 @@ const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HPUMP";
 const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || DEFAULT_CA;
 const HOOD_CHART_URL = process.env.NEXT_PUBLIC_HOOD_CHART_URL?.trim() || process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || (CA ? `https://dexscreener.com/solana/${CA}` : "https://dexscreener.com/solana");
 const HOOD_CHART_EMBED_URL = process.env.NEXT_PUBLIC_HOOD_CHART_EMBED_URL?.trim() || "";
-const DAY_MS = 24 * 60 * 60 * 1000;
 const HOUR_MS = 60 * 60 * 1000;
 const PRESALE_MIN_HOLDING = "2.5M+";
 const FIRST_PRESALE_AT = process.env.NEXT_PUBLIC_FIRST_PRESALE_AT?.trim() || "";
+const FIRST_SNAPSHOT_AT = process.env.NEXT_PUBLIC_FIRST_SNAPSHOT_AT?.trim() || "";
 const SOLANA_ADDRESS_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 const ETH_ADDRESS_RE = /^0x[a-fA-F0-9]{40}$/;
 
@@ -231,7 +233,14 @@ function formatLongCountdown(ms: number) {
 
 function firstPresaleTime() {
   const configured = FIRST_PRESALE_AT ? Date.parse(FIRST_PRESALE_AT) : 0;
-  return Number.isFinite(configured) && configured > Date.now() ? configured : Date.now() + DAY_MS;
+  return Number.isFinite(configured) && configured > Date.now() ? configured : 0;
+}
+
+function firstSnapshotLockTime() {
+  const configured = FIRST_SNAPSHOT_AT ? Date.parse(FIRST_SNAPSHOT_AT) : 0;
+  return Number.isFinite(configured) && configured > Date.now()
+    ? configured
+    : Date.now() + FIRST_SNAPSHOT_HOURS_FROM_NOW * HOUR_MS;
 }
 
 function statusLabel(status: string) {
@@ -342,9 +351,13 @@ function useHolderData() {
 }
 
 function usePresaleSchedule() {
-  const [firstPresaleAt] = useState(firstPresaleTime);
-  const snapshotOpensAt = firstPresaleAt - SNAPSHOT_OPENS_HOURS_BEFORE * HOUR_MS;
-  const snapshotLocksAt = firstPresaleAt - SNAPSHOT_LOCKS_HOURS_BEFORE * HOUR_MS;
+  const [snapshotLocksAt] = useState(firstSnapshotLockTime);
+  const [configuredPresaleAt] = useState(firstPresaleTime);
+  const firstPresaleAt =
+    configuredPresaleAt > snapshotLocksAt
+      ? configuredPresaleAt
+      : snapshotLocksAt + LAUNCH_AFTER_SNAPSHOT_MAX_HOURS * HOUR_MS;
+  const snapshotOpensAt = snapshotLocksAt - SNAPSHOT_WINDOW_HOURS * HOUR_MS;
   const firstCoinRevealAt = firstPresaleAt - FIRST_COIN_REVEAL_HOURS_BEFORE * HOUR_MS;
 
   return { firstPresaleAt, snapshotOpensAt, snapshotLocksAt, firstCoinRevealAt };
@@ -353,14 +366,18 @@ function usePresaleSchedule() {
 export function HeroCountdown() {
   const { stats, now } = useProtocolData();
   const { firstPresaleAt, snapshotOpensAt, snapshotLocksAt } = usePresaleSchedule();
-  const countdown = firstPresaleAt && now ? formatLongCountdown(firstPresaleAt - now) : "--:--:--";
+  const countdown = snapshotLocksAt && now ? formatLongCountdown(snapshotLocksAt - now) : "--:--:--";
   const hpumpDeployed = stats ? rewardTotalAmount(stats.totalRewardTotals, REWARD_SYMBOL) : 0;
   const eligibleHolders = stats?.latestEligibleHolders ?? 0;
 
   return (
     <div className="hero-countdown" aria-live="polite">
-      <span>First Presale Opens In</span>
+      <span>First Snapshot Locks In</span>
       <strong className="countdown-value">{countdown}</strong>
+      <div className="hero-total-distributed">
+        <span>Launch Window</span>
+        <b>{formatDateTime(snapshotLocksAt)} - {formatDateTime(firstPresaleAt)}</b>
+      </div>
       <div className="hero-total-distributed">
         <span>Snapshot Window</span>
         <b>{formatDateTime(snapshotOpensAt)} - {formatDateTime(snapshotLocksAt)}</b>
@@ -395,7 +412,7 @@ export function LiveProtocolDashboard() {
   const { stats, now } = useProtocolData();
   const { firstPresaleAt, snapshotOpensAt, snapshotLocksAt } = usePresaleSchedule();
   const rounds = stats?.roundHistory ?? [];
-  const countdown = firstPresaleAt && now ? formatLongCountdown(firstPresaleAt - now) : "--:--:--";
+  const countdown = snapshotLocksAt && now ? formatLongCountdown(snapshotLocksAt - now) : "--:--:--";
   const latestRound = rounds[0];
   const totalRewardAirdropped = stats ? rewardTotalAmount(stats.totalRewardTotals, REWARD_SYMBOL) : 0;
   const totalRewardBought = rounds.reduce((sum, round) => sum + (Number.isFinite(round.rewardBought) ? round.rewardBought : 0), 0);
@@ -412,8 +429,9 @@ export function LiveProtocolDashboard() {
           <MetricCard label="Creator Fees Routed" value={totalRewardBought > 0 ? formatAmount(totalRewardBought, REWARD_SYMBOL, 4) : "Awaiting live routing"} strong />
           <MetricCard label={LAUNCH_POOL_LABEL} value={totalRewardAirdropped > 0 ? formatAmount(totalRewardAirdropped, REWARD_SYMBOL, 2) : stats ? formatRewardTotals(stats.totalRewardTotals, "Awaiting live routing") : "Loading"} />
           <MetricCard label="Last Window" value={latestRound ? `#${latestRound.epoch} ${statusLabel(latestRound.status)}` : "Awaiting window"} />
-          <MetricCard label="First Presale Timer" value={countdown} />
+          <MetricCard label="Snapshot Lock Timer" value={countdown} />
           <MetricCard label="Snapshot Window" value={`${formatDateTime(snapshotOpensAt)} - ${formatDateTime(snapshotLocksAt)}`} />
+          <MetricCard label="First Launch Window" value={`${formatDateTime(snapshotLocksAt)} - ${formatDateTime(firstPresaleAt)}`} />
           <MetricCard label="Tax Token Split" value={TAX_SPLIT_COPY} muted />
         </div>
       </div>
@@ -498,19 +516,19 @@ export function RobinhoodHoldingsPanel() {
 export function RobinhoodRunnerPanel() {
   const { now } = useProtocolData();
   const { firstPresaleAt, snapshotOpensAt, snapshotLocksAt } = usePresaleSchedule();
-  const runnerCountdown = now ? formatLongCountdown(firstPresaleAt - now) : "--:--:--";
+  const runnerCountdown = now ? formatLongCountdown(snapshotLocksAt - now) : "--:--:--";
 
   return (
     <section className="section runner-section" id="runners">
       <div className="container">
         <div className="section-kicker live-kicker"><span>Robin Hood launches</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Launch pool, presale clock, receipts.</h2>
-          <p>The Robin Hood side shows the tracked launch pool, the first presale clock, and exactly when {PRESALE_MIN_HOLDING} holders can enter.</p>
+          <h2>Launch pool, snapshot clock, receipts.</h2>
+          <p>The Robin Hood side shows the tracked launch pool, the first snapshot clock, and exactly when {PRESALE_MIN_HOLDING} holders lock eligibility.</p>
         </div>
         <div className="runner-layout">
           <div className="runner-countdown-card">
-            <span>Next presale window</span>
+            <span>First snapshot locks in</span>
             <strong className="countdown-value">{runnerCountdown}</strong>
             <p>The {SNAPSHOT_WINDOW_COPY} {SNAPSHOT_TIMING_COPY}. Hold at least {PRESALE_MIN_HOLDING} HPUMP and do not go below before it locks.</p>
           </div>
@@ -524,6 +542,11 @@ export function RobinhoodRunnerPanel() {
               <span>Snapshot locks</span>
               <strong>{formatDateTime(snapshotLocksAt)}</strong>
               <b>{PRESALE_MIN_HOLDING} HPUMP required</b>
+            </article>
+            <article className="runner-position-card">
+              <span>First launch window</span>
+              <strong>{formatDateTime(snapshotLocksAt)} - {formatDateTime(firstPresaleAt)}</strong>
+              <b>{FIRST_LAUNCH_WINDOW_COPY}</b>
             </article>
           </div>
         </div>
@@ -754,7 +777,7 @@ export function HolderLookup() {
   const solLooksValid = SOLANA_ADDRESS_RE.test(cleanSolWallet);
   const ethLooksValid = ETH_ADDRESS_RE.test(cleanEthWallet);
   const canSubmit = solLooksValid && ethLooksValid;
-  const presaleCountdown = now ? formatLongCountdown(firstPresaleAt - now) : "--:--:--";
+  const snapshotCountdown = now ? formatLongCountdown(snapshotLocksAt - now) : "--:--:--";
   const revealCountdown = now ? formatLongCountdown(firstCoinRevealAt - now) : "--:--:--";
   const displayedHolders = holders?.topHolders.slice(0, 8) ?? [];
   const submittedMatchesTopHolder =
@@ -798,7 +821,7 @@ export function HolderLookup() {
           <h2>Submit your Sol wallet. Add your ETH destination.</h2>
           <p className="lead">
             You need {PRESALE_MIN_HOLDING} HPUMP in the Sol wallet at the snapshot. Do not go under that amount before
-            the snapshot window, which opens {formatDateTime(snapshotOpensAt)} and locks by {formatDateTime(snapshotLocksAt)}.
+            the snapshot window, which opens {formatDateTime(snapshotOpensAt)} and locks by {formatDateTime(snapshotLocksAt)}. The first launch window runs {FIRST_LAUNCH_WINDOW_COPY}.
           </p>
           <div className="presale-countdown-grid" aria-label="First coin countdowns">
             <article>
@@ -807,8 +830,8 @@ export function HolderLookup() {
               <p>Reveal is scheduled {FIRST_COIN_REVEAL_COPY}.</p>
             </article>
             <article>
-              <span>First presale opens</span>
-              <strong className="countdown-value">{presaleCountdown}</strong>
+              <span>First snapshot locks</span>
+              <strong className="countdown-value">{snapshotCountdown}</strong>
               <p>Only wallets still holding {PRESALE_MIN_HOLDING} HPUMP at lock are eligible.</p>
             </article>
           </div>
@@ -866,7 +889,7 @@ export function HolderLookup() {
                 <strong>{canSubmit ? "Address format saved for presale review" : "Submission needs attention"}</strong>
                 <span>
                   {canSubmit
-                    ? `${compactAddress(cleanSolWallet)} is ready for the ${formatDateTime(firstPresaleAt)} presale review. Final eligibility is determined by the live ${PRESALE_MIN_HOLDING} HPUMP snapshot.`
+                    ? `${compactAddress(cleanSolWallet)} is ready for the ${formatDateTime(snapshotLocksAt)} snapshot review. Launch follows ${FIRST_LAUNCH_WINDOW_COPY}. Final eligibility is determined by the live ${PRESALE_MIN_HOLDING} HPUMP snapshot.`
                     : "Enter a valid Solana wallet and a valid 0x ETH address before the snapshot locks."}
                 </span>
               </>
