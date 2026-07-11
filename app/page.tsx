@@ -11,17 +11,18 @@ import {
   RewardExplanation
 } from "./home-strategy-data";
 import {
+  FIRST_LAUNCH_WINDOW_COPY,
+  FIRST_SNAPSHOT_HOURS_FROM_NOW,
   LAUNCH_CADENCE_COPY,
   LAUNCH_CADENCE_TITLE,
-  SNAPSHOT_TIMING_COPY,
   SNAPSHOT_WINDOW_COPY,
   TAX_SPLIT_COPY
 } from "./hood-pump-config";
 
-const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/HoodPump_";
+const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/i/communities/2028470502415835347";
 const DEFAULT_CA = "HsD1kibhkv8e46d7FdBcE1vkY7ksjwbqgxEYSfHxpump";
 const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || DEFAULT_CA;
-const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim() || (CA ? `https://pump.fun/coin/${CA}` : "https://pump.fun");
+const CHART_URL = process.env.NEXT_PUBLIC_HOOD_CHART_URL?.trim() || process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || `https://dexscreener.com/solana/${CA}`;
 
 export default function Page() {
   return (
@@ -45,11 +46,12 @@ export default function Page() {
             <a href="#airdrops">Access</a>
           </nav>
           <div className="nav-actions">
-            <a className="mini-button x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open X">
-              X
+            <a className="ca-chip" href={CHART_URL} target="_blank" rel="noreferrer" aria-label={`Open contract ${CA}`}>
+              <span>CA</span>
+              <b>{CA}</b>
             </a>
-            <a className="cta" href={BUY_URL} target="_blank" rel="noreferrer">
-              Buy
+            <a className="mini-button x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open X community">
+              X Community
             </a>
           </div>
         </div>
@@ -79,11 +81,14 @@ export default function Page() {
               <p className="hero-subtitle">Creator fees fund Robin Hood launches with a clear {TAX_SPLIT_COPY} model.</p>
               <p className="hero-lead">
                 Hood Pump routes creator fees into launch rails. Holders with 2.5M+ HPUMP get presale
-                access, with the first window opening in 1 day and the snapshot window that {SNAPSHOT_TIMING_COPY}.
+                access, with the first snapshot locking in {FIRST_SNAPSHOT_HOURS_FROM_NOW} hours and the first launch window opening {FIRST_LAUNCH_WINDOW_COPY}.
               </p>
               <div className="hero-actions">
-                <a className="cta" href={BUY_URL} target="_blank" rel="noreferrer">
-                  Enter Presale
+                <a className="cta" href="#lookup">
+                  Verify Wallet
+                </a>
+                <a className="cta secondary ca-copy-button" href={CHART_URL} target="_blank" rel="noreferrer">
+                  CA {CA}
                 </a>
               </div>
             </div>
@@ -139,10 +144,7 @@ export default function Page() {
           </div>
           <div className="footer-links">
             <a href={X_URL} target="_blank" rel="noreferrer">
-              X
-            </a>
-            <a href={BUY_URL} target="_blank" rel="noreferrer">
-              Buy
+              X Community
             </a>
           </div>
         </div>
