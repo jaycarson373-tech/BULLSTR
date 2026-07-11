@@ -182,8 +182,8 @@ export function SherwoodRunnerGame() {
                 <h3>{hud.finished ? "Run complete" : "Sherwood Run"}</h3>
                 <p>
                   {hud.finished
-                    ? `You cleared ${hud.score} gates across ${hud.distance}m. Submit wallets to save it.`
-                    : "Press space, tap, or click to flap. Fly through Sherwood tree gates."}
+                    ? `You collected ${hud.score} gold coins across ${hud.distance}m. Submit wallets to save it.`
+                    : "Press space, tap, or click to flap. Collect the gold coin in each Sherwood tree gate."}
                 </p>
                 <button type="button" className="cta" onClick={startRun}>{hud.finished ? "Run again" : "Start run"}</button>
               </div>
@@ -195,7 +195,7 @@ export function SherwoodRunnerGame() {
       {hud.finished ? (
         <aside className="sherwood-submit-card">
           <h3>Save score</h3>
-          <p>{hud.score.toLocaleString()} gates / {hud.distance.toLocaleString()}m. Add your name and wallet for the multiplier board.</p>
+          <p>{hud.score.toLocaleString()} gold coins / {hud.distance.toLocaleString()}m. Add your name and wallet for the multiplier board.</p>
           <label htmlFor="sherwood-runner-name">Runner name</label>
           <input
             id="sherwood-runner-name"
@@ -263,7 +263,7 @@ export function HowItWorksPrompt() {
             </li>
             <li>
               <strong>Clear</strong>
-              <span>Fly through tree gates for score. Hit a trunk, the canopy, or the forest floor and the run ends.</span>
+              <span>Each tree gate has one gold coin in the center. Collect the coin for score; hit a trunk, the canopy, or the forest floor and the run ends.</span>
             </li>
             <li>
               <strong>Submit</strong>
@@ -399,7 +399,7 @@ function createGame() {
     ground: 300,
     obstacleTimer: 0.65,
     runner: { x: 88, y: 0, vy: 0, w: 44, h: 52 },
-    obstacles: [] as Array<{ x: number; gapY: number; gapH: number; w: number; passed: boolean }>,
+    obstacles: [] as Array<{ x: number; gapY: number; gapH: number; w: number; coinTaken: boolean }>,
     trees: Array.from({ length: 16 }, (_, index) => ({ x: index * 92, h: 60 + Math.random() * 100, layer: index % 3 }))
   };
 }
@@ -432,7 +432,7 @@ function updateGame(game: GameState, canvas: HTMLCanvasElement, dt: number, endR
     const topSafe = 34;
     const bottomSafe = h - 58 - gapH;
     const gapY = topSafe + Math.random() * Math.max(20, bottomSafe - topSafe);
-    game.obstacles.push({ x: w + 44, gapY, gapH, w: 58, passed: false });
+    game.obstacles.push({ x: w + 44, gapY, gapH, w: 58, coinTaken: false });
     game.obstacleTimer = Math.max(0.92, 1.55 - game.speed * 0.11);
   }
 
@@ -453,9 +453,10 @@ function updateGame(game: GameState, canvas: HTMLCanvasElement, dt: number, endR
   game.obstacles.forEach((obstacle) => {
     const topTrunk = { x: obstacle.x, y: 0, w: obstacle.w, h: obstacle.gapY };
     const bottomTrunk = { x: obstacle.x, y: obstacle.gapY + obstacle.gapH, w: obstacle.w, h: game.ground - (obstacle.gapY + obstacle.gapH) };
+    const coinBox = { x: obstacle.x + obstacle.w / 2 - 9, y: obstacle.gapY + obstacle.gapH / 2 - 9, w: 18, h: 18 };
     if (rectsHit(runnerBox, topTrunk, 7) || rectsHit(runnerBox, bottomTrunk, 7)) endRun();
-    if (!obstacle.passed && obstacle.x + obstacle.w < runnerBox.x) {
-      obstacle.passed = true;
+    if (!obstacle.coinTaken && rectsHit(runnerBox, coinBox, 2)) {
+      obstacle.coinTaken = true;
       game.score += 1;
     }
   });
@@ -488,7 +489,10 @@ function drawGame(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, game
   ctx.fillRect(0, game.ground, w, h - game.ground);
   ctx.fillStyle = "rgba(198,255,0,.42)";
   for (let x = -40; x < w + 40; x += 30) pixelRect(ctx, x, game.ground + ((x + Math.floor(game.distance * 9)) % 14), 18, 3);
-  game.obstacles.forEach((obstacle) => drawObstacle(ctx, obstacle));
+  game.obstacles.forEach((obstacle) => {
+    drawObstacle(ctx, obstacle);
+    if (!obstacle.coinTaken) drawCoin(ctx, obstacle.x + obstacle.w / 2, obstacle.gapY + obstacle.gapH / 2);
+  });
   drawRunner(ctx, game);
 }
 
@@ -531,6 +535,18 @@ function drawObstacle(ctx: CanvasRenderingContext2D, obstacle: { x: number; gapY
   ctx.fillStyle = "#c6ff00";
   pixelRect(ctx, obstacle.x + 6, topH - 12, 12, 5);
   pixelRect(ctx, obstacle.x + obstacle.w - 18, bottomY + 7, 12, 5);
+}
+
+function drawCoin(ctx: CanvasRenderingContext2D, x: number, y: number) {
+  ctx.fillStyle = "#ffcf2e";
+  pixelRect(ctx, x - 7, y - 10, 14, 20);
+  pixelRect(ctx, x - 10, y - 7, 20, 14);
+  ctx.fillStyle = "#fff07a";
+  pixelRect(ctx, x - 3, y - 7, 6, 5);
+  pixelRect(ctx, x - 7, y - 2, 4, 4);
+  ctx.fillStyle = "#7a4a00";
+  pixelRect(ctx, x - 2, y - 5, 4, 12);
+  pixelRect(ctx, x - 5, y - 1, 10, 3);
 }
 
 function drawRunner(ctx: CanvasRenderingContext2D, game: GameState) {

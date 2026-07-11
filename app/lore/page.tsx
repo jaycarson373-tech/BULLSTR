@@ -44,13 +44,13 @@ export default function LorePage() {
                 <strong>Sherwood is the hideout.</strong>
                 <p>
                   Robin Hood stories are built around a forest crew beating an unfair treasury. Sherwood Run keeps that
-                  spirit: the runner flies through the woods, clears tree gates, and climbs the public board.
+                  spirit: the runner flies through the woods, grabs gold from each tree gate, and climbs the public board.
                 </p>
               </article>
               <article className="lore-card">
                 <span>The Game</span>
                 <strong>Flap the forest.</strong>
-                <p>Press space, tap, or click to flap through Sherwood. Each cleared tree gate adds score. The forest gets faster and the gaps tighten over time.</p>
+                <p>Press space, tap, or click to flap through Sherwood. Each tree gate has one gold coin in the middle, and collected coins are the score. The forest gets faster and the gaps tighten over time.</p>
               </article>
               <article className="lore-card">
                 <span>The Wallets</span>
