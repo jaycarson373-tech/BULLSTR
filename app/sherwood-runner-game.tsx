@@ -422,35 +422,29 @@ function rectsHit(a: { x: number; y: number; w: number; h: number }, b: { x: num
 function drawGame(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, game: GameState) {
   const w = canvas.clientWidth;
   const h = canvas.clientHeight;
+  ctx.imageSmoothingEnabled = false;
   ctx.clearRect(0, 0, w, h);
-  const sky = ctx.createLinearGradient(0, 0, 0, h);
-  sky.addColorStop(0, "#04110a");
-  sky.addColorStop(0.58, "#12341f");
-  sky.addColorStop(1, "#020400");
-  ctx.fillStyle = sky;
+  ctx.fillStyle = "#04110a";
   ctx.fillRect(0, 0, w, h);
-  ctx.fillStyle = "rgba(198,255,0,.66)";
-  ctx.beginPath();
-  ctx.arc(w - 72, 58, 24, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.fillStyle = "#092016";
+  ctx.fillRect(0, Math.floor(h * 0.46), w, Math.ceil(h * 0.54));
+  ctx.fillStyle = "#c6ff00";
+  pixelRect(ctx, w - 92, 36, 10, 10);
+  pixelRect(ctx, w - 82, 28, 28, 28);
+  pixelRect(ctx, w - 54, 38, 10, 10);
   [...game.trees].sort((a, b) => a.layer - b.layer).forEach((tree) => drawTree(ctx, game, tree));
   ctx.fillStyle = "#061008";
   ctx.fillRect(0, game.ground, w, h - game.ground);
   ctx.fillStyle = "rgba(198,255,0,.42)";
-  for (let x = -40; x < w + 40; x += 30) ctx.fillRect(x, game.ground + ((x + Math.floor(game.distance * 9)) % 14), 18, 3);
+  for (let x = -40; x < w + 40; x += 30) pixelRect(ctx, x, game.ground + ((x + Math.floor(game.distance * 9)) % 14), 18, 3);
   game.coins.forEach((coin) => {
     ctx.fillStyle = "#c6ff00";
-    ctx.beginPath();
-    ctx.arc(coin.x, coin.y, coin.r, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(2,4,0,.62)";
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    pixelRect(ctx, coin.x - 7, coin.y - 7, 14, 14);
     ctx.fillStyle = "#020400";
-    ctx.font = "bold 10px Rubik, sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("S", coin.x, coin.y + 0.5);
+    pixelRect(ctx, coin.x - 3, coin.y - 5, 6, 2);
+    pixelRect(ctx, coin.x - 4, coin.y - 1, 8, 2);
+    pixelRect(ctx, coin.x - 3, coin.y + 3, 6, 2);
+    ctx.fillStyle = "#020400";
   });
   game.obstacles.forEach((obstacle) => drawObstacle(ctx, obstacle));
   drawRunner(ctx, game);
@@ -460,84 +454,58 @@ function drawTree(ctx: CanvasRenderingContext2D, game: GameState, tree: GameStat
   const base = game.ground + 4;
   const scale = 0.74 + tree.layer * 0.2;
   ctx.fillStyle = tree.layer === 0 ? "rgba(4, 21, 15, .55)" : "rgba(1, 12, 8, .82)";
-  ctx.fillRect(tree.x + 18 * scale, base - tree.h, 12 * scale, tree.h);
-  ctx.beginPath();
-  ctx.moveTo(tree.x, base - tree.h + 24);
-  ctx.lineTo(tree.x + 25 * scale, base - tree.h - 42 * scale);
-  ctx.lineTo(tree.x + 58 * scale, base - tree.h + 24);
-  ctx.closePath();
-  ctx.fill();
+  pixelRect(ctx, tree.x + 18 * scale, base - tree.h, 12 * scale, tree.h);
   ctx.fillStyle = tree.layer === 0 ? "rgba(198,255,0,.08)" : "rgba(198,255,0,.13)";
-  ctx.beginPath();
-  ctx.arc(tree.x + 28 * scale, base - tree.h - 14 * scale, 24 * scale, 0, Math.PI * 2);
-  ctx.fill();
+  const crownX = tree.x + 28 * scale;
+  const crownY = base - tree.h - 12 * scale;
+  pixelRect(ctx, crownX - 22 * scale, crownY, 44 * scale, 18 * scale);
+  pixelRect(ctx, crownX - 14 * scale, crownY - 16 * scale, 28 * scale, 16 * scale);
+  pixelRect(ctx, crownX - 30 * scale, crownY + 12 * scale, 60 * scale, 20 * scale);
+  ctx.fillStyle = "rgba(198,255,0,.18)";
+  pixelRect(ctx, crownX - 6 * scale, crownY - 8 * scale, 10 * scale, 8 * scale);
 }
 
 function drawObstacle(ctx: CanvasRenderingContext2D, obstacle: { x: number; y: number; w: number; h: number; kind: "log" | "stump" }) {
   if (obstacle.kind === "log") {
     ctx.fillStyle = "#5d381d";
-    ctx.fillRect(obstacle.x, obstacle.y + 5, obstacle.w, obstacle.h - 5);
+    pixelRect(ctx, obstacle.x, obstacle.y + 5, obstacle.w, obstacle.h - 5);
     ctx.fillStyle = "#8a5426";
-    ctx.beginPath();
-    ctx.arc(obstacle.x + 8, obstacle.y + obstacle.h / 2 + 3, 9, 0, Math.PI * 2);
-    ctx.arc(obstacle.x + obstacle.w - 8, obstacle.y + obstacle.h / 2 + 3, 9, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(198,255,0,.25)";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(obstacle.x + 12, obstacle.y + 10);
-    ctx.lineTo(obstacle.x + obstacle.w - 12, obstacle.y + 10);
-    ctx.stroke();
+    pixelRect(ctx, obstacle.x + 4, obstacle.y + 7, 10, obstacle.h - 9);
+    pixelRect(ctx, obstacle.x + obstacle.w - 14, obstacle.y + 7, 10, obstacle.h - 9);
+    ctx.fillStyle = "rgba(198,255,0,.25)";
+    pixelRect(ctx, obstacle.x + 16, obstacle.y + 10, obstacle.w - 32, 3);
     return;
   }
 
   ctx.fillStyle = "#4c2d16";
-  ctx.fillRect(obstacle.x + obstacle.w * 0.18, obstacle.y, obstacle.w * 0.64, obstacle.h);
+  pixelRect(ctx, obstacle.x + obstacle.w * 0.18, obstacle.y, obstacle.w * 0.64, obstacle.h);
   ctx.fillStyle = "#7d4a22";
-  ctx.beginPath();
-  ctx.ellipse(obstacle.x + obstacle.w / 2, obstacle.y + 4, obstacle.w * 0.45, 8, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = "rgba(198,255,0,.28)";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(obstacle.x + obstacle.w * 0.18, obstacle.y + obstacle.h * 0.45);
-  ctx.lineTo(obstacle.x + obstacle.w * 0.82, obstacle.y + obstacle.h * 0.3);
-  ctx.stroke();
+  pixelRect(ctx, obstacle.x + obstacle.w * 0.1, obstacle.y, obstacle.w * 0.8, 8);
+  ctx.fillStyle = "rgba(198,255,0,.28)";
+  pixelRect(ctx, obstacle.x + obstacle.w * 0.32, obstacle.y + obstacle.h * 0.32, obstacle.w * 0.36, 3);
 }
 
 function drawRunner(ctx: CanvasRenderingContext2D, game: GameState) {
   const runner = game.runner;
   ctx.save();
-  ctx.translate(runner.x, runner.y + (runner.grounded ? Math.sin(game.distance * 0.9) * 2 : 0));
-  ctx.fillStyle = "rgba(2,4,0,.78)";
-  ctx.beginPath();
-  ctx.moveTo(9, 22);
-  ctx.lineTo(-10, 35);
-  ctx.lineTo(7, 42);
-  ctx.closePath();
-  ctx.fill();
+  ctx.translate(Math.floor(runner.x), Math.floor(runner.y + (runner.grounded ? Math.sin(game.distance * 0.9) * 2 : 0)));
+  ctx.fillStyle = "#020400";
+  pixelRect(ctx, -8, 26, 18, 10);
+  pixelRect(ctx, -2, 34, 12, 8);
   ctx.fillStyle = "#18371f";
-  ctx.fillRect(10, 18, 18, 25);
+  pixelRect(ctx, 10, 18, 18, 25);
   ctx.fillStyle = "#c6ff00";
-  ctx.fillRect(12, 28, 16, 4);
+  pixelRect(ctx, 12, 28, 16, 4);
   ctx.fillStyle = "#071108";
-  ctx.fillRect(15, 24, 10, 8);
+  pixelRect(ctx, 15, 24, 10, 8);
   ctx.fillStyle = "#18371f";
-  ctx.beginPath();
-  ctx.moveTo(7, 19);
-  ctx.lineTo(20, 1);
-  ctx.lineTo(34, 19);
-  ctx.closePath();
-  ctx.fill();
-  ctx.strokeStyle = "#c6ff00";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(5, 21);
-  ctx.lineTo(20, 1);
-  ctx.lineTo(35, 21);
-  ctx.stroke();
-  ctx.fillRect(6, 42, 8, 8);
-  ctx.fillRect(24, 42, 8, 8);
+  pixelRect(ctx, 14, 8, 14, 10);
+  pixelRect(ctx, 10, 14, 22, 7);
+  ctx.fillStyle = "#c6ff00";
+  pixelRect(ctx, 12, 15, 4, 3);
+  pixelRect(ctx, 26, 15, 4, 3);
+  pixelRect(ctx, 6, 42, 8, 8);
+  pixelRect(ctx, 24, 42, 8, 8);
   ctx.strokeStyle = "#7c4a22";
   ctx.lineWidth = 3;
   ctx.beginPath();
@@ -550,7 +518,11 @@ function drawRunner(ctx: CanvasRenderingContext2D, game: GameState) {
   ctx.lineTo(35, 40);
   ctx.stroke();
   ctx.fillStyle = "#c6ff00";
-  ctx.fillRect(3, 10, 5, 20);
-  ctx.fillRect(5, 8, 14, 2);
+  pixelRect(ctx, 3, 10, 5, 20);
+  pixelRect(ctx, 5, 8, 14, 2);
   ctx.restore();
+}
+
+function pixelRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
+  ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
 }
