@@ -261,7 +261,7 @@ async function tokenBalanceOrNull(connection: Connection, wallet: PublicKey, min
 
 async function sherwoodHoldingsOrNull(): Promise<SherwoodHoldings> {
   const wallet = bagholderWalletPublicKey();
-  const sourceSymbol = symbolEnv("SOURCE_SYMBOL", "SHER");
+  const sourceSymbol = symbolEnv("SOURCE_SYMBOL", "Sherwood");
   const rewardSymbol = symbolEnv("REWARD_SYMBOL", sourceSymbol);
   const empty = {
     wallet: wallet?.toBase58() ?? null,
@@ -312,12 +312,12 @@ function payoutTime(row: Pick<PayoutRow, "updated_at" | "created_at" | "epoch_id
 }
 
 function rewardAsset(row: Pick<PayoutRow, "reward_asset">) {
-  return row.reward_asset?.trim() || "SHER";
+  return row.reward_asset?.trim() || "Sherwood";
 }
 
 function rewardAssetRank(asset: string) {
   const upper = asset.toUpperCase();
-  if (upper === "SHER") return 0;
+  if (upper === "SHERWOOD") return 0;
   if (upper === "SOL") return 1;
   return 3;
 }
@@ -619,7 +619,7 @@ export async function GET() {
       const claim = claimsByEpoch.get(epochId);
       const buy = buysByEpoch.get(epochId);
       const payoutSummary = payoutsByEpoch.get(epochId);
-      const sherSummary = payoutSummary?.rewardTotals.get("SHER");
+      const sherSummary = payoutSummary?.rewardTotals.get("Sherwood");
       return {
         epoch: displayEpochById.get(epochId) ?? realEpochCount - index,
         status: row?.status === "completed" ? "completed" : "settled",
@@ -636,7 +636,7 @@ export async function GET() {
 
     const recentRewards = payoutRows.slice(0, 50).map((row) => ({
       epoch: displayEpochById.get(row.epoch_id) ?? epochNumber(row.epoch_id, 0),
-      rewardAsset: row.reward_asset ?? "SHER",
+      rewardAsset: row.reward_asset ?? "Sherwood",
       wallet: row.wallet,
       rewardAmount: toNumber(row.reward_amount),
       normalRewardAmount: toNumber(row.normal_reward_amount),

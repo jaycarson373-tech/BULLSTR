@@ -1,13 +1,13 @@
 alter table payouts
-  alter column reward_asset set default 'SHER';
+  alter column reward_asset set default 'Sherwood';
 
 update payouts
 set
-  reward_asset = 'SHER',
-  idempotency_key = epoch_id || ':' || wallet || ':SHER'
-where reward_asset not in ('SHER', 'SOL');
+  reward_asset = 'Sherwood',
+  idempotency_key = epoch_id || ':' || wallet || ':Sherwood'
+where reward_asset not in ('Sherwood', 'SOL');
 
 update payouts
-set idempotency_key = epoch_id || ':' || wallet || ':SHER'
-where reward_asset = 'SHER'
-  and idempotency_key <> epoch_id || ':' || wallet || ':SHER';
+set idempotency_key = epoch_id || ':' || wallet || ':Sherwood'
+where reward_asset = 'Sherwood'
+  and idempotency_key <> epoch_id || ':' || wallet || ':Sherwood';

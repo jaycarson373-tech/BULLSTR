@@ -105,8 +105,8 @@ const emptyStats: StatsResponse = {
     solBalance: null,
     sourceTokenBalance: null,
     rewardTokenBalance: null,
-    sourceSymbol: "SHER",
-    rewardSymbol: "SHER",
+    sourceSymbol: "Sherwood",
+    rewardSymbol: "Sherwood",
     updatedAt: null
   },
   nextDropTime: new Date().toISOString(),
@@ -116,11 +116,11 @@ const emptyStats: StatsResponse = {
 
 const REFRESH_MS = 12_000;
 const DEFAULT_CA = "";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "SHER";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "SHER";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "Sherwood";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "Sherwood";
 const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || DEFAULT_CA;
-const SHER_CHART_URL = process.env.NEXT_PUBLIC_SHER_CHART_URL?.trim() || process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || (CA ? `https://dexscreener.com/solana/${CA}` : "https://dexscreener.com/solana");
-const SHER_CHART_EMBED_URL = process.env.NEXT_PUBLIC_SHER_CHART_EMBED_URL?.trim() || "";
+const SHERWOOD_CHART_URL = process.env.NEXT_PUBLIC_SHERWOOD_CHART_URL?.trim() || process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || (CA ? `https://dexscreener.com/solana/${CA}` : "https://dexscreener.com/solana");
+const SHERWOOD_CHART_EMBED_URL = process.env.NEXT_PUBLIC_SHERWOOD_CHART_EMBED_URL?.trim() || "";
 const HOUR_MS = 60 * 60 * 1000;
 const PRESALE_MIN_HOLDING = "2.5M+";
 const FIRST_PRESALE_AT = process.env.NEXT_PUBLIC_FIRST_PRESALE_AT?.trim() || "";
@@ -437,7 +437,7 @@ export function LiveProtocolDashboard() {
       <div className="container">
         <div className="section-kicker live-kicker"><span>Machine readout</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>The Sherwood Forest launch dashboard lives here.</h2>
+          <h2>The Sherwood Run launch dashboard lives here.</h2>
           <p>Live values come from the existing backend. If the backend has not settled data yet, this stays quiet instead of inventing numbers.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
@@ -458,28 +458,28 @@ export function SherwoodChart() {
   return (
     <section className="section sherwood-chart-section" id="chart">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>SHER chart</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>Sherwood chart</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Live SHER chart.</h2>
-          <p>Set NEXT_PUBLIC_SHER_CHART_EMBED_URL to embed the exact DexScreener pair. Until then, this section links directly to the live chart surface.</p>
+          <h2>Live Sherwood chart.</h2>
+          <p>Set NEXT_PUBLIC_SHERWOOD_CHART_EMBED_URL to embed the exact DexScreener pair. Until then, this section links directly to the live chart surface.</p>
         </div>
         <div className="sherwood-chart-card">
-          {SHER_CHART_EMBED_URL ? (
+          {SHERWOOD_CHART_EMBED_URL ? (
             <iframe
-              title="SHER live chart"
-              src={SHER_CHART_EMBED_URL}
+              title="Sherwood live chart"
+              src={SHERWOOD_CHART_EMBED_URL}
               loading="lazy"
               allow="clipboard-write"
             />
           ) : (
             <div className="sherwood-chart-fallback">
-              <span>SHER</span>
+              <span>Sherwood</span>
               <strong>Chart ready</strong>
               <p>Add the DexScreener embed URL in env to show the live candle view here.</p>
             </div>
           )}
-          <a className="cta" href={SHER_CHART_URL} target="_blank" rel="noreferrer">
-            Open SHER chart
+          <a className="cta" href={SHERWOOD_CHART_URL} target="_blank" rel="noreferrer">
+            Open Sherwood chart
           </a>
         </div>
       </div>
@@ -502,10 +502,10 @@ export function SherwoodHoldingsPanel() {
   return (
     <section className="section sherwood-holdings-section" id="holdings">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>Sherwood Forest holdings</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>Sherwood Run holdings</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Total holdings from the Sherwood Forest wallet.</h2>
-          <p>Balances come from the configured Sherwood Forest/bagholder wallet and refresh through the same live stats route.</p>
+          <h2>Total holdings from the Sherwood Run wallet.</h2>
+          <p>Balances come from the configured Sherwood Run/bagholder wallet and refresh through the same live stats route.</p>
         </div>
         <div className="sherwood-holdings-card">
           <div>
@@ -536,16 +536,16 @@ export function SherwoodRunnerPanel() {
   return (
     <section className="section runner-section" id="runners">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>Sherwood Forest launches</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>Sherwood Run launches</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>Launch pool, snapshot clock, receipts.</h2>
-          <p>The Sherwood Forest side shows the tracked launch pool, the first snapshot clock, and exactly when {PRESALE_MIN_HOLDING} holders lock eligibility.</p>
+          <p>The Sherwood Run side shows the tracked launch pool, the first snapshot clock, and exactly when {PRESALE_MIN_HOLDING} holders lock eligibility.</p>
         </div>
         <div className="runner-layout">
           <div className="runner-countdown-card">
             <span>First snapshot locks in</span>
             <strong className="countdown-value">{runnerCountdown}</strong>
-            <p>The {SNAPSHOT_WINDOW_COPY} {SNAPSHOT_TIMING_COPY}. Hold at least {PRESALE_MIN_HOLDING} SHER and do not go below before it locks.</p>
+            <p>The {SNAPSHOT_WINDOW_COPY} {SNAPSHOT_TIMING_COPY}. Hold at least {PRESALE_MIN_HOLDING} Sherwood and do not go below before it locks.</p>
           </div>
           <div className="runner-position-grid">
             <article className="runner-position-card">
@@ -556,7 +556,7 @@ export function SherwoodRunnerPanel() {
             <article className="runner-position-card">
               <span>Snapshot locks</span>
               <strong>{formatDateTime(snapshotLocksAt)}</strong>
-              <b>{PRESALE_MIN_HOLDING} SHER required</b>
+              <b>{PRESALE_MIN_HOLDING} Sherwood required</b>
             </article>
             <article className="runner-position-card">
               <span>First launch window</span>
@@ -636,8 +636,8 @@ export function RewardExplanation() {
       <div className="container">
           <div className="section-kicker">How it works</div>
         <div className="section-head split-head">
-          <h2>Three steps. Hold SHER, submit addresses, enter presale.</h2>
-          <p>Hold {PRESALE_MIN_HOLDING} SHER, keep that balance through the pre-presale snapshot, submit your Sol wallet, and add the ETH address for allocation. The tax-token model uses {TAX_SPLIT_COPY}.</p>
+          <h2>Three steps. Hold Sherwood, submit addresses, enter presale.</h2>
+          <p>Hold {PRESALE_MIN_HOLDING} Sherwood, keep that balance through the pre-presale snapshot, submit your Sol wallet, and add the ETH address for allocation. The tax-token model uses {TAX_SPLIT_COPY}.</p>
         </div>
         <div className="reward-flow">
           {[
@@ -678,7 +678,7 @@ export function SherwoodWalletBoard() {
       <div className="container">
         <div className="section-kicker live-kicker"><span>Holder board</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Sherwood Forest wallets.</h2>
+          <h2>Sherwood Run wallets.</h2>
           <p>Top holders come from the live holder route. Empty states mean the backend has not returned holder rows yet.</p>
         </div>
         <div className="history-card bull-board-card">
@@ -835,7 +835,7 @@ export function HolderLookup() {
           <div className="section-kicker">Presale verification</div>
           <h2>Submit your Sol wallet. Add your ETH destination.</h2>
           <p className="lead">
-            You need {PRESALE_MIN_HOLDING} SHER in the Sol wallet at the snapshot. Do not go under that amount before
+            You need {PRESALE_MIN_HOLDING} Sherwood in the Sol wallet at the snapshot. Do not go under that amount before
             the snapshot window, which opens {formatDateTime(snapshotOpensAt)} and locks by {formatDateTime(snapshotLocksAt)}. The first launch window runs {FIRST_LAUNCH_WINDOW_COPY}.
           </p>
           <div className="presale-countdown-grid" aria-label="First coin countdowns">
@@ -847,7 +847,7 @@ export function HolderLookup() {
             <article>
               <span>First snapshot locks</span>
               <strong className="countdown-value">{snapshotCountdown}</strong>
-              <p>Only wallets still holding {PRESALE_MIN_HOLDING} SHER at lock are eligible.</p>
+              <p>Only wallets still holding {PRESALE_MIN_HOLDING} Sherwood at lock are eligible.</p>
             </article>
           </div>
         </div>
@@ -856,7 +856,7 @@ export function HolderLookup() {
             No wallet signature required - connect is read-only and only fills your public Sol address.
             We suggest using a burner ETH receiving wallet for the first presale allocation.
           </p>
-          <label htmlFor="sol-wallet">Solana wallet holding SHER</label>
+          <label htmlFor="sol-wallet">Solana wallet holding Sherwood</label>
           <div className="lookup-row">
             <input
               id="sol-wallet"
@@ -880,7 +880,7 @@ export function HolderLookup() {
             <button type="submit">Save Address</button>
           </div>
           <div className="verification-grid" aria-label="Presale requirements">
-            <span>{PRESALE_MIN_HOLDING} SHER minimum</span>
+            <span>{PRESALE_MIN_HOLDING} Sherwood minimum</span>
             <span>{SNAPSHOT_WINDOW_COPY}</span>
             <span>{TAX_SPLIT_COPY}</span>
           </div>
@@ -904,18 +904,18 @@ export function HolderLookup() {
                 <strong>{canSubmit ? "Address format saved for presale review" : "Submission needs attention"}</strong>
                 <span>
                   {canSubmit
-                    ? `${compactAddress(cleanSolWallet)} is ready for the ${formatDateTime(snapshotLocksAt)} snapshot review. Launch follows ${FIRST_LAUNCH_WINDOW_COPY}. Final eligibility is determined by the live ${PRESALE_MIN_HOLDING} SHER snapshot.`
+                    ? `${compactAddress(cleanSolWallet)} is ready for the ${formatDateTime(snapshotLocksAt)} snapshot review. Launch follows ${FIRST_LAUNCH_WINDOW_COPY}. Final eligibility is determined by the live ${PRESALE_MIN_HOLDING} Sherwood snapshot.`
                     : "Enter a valid Solana wallet and a valid 0x ETH address before the snapshot locks."}
                 </span>
               </>
             ) : (
-              <span>Submit before snapshot. Holding less than {PRESALE_MIN_HOLDING} SHER at lock means no presale access.</span>
+              <span>Submit before snapshot. Holding less than {PRESALE_MIN_HOLDING} Sherwood at lock means no presale access.</span>
             )}
           </div>
           <div className="presale-holder-list">
             <div>
               <strong>Verified wallets</strong>
-              <span>Top SHER holders show here with ETH counterpart status. Connected rows upgrade to Verified Sherwood holder.</span>
+              <span>Top Sherwood holders show here with ETH counterpart status. Connected rows upgrade to Verified Sherwood holder.</span>
             </div>
             <div className="table-wrap">
               <table>
@@ -947,7 +947,7 @@ export function HolderLookup() {
                           <td>{compactAddress(holder.address)}</td>
                           <td>{formatNumber(holder.balance, 0)}</td>
                           <td>{isVerified ? compactAddress(cleanEthWallet) : "Not connected"}</td>
-                          <td>{isVerified ? "Verified Sherwood holder" : "SHER holder"}</td>
+                          <td>{isVerified ? "Verified Sherwood holder" : "Sherwood holder"}</td>
                         </tr>
                       );
                     })

@@ -68,7 +68,7 @@ export async function runEpoch(date = new Date()) {
     );
     const selectedHolders = selectRewardRecipients(epochId, eligibleHolders);
     const holders = selectedHolders;
-    console.log(`[${epochId}] selected automatic SHER reward recipients from 100K+ holders: ${holders.length}`);
+    console.log(`[${epochId}] selected automatic Sherwood reward recipients from 100K+ holders: ${holders.length}`);
 
     if (!holders.length) {
       await recordBuy(epochId, "0", "0", "0", null);
@@ -83,7 +83,7 @@ export async function runEpoch(date = new Date()) {
     }
 
     const payoutReserveLamports = await estimateTokenPayoutReserveLamports([
-      { wallets: holders.map((holder) => holder.wallet), mint: config.rewardTokenMint, label: "SHER-to-100K-holders" }
+      { wallets: holders.map((holder) => holder.wallet), mint: config.rewardTokenMint, label: "Sherwood-to-100K-holders" }
     ]);
     const splitPlan = await treasurySolBudget(payoutReserveLamports);
     const splitBaseLamports = claimedLamports < splitPlan.usableLamports ? claimedLamports : splitPlan.usableLamports;
@@ -135,15 +135,15 @@ export async function runEpoch(date = new Date()) {
         reward_distributed: "0",
         status: "skipped"
       });
-      console.log(`[${epochId}] no SHER reward balance, skipped airdrop`);
+      console.log(`[${epochId}] no Sherwood reward balance, skipped airdrop`);
       return;
     }
 
     const tokenAirdrop = allocations.length
-      ? await airdropTokenRewards(epochId, allocations, "SHER")
+      ? await airdropTokenRewards(epochId, allocations, "Sherwood")
       : { settledUi: 0, settledCount: 0, stoppedForReserve: false };
     if (tokenAirdrop.stoppedForReserve && tokenAirdrop.settledCount === 0) {
-      throw new Error("SHER holder airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
+      throw new Error("Sherwood holder airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
     }
     const distributed = tokenAirdrop.settledUi;
     await completeEpoch(epochId, {

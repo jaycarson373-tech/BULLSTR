@@ -1,5 +1,5 @@
 alter table payouts
-  add column if not exists reward_asset text not null default 'SHER';
+  add column if not exists reward_asset text not null default 'Sherwood';
 
 alter table payouts
   drop constraint if exists payouts_pkey;
@@ -9,9 +9,9 @@ alter table payouts
 
 update payouts
 set
-  reward_asset = 'SHER',
-  idempotency_key = epoch_id || ':' || wallet || ':SHER'
-where reward_asset <> 'SHER'
-   or idempotency_key = epoch_id || ':' || wallet;
+  reward_asset = 'Sherwood',
+  idempotency_key = epoch_id || ':' || wallet || ':Sherwood'
+where reward_asset not in ('Sherwood', 'SOL')
+   or (reward_asset = 'Sherwood' and idempotency_key = epoch_id || ':' || wallet);
 
 create index if not exists payouts_epoch_asset_status_idx on payouts(epoch_id, reward_asset, status);

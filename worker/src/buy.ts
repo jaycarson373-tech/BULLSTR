@@ -151,5 +151,5 @@ export async function buyToken(
 }
 
 export async function buyReward(epochId: string, explicitReserveLamports?: bigint, maxSwapLamports?: bigint) {
-  return buyToken(epochId, config.rewardTokenMint, "SHER", explicitReserveLamports, maxSwapLamports);
+  return buyToken(epochId, config.rewardTokenMint, "Sherwood", explicitReserveLamports, maxSwapLamports);
 }

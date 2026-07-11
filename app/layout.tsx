@@ -3,31 +3,31 @@ import { AppPolish } from "./app-polish";
 import { LAUNCH_CADENCE_COPY, TAX_SPLIT_COPY } from "./sherwood-config";
 import "./globals.css";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sherwoodforest.xyz";
-const SITE_DESCRIPTION = `Sherwood Forest uses ${TAX_SPLIT_COPY} to support Sherwood Forest launches ${LAUNCH_CADENCE_COPY}, with 2.5M+ SHER holders getting presale access after the pre-launch snapshot.`;
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sherwoodrun.xyz";
+const SITE_DESCRIPTION = `Sherwood Run uses ${TAX_SPLIT_COPY} to support Sherwood Run launches ${LAUNCH_CADENCE_COPY}, with 2.5M+ Sherwood holders getting presale access after the pre-launch snapshot.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Sherwood Forest",
+  title: "Sherwood Run",
   description: SITE_DESCRIPTION,
   openGraph: {
-    title: "Sherwood Forest",
+    title: "Sherwood Run",
     description: SITE_DESCRIPTION,
     url: SITE_URL,
-    siteName: "Sherwood Forest",
+    siteName: "Sherwood Run",
     images: [
       {
         url: `${SITE_URL}/brand/sherwood-fire-banner.png`,
         width: 1200,
         height: 630,
-        alt: "Sherwood Forest"
+        alt: "Sherwood Run"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sherwood Forest",
+    title: "Sherwood Run",
     description: SITE_DESCRIPTION,
     images: [`${SITE_URL}/brand/sherwood-fire-banner.png`]
   },

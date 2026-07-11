@@ -23,17 +23,17 @@ import {
 const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/i/communities/2028470502415835347";
 const DEFAULT_CA = "";
 const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || DEFAULT_CA;
-const CHART_URL = process.env.NEXT_PUBLIC_SHER_CHART_URL?.trim() || process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || (CA ? `https://dexscreener.com/solana/${CA}` : "https://dexscreener.com/solana");
+const CHART_URL = process.env.NEXT_PUBLIC_SHERWOOD_CHART_URL?.trim() || process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || (CA ? `https://dexscreener.com/solana/${CA}` : "https://dexscreener.com/solana");
 
 export default function Page() {
   return (
-    <div className="page sherwood-forest-page">
+    <div className="page sherwood-run-page">
       <header className="nav">
         <div className="container nav-inner">
-          <a className="brand" href="#top" aria-label="Sherwood Forest home">
+          <a className="brand" href="#top" aria-label="Sherwood Run home">
             <img className="brand-logo" src="/brand/sherwood-fire-logo.png" alt="" />
             <span>
-              Sherwood Forest
+              Sherwood Run
             </span>
           </a>
           <nav className="nav-links" aria-label="Primary navigation">
@@ -74,14 +74,14 @@ export default function Page() {
               <div className="hero-brand-mark" aria-hidden="true">
                 <img src="/brand/sherwood-fire-logo.png" alt="" />
               </div>
-              <div className="section-kicker">SHER</div>
+              <div className="section-kicker">Sherwood</div>
               <h1>
                 <span>Sherwood</span>
-                <span>Forest</span>
+                <span>Run</span>
               </h1>
-              <p className="hero-subtitle">Creator fees fund Sherwood Forest launches with a clear {TAX_SPLIT_COPY} model.</p>
+              <p className="hero-subtitle">Creator fees fund Sherwood Run launches with a clear {TAX_SPLIT_COPY} model.</p>
               <p className="hero-lead">
-                Sherwood Forest routes creator fees into launch rails. Holders with 2.5M+ SHER get presale
+                Sherwood Run routes creator fees into launch rails. Holders with 2.5M+ Sherwood get presale
                 access, with the first snapshot locking at {FIRST_SNAPSHOT_COPY} and the first launch window opening {FIRST_LAUNCH_WINDOW_COPY}.
               </p>
               <div className="hero-actions">
@@ -103,8 +103,8 @@ export default function Page() {
             <div className="section-head split-head">
               <h2>Creator fees power launches, liquidity, and holder airdrops {LAUNCH_CADENCE_COPY}.</h2>
               <p>
-                Sherwood Forest keeps the launch path obvious: tax-token flow splits into liquidity and airdrops,
-                2.5M+ SHER holders get presale access, and live sections track countdowns, wallet verification,
+                Sherwood Run keeps the launch path obvious: tax-token flow splits into liquidity and airdrops,
+                2.5M+ Sherwood holders get presale access, and live sections track countdowns, wallet verification,
                 receipts, and holder status.
               </p>
             </div>
@@ -117,7 +117,7 @@ export default function Page() {
               <article>
                 <span>2.5M+</span>
                 <strong>Holder Presale Access</strong>
-                <p>Wallets holding at least 2.5M SHER qualify only if they stay above the minimum through the {SNAPSHOT_WINDOW_COPY}.</p>
+                <p>Wallets holding at least 2.5M Sherwood qualify only if they stay above the minimum through the {SNAPSHOT_WINDOW_COPY}.</p>
               </article>
             </div>
           </div>
@@ -140,8 +140,8 @@ export default function Page() {
           <div className="footer-brand">
             <img className="brand-logo" src="/brand/sherwood-fire-logo.png" alt="" />
             <div>
-              <strong>Sherwood Forest</strong>
-              <p>SHER holders. Sherwood Forest launches {LAUNCH_CADENCE_COPY}.</p>
+              <strong>Sherwood Run</strong>
+              <p>Sherwood holders. Sherwood Run launches {LAUNCH_CADENCE_COPY}.</p>
             </div>
           </div>
           <div className="footer-links">

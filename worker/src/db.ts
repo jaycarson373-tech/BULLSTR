@@ -125,7 +125,7 @@ export async function planPayout(
   rewardAmount: string,
   metadata?: PayoutMetadata
 ) {
-  const rewardAsset = metadata?.rewardAsset ?? "SHER";
+  const rewardAsset = metadata?.rewardAsset ?? "Sherwood";
   const idempotencyKey = `${epochId}:${wallet}:${rewardAsset}`;
   const result = await supabase
     .from("payouts")
@@ -155,7 +155,7 @@ export async function dryRunPayout(
   rewardAmount: string,
   metadata?: PayoutMetadata
 ) {
-  const rewardAsset = metadata?.rewardAsset ?? "SHER";
+  const rewardAsset = metadata?.rewardAsset ?? "Sherwood";
   const result = await supabase.from("payouts").upsert({
     epoch_id: epochId,
     wallet,
@@ -170,7 +170,7 @@ export async function dryRunPayout(
   assertNoError(result, "dry-run payout");
 }
 
-export async function settlePayout(epochId: string, wallet: string, txSig: string, rewardAsset = "SHER") {
+export async function settlePayout(epochId: string, wallet: string, txSig: string, rewardAsset = "Sherwood") {
   const result = await supabase
     .from("payouts")
     .update({ status: "settled", tx_sig: txSig, updated_at: new Date().toISOString() })
@@ -180,7 +180,7 @@ export async function settlePayout(epochId: string, wallet: string, txSig: strin
   assertNoError(result, "settle payout");
 }
 
-export async function failPayout(epochId: string, wallet: string, error: unknown, rewardAsset = "SHER") {
+export async function failPayout(epochId: string, wallet: string, error: unknown, rewardAsset = "Sherwood") {
   const result = await supabase
     .from("payouts")
     .update({
@@ -214,7 +214,7 @@ export async function getSherwoodMultiplierMap() {
   if (result.error) {
     const message = JSON.stringify(result.error);
     if (message.includes("sherwood_scores") || message.includes("42P01") || message.includes("PGRST205")) {
-      console.warn("[SHERWOOD] sherwood_scores table missing; game multipliers disabled");
+      console.warn("[Sherwood] sherwood_scores table missing; game multipliers disabled");
       return new Map<string, { rank: number; multiplierBps: number; bestScore: number; bestDistance: number }>();
     }
     throw result.error;
