@@ -397,6 +397,18 @@ main,
   text-transform: uppercase;
 }
 
+.hero-ca-chip {
+  width: 100%;
+  max-width: none;
+  min-height: 42px;
+  border-radius: 4px;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.36);
+}
+
+.hero-ca-chip b {
+  white-space: nowrap;
+}
+
 .subpage-main {
   padding-top: 86px;
 }

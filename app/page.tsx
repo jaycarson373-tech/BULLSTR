@@ -1,7 +1,9 @@
 import { HomeAirdropStats } from "./home-strategy-data";
 import { HowItWorksPrompt, SherwoodRunnerGame } from "./sherwood-runner-game";
 
-const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/i/communities/2028470502415835347";
+const DEFAULT_CA = "E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump";
+const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || DEFAULT_CA;
+const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/SherwoodRun";
 
 function MainNav() {
   return (
@@ -48,6 +50,10 @@ export default function Page() {
             </div>
             <HomeAirdropStats />
             <p className="hero-disclaimer">Cheaters will be blacklisted from all airdrops.</p>
+            <a className="ca-chip hero-ca-chip" href={`https://dexscreener.com/solana/${CA}`} target="_blank" rel="noreferrer" aria-label="Open Sherwood Run contract address on DexScreener">
+              <span>CA</span>
+              <b>{CA}</b>
+            </a>
             <SherwoodRunnerGame />
           </div>
         </section>

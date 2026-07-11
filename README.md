@@ -1,17 +1,14 @@
 # Sherwood Run
 
-Contract address: `<SHERWOOD_TOKEN_MINT>`
-X Community: `https://x.com/i/communities/2028470502415835347`
+Contract address: `E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump`
+X: `https://x.com/SherwoodRun`
 
-Sherwood Run is the Sherwood holder access site:
+Sherwood Run is the Sherwood arcade and HoodX airdrop site:
 
-- Creator fees fund a new Sherwood Run token launch every 7 days.
-- Holders with 2.5M+ Sherwood get presale access.
-- The first snapshot defaults to 2:00 AM ET on July 11, 2026 unless `NEXT_PUBLIC_FIRST_SNAPSHOT_AT` is set.
-- The first launch window follows 0-4 hours after snapshot lock unless `NEXT_PUBLIC_FIRST_PRESALE_AT` is set.
-- Wallets must not drop under 2.5M Sherwood before snapshot lock.
-- Live sections track the launch countdown, wallet verification, access records, holders, wallet holdings, and on-chain receipts.
-- The dashboard reads settled windows, payouts, holders, wallet holdings, and recent records from Supabase.
+- The game is a pixel Sherwood flapper where players clear tree gates for leaderboard score.
+- Every 30 minutes the worker claims, snapshots eligible 1M+ Sherwood holders, checks the active 6-hour leaderboard, and sends HoodX.
+- Leaderboard wallets can boost matching eligible holder wallets with rank multipliers.
+- The dashboard reads settled HoodX windows, payouts, holders, wallet holdings, and recent records from Supabase.
 
 The site should feel fast, neon, and unmistakably Sherwood Run.
 
@@ -19,9 +16,9 @@ The site should feel fast, neon, and unmistakably Sherwood Run.
 
 1. Claim creator fees into the treasury.
 2. Snapshot source-token holders with at least `ELIGIBILITY_MIN`.
-3. Use `ELIGIBILITY_MIN=2500000` for 2.5M+ Sherwood presale access.
-4. Route creator fees into the Sherwood Run launch pool.
-5. Store windows, snapshots, launch pools, wallet holdings, and records in Supabase.
+3. Use `ELIGIBILITY_MIN=1000000` for 1M+ Sherwood airdrop eligibility.
+4. Check the active 6-hour Sherwood Run leaderboard for matching wallet multipliers.
+5. Store windows, snapshots, HoodX payouts, wallet holdings, and records in Supabase.
 
 ## Local Development
 
@@ -45,20 +42,13 @@ Copy `.env.example` and fill in the live mints and keys.
 ```bash
 NEXT_PUBLIC_PROJECT_NAME="Sherwood Run"
 NEXT_PUBLIC_SOURCE_SYMBOL=Sherwood
-NEXT_PUBLIC_REWARD_SYMBOL=Sherwood
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=<SHERWOOD_TOKEN_MINT>
-NEXT_PUBLIC_CA=<SHERWOOD_TOKEN_MINT>
-NEXT_PUBLIC_X_URL=https://x.com/i/communities/2028470502415835347
+NEXT_PUBLIC_REWARD_SYMBOL=HoodX
+NEXT_PUBLIC_SOURCE_TOKEN_MINT=E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump
+NEXT_PUBLIC_CA=E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump
+NEXT_PUBLIC_X_URL=https://x.com/SherwoodRun
 NEXT_PUBLIC_DEXSCREENER_URL=<SHERWOOD_DEXSCREENER_URL>
 NEXT_PUBLIC_SHERWOOD_CHART_URL=<SHERWOOD_DEXSCREENER_URL>
 NEXT_PUBLIC_SHERWOOD_CHART_EMBED_URL=<OPTIONAL_DEXSCREENER_EMBED_URL>
-NEXT_PUBLIC_LAUNCH_CADENCE_DAYS=7
-NEXT_PUBLIC_SNAPSHOT_OPENS_HOURS_BEFORE=4
-NEXT_PUBLIC_SNAPSHOT_LOCKS_HOURS_BEFORE=2
-NEXT_PUBLIC_LAUNCH_AFTER_SNAPSHOT_MAX_HOURS=4
-NEXT_PUBLIC_FIRST_SNAPSHOT_AT=2026-07-11T02:00:00-04:00
-NEXT_PUBLIC_FIRST_PRESALE_AT=<OPTIONAL_ISO_TIME>
-
 NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<SUPABASE_ANON_KEY>
 SUPABASE_URL=<SUPABASE_URL>
@@ -66,7 +56,7 @@ SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
 
 REWARD_MODE=token
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=<SHERWOOD_TOKEN_MINT>
+SOURCE_TOKEN_MINT=E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump
 REWARD_TOKEN_MINT=<REWARD_TOKEN_MINT>
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET>
 
@@ -75,7 +65,7 @@ BUY_ENABLED=false
 AIRDROP_ENABLED=false
 
 EPOCH_MINUTES=30
-ELIGIBILITY_MIN=2500000
+ELIGIBILITY_MIN=1000000
 MAX_WALLETS_PER_EPOCH=200
 MAX_HOLDER_PCT=5
 EXCLUDE_WALLETS=
