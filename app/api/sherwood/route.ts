@@ -7,10 +7,18 @@ export const runtime = "nodejs";
 type ScoreRow = {
   wallet: string;
   player_name: string | null;
-  best_score: number | null;
-  best_distance: number | null;
-  runs: number | null;
-  updated_at: string | null;
+  score: number | null;
+  distance: number | null;
+  created_at: string | null;
+};
+
+type LeaderboardRow = {
+  wallet: string;
+  playerName: string | null;
+  bestScore: number;
+  bestDistance: number;
+  runs: number;
+  latestRunAt: string | null;
 };
 
 function supabaseConfig() {
@@ -48,32 +56,76 @@ function normalizePlayerName(value: unknown) {
 }
 
 function rankMultiplier(rank: number) {
-  if (rank === 1) return 3;
-  if (rank === 2) return 2;
-  if (rank === 3) return 1.5;
-  if (rank <= 10) return 1.15;
+  if (rank === 1) return 10;
+  if (rank === 2) return 5;
+  if (rank === 3) return 3;
+  if (rank === 4) return 2.75;
+  if (rank === 5) return 2.5;
+  if (rank === 6) return 2.25;
+  if (rank === 7) return 2;
+  if (rank === 8) return 1.85;
+  if (rank === 9) return 1.65;
+  if (rank === 10) return 1.5;
   return 1;
+}
+
+function currentSeasonStart() {
+  const seasonMs = 6 * 60 * 60 * 1000;
+  return new Date(Math.floor(Date.now() / seasonMs) * seasonMs).toISOString();
 }
 
 async function leaderboard(db = client()) {
   const { data, error } = await db
-    .from("sherwood_scores")
-    .select("wallet,player_name,best_score,best_distance,runs,updated_at")
-    .order("best_score", { ascending: false })
-    .order("best_distance", { ascending: false })
-    .order("updated_at", { ascending: true })
-    .limit(25);
+    .from("sherwood_runs")
+    .select("wallet,player_name,score,distance,created_at")
+    .gte("created_at", currentSeasonStart())
+    .order("score", { ascending: false })
+    .order("distance", { ascending: false })
+    .order("created_at", { ascending: true })
+    .limit(1000);
 
   if (error) throw error;
-  return ((data ?? []) as ScoreRow[]).map((row, index) => ({
+
+  const bestByWallet = new Map<string, LeaderboardRow>();
+  for (const row of (data ?? []) as ScoreRow[]) {
+    const existing = bestByWallet.get(row.wallet);
+    const score = Number(row.score ?? 0);
+    const distance = Number(row.distance ?? 0);
+    const createdAt = row.created_at;
+    if (!existing) {
+      bestByWallet.set(row.wallet, {
+        wallet: row.wallet,
+        playerName: row.player_name,
+        bestScore: score,
+        bestDistance: distance,
+        runs: 1,
+        latestRunAt: createdAt
+      });
+      continue;
+    }
+
+    existing.runs += 1;
+    if (createdAt && (!existing.latestRunAt || Date.parse(createdAt) > Date.parse(existing.latestRunAt))) {
+      existing.latestRunAt = createdAt;
+      existing.playerName = row.player_name ?? existing.playerName;
+    }
+    if (score > existing.bestScore || (score === existing.bestScore && distance > existing.bestDistance)) {
+      existing.bestScore = score;
+      existing.bestDistance = distance;
+      existing.playerName = row.player_name ?? existing.playerName;
+    }
+  }
+
+  return [...bestByWallet.values()].sort((a, b) => b.bestScore - a.bestScore || b.bestDistance - a.bestDistance || Date.parse(a.latestRunAt ?? "") - Date.parse(b.latestRunAt ?? "")).slice(0, 25).map((row, index) => ({
     wallet: row.wallet,
-    playerName: row.player_name,
-    bestScore: Number(row.best_score ?? 0),
-    bestDistance: Number(row.best_distance ?? 0),
-    runs: Number(row.runs ?? 0),
+    playerName: row.playerName,
+    bestScore: row.bestScore,
+    bestDistance: row.bestDistance,
+    runs: row.runs,
     rank: index + 1,
     multiplier: rankMultiplier(index + 1),
-    updatedAt: row.updated_at
+    season: "6h",
+    updatedAt: row.latestRunAt
   }));
 }
 

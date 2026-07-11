@@ -3,7 +3,7 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sherwoodrun.xyz";
-const SITE_DESCRIPTION = "Sherwood Run is a Robin Hood arcade runner where eligible holders receive HoodX every 30 minutes and leaderboard wallets earn a multiplier.";
+const SITE_DESCRIPTION = "Sherwood Run is a Robin Hood arcade runner where 1M+ holders receive HoodX every 30 minutes and the active 6-hour leaderboard can add a multiplier.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

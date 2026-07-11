@@ -15,7 +15,7 @@ type BoardRow = {
 type StatsResponse = {
   totalRewardAirdropped: number;
   totalRewardTotals?: Array<{ rewardAsset: string; rewardAmount: number }>;
-  recentRewards?: Array<{ wallet: string; rewardAmount: number; rewardAsset?: string; time: string; txSig: string | null }>;
+  recentRewards?: Array<{ wallet: string; rewardAmount: number; normalRewardAmount?: number; rewardAsset?: string; time: string; txSig: string | null }>;
 };
 
 type GameState = ReturnType<typeof createGame>;
@@ -154,7 +154,7 @@ export function SherwoodRunnerGame() {
       setPlayerName("");
       setPrimaryWallet("");
       setExtraWallets("");
-      setStatus("Saved. Leaderboard rank boosts matching eligible holder wallets during airdrops.");
+      setStatus("Saved for the active 6-hour board. If this wallet is a 1M+ holder, its rank can boost the next HoodX drops.");
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Sherwood submit failed.");
     } finally {
@@ -271,7 +271,7 @@ export function HowItWorksPrompt() {
             </li>
             <li>
               <strong>Boost</strong>
-              <span>Every 30 minutes, eligible holders get HoodX. Holder wallets on the leaderboard receive the multiplier.</span>
+              <span>#1 gets 10x, #2 gets 5x, #3 gets 3x, and #4-10 scale from 2.75x to 1.5x. Every 30 minutes, eligible 1M+ holders get HoodX; the active 6-hour board adds the matching wallet's best rank.</span>
             </li>
           </ol>
         </div>
@@ -296,6 +296,7 @@ export function SherwoodLeaderboard() {
     stats?.totalRewardTotals?.reduce((sum, row) => sum + Number(row.rewardAmount ?? 0), 0) ??
     Number(stats?.totalRewardAirdropped ?? 0);
   const recentHits = stats?.recentRewards?.length ?? 0;
+  const latestReward = stats?.recentRewards?.[0];
 
   return (
     <section className="section leaderboard-page-section">
@@ -303,7 +304,7 @@ export function SherwoodLeaderboard() {
         <div className="section-kicker">Leaderboard</div>
         <div className="section-head split-head">
           <h2>Top Sherwood runners.</h2>
-          <p>These ranks feed the airdrop multiplier. A wallet must also qualify as an eligible Sherwood holder to receive the boosted airdrop weight.</p>
+          <p>The board resets every 6 hours. Only wallets that also qualify as 1M+ Sherwood holders receive the HoodX multiplier during each 30-minute airdrop.</p>
         </div>
         <div className="leaderboard-summary">
           <article>
@@ -316,7 +317,11 @@ export function SherwoodLeaderboard() {
           </article>
           <article>
             <span>Top Multiplier</span>
-            <strong>3x</strong>
+            <strong>10x</strong>
+          </article>
+          <article>
+            <span>Latest Multiplier</span>
+            <strong>{latestReward?.normalRewardAmount && latestReward.normalRewardAmount > 0 ? `${(latestReward.rewardAmount / latestReward.normalRewardAmount).toLocaleString(undefined, { maximumFractionDigits: 2 })}x` : "Awaiting"}</strong>
           </article>
         </div>
         <div className="history-card sherwood-board-card">
@@ -329,8 +334,8 @@ export function SherwoodLeaderboard() {
                   <th>Wallet</th>
                   <th>Best coins</th>
                   <th>Best run</th>
-                  <th>Runs</th>
-                  <th>Airdrop multiplier</th>
+                  <th>6h runs</th>
+                  <th>HoodX multiplier</th>
                 </tr>
               </thead>
               <tbody>

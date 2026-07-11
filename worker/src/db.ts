@@ -15,8 +15,9 @@ export type PayoutMetadata = {
 
 type SherwoodScoreRow = {
   wallet: string;
-  best_score: number | null;
-  best_distance: number | null;
+  score: number | null;
+  distance: number | null;
+  created_at: string | null;
 };
 
 function assertNoError<T>(result: { data: T; error: unknown }, label: string): T {
@@ -125,7 +126,7 @@ export async function planPayout(
   rewardAmount: string,
   metadata?: PayoutMetadata
 ) {
-  const rewardAsset = metadata?.rewardAsset ?? "Sherwood";
+  const rewardAsset = metadata?.rewardAsset ?? "HoodX";
   const idempotencyKey = `${epochId}:${wallet}:${rewardAsset}`;
   const result = await supabase
     .from("payouts")
@@ -155,7 +156,7 @@ export async function dryRunPayout(
   rewardAmount: string,
   metadata?: PayoutMetadata
 ) {
-  const rewardAsset = metadata?.rewardAsset ?? "Sherwood";
+  const rewardAsset = metadata?.rewardAsset ?? "HoodX";
   const result = await supabase.from("payouts").upsert({
     epoch_id: epochId,
     wallet,
@@ -170,7 +171,7 @@ export async function dryRunPayout(
   assertNoError(result, "dry-run payout");
 }
 
-export async function settlePayout(epochId: string, wallet: string, txSig: string, rewardAsset = "Sherwood") {
+export async function settlePayout(epochId: string, wallet: string, txSig: string, rewardAsset = "HoodX") {
   const result = await supabase
     .from("payouts")
     .update({ status: "settled", tx_sig: txSig, updated_at: new Date().toISOString() })
@@ -180,7 +181,7 @@ export async function settlePayout(epochId: string, wallet: string, txSig: strin
   assertNoError(result, "settle payout");
 }
 
-export async function failPayout(epochId: string, wallet: string, error: unknown, rewardAsset = "Sherwood") {
+export async function failPayout(epochId: string, wallet: string, error: unknown, rewardAsset = "HoodX") {
   const result = await supabase
     .from("payouts")
     .update({
@@ -195,40 +196,70 @@ export async function failPayout(epochId: string, wallet: string, error: unknown
 }
 
 export function sherwoodRankMultiplierBps(rank: number) {
-  if (rank === 1) return 30_000;
-  if (rank === 2) return 20_000;
-  if (rank === 3) return 15_000;
-  if (rank <= 10) return 11_500;
+  if (rank === 1) return 100_000;
+  if (rank === 2) return 50_000;
+  if (rank === 3) return 30_000;
+  if (rank === 4) return 27_500;
+  if (rank === 5) return 25_000;
+  if (rank === 6) return 22_500;
+  if (rank === 7) return 20_000;
+  if (rank === 8) return 18_500;
+  if (rank === 9) return 16_500;
+  if (rank === 10) return 15_000;
   return 10_000;
+}
+
+function sherwoodSeasonStart() {
+  const seasonMs = 6 * 60 * 60 * 1000;
+  return new Date(Math.floor(Date.now() / seasonMs) * seasonMs).toISOString();
 }
 
 export async function getSherwoodMultiplierMap() {
   const result = await supabase
-    .from("sherwood_scores")
-    .select("wallet,best_score,best_distance")
-    .order("best_score", { ascending: false })
-    .order("best_distance", { ascending: false })
-    .order("updated_at", { ascending: true })
+    .from("sherwood_runs")
+    .select("wallet,score,distance,created_at")
+    .gte("created_at", sherwoodSeasonStart())
+    .order("score", { ascending: false })
+    .order("distance", { ascending: false })
+    .order("created_at", { ascending: true })
     .limit(1000);
 
   if (result.error) {
     const message = JSON.stringify(result.error);
-    if (message.includes("sherwood_scores") || message.includes("42P01") || message.includes("PGRST205")) {
-      console.warn("[Sherwood] sherwood_scores table missing; game multipliers disabled");
+    if (message.includes("sherwood_runs") || message.includes("42P01") || message.includes("PGRST205")) {
+      console.warn("[Sherwood] sherwood_runs table missing; game multipliers disabled");
       return new Map<string, { rank: number; multiplierBps: number; bestScore: number; bestDistance: number }>();
     }
     throw result.error;
   }
 
+  const bestByWallet = new Map<string, { wallet: string; bestScore: number; bestDistance: number; latestRunAt: string | null }>();
+  for (const row of (result.data ?? []) as SherwoodScoreRow[]) {
+    const score = Number(row.score ?? 0);
+    const distance = Number(row.distance ?? 0);
+    const existing = bestByWallet.get(row.wallet);
+    if (!existing || score > existing.bestScore || (score === existing.bestScore && distance > existing.bestDistance)) {
+      bestByWallet.set(row.wallet, {
+        wallet: row.wallet,
+        bestScore: score,
+        bestDistance: distance,
+        latestRunAt: row.created_at
+      });
+    }
+  }
+
   return new Map(
-    ((result.data ?? []) as SherwoodScoreRow[]).map((row, index) => [
-      row.wallet,
-      {
-        rank: index + 1,
-        multiplierBps: sherwoodRankMultiplierBps(index + 1),
-        bestScore: Number(row.best_score ?? 0),
-        bestDistance: Number(row.best_distance ?? 0)
-      }
-    ])
+    [...bestByWallet.values()]
+      .sort((a, b) => b.bestScore - a.bestScore || b.bestDistance - a.bestDistance || Date.parse(a.latestRunAt ?? "") - Date.parse(b.latestRunAt ?? ""))
+      .slice(0, 10)
+      .map((row, index) => [
+        row.wallet,
+        {
+          rank: index + 1,
+          multiplierBps: sherwoodRankMultiplierBps(index + 1),
+          bestScore: row.bestScore,
+          bestDistance: row.bestDistance
+        }
+      ])
   );
 }

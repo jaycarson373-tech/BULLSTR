@@ -27,6 +27,7 @@ type Reward = {
   rewardAsset?: string;
   wallet: string;
   rewardAmount: number;
+  normalRewardAmount: number;
   time: string;
   status: string;
   txSig: string | null;
@@ -188,6 +189,12 @@ function lastHoodAirdrop(stats: StatsResponse | null) {
   return rewardTotalAmount(stats.lastRewardTotals, REWARD_SYMBOL) || rewardTotalsSum(stats.lastRewardTotals) || Number(stats.lastRewardAirdropped || 0);
 }
 
+function formatMultiplier(rewardAmount: number, normalRewardAmount: number) {
+  if (!Number.isFinite(rewardAmount) || !Number.isFinite(normalRewardAmount) || normalRewardAmount <= 0) return "1x";
+  const multiplier = rewardAmount / normalRewardAmount;
+  return `${multiplier.toLocaleString(undefined, { maximumFractionDigits: 2 })}x`;
+}
+
 function nextDropCountdown(stats: StatsResponse | null, now: number) {
   const configured = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const next = Number.isFinite(configured) && configured > 0 ? configured : Math.ceil(Date.now() / (DROP_INTERVAL_MINUTES * 60_000)) * DROP_INTERVAL_MINUTES * 60_000;
@@ -219,7 +226,7 @@ export function HomeAirdropStats() {
       </article>
       <article>
         <span>Utility</span>
-        <strong>30m holder drops + leaderboard boosts</strong>
+        <strong>Claim, snapshot, boost, send</strong>
       </article>
     </div>
   );
@@ -238,7 +245,7 @@ export function LiveProtocolDashboard() {
         <div className="section-kicker live-kicker"><span>HoodX airdrops</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>Every 30 minutes, holders get HoodX.</h2>
-          <p>Eligible Sherwood holders receive the HoodX airdrop. If a holder wallet is ranked on the Sherwood Run leaderboard, the worker applies that rank multiplier during the drop.</p>
+          <p>Each cycle claims, snapshots 1M+ Sherwood holders, checks the current 6-hour leaderboard, and applies the wallet's best rank multiplier before HoodX is sent.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
           <MetricCard label="Total HoodX Airdropped" value={formatAmount(total, REWARD_SYMBOL)} strong />
@@ -246,8 +253,8 @@ export function LiveProtocolDashboard() {
           <MetricCard label="Next Airdrop" value={now ? nextDropCountdown(stats, now) : "30:00"} />
           <MetricCard label="Drop Cadence" value="Every 30 minutes" />
           <MetricCard label="Eligible Holders" value={latestHolders > 0 ? latestHolders.toLocaleString() : "Awaiting holders"} />
-          <MetricCard label="Leaderboard Boost" value="Top holder wallets get multipliers" />
-          <MetricCard label="Last Hit" value={latestReward ? `${compactAddress(latestReward.wallet)} / ${formatAmount(latestReward.rewardAmount, REWARD_SYMBOL)}` : "Awaiting airdrop"} />
+          <MetricCard label="Leaderboard Boost" value="#1 10x / #2 5x / #3 3x / #4-10 2.75x-1.5x" />
+          <MetricCard label="Last Hit" value={latestReward ? `${compactAddress(latestReward.wallet)} / ${formatMultiplier(latestReward.rewardAmount, latestReward.normalRewardAmount)} / ${formatAmount(latestReward.rewardAmount, REWARD_SYMBOL)}` : "Awaiting airdrop"} />
         </div>
       </div>
     </section>
@@ -273,7 +280,9 @@ export function RecentAirdrops() {
                 <tr>
                   <th>Wallet</th>
                   <th>Asset</th>
-                  <th>Amount</th>
+                  <th>Base</th>
+                  <th>Multiplier</th>
+                  <th>HoodX Received</th>
                   <th>Time</th>
                   <th>TX Link</th>
                 </tr>
@@ -284,6 +293,8 @@ export function RecentAirdrops() {
                     <tr key={`${reward.wallet}-${reward.time}-${reward.rewardAmount}`}>
                       <td>{compactAddress(reward.wallet)}</td>
                       <td>{REWARD_SYMBOL}</td>
+                      <td>{formatAmount(reward.normalRewardAmount, REWARD_SYMBOL)}</td>
+                      <td>{formatMultiplier(reward.rewardAmount, reward.normalRewardAmount)}</td>
                       <td>{formatAmount(reward.rewardAmount, REWARD_SYMBOL)}</td>
                       <td>{formatDate(reward.time)}</td>
                       <td>
@@ -299,7 +310,7 @@ export function RecentAirdrops() {
                   ))
                 ) : (
                   <tr>
-                    <td className="placeholder-cell" colSpan={5}>Awaiting settled HoodX airdrops.</td>
+                    <td className="placeholder-cell" colSpan={7}>Awaiting settled HoodX airdrops.</td>
                   </tr>
                 )}
               </tbody>
@@ -321,7 +332,7 @@ export function AirdropHistory() {
         <div className="section-kicker live-kicker"><span>Airdrop history</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>30-minute HoodX windows.</h2>
-          <p>Each window checks eligible Sherwood holders, applies any leaderboard multiplier, and records settled payouts.</p>
+          <p>Each window claims, snapshots eligible 1M+ Sherwood holders, applies the active 6-hour leaderboard multiplier, and records settled payouts.</p>
         </div>
         <div className="history-card">
           <div className="table-wrap">
