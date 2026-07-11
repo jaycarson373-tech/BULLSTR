@@ -383,6 +383,20 @@ main,
   line-height: 0.96;
 }
 
+.hero-disclaimer {
+  margin: -4px 0 0;
+  border: 1px solid rgba(198, 255, 0, 0.18);
+  border-radius: 4px;
+  background: rgba(2, 4, 0, 0.62);
+  color: var(--text-soft);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  line-height: 1.35;
+  padding: 8px 10px;
+  text-transform: uppercase;
+}
+
 .subpage-main {
   padding-top: 86px;
 }

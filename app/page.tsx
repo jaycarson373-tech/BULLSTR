@@ -47,6 +47,7 @@ export default function Page() {
               <HowItWorksPrompt />
             </div>
             <HomeAirdropStats />
+            <p className="hero-disclaimer">Cheaters will be blacklisted from all airdrops.</p>
             <SherwoodRunnerGame />
           </div>
         </section>
