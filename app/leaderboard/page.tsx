@@ -1,4 +1,4 @@
-import { AirdropHistory, LiveProtocolDashboard, RecentAirdrops } from "../home-strategy-data";
+import { SherwoodLeaderboard } from "../sherwood-runner-game";
 
 const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/i/communities/2028470502415835347";
 
@@ -24,14 +24,12 @@ function SubpageNav() {
   );
 }
 
-export default function DashboardPage() {
+export default function LeaderboardPage() {
   return (
     <div className="page sherwood-run-page">
       <SubpageNav />
       <main className="subpage-main">
-        <LiveProtocolDashboard />
-        <RecentAirdrops />
-        <AirdropHistory />
+        <SherwoodLeaderboard />
       </main>
     </div>
   );

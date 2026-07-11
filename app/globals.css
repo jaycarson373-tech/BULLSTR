@@ -133,6 +133,89 @@ main,
   margin: 0 auto;
 }
 
+.game-home {
+  min-height: 100vh;
+}
+
+.home-game-hero {
+  min-height: 100vh;
+  padding: 116px 0 30px;
+}
+
+.home-game-layout {
+  display: grid;
+  min-height: calc(100vh - 146px);
+  grid-template-columns: minmax(260px, 0.64fr) minmax(0, 1.36fr);
+  gap: clamp(24px, 4vw, 50px);
+  align-items: center;
+}
+
+.home-game-copy {
+  display: grid;
+  gap: 18px;
+}
+
+.home-game-logo {
+  width: clamp(96px, 13vw, 148px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(198, 255, 0, 0.48);
+  border-radius: 24px;
+  object-fit: cover;
+  box-shadow: 0 0 46px rgba(198, 255, 0, 0.22);
+}
+
+.home-game-copy h1 {
+  max-width: 560px;
+  font-size: clamp(4rem, 8vw, 8.4rem);
+}
+
+.home-game-copy .hero-subtitle {
+  max-width: 560px;
+}
+
+.simple-how-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.simple-how-grid article {
+  display: grid;
+  min-height: 138px;
+  align-content: space-between;
+  gap: 12px;
+  border: 1px solid rgba(198, 255, 0, 0.22);
+  border-radius: 14px;
+  background: rgba(2, 4, 0, 0.68);
+  padding: 14px;
+}
+
+.simple-how-grid span,
+.mini-leaderboard strong,
+.leaderboard-summary span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.simple-how-grid strong {
+  color: var(--accent);
+  font-size: 1.15rem;
+  font-weight: 950;
+}
+
+.simple-how-grid p {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.subpage-main {
+  padding-top: 86px;
+}
+
 .nav {
   position: fixed;
   top: 0;
@@ -679,6 +762,13 @@ main,
   margin-bottom: 18px;
 }
 
+.sherwood-game-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  gap: 16px;
+  align-items: stretch;
+}
+
 .sherwood-brand-strip {
   display: flex;
   align-items: center;
@@ -712,7 +802,7 @@ main,
 }
 
 .sherwood-hud {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
   padding: 12px;
   border-bottom: 1px solid rgba(198, 255, 0, 0.18);
@@ -908,7 +998,7 @@ main,
 
 .sherwood-canvas-wrap {
   position: relative;
-  min-height: 360px;
+  min-height: 430px;
   aspect-ratio: 16 / 9;
 }
 
@@ -989,6 +1079,44 @@ main,
 
 .sherwood-board-card {
   margin-top: 18px;
+}
+
+.mini-leaderboard {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  border-top: 1px solid rgba(198, 255, 0, 0.16);
+  padding-top: 14px;
+}
+
+.mini-leaderboard span {
+  color: var(--text-soft);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.leaderboard-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.leaderboard-summary article {
+  display: grid;
+  min-height: 142px;
+  align-content: space-between;
+  border: 1px solid rgba(198, 255, 0, 0.24);
+  border-radius: 16px;
+  background: rgba(4, 9, 0, 0.76);
+  padding: 22px;
+}
+
+.leaderboard-summary strong {
+  color: var(--accent);
+  font-size: clamp(2rem, 4vw, 4.4rem);
+  font-weight: 950;
+  line-height: 0.9;
 }
 
 .runner-countdown-card span,
@@ -1476,6 +1604,7 @@ tbody tr:hover {
   }
 
   .hero-inner,
+  .home-game-layout,
   .split-head,
   .split-section,
   .sherwood-rail-grid,
@@ -1487,6 +1616,9 @@ tbody tr:hover {
   .runner-layout,
   .runner-position-grid,
   .sherwood-layout,
+  .sherwood-game-shell,
+  .simple-how-grid,
+  .leaderboard-summary,
   .presale-countdown-grid,
   .tax-token-strip {
     grid-template-columns: 1fr;
@@ -1512,6 +1644,14 @@ tbody tr:hover {
 
   .hero {
     padding: 188px 0 58px;
+  }
+
+  .home-game-hero {
+    padding: 126px 0 24px;
+  }
+
+  .home-game-layout {
+    min-height: auto;
   }
 
   h1 {
@@ -1581,7 +1721,7 @@ tbody tr:hover {
   .sherwood-chart-card iframe,
   .sherwood-chart-fallback,
   .sherwood-canvas-wrap {
-    min-height: 360px;
+    min-height: 320px;
   }
 
   .sherwood-hud {
