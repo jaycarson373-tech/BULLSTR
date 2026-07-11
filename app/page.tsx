@@ -33,7 +33,6 @@ export default function Page() {
             <img className="brand-logo" src="/brand/hood-strategy-logo-source.png" alt="" />
             <span>
               Hood Pump
-              <small>HPUMP access</small>
             </span>
           </a>
           <nav className="nav-links" aria-label="Primary navigation">
