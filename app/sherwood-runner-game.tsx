@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 type BoardRow = {
   wallet: string;
+  playerName?: string | null;
   bestScore: number;
   bestDistance: number;
   runs: number;
@@ -34,6 +35,7 @@ export function SherwoodRunnerGame() {
   const gameRef = useRef(createGame());
   const rafRef = useRef<number | null>(null);
   const [hud, setHud] = useState<Hud>({ playing: false, finished: false, score: 0, distance: 0, speed: 1 });
+  const [playerName, setPlayerName] = useState("");
   const [primaryWallet, setPrimaryWallet] = useState("");
   const [extraWallets, setExtraWallets] = useState("");
   const [board, setBoard] = useState<BoardRow[]>([]);
@@ -121,6 +123,17 @@ export function SherwoodRunnerGame() {
   }, []);
 
   async function submitRun() {
+    if (!hud.finished) {
+      setStatus("Finish a run before submitting.");
+      return;
+    }
+
+    const name = playerName.trim().slice(0, 24);
+    if (!name) {
+      setStatus("Add a runner name.");
+      return;
+    }
+
     const wallets = parseWallets(primaryWallet, extraWallets);
     if (!wallets.length) {
       setStatus("Paste at least one valid Solana wallet.");
@@ -133,11 +146,12 @@ export function SherwoodRunnerGame() {
       const response = await fetch("/api/sherwood", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ wallets, score: hud.score, distance: hud.distance })
+        body: JSON.stringify({ wallets, playerName: name, score: hud.score, distance: hud.distance })
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "Sherwood submit failed.");
       setBoard(data.leaderboard ?? []);
+      setPlayerName("");
       setPrimaryWallet("");
       setExtraWallets("");
       setStatus("Saved. Leaderboard rank boosts matching eligible holder wallets during airdrops.");
@@ -149,7 +163,7 @@ export function SherwoodRunnerGame() {
   }
 
   return (
-    <section className="sherwood-game-shell" id="play">
+    <section className={`sherwood-game-shell${hud.finished ? " has-submit" : " is-game-only"}`} id="play">
       <div className="sherwood-game-card">
         <div className="sherwood-hud">
           <GameStat label="Coins" value={hud.score.toLocaleString()} />
@@ -178,39 +192,50 @@ export function SherwoodRunnerGame() {
         </div>
       </div>
 
-      <aside className="sherwood-submit-card">
-        <h3>Save score</h3>
-        <p>Submit Solana wallets after a run. The leaderboard gives matching eligible holders a multiplier.</p>
-        <label htmlFor="sherwood-primary-wallet">Main Solana wallet</label>
-        <input
-          id="sherwood-primary-wallet"
-          value={primaryWallet}
-          onChange={(event) => setPrimaryWallet(event.target.value)}
-          placeholder="Paste Solana wallet"
-          spellCheck={false}
-        />
-        <label htmlFor="sherwood-extra-wallets">Extra wallets</label>
-        <textarea
-          id="sherwood-extra-wallets"
-          value={extraWallets}
-          onChange={(event) => setExtraWallets(event.target.value)}
-          placeholder="One per line, comma, or space separated"
-          rows={4}
-          spellCheck={false}
-        />
-        <button type="button" className="cta" disabled={submitting} onClick={submitRun}>Submit to leaderboard</button>
-        <p className="wallet-status">{status}</p>
-        <div className="mini-leaderboard">
-          <strong>Top runners</strong>
-          {board.length ? (
-            board.slice(0, 5).map((row) => (
-              <span key={row.wallet}>#{row.rank} {compactAddress(row.wallet)} - {row.bestScore.toLocaleString()}</span>
-            ))
-          ) : (
-            <span>No runs submitted yet.</span>
-          )}
-        </div>
-      </aside>
+      {hud.finished ? (
+        <aside className="sherwood-submit-card">
+          <h3>Save score</h3>
+          <p>{hud.score.toLocaleString()} coins / {hud.distance.toLocaleString()}m. Add your name and wallet for the multiplier board.</p>
+          <label htmlFor="sherwood-runner-name">Runner name</label>
+          <input
+            id="sherwood-runner-name"
+            value={playerName}
+            onChange={(event) => setPlayerName(event.target.value)}
+            placeholder="Robin of Sherwood"
+            maxLength={24}
+            spellCheck={false}
+          />
+          <label htmlFor="sherwood-primary-wallet">Wallet</label>
+          <input
+            id="sherwood-primary-wallet"
+            value={primaryWallet}
+            onChange={(event) => setPrimaryWallet(event.target.value)}
+            placeholder="Paste Solana wallet"
+            spellCheck={false}
+          />
+          <label htmlFor="sherwood-extra-wallets">Extra wallets</label>
+          <textarea
+            id="sherwood-extra-wallets"
+            value={extraWallets}
+            onChange={(event) => setExtraWallets(event.target.value)}
+            placeholder="Optional: one per line"
+            rows={3}
+            spellCheck={false}
+          />
+          <button type="button" className="cta" disabled={submitting} onClick={submitRun}>Submit score</button>
+          <p className="wallet-status">{status}</p>
+          <div className="mini-leaderboard">
+            <strong>Top runners</strong>
+            {board.length ? (
+              board.slice(0, 3).map((row) => (
+                <span key={row.wallet}>#{row.rank} {row.playerName || compactAddress(row.wallet)} - {row.bestScore.toLocaleString()}</span>
+              ))
+            ) : (
+              <span>No runs submitted yet.</span>
+            )}
+          </div>
+        </aside>
+      ) : null}
     </section>
   );
 }
@@ -260,6 +285,7 @@ export function SherwoodLeaderboard() {
               <thead>
                 <tr>
                   <th>Rank</th>
+                  <th>Name</th>
                   <th>Wallet</th>
                   <th>Best coins</th>
                   <th>Best run</th>
@@ -272,6 +298,7 @@ export function SherwoodLeaderboard() {
                   board.map((row) => (
                     <tr key={row.wallet}>
                       <td>#{row.rank}</td>
+                      <td>{row.playerName || "Outlaw"}</td>
                       <td>{compactAddress(row.wallet)}</td>
                       <td>{row.bestScore.toLocaleString()}</td>
                       <td>{row.bestDistance.toLocaleString()}m</td>
@@ -281,7 +308,7 @@ export function SherwoodLeaderboard() {
                   ))
                 ) : (
                   <tr>
-                    <td className="placeholder-cell" colSpan={6}>No Sherwood runs submitted yet.</td>
+                    <td className="placeholder-cell" colSpan={7}>No Sherwood runs submitted yet.</td>
                   </tr>
                 )}
               </tbody>
@@ -327,7 +354,7 @@ function createGame() {
     ground: 300,
     obstacleTimer: 1.2,
     coinTimer: 0.7,
-    runner: { x: 84, y: 0, vy: 0, w: 34, h: 50, grounded: true },
+    runner: { x: 78, y: 0, vy: 0, w: 46, h: 62, grounded: true },
     obstacles: [] as Array<{ x: number; y: number; w: number; h: number; kind: "log" | "stump" }>,
     coins: [] as Array<{ x: number; y: number; r: number; taken: boolean }>,
     trees: Array.from({ length: 16 }, (_, index) => ({ x: index * 92, h: 60 + Math.random() * 100, layer: index % 3 }))
@@ -346,7 +373,7 @@ function resizeCanvas(canvas: HTMLCanvasElement, game: GameState) {
 
 function jump(game: GameState) {
   if (!game.playing || !game.runner.grounded) return;
-  game.runner.vy = -15.8;
+  game.runner.vy = -16.8;
   game.runner.grounded = false;
 }
 
@@ -439,12 +466,13 @@ function drawGame(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, game
   for (let x = -40; x < w + 40; x += 30) pixelRect(ctx, x, game.ground + ((x + Math.floor(game.distance * 9)) % 14), 18, 3);
   game.coins.forEach((coin) => {
     ctx.fillStyle = "#c6ff00";
-    pixelRect(ctx, coin.x - 7, coin.y - 7, 14, 14);
+    pixelRect(ctx, coin.x - 6, coin.y - 9, 12, 18);
+    pixelRect(ctx, coin.x - 9, coin.y - 6, 18, 12);
+    ctx.fillStyle = "#f1ff72";
+    pixelRect(ctx, coin.x - 2, coin.y - 7, 4, 4);
     ctx.fillStyle = "#020400";
-    pixelRect(ctx, coin.x - 3, coin.y - 5, 6, 2);
-    pixelRect(ctx, coin.x - 4, coin.y - 1, 8, 2);
-    pixelRect(ctx, coin.x - 3, coin.y + 3, 6, 2);
-    ctx.fillStyle = "#020400";
+    pixelRect(ctx, coin.x - 2, coin.y - 4, 4, 10);
+    pixelRect(ctx, coin.x - 5, coin.y - 1, 10, 3);
   });
   game.obstacles.forEach((obstacle) => drawObstacle(ctx, obstacle));
   drawRunner(ctx, game);
@@ -453,16 +481,21 @@ function drawGame(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, game
 function drawTree(ctx: CanvasRenderingContext2D, game: GameState, tree: GameState["trees"][number]) {
   const base = game.ground + 4;
   const scale = 0.74 + tree.layer * 0.2;
-  ctx.fillStyle = tree.layer === 0 ? "rgba(4, 21, 15, .55)" : "rgba(1, 12, 8, .82)";
-  pixelRect(ctx, tree.x + 18 * scale, base - tree.h, 12 * scale, tree.h);
-  ctx.fillStyle = tree.layer === 0 ? "rgba(198,255,0,.08)" : "rgba(198,255,0,.13)";
+  ctx.fillStyle = tree.layer === 0 ? "rgba(70, 42, 19, .48)" : "rgba(91, 55, 26, .72)";
+  pixelRect(ctx, tree.x + 22 * scale, base - tree.h, 16 * scale, tree.h);
+  ctx.fillStyle = tree.layer === 0 ? "rgba(32, 68, 28, .42)" : "rgba(26, 86, 31, .78)";
   const crownX = tree.x + 28 * scale;
   const crownY = base - tree.h - 12 * scale;
-  pixelRect(ctx, crownX - 22 * scale, crownY, 44 * scale, 18 * scale);
-  pixelRect(ctx, crownX - 14 * scale, crownY - 16 * scale, 28 * scale, 16 * scale);
-  pixelRect(ctx, crownX - 30 * scale, crownY + 12 * scale, 60 * scale, 20 * scale);
-  ctx.fillStyle = "rgba(198,255,0,.18)";
-  pixelRect(ctx, crownX - 6 * scale, crownY - 8 * scale, 10 * scale, 8 * scale);
+  pixelRect(ctx, crownX - 38 * scale, crownY + 14 * scale, 78 * scale, 22 * scale);
+  pixelRect(ctx, crownX - 28 * scale, crownY - 4 * scale, 58 * scale, 24 * scale);
+  pixelRect(ctx, crownX - 16 * scale, crownY - 26 * scale, 34 * scale, 24 * scale);
+  pixelRect(ctx, crownX - 48 * scale, crownY + 30 * scale, 24 * scale, 18 * scale);
+  pixelRect(ctx, crownX + 24 * scale, crownY + 28 * scale, 28 * scale, 18 * scale);
+  ctx.fillStyle = tree.layer === 0 ? "rgba(198,255,0,.08)" : "rgba(198,255,0,.2)";
+  pixelRect(ctx, crownX - 8 * scale, crownY - 18 * scale, 14 * scale, 8 * scale);
+  pixelRect(ctx, crownX + 16 * scale, crownY + 4 * scale, 12 * scale, 8 * scale);
+  ctx.fillStyle = "rgba(2,4,0,.56)";
+  pixelRect(ctx, tree.x + 27 * scale, base - tree.h + 18 * scale, 6 * scale, tree.h - 22 * scale);
 }
 
 function drawObstacle(ctx: CanvasRenderingContext2D, obstacle: { x: number; y: number; w: number; h: number; kind: "log" | "stump" }) {
@@ -489,37 +522,53 @@ function drawRunner(ctx: CanvasRenderingContext2D, game: GameState) {
   const runner = game.runner;
   ctx.save();
   ctx.translate(Math.floor(runner.x), Math.floor(runner.y + (runner.grounded ? Math.sin(game.distance * 0.9) * 2 : 0)));
+
   ctx.fillStyle = "#020400";
-  pixelRect(ctx, -8, 26, 18, 10);
-  pixelRect(ctx, -2, 34, 12, 8);
-  ctx.fillStyle = "#18371f";
-  pixelRect(ctx, 10, 18, 18, 25);
-  ctx.fillStyle = "#c6ff00";
-  pixelRect(ctx, 12, 28, 16, 4);
+  pixelRect(ctx, -16, 24, 28, 12);
+  pixelRect(ctx, -10, 36, 20, 12);
+  pixelRect(ctx, -4, 48, 12, 10);
+
   ctx.fillStyle = "#071108";
-  pixelRect(ctx, 15, 24, 10, 8);
-  ctx.fillStyle = "#18371f";
-  pixelRect(ctx, 14, 8, 14, 10);
-  pixelRect(ctx, 10, 14, 22, 7);
+  pixelRect(ctx, 14, 44, 9, 16);
+  pixelRect(ctx, 30, 44, 9, 16);
   ctx.fillStyle = "#c6ff00";
-  pixelRect(ctx, 12, 15, 4, 3);
-  pixelRect(ctx, 26, 15, 4, 3);
-  pixelRect(ctx, 6, 42, 8, 8);
-  pixelRect(ctx, 24, 42, 8, 8);
-  ctx.strokeStyle = "#7c4a22";
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.arc(35, 26, 14, -Math.PI / 2, Math.PI / 2);
-  ctx.stroke();
-  ctx.strokeStyle = "#c6ff00";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(35, 12);
-  ctx.lineTo(35, 40);
-  ctx.stroke();
+  pixelRect(ctx, 13, 58, 12, 4);
+  pixelRect(ctx, 29, 58, 12, 4);
+
+  ctx.fillStyle = "#1e4c25";
+  pixelRect(ctx, 12, 20, 28, 26);
+  pixelRect(ctx, 8, 28, 8, 14);
+  pixelRect(ctx, 38, 29, 8, 14);
   ctx.fillStyle = "#c6ff00";
-  pixelRect(ctx, 3, 10, 5, 20);
-  pixelRect(ctx, 5, 8, 14, 2);
+  pixelRect(ctx, 14, 34, 24, 5);
+  pixelRect(ctx, 20, 23, 4, 6);
+
+  ctx.fillStyle = "#1e4c25";
+  pixelRect(ctx, 18, 2, 16, 7);
+  pixelRect(ctx, 15, 8, 22, 8);
+  pixelRect(ctx, 12, 15, 30, 13);
+  ctx.fillStyle = "#020400";
+  pixelRect(ctx, 20, 15, 15, 10);
+  ctx.fillStyle = "#c6ff00";
+  pixelRect(ctx, 22, 17, 3, 2);
+  pixelRect(ctx, 31, 17, 3, 2);
+
+  ctx.fillStyle = "#7c4a22";
+  pixelRect(ctx, 4, 8, 5, 24);
+  ctx.fillStyle = "#c6ff00";
+  pixelRect(ctx, 1, 6, 13, 2);
+  pixelRect(ctx, 2, 2, 2, 8);
+  pixelRect(ctx, 7, 2, 2, 8);
+  pixelRect(ctx, 12, 2, 2, 8);
+
+  ctx.fillStyle = "#7c4a22";
+  pixelRect(ctx, 48, 12, 4, 32);
+  pixelRect(ctx, 43, 10, 9, 4);
+  pixelRect(ctx, 43, 42, 9, 4);
+  ctx.fillStyle = "#c6ff00";
+  pixelRect(ctx, 52, 16, 2, 26);
+  pixelRect(ctx, 39, 27, 15, 3);
+
   ctx.restore();
 }
 

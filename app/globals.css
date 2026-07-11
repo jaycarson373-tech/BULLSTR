@@ -151,55 +151,68 @@ main,
 
 .home-game-hero {
   min-height: 100vh;
-  padding: 116px 0 30px;
+  padding: 90px 0 26px;
 }
 
 .home-game-layout {
   display: grid;
-  min-height: calc(100vh - 146px);
-  grid-template-columns: minmax(260px, 0.64fr) minmax(0, 1.36fr);
-  gap: clamp(24px, 4vw, 50px);
-  align-items: center;
+  min-height: auto;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  align-items: start;
 }
 
 .home-game-copy {
   display: grid;
-  gap: 18px;
+  grid-template-columns: 72px minmax(240px, 0.58fr) minmax(390px, 1fr);
+  gap: 10px 16px;
+  align-items: start;
 }
 
 .home-game-logo {
-  width: clamp(96px, 13vw, 148px);
+  grid-row: span 3;
+  width: 72px;
   aspect-ratio: 1;
   border: 1px solid rgba(198, 255, 0, 0.48);
-  border-radius: 8px;
+  border-radius: 4px;
   object-fit: cover;
   box-shadow: 0 0 46px rgba(198, 255, 0, 0.22);
 }
 
 .home-game-copy h1 {
-  max-width: 560px;
-  font-size: clamp(4rem, 8vw, 8.4rem);
+  max-width: none;
+  font-size: clamp(2.6rem, 4vw, 4.8rem);
+  line-height: 0.86;
 }
 
 .home-game-copy .hero-subtitle {
-  max-width: 560px;
+  max-width: 420px;
+  font-size: clamp(0.98rem, 1.2vw, 1.22rem);
+}
+
+.home-game-copy .section-kicker,
+.home-game-copy h1,
+.home-game-copy .hero-subtitle {
+  grid-column: 2;
 }
 
 .simple-how-grid {
   display: grid;
+  grid-column: 3;
+  grid-row: 1 / span 3;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
 .simple-how-grid article {
   display: grid;
-  min-height: 138px;
+  min-height: 98px;
   align-content: space-between;
-  gap: 12px;
+  gap: 8px;
   border: 1px solid rgba(198, 255, 0, 0.22);
   border-radius: 4px;
   background: rgba(2, 4, 0, 0.68);
-  padding: 14px;
+  padding: 12px;
 }
 
 .simple-how-grid span,
@@ -776,9 +789,13 @@ main,
 
 .sherwood-game-shell {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 300px);
   gap: 16px;
-  align-items: stretch;
+  align-items: start;
+}
+
+.sherwood-game-shell.is-game-only {
+  grid-template-columns: 1fr;
 }
 
 .sherwood-brand-strip {
@@ -816,7 +833,7 @@ main,
 .sherwood-hud {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
-  padding: 12px;
+  padding: 8px;
   border-bottom: 1px solid rgba(198, 255, 0, 0.18);
   background: rgba(0, 0, 0, 0.24);
 }
@@ -977,9 +994,9 @@ main,
 
 .sherwood-hud div {
   min-width: 0;
-  min-height: 96px;
-  padding: 12px;
-  border-radius: 12px;
+  min-height: 70px;
+  padding: 10px;
+  border-radius: 4px;
   box-shadow: none;
 }
 
@@ -1001,7 +1018,7 @@ main,
   overflow: hidden;
   margin-top: 4px;
   color: var(--accent);
-  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  font-size: clamp(1.15rem, 2.1vw, 1.72rem);
   font-weight: 950;
   line-height: 0.95;
   text-overflow: ellipsis;
@@ -1010,8 +1027,8 @@ main,
 
 .sherwood-canvas-wrap {
   position: relative;
-  min-height: 430px;
-  aspect-ratio: 16 / 9;
+  min-height: 300px;
+  aspect-ratio: 21 / 9;
 }
 
 .sherwood-canvas-wrap canvas {
@@ -1033,11 +1050,11 @@ main,
 }
 
 .sherwood-overlay > div {
-  width: min(540px, 100%);
+  width: min(430px, 100%);
   border: 1px solid rgba(198, 255, 0, 0.32);
   border-radius: 4px;
   background: rgba(2, 8, 1, 0.86);
-  padding: 22px;
+  padding: 18px;
   box-shadow: 0 0 38px rgba(198, 255, 0, 0.16);
 }
 
@@ -1045,7 +1062,7 @@ main,
 .sherwood-submit-card h3 {
   margin: 0 0 10px;
   color: var(--accent);
-  font-size: clamp(2rem, 5vw, 4rem);
+  font-size: clamp(1.6rem, 3.1vw, 2.6rem);
   font-weight: 950;
   line-height: 0.9;
 }
@@ -1058,37 +1075,38 @@ main,
 }
 
 .sherwood-submit-card {
-  padding: 20px;
+  padding: 14px;
 }
 
 .sherwood-submit-card label {
-  margin: 14px 0 8px;
+  margin: 10px 0 6px;
 }
 
 .sherwood-submit-card input,
 .sherwood-submit-card textarea {
   width: 100%;
   border: 1px solid rgba(198, 255, 0, 0.2);
-  border-radius: 12px;
+  border-radius: 4px;
   background: rgba(2, 4, 0, 0.74);
   color: var(--text);
   outline: none;
 }
 
 .sherwood-submit-card input {
-  min-height: 50px;
-  padding: 0 14px;
+  min-height: 42px;
+  padding: 0 12px;
 }
 
 .sherwood-submit-card textarea {
-  min-height: 128px;
-  padding: 14px;
+  min-height: 76px;
+  padding: 12px;
   resize: vertical;
 }
 
 .sherwood-submit-card button {
   width: 100%;
-  margin-top: 14px;
+  min-height: 46px;
+  margin-top: 12px;
 }
 
 .sherwood-board-card {
@@ -1097,10 +1115,10 @@ main,
 
 .mini-leaderboard {
   display: grid;
-  gap: 8px;
-  margin-top: 16px;
+  gap: 6px;
+  margin-top: 12px;
   border-top: 1px solid rgba(198, 255, 0, 0.16);
-  padding-top: 14px;
+  padding-top: 12px;
 }
 
 .mini-leaderboard span {
@@ -1642,6 +1660,16 @@ tbody tr:hover {
     align-items: start;
   }
 
+  .home-game-copy {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+
+  .simple-how-grid {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .lore-card-wide {
     grid-column: auto;
   }
@@ -1666,6 +1694,31 @@ tbody tr:hover {
 
   .home-game-layout {
     min-height: auto;
+  }
+
+  .home-game-copy {
+    grid-template-columns: 1fr;
+  }
+
+  .home-game-logo,
+  .home-game-copy .section-kicker,
+  .home-game-copy h1,
+  .home-game-copy .hero-subtitle,
+  .simple-how-grid {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .home-game-logo {
+    width: 82px;
+  }
+
+  .home-game-copy h1 {
+    font-size: clamp(2.8rem, 15vw, 4.7rem);
+  }
+
+  .simple-how-grid {
+    grid-template-columns: 1fr;
   }
 
   h1 {

@@ -6,6 +6,7 @@ export const runtime = "nodejs";
 
 type ScoreRow = {
   wallet: string;
+  player_name: string | null;
   best_score: number | null;
   best_distance: number | null;
   runs: number | null;
@@ -40,6 +41,12 @@ function normalizeWallets(value: unknown) {
   return Array.from(new Set(raw.map(normalizeWallet).filter(Boolean) as string[])).slice(0, 8);
 }
 
+function normalizePlayerName(value: unknown) {
+  const name = String(value ?? "").trim().replace(/\s+/g, " ");
+  if (!name) return "Outlaw";
+  return name.slice(0, 24);
+}
+
 function rankMultiplier(rank: number) {
   if (rank === 1) return 3;
   if (rank === 2) return 2;
@@ -51,7 +58,7 @@ function rankMultiplier(rank: number) {
 async function leaderboard(db = client()) {
   const { data, error } = await db
     .from("sherwood_scores")
-    .select("wallet,best_score,best_distance,runs,updated_at")
+    .select("wallet,player_name,best_score,best_distance,runs,updated_at")
     .order("best_score", { ascending: false })
     .order("best_distance", { ascending: false })
     .order("updated_at", { ascending: true })
@@ -60,6 +67,7 @@ async function leaderboard(db = client()) {
   if (error) throw error;
   return ((data ?? []) as ScoreRow[]).map((row, index) => ({
     wallet: row.wallet,
+    playerName: row.player_name,
     bestScore: Number(row.best_score ?? 0),
     bestDistance: Number(row.best_distance ?? 0),
     runs: Number(row.runs ?? 0),
@@ -88,6 +96,7 @@ export async function POST(request: Request) {
 
     const score = Math.max(0, Math.min(999999, Math.floor(Number(body.score) || 0)));
     const distance = Math.max(0, Math.min(999999, Math.floor(Number(body.distance) || 0)));
+    const playerName = normalizePlayerName(body.playerName ?? body.name);
     const now = new Date().toISOString();
     const db = client();
 
@@ -108,6 +117,7 @@ export async function POST(request: Request) {
       const { error: scoreError } = await db.from("sherwood_scores").upsert(
         {
           wallet,
+          player_name: playerName,
           best_score: nextBestScore,
           best_distance: nextBestDistance,
           runs: nextRuns,
@@ -119,6 +129,7 @@ export async function POST(request: Request) {
 
       const { error: runError } = await db.from("sherwood_runs").insert({
         wallet,
+        player_name: playerName,
         score,
         distance
       });
