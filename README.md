@@ -3,10 +3,12 @@
 Contract address: `E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump`
 X: `https://x.com/HyperHood_`
 
-HyperHood is the Hood real-revenue flywheel:
+HyperHood is the Hood liquidity flywheel:
 
-- Creator fees and taxes accrue to the treasury.
-- Treasury capital can route into HHOOD buybacks, launch liquidity, and holder airdrops.
+- Fees strengthen a HyperHood pool with HyperHood and HoodXStock.
+- 50% of fees buy HOOD for pool-bonus airdrops when possible, or HH holders when pool routing is unavailable.
+- 50% of fees strengthen liquidity as 50% HH and 50% HOOD, making the LP thicker over time.
+- LP fees compound back into the pool so liquidity depth can keep reinforcing itself.
 - Every 30 minutes the worker claims, snapshots the 1M+ HHOOD holder gate, checks the active 24-hour holder board, and records settled distributions.
 - Holding 1M+ HHOOD is the eligibility gate; the holder board decides who receives each distribution slot.
 - Eligible recipients get a +10% weight bonus for each full day they hold without selling.
@@ -17,9 +19,9 @@ The site should feel fast, neon, and unmistakably HyperHood: real receipts, real
 ## Current Implementation
 
 1. Claim creator fees into the treasury.
-2. Snapshot source-token holders with at least `ELIGIBILITY_MIN`.
-3. Use `ELIGIBILITY_MIN=1000000` for 1M+ HHOOD distribution eligibility.
-4. Check the active 24-hour HyperHood holder board and fill 15 distribution slots from the first eligible wallets.
+2. Route 50% toward HOOD buys for airdrops to the pool when possible, otherwise HH holders.
+3. Route 50% into LP reinforcement, split as 50% HH and 50% HOOD.
+4. Recycle LP fees back into the pool to compound liquidity depth.
 5. Store windows, snapshots, payouts, wallet holdings, and records in Supabase.
 
 ## Local Development

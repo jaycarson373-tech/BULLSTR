@@ -226,9 +226,50 @@ export function HomeAirdropStats() {
       </article>
       <article>
         <span>Utility</span>
-        <strong>Fees, buybacks, holder yield</strong>
+        <strong>50% HOOD drops / 50% LP thickness</strong>
       </article>
     </div>
+  );
+}
+
+export function FeeLoopChart() {
+  return (
+    <section className="fee-loop-card" aria-label="HyperHood fee routing model">
+      <div className="fee-loop-copy">
+        <div className="section-kicker">Fee Engine</div>
+        <h2>HyperHood makes the pool thicker every cycle.</h2>
+        <p>
+          Fees strengthen the HyperHood pool with HyperHood and HoodXStock. Half buys HOOD for pool bonus airdrops
+          when possible, or HH holders when not. The other half adds LP as 50% HH and 50% HOOD, then LP fees compound
+          back into the pool.
+        </p>
+      </div>
+      <div className="fee-loop-visual" aria-hidden="true">
+        <div className="fee-pie">
+          <div className="fee-pie-core">
+            <span>100%</span>
+            <strong>Fees</strong>
+          </div>
+        </div>
+        <div className="fee-legend">
+          <div>
+            <span className="legend-dot legend-airdrop" />
+            <strong>50%</strong>
+            <p>Buy HOOD, then airdrop to the pool when possible or HH holders with pool bonus.</p>
+          </div>
+          <div>
+            <span className="legend-dot legend-lp" />
+            <strong>50%</strong>
+            <p>Add liquidity: 25% HH + 25% HOOD to make the LP thick.</p>
+          </div>
+          <div>
+            <span className="legend-dot legend-compound" />
+            <strong>LP fees</strong>
+            <p>Harvested fees loop back into liquidity so depth compounds over time.</p>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -244,8 +285,8 @@ export function LiveProtocolDashboard() {
       <div className="container">
         <div className="section-kicker live-kicker"><span>HyperHood revenue</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Every cycle routes real revenue back into the Hood flywheel.</h2>
-          <p>Each window claims fees, snapshots qualified HHOOD holders, checks the active holder board, skips ineligible wallets, and records the settled yield route.</p>
+          <h2>Every cycle routes fees into HOOD drops and deeper LP.</h2>
+          <p>Each window claims fees, buys HOOD for pool-bonus airdrops when possible, and compounds the other half into HH/HOOD liquidity for a thicker HyperHood pool.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
           <MetricCard label="Total Yield Routed" value={formatAmount(total, REWARD_SYMBOL)} strong />
@@ -253,7 +294,7 @@ export function LiveProtocolDashboard() {
           <MetricCard label="Next Revenue Window" value={now ? nextDropCountdown(stats, now) : "30:00"} />
           <MetricCard label="Claim Cadence" value="Every 30 minutes" />
           <MetricCard label="Holder Gate" value={latestHolders > 0 ? latestHolders.toLocaleString() : "Awaiting holders"} />
-          <MetricCard label="Revenue Split" value="Buybacks / launch liquidity / holder airdrops" />
+          <MetricCard label="Revenue Split" value="50% HOOD drops / 50% HH-HOOD LP" />
           <MetricCard label="Last Receipt" value={latestReward ? `${compactAddress(latestReward.wallet)} / ${formatMultiplier(latestReward.rewardAmount, latestReward.normalRewardAmount)} / ${formatAmount(latestReward.rewardAmount, REWARD_SYMBOL)}` : "Awaiting route"} />
         </div>
       </div>

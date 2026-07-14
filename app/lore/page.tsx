@@ -36,35 +36,35 @@ export default function LorePage() {
           <div className="container">
             <div className="section-kicker">HyperHood thesis</div>
             <div className="section-head split-head">
-              <h2>Real revenue. Hood yield. One flywheel.</h2>
+              <h2>Fees in. HOOD out. Liquidity gets thicker.</h2>
               <p>
-                HyperHood adapts the real-revenue thesis for the Hood ecosystem: fees accrue to the treasury, the treasury
-                routes capital into buybacks, launch liquidity, and holder airdrops, and every receipt stays visible for holders.
+                HyperHood is built around a simple pool flywheel: fees strengthen a HyperHood pool with HyperHood and HoodXStock,
+                buy HOOD for distributions, and compound LP fees back into deeper HH/HOOD liquidity.
               </p>
             </div>
             <div className="lore-grid">
               <article className="lore-card lore-card-wide">
                 <span>The Engine</span>
-                <strong>Fees become fuel.</strong>
+                <strong>Fees split 50/50.</strong>
                 <p>
-                  Creator fees and token taxes flow into the Hood treasury. HyperHood turns that revenue into recurring
-                  market support, new launch capital, and transparent holder distributions.
+                  Half of fees buy HOOD for pool-bonus airdrops when possible, or HH holders when pool routing is not available.
+                  The other half is reserved to strengthen liquidity.
                 </p>
               </article>
               <article className="lore-card">
-                <span>Buybacks</span>
-                <strong>Support the base token.</strong>
-                <p>The flywheel can route revenue back into HHOOD buy pressure, keeping the main token connected to activity across the ecosystem.</p>
+                <span>Pool Bonus</span>
+                <strong>HOOD gets pushed to aligned holders.</strong>
+                <p>HOOD bought with fees is aimed at the pool first when possible, then HH holders, giving deeper participation a stronger bonus path.</p>
               </article>
               <article className="lore-card">
-                <span>Launch Liquidity</span>
-                <strong>Fund the next Hood launch.</strong>
-                <p>Each cycle compounds toward fresh liquidity so the next Hood token can start stronger instead of relying on scattered one-off funding.</p>
+                <span>LP Thickness</span>
+                <strong>50% HH and 50% HOOD.</strong>
+                <p>The liquidity half is split into equal HH and HOOD legs, then added to the pool so depth grows instead of thinning out.</p>
               </article>
               <article className="lore-card">
-                <span>Holder Access</span>
-                <strong>Snapshots decide eligibility.</strong>
-                <p>Qualified holders enter non-custodial snapshots for airdrops and allocation windows. No signature is required just to save a receiving address.</p>
+                <span>Compounding</span>
+                <strong>LP fees go back in.</strong>
+                <p>Fees earned from the LP are recycled into more liquidity, creating a leveraged HOOD exposure loop as more volume hits the pool.</p>
               </article>
               <article className="lore-card">
                 <span>Receipts</span>

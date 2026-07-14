@@ -3,7 +3,7 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hyperhood.xyz";
-const SITE_DESCRIPTION = "HyperHood is a real-revenue Hood flywheel where creator fees and taxes route into buybacks, launch liquidity, and holder airdrops on Solana.";
+const SITE_DESCRIPTION = "HyperHood routes fees into HOOD airdrops and thicker HH/HOOD liquidity, then compounds LP fees back into the pool on Solana.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

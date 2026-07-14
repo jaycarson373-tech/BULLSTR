@@ -1,5 +1,5 @@
 import { CopyCaChip } from "./ca-copy-chip";
-import { HomeAirdropStats } from "./home-strategy-data";
+import { FeeLoopChart, HomeAirdropStats } from "./home-strategy-data";
 import { HowItWorksPrompt, HyperHoodRunnerGame } from "./hyperhood-runner-game";
 
 const DEFAULT_CA = "E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump";
@@ -46,11 +46,12 @@ export default function Page() {
                 <span>Hood</span>
               </h1>
               <p className="hero-subtitle">
-                Real revenue for the Hood flywheel. Creator fees and taxes route into buybacks, launch liquidity, and holder airdrops.
+                Fees turn into HOOD airdrops and thicker HH/HOOD liquidity. Half feeds holders, half reinforces the pool.
               </p>
               <HowItWorksPrompt />
             </div>
             <HomeAirdropStats />
+            <FeeLoopChart />
             <p className="hero-disclaimer">Non-custodial snapshots. No wallet signature required for address submission.</p>
             <HyperHoodRunnerGame />
           </div>
