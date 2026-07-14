@@ -49,5 +49,30 @@ export function AppPolish() {
     };
   }, []);
 
+  useEffect(() => {
+    const canAnimate = window.matchMedia("(pointer: fine) and (min-width: 900px)").matches;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!canAnimate || reduceMotion) return;
+
+    let frame = 0;
+    const updatePointer = (event: PointerEvent) => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const x = ((event.clientX / window.innerWidth) - 0.5) * 18;
+        const y = ((event.clientY / window.innerHeight) - 0.5) * 14;
+        document.documentElement.style.setProperty("--mouse-x", `${x.toFixed(2)}px`);
+        document.documentElement.style.setProperty("--mouse-y", `${y.toFixed(2)}px`);
+      });
+    };
+
+    window.addEventListener("pointermove", updatePointer, { passive: true });
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("pointermove", updatePointer);
+      document.documentElement.style.removeProperty("--mouse-x");
+      document.documentElement.style.removeProperty("--mouse-y");
+    };
+  }, []);
+
   return null;
 }

@@ -3,7 +3,7 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hyperhood.xyz";
-const SITE_DESCRIPTION = "HyperHood routes fees into HOOD airdrops and thicker HH/HOOD liquidity, then compounds LP fees back into the pool on Solana.";
+const SITE_DESCRIPTION = "HyperHood uses creator fees to buy HOOD, airdrop eligible holders, add HH/HOOD liquidity, and compound LP fees back into the pool.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

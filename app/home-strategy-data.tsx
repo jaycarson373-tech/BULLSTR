@@ -143,12 +143,6 @@ function formatAmount(value: number, symbol: string, maximumFractionDigits = 2) 
   return `${formatNumber(value, maximumFractionDigits)} ${symbol}`;
 }
 
-function formatLiveNumber(value: number | null | undefined, fallback = "0", maximumFractionDigits = 2) {
-  const number = Number(value ?? 0);
-  if (!Number.isFinite(number) || number <= 0) return fallback;
-  return number.toLocaleString(undefined, { maximumFractionDigits });
-}
-
 function formatDate(value: string | null | undefined) {
   if (!value) return "Awaiting";
   const date = new Date(value);
@@ -190,6 +184,10 @@ function hoodAirdropped(stats: StatsResponse | null) {
   return rewardTotalAmount(stats.totalRewardTotals, REWARD_SYMBOL) || rewardTotalsSum(stats.totalRewardTotals) || Number(stats.totalRewardAirdropped || 0);
 }
 
+function hoodPurchased(stats: StatsResponse | null) {
+  return (stats?.roundHistory ?? []).reduce((sum, round) => sum + Number(round.rewardBought || 0), 0);
+}
+
 function lastHoodAirdrop(stats: StatsResponse | null) {
   if (!stats) return 0;
   return rewardTotalAmount(stats.lastRewardTotals, REWARD_SYMBOL) || rewardTotalsSum(stats.lastRewardTotals) || Number(stats.lastRewardAirdropped || 0);
@@ -208,17 +206,15 @@ function nextDropCountdown(stats: StatsResponse | null, now: number) {
 }
 
 export function ProtocolTopStrip() {
-  const { stats } = useProtocolData();
-  const holdings = stats?.sherwoodHoldings;
-  const position = holdings?.sourceTokenBalance ?? 0;
-  const size = holdings?.rewardTokenBalance ?? 0;
-  const solBridged = stats?.bagholderSolBalance ?? holdings?.solBalance ?? 0;
+  const { stats, now } = useProtocolData();
+  const purchased = hoodPurchased(stats);
+  const airdropped = hoodAirdropped(stats);
   const tickerItems = [
-    ["Current Position", `${formatLiveNumber(position)} ${SOURCE_SYMBOL}`],
-    ["Size", `${formatLiveNumber(size)} ${REWARD_SYMBOL}`],
-    ["Total SOL Bridged", `${formatLiveNumber(solBridged)} SOL`],
-    ["HoodX Price", "Awaiting pool"],
-    ["Total Burnt", "0"]
+    ["HOOD Purchased", formatAmount(purchased, "HOOD")],
+    ["HOOD Airdropped", formatAmount(airdropped, "HOOD")],
+    ["Liquidity Added", "Awaiting LP"],
+    ["LP Fees Compounded", "Awaiting LP"],
+    ["Next Distribution", now ? nextDropCountdown(stats, now) : "15:00"]
   ];
 
   return (
@@ -250,21 +246,22 @@ function MetricCard({ label, value, strong }: { label: string; value: string; st
 
 export function HomeAirdropStats() {
   const { stats, now } = useProtocolData();
-  const total = hoodAirdropped(stats);
+  const purchased = hoodPurchased(stats);
+  const airdropped = hoodAirdropped(stats);
 
   return (
-    <div className="home-airdrop-stats" aria-label="HyperHood revenue stats">
+    <div className="home-airdrop-stats" aria-label="HyperHood live flywheel stats">
       <article>
-        <span>Total Yield Routed</span>
-        <strong>{formatAmount(total, REWARD_SYMBOL)}</strong>
+        <span>HOOD Purchased</span>
+        <strong>{formatAmount(purchased, "HOOD")}</strong>
       </article>
       <article>
-        <span>Next Revenue Window</span>
+        <span>HOOD Airdropped</span>
+        <strong>{formatAmount(airdropped, "HOOD")}</strong>
+      </article>
+      <article>
+        <span>Next Distribution</span>
         <strong>{now ? nextDropCountdown(stats, now) : "15:00"}</strong>
-      </article>
-      <article>
-        <span>Utility</span>
-        <strong>50% HOOD drops / 50% LP thickness</strong>
       </article>
     </div>
   );
@@ -272,17 +269,16 @@ export function HomeAirdropStats() {
 
 export function FeeLoopChart() {
   return (
-    <section className="fee-loop-card" aria-label="HyperHood fee routing model">
+    <section className="fee-loop-card" id="flywheel" aria-label="HyperHood flywheel model">
       <div className="fee-loop-copy">
-        <div className="section-kicker">Fee Engine</div>
-        <h2>HyperHood makes the pool thicker every cycle.</h2>
+        <div className="section-kicker">Live Flywheel</div>
+        <h2>Every trade pushes the long.</h2>
         <p>
-          Fees strengthen the HyperHood pool with HyperHood and HoodXStock. Half buys HOOD for pool bonus airdrops
-          when possible, or HH holders when not. At bond, the LP is created, the other half adds LP as 50% HH and
-          50% HOOD, then LP fees compound back into the pool.
+          50% of creator fees buy HOOD for eligible holders. 50% adds HH/HOOD liquidity. LP fees compound back
+          into liquidity forever.
         </p>
       </div>
-      <div className="fee-loop-visual" aria-hidden="true">
+      <div className="fee-loop-visual" aria-label="Fee split visual">
         <div className="fee-pie">
           <div className="fee-pie-core">
             <span>100%</span>
@@ -293,19 +289,30 @@ export function FeeLoopChart() {
           <div>
             <span className="legend-dot legend-airdrop" />
             <strong>50%</strong>
-            <p>Buy HOOD, then airdrop to the pool when possible or HH holders with pool bonus.</p>
+            <p>Buy HOOD, then airdrop holders.</p>
           </div>
           <div>
             <span className="legend-dot legend-lp" />
             <strong>50%</strong>
-            <p>Add liquidity: 25% HH + 25% HOOD to make the LP thick.</p>
+            <p>Add liquidity with HH and HOOD.</p>
           </div>
           <div>
             <span className="legend-dot legend-compound" />
             <strong>LP fees</strong>
-            <p>Harvested fees loop back into liquidity so depth compounds over time.</p>
+            <p>Compound LP fees back into the pool.</p>
           </div>
         </div>
+      </div>
+      <div className="flywheel-flow" aria-label="HyperHood flywheel">
+        <span>Trading Volume</span>
+        <span>Creator Fees</span>
+        <span>50% Buy HOOD</span>
+        <span>50% Add LP</span>
+        <span>HOOD Airdrops</span>
+        <span>Deeper Liquidity</span>
+        <span>LP Fees</span>
+        <span>Compounded Back Into LP</span>
+        <span>Repeat Forever</span>
       </div>
       <div className="fee-roadmap" aria-label="HyperHood roadmap">
         <span>Roadmap</span>
@@ -322,24 +329,24 @@ export function HowItWorksSection() {
       <div className="container">
         <div className="section-kicker">How it works</div>
         <div className="section-head split-head">
-          <h2>Fees enter one loop, then reinforce the next loop.</h2>
-          <p>HyperHood is built to make the HH/HOOD pool harder to move over time while keeping live receipts visible on the dashboard.</p>
+          <h2>Buy HOOD. Add liquidity. Compound LP fees.</h2>
+          <p>HyperHood keeps the loop easy to follow: fees buy HOOD for holders, add liquidity, then recycle LP fees back into the pool.</p>
         </div>
         <div className="reward-flow">
           <article className="reward-flow-card">
             <span>01</span>
-            <strong>Fees are claimed.</strong>
-            <p>Protocol windows run every 15 minutes and read the live treasury state.</p>
+            <strong>Buy HOOD.</strong>
+            <p>Every trade creates fees. Half buys fractional Robinhood stock.</p>
           </article>
           <article className="reward-flow-card">
             <span>02</span>
-            <strong>HOOD is routed.</strong>
-            <p>50% buys HOOD for airdrops to pool-aligned holders where possible, or HH holders when needed.</p>
+            <strong>Airdrop holders.</strong>
+            <p>Purchased HOOD is airdropped to eligible holders.</p>
           </article>
           <article className="reward-flow-card">
             <span>03</span>
-            <strong>LP gets thicker.</strong>
-            <p>50% reinforces liquidity as HH plus HOOD, and LP fees cycle back into depth.</p>
+            <strong>Compound LP fees.</strong>
+            <p>The other half adds liquidity, then LP fees go back into the pool.</p>
           </article>
         </div>
       </div>
@@ -349,6 +356,7 @@ export function HowItWorksSection() {
 
 export function LiveProtocolDashboard() {
   const { stats, now } = useProtocolData();
+  const purchased = hoodPurchased(stats);
   const total = hoodAirdropped(stats);
   const last = lastHoodAirdrop(stats);
   const latestReward = stats?.recentRewards?.[0];
@@ -357,19 +365,19 @@ export function LiveProtocolDashboard() {
   return (
     <section className="section live-section airdrop-section" id="dashboard">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>HyperHood revenue</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>HyperHood flywheel</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Every cycle routes fees into HOOD drops and deeper LP.</h2>
-          <p>Each window claims fees, buys HOOD for pool-bonus airdrops when possible, and compounds the other half into HH/HOOD liquidity for a thicker HyperHood pool.</p>
+          <h2>Creator fees buy HOOD and add liquidity.</h2>
+          <p>Live values only. Empty cards mean the backend has not recorded that on-chain event yet.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
-          <MetricCard label="Total Yield Routed" value={formatAmount(total, REWARD_SYMBOL)} strong />
-          <MetricCard label="Last Yield Route" value={formatAmount(last, REWARD_SYMBOL)} />
-          <MetricCard label="Next Revenue Window" value={now ? nextDropCountdown(stats, now) : "15:00"} />
-          <MetricCard label="Claim Cadence" value="Every 15 minutes" />
-          <MetricCard label="Holder Gate" value={latestHolders > 0 ? latestHolders.toLocaleString() : "Awaiting holders"} />
-          <MetricCard label="Revenue Split" value="50% HOOD drops / 50% HH-HOOD LP" />
-          <MetricCard label="Last Receipt" value={latestReward ? `${compactAddress(latestReward.wallet)} / ${formatMultiplier(latestReward.rewardAmount, latestReward.normalRewardAmount)} / ${formatAmount(latestReward.rewardAmount, REWARD_SYMBOL)}` : "Awaiting route"} />
+          <MetricCard label="HOOD Purchased" value={formatAmount(purchased, "HOOD")} strong />
+          <MetricCard label="HOOD Airdropped" value={formatAmount(total, "HOOD")} />
+          <MetricCard label="Liquidity Added" value="Awaiting LP" />
+          <MetricCard label="LP Fees Compounded" value="Awaiting LP" />
+          <MetricCard label="Next Distribution" value={now ? nextDropCountdown(stats, now) : "15:00"} />
+          <MetricCard label="Eligible Holders" value={latestHolders > 0 ? latestHolders.toLocaleString() : "Awaiting holders"} />
+          <MetricCard label="Last Airdrop" value={latestReward ? `${compactAddress(latestReward.wallet)} / ${formatMultiplier(latestReward.rewardAmount, latestReward.normalRewardAmount)} / ${formatAmount(latestReward.rewardAmount || last, "HOOD")}` : "Awaiting distribution"} />
         </div>
       </div>
     </section>
@@ -383,10 +391,10 @@ export function RecentAirdrops() {
   return (
     <section className="section recent-airdrops-section" id="airdrops">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>Recent yield receipts</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>Recent HOOD airdrops</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>Settled holder receipts.</h2>
-          <p>Only settled HyperHood distributions are shown. Empty rows mean no on-chain receipts are available yet.</p>
+          <p>Only settled HyperHood airdrops are shown. Empty rows mean no on-chain receipts are available yet.</p>
         </div>
         <div className="history-card">
           <div className="table-wrap">
@@ -407,10 +415,10 @@ export function RecentAirdrops() {
                   rewards.slice(0, 50).map((reward) => (
                     <tr key={`${reward.wallet}-${reward.time}-${reward.rewardAmount}`}>
                       <td>{compactAddress(reward.wallet)}</td>
-                      <td>{REWARD_SYMBOL}</td>
-                      <td>{formatAmount(reward.normalRewardAmount, REWARD_SYMBOL)}</td>
+                      <td>HOOD</td>
+                      <td>{formatAmount(reward.normalRewardAmount, "HOOD")}</td>
                       <td>{formatMultiplier(reward.rewardAmount, reward.normalRewardAmount)}</td>
-                      <td>{formatAmount(reward.rewardAmount, REWARD_SYMBOL)}</td>
+                      <td>{formatAmount(reward.rewardAmount, "HOOD")}</td>
                       <td>{formatDate(reward.time)}</td>
                       <td>
                         {reward.txSig ? (
@@ -444,21 +452,21 @@ export function AirdropHistory() {
   return (
     <section className="section history-section" id="airdrops-history">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>Revenue history</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>Distribution history</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>15-minute HyperHood windows.</h2>
-          <p>Each window claims fees, snapshots the holder gate, fills eligible distribution slots, applies any hold-streak bonus, and records settled payouts.</p>
+          <h2>15-minute HyperHood distributions.</h2>
+          <p>Each distribution records eligible holders, recipients, amounts, and transaction links.</p>
         </div>
         <div className="history-card">
           <div className="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Window</th>
+                  <th>Distribution</th>
                   <th>Status</th>
                   <th>Duration</th>
                   <th>Recipients</th>
-                  <th>Total {REWARD_SYMBOL}</th>
+                  <th>Total HOOD</th>
                   <th>Transaction</th>
                 </tr>
               </thead>
@@ -473,7 +481,7 @@ export function AirdropHistory() {
                         <td>{statusLabel(round.status)}</td>
                         <td>{round.duration}</td>
                         <td>{recipients > 0 ? recipients.toLocaleString() : "Awaiting"}</td>
-                        <td>{formatAmount(total, REWARD_SYMBOL)}</td>
+                        <td>{formatAmount(total, "HOOD")}</td>
                         <td>
                           {round.txSig ? (
                             <a href={`https://solscan.io/tx/${round.txSig}`} target="_blank" rel="noreferrer">
@@ -488,7 +496,7 @@ export function AirdropHistory() {
                   })
                 ) : (
                   <tr>
-                    <td className="placeholder-cell" colSpan={6}>Awaiting settled HyperHood windows.</td>
+                    <td className="placeholder-cell" colSpan={6}>Awaiting settled HyperHood distributions.</td>
                   </tr>
                 )}
               </tbody>
