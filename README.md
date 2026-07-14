@@ -1,25 +1,26 @@
-# Sherwood Run
+# HyperHood
 
 Contract address: `E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump`
-X: `https://x.com/SherwoodRun`
+X: `https://x.com/HyperHood_`
 
-Sherwood Run is the Sherwood arcade and HoodX airdrop site:
+HyperHood is the Hood real-revenue flywheel:
 
-- The game is a pixel Sherwood flapper where players clear tree gates for leaderboard score.
-- Every 30 minutes the worker claims, snapshots the 1M+ Sherwood holder gate, checks the active 24-hour leaderboard, and sends HoodX to the first 15 eligible players.
-- Holding 1M+ Sherwood is only the eligibility gate; the game decides who receives each HoodX drop.
-- Eligible prize winners get a +10% weight bonus for each full day they hold without selling.
-- The dashboard reads settled HoodX windows, payouts, holders, wallet holdings, and recent records from Supabase.
+- Creator fees and taxes accrue to the treasury.
+- Treasury capital can route into HHOOD buybacks, launch liquidity, and holder airdrops.
+- Every 30 minutes the worker claims, snapshots the 1M+ HHOOD holder gate, checks the active 24-hour holder board, and records settled distributions.
+- Holding 1M+ HHOOD is the eligibility gate; the holder board decides who receives each distribution slot.
+- Eligible recipients get a +10% weight bonus for each full day they hold without selling.
+- The dashboard reads settled revenue windows, payouts, holders, wallet holdings, and recent records from Supabase.
 
-The site should feel fast, neon, and unmistakably Sherwood Run.
+The site should feel fast, neon, and unmistakably HyperHood: real receipts, real flywheel, no custodial wallet-drainer signals.
 
 ## Current Implementation
 
 1. Claim creator fees into the treasury.
 2. Snapshot source-token holders with at least `ELIGIBILITY_MIN`.
-3. Use `ELIGIBILITY_MIN=1000000` for 1M+ Sherwood airdrop eligibility.
-4. Check the active 24-hour Sherwood Run leaderboard and fill 15 prize slots from the first eligible wallets.
-5. Store windows, snapshots, HoodX payouts, wallet holdings, and records in Supabase.
+3. Use `ELIGIBILITY_MIN=1000000` for 1M+ HHOOD distribution eligibility.
+4. Check the active 24-hour HyperHood holder board and fill 15 distribution slots from the first eligible wallets.
+5. Store windows, snapshots, payouts, wallet holdings, and records in Supabase.
 
 ## Local Development
 
@@ -41,14 +42,14 @@ npm run build
 Copy `.env.example` and fill in the live mints and keys.
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME="Sherwood Run"
-NEXT_PUBLIC_SOURCE_SYMBOL=Sherwood
-NEXT_PUBLIC_REWARD_SYMBOL=HoodX
+NEXT_PUBLIC_PROJECT_NAME="HyperHood"
+NEXT_PUBLIC_SOURCE_SYMBOL=HHOOD
+NEXT_PUBLIC_REWARD_SYMBOL=HHOOD
 NEXT_PUBLIC_SOURCE_TOKEN_MINT=E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump
 NEXT_PUBLIC_CA=E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump
-NEXT_PUBLIC_X_URL=https://x.com/SherwoodRun
-NEXT_PUBLIC_DEXSCREENER_URL=<SHERWOOD_DEXSCREENER_URL>
-NEXT_PUBLIC_SHERWOOD_CHART_URL=<SHERWOOD_DEXSCREENER_URL>
+NEXT_PUBLIC_X_URL=https://x.com/HyperHood_
+NEXT_PUBLIC_DEXSCREENER_URL=<HYPERHOOD_DEXSCREENER_URL>
+NEXT_PUBLIC_SHERWOOD_CHART_URL=<HYPERHOOD_DEXSCREENER_URL>
 NEXT_PUBLIC_SHERWOOD_CHART_EMBED_URL=<OPTIONAL_DEXSCREENER_EMBED_URL>
 NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<SUPABASE_ANON_KEY>

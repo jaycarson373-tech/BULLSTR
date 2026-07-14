@@ -33,7 +33,7 @@ type Reward = {
   txSig: string | null;
 };
 
-type SherwoodHoldings = {
+type HyperHoodHoldings = {
   wallet: string | null;
   solBalance: number | null;
   sourceTokenBalance: number | null;
@@ -53,7 +53,7 @@ type StatsResponse = {
   latestEligibleHolders: number;
   eligibleBullstrHeld: number;
   bagholderSolBalance: number | null;
-  sherwoodHoldings?: SherwoodHoldings;
+  sherwoodHoldings?: HyperHoodHoldings;
   nextDropTime: string;
   roundHistory: Round[];
   recentRewards: Reward[];
@@ -61,8 +61,8 @@ type StatsResponse = {
 
 const REFRESH_MS = 12_000;
 const DROP_INTERVAL_MINUTES = 30;
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "Sherwood";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HoodX";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HHOOD";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HHOOD";
 
 const emptyStats: StatsResponse = {
   currentEpoch: 0,
@@ -215,18 +215,18 @@ export function HomeAirdropStats() {
   const total = hoodAirdropped(stats);
 
   return (
-    <div className="home-airdrop-stats" aria-label="HoodX airdrop stats">
+    <div className="home-airdrop-stats" aria-label="HyperHood revenue stats">
       <article>
-        <span>Total HoodX Airdropped</span>
+        <span>Total Yield Routed</span>
         <strong>{formatAmount(total, REWARD_SYMBOL)}</strong>
       </article>
       <article>
-        <span>Next Airdrop</span>
+        <span>Next Revenue Window</span>
         <strong>{now ? nextDropCountdown(stats, now) : "30:00"}</strong>
       </article>
       <article>
         <span>Utility</span>
-        <strong>Play, qualify, split HoodX</strong>
+        <strong>Fees, buybacks, holder yield</strong>
       </article>
     </div>
   );
@@ -242,19 +242,19 @@ export function LiveProtocolDashboard() {
   return (
     <section className="section live-section airdrop-section" id="dashboard">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>HoodX airdrops</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>HyperHood revenue</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Every 30 minutes, top eligible players get HoodX.</h2>
-          <p>Each cycle claims, snapshots 1M+ Sherwood holders, checks the 24-hour leaderboard, skips ineligible scores, and splits HoodX across the first 15 eligible players.</p>
+          <h2>Every cycle routes real revenue back into the Hood flywheel.</h2>
+          <p>Each window claims fees, snapshots qualified HHOOD holders, checks the active holder board, skips ineligible wallets, and records the settled yield route.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
-          <MetricCard label="Total HoodX Airdropped" value={formatAmount(total, REWARD_SYMBOL)} strong />
-          <MetricCard label="Last HoodX Airdrop" value={formatAmount(last, REWARD_SYMBOL)} />
-          <MetricCard label="Next Airdrop" value={now ? nextDropCountdown(stats, now) : "30:00"} />
-          <MetricCard label="Drop Cadence" value="Every 30 minutes" />
-          <MetricCard label="1M+ Wallet Gate" value={latestHolders > 0 ? latestHolders.toLocaleString() : "Awaiting holders"} />
-          <MetricCard label="Prize Split" value="#1 15% / #2 10% / #3-15 fill the rest" />
-          <MetricCard label="Last Hit" value={latestReward ? `${compactAddress(latestReward.wallet)} / ${formatMultiplier(latestReward.rewardAmount, latestReward.normalRewardAmount)} / ${formatAmount(latestReward.rewardAmount, REWARD_SYMBOL)}` : "Awaiting airdrop"} />
+          <MetricCard label="Total Yield Routed" value={formatAmount(total, REWARD_SYMBOL)} strong />
+          <MetricCard label="Last Yield Route" value={formatAmount(last, REWARD_SYMBOL)} />
+          <MetricCard label="Next Revenue Window" value={now ? nextDropCountdown(stats, now) : "30:00"} />
+          <MetricCard label="Claim Cadence" value="Every 30 minutes" />
+          <MetricCard label="Holder Gate" value={latestHolders > 0 ? latestHolders.toLocaleString() : "Awaiting holders"} />
+          <MetricCard label="Revenue Split" value="Buybacks / launch liquidity / holder airdrops" />
+          <MetricCard label="Last Receipt" value={latestReward ? `${compactAddress(latestReward.wallet)} / ${formatMultiplier(latestReward.rewardAmount, latestReward.normalRewardAmount)} / ${formatAmount(latestReward.rewardAmount, REWARD_SYMBOL)}` : "Awaiting route"} />
         </div>
       </div>
     </section>
@@ -268,10 +268,10 @@ export function RecentAirdrops() {
   return (
     <section className="section recent-airdrops-section" id="airdrops">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>Recent HoodX drops</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>Recent yield receipts</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>Winner airdrop receipts.</h2>
-          <p>Only settled HoodX drops to eligible leaderboard players are shown. Empty rows mean no settled payouts are available yet.</p>
+          <h2>Settled holder receipts.</h2>
+          <p>Only settled HyperHood distributions are shown. Empty rows mean no on-chain receipts are available yet.</p>
         </div>
         <div className="history-card">
           <div className="table-wrap">
@@ -282,7 +282,7 @@ export function RecentAirdrops() {
                   <th>Asset</th>
                   <th>Base rank share</th>
                   <th>Hold bonus</th>
-                  <th>HoodX Received</th>
+                  <th>{REWARD_SYMBOL} Received</th>
                   <th>Time</th>
                   <th>TX Link</th>
                 </tr>
@@ -310,7 +310,7 @@ export function RecentAirdrops() {
                   ))
                 ) : (
                   <tr>
-                    <td className="placeholder-cell" colSpan={7}>Awaiting settled HoodX airdrops.</td>
+                    <td className="placeholder-cell" colSpan={7}>Awaiting settled HyperHood distributions.</td>
                   </tr>
                 )}
               </tbody>
@@ -329,10 +329,10 @@ export function AirdropHistory() {
   return (
     <section className="section history-section" id="airdrops-history">
       <div className="container">
-        <div className="section-kicker live-kicker"><span>Airdrop history</span><LiveBadge /></div>
+        <div className="section-kicker live-kicker"><span>Revenue history</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>30-minute HoodX windows.</h2>
-          <p>Each window claims, snapshots the 1M+ holder gate, fills the first 15 eligible leaderboard slots, applies the hold-streak bonus, and records settled payouts.</p>
+          <h2>30-minute HyperHood windows.</h2>
+          <p>Each window claims fees, snapshots the holder gate, fills eligible distribution slots, applies any hold-streak bonus, and records settled payouts.</p>
         </div>
         <div className="history-card">
           <div className="table-wrap">
@@ -343,7 +343,7 @@ export function AirdropHistory() {
                   <th>Status</th>
                   <th>Duration</th>
                   <th>Recipients</th>
-                  <th>Total HoodX</th>
+                  <th>Total {REWARD_SYMBOL}</th>
                   <th>Transaction</th>
                 </tr>
               </thead>
@@ -373,7 +373,7 @@ export function AirdropHistory() {
                   })
                 ) : (
                   <tr>
-                    <td className="placeholder-cell" colSpan={6}>Awaiting settled HoodX windows.</td>
+                    <td className="placeholder-cell" colSpan={6}>Awaiting settled HyperHood windows.</td>
                   </tr>
                 )}
               </tbody>

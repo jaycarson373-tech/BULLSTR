@@ -31,7 +31,7 @@ type Hud = {
 
 const SOLANA_ADDRESS_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 
-export function SherwoodRunnerGame() {
+export function HyperHoodRunnerGame() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const gameRef = useRef(createGame());
   const rafRef = useRef<number | null>(null);
@@ -40,7 +40,7 @@ export function SherwoodRunnerGame() {
   const [playerName, setPlayerName] = useState("");
   const [primaryWallet, setPrimaryWallet] = useState("");
   const [board, setBoard] = useState<BoardRow[]>([]);
-  const [status, setStatus] = useState("Play first, then submit one wallet for leaderboard weight.");
+  const [status, setStatus] = useState("Run first, then submit one wallet for holder-board weight.");
   const [submitting, setSubmitting] = useState(false);
 
   const syncHud = useCallback((force = false) => {
@@ -91,7 +91,7 @@ export function SherwoodRunnerGame() {
     gameRef.current.playing = true;
     gameRef.current.runner.y = canvas.clientHeight * 0.42;
     gameRef.current.runner.vy = -300;
-    setStatus("Flight live. Press space, tap, or click to flap.");
+    setStatus("Flywheel live. Press space, tap, or click to move.");
     let last = performance.now();
     const loop = (time: number) => {
       const dt = Math.min(0.033, (time - last) / 1000);
@@ -155,7 +155,7 @@ export function SherwoodRunnerGame() {
     }
 
     setSubmitting(true);
-    setStatus("Submitting score to Sherwood...");
+    setStatus("Submitting score to HyperHood...");
     try {
       const response = await fetch("/api/sherwood", {
         method: "POST",
@@ -163,45 +163,45 @@ export function SherwoodRunnerGame() {
         body: JSON.stringify({ wallet, playerName: name, score: hud.score, distance: hud.distance })
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error ?? "Sherwood submit failed.");
+      if (!response.ok) throw new Error(data.error ?? "HyperHood submit failed.");
       setBoard(data.leaderboard ?? []);
       setPlayerName("");
       setPrimaryWallet("");
-      setStatus("Saved for the active 24-hour board. If this wallet holds 1M+ Sherwood and lands in an eligible top-15 slot, it can receive the next HoodX drop.");
+      setStatus("Saved for the active 24-hour board. If this wallet holds 1M+ HHOOD and lands in an eligible top-15 slot, it can receive the next HyperHood distribution.");
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "Sherwood submit failed.");
+      setStatus(error instanceof Error ? error.message : "HyperHood submit failed.");
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <section className={`sherwood-game-shell${hud.finished ? " has-submit" : " is-game-only"}`} id="play">
-      <div className="sherwood-game-card">
-        <div className="sherwood-hud">
+    <section className={`hyperhood-game-shell${hud.finished ? " has-submit" : " is-game-only"}`} id="play">
+      <div className="hyperhood-game-card">
+        <div className="hyperhood-hud">
           <GameStat label="Score" value={hud.score.toLocaleString()} />
           <GameStat label="Flight" value={`${hud.distance}m`} />
           <GameStat label="Speed" value={`${hud.speed.toFixed(1)}x`} />
         </div>
-        <div className="sherwood-canvas-wrap">
+        <div className="hyperhood-canvas-wrap">
           <canvas
             ref={canvasRef}
-            aria-label="Sherwood Run game"
+            aria-label="HyperHood holder run"
             onPointerDown={() => (gameRef.current.playing ? jump(gameRef.current) : startRun())}
           />
           {!hud.playing ? (
-            <div className="sherwood-overlay" role="button" tabIndex={0} onPointerDown={startRun} onKeyDown={(event) => {
+            <div className="hyperhood-overlay" role="button" tabIndex={0} onPointerDown={startRun} onKeyDown={(event) => {
               if (event.key === " " || event.key === "Enter") {
                 event.preventDefault();
                 startRun();
               }
             }}>
               <div>
-                <h3>{hud.finished ? "Run complete" : "Sherwood Run"}</h3>
+                <h3>{hud.finished ? "Run complete" : "HyperHood Run"}</h3>
                 <p>
                   {hud.finished
-                    ? `You collected ${hud.score} gold coins across ${hud.distance}m. Submit one wallet to save it.`
-                    : "Press space, tap, or click to flap. Collect the gold coin in each Sherwood tree gate."}
+                    ? `You collected ${hud.score} fee pulses across ${hud.distance}m. Submit one wallet to save it.`
+                    : "Press space, tap, or click to move. Collect the fee pulse in each HyperHood gate."}
                 </p>
                 <button type="button" className="cta">{hud.finished ? "Run again" : "Start run"}</button>
               </div>
@@ -211,21 +211,21 @@ export function SherwoodRunnerGame() {
       </div>
 
       {hud.finished ? (
-        <aside className="sherwood-submit-card">
+        <aside className="hyperhood-submit-card">
           <h3>Save score</h3>
-          <p>{hud.score.toLocaleString()} gold coins / {hud.distance.toLocaleString()}m. Add your name and wallet for the 24-hour prize board.</p>
-          <label htmlFor="sherwood-runner-name">Runner name</label>
+          <p>{hud.score.toLocaleString()} fee pulses / {hud.distance.toLocaleString()}m. Add your name and wallet for the 24-hour holder board.</p>
+          <label htmlFor="hyperhood-runner-name">Runner name</label>
           <input
-            id="sherwood-runner-name"
+            id="hyperhood-runner-name"
             value={playerName}
             onChange={(event) => setPlayerName(event.target.value)}
-            placeholder="Robin of Sherwood"
+            placeholder="HyperHood holder"
             maxLength={24}
             spellCheck={false}
           />
-          <label htmlFor="sherwood-primary-wallet">Wallet</label>
+          <label htmlFor="hyperhood-primary-wallet">Wallet</label>
           <input
-            id="sherwood-primary-wallet"
+            id="hyperhood-primary-wallet"
             value={primaryWallet}
             onChange={(event) => setPrimaryWallet(event.target.value)}
             placeholder="Paste Solana wallet"
@@ -234,7 +234,7 @@ export function SherwoodRunnerGame() {
           <button type="button" className="cta" disabled={submitting} onClick={submitRun}>Submit score</button>
           <p className="wallet-status">{status}</p>
           <div className="mini-leaderboard">
-            <strong>Top runners</strong>
+            <strong>Top holders</strong>
             {board.length ? (
               board.slice(0, 3).map((row) => (
                 <span key={row.wallet}>#{row.rank} {row.playerName || compactAddress(row.wallet)} - {row.bestScore.toLocaleString()}</span>
@@ -259,28 +259,28 @@ export function HowItWorksPrompt() {
         <strong>How It Works</strong>
       </button>
       {open ? (
-        <div className="how-it-works-modal" role="dialog" aria-modal="true" aria-label="How Sherwood Run works">
+        <div className="how-it-works-modal" role="dialog" aria-modal="true" aria-label="How HyperHood works">
           <button type="button" className="modal-close" onClick={() => setOpen(false)} aria-label="Close how it works">
             ×
           </button>
           <div className="section-kicker">How It Works</div>
-          <h3>Run, rank, boost the drop.</h3>
+          <h3>Route revenue, rank, earn.</h3>
           <ol>
             <li>
               <strong>Play</strong>
-              <span>Press space, tap, or click to flap through Sherwood as the hooded runner.</span>
+              <span>Press space, tap, or click through the HyperHood fee lane.</span>
             </li>
             <li>
               <strong>Clear</strong>
-              <span>Each tree gate has one gold coin in the center. Collect the coin for score; hit a trunk, the canopy, or the forest floor and the run ends.</span>
+              <span>Each gate has one fee pulse in the center. Collect the pulse for score; hit a wall, ceiling, or floor and the run ends.</span>
             </li>
             <li>
               <strong>Submit</strong>
-              <span>After the run, enter a name and wallet to save your leaderboard score.</span>
+              <span>After the run, enter a name and wallet to save your holder-board score.</span>
             </li>
             <li>
-              <strong>Boost</strong>
-              <span>Every 30 minutes, HoodX goes to the first 15 leaderboard wallets that also hold 1M+ Sherwood. Prize slots start at 15% for first and 10% for second, and holding without selling adds +10% weight per day.</span>
+              <strong>Earn</strong>
+              <span>Every 30 minutes, HHOOD routes to the first 15 board wallets that also hold 1M+ HHOOD. Prize slots start at 15% for first and 10% for second, and holding without selling adds +10% weight per day.</span>
             </li>
           </ol>
         </div>
@@ -289,7 +289,7 @@ export function HowItWorksPrompt() {
   );
 }
 
-export function SherwoodLeaderboard() {
+export function HyperHoodLeaderboard() {
   const [board, setBoard] = useState<BoardRow[]>([]);
   const [stats, setStats] = useState<StatsResponse | null>(null);
 
@@ -310,18 +310,18 @@ export function SherwoodLeaderboard() {
   return (
     <section className="section leaderboard-page-section">
       <div className="container">
-        <div className="section-kicker">Leaderboard</div>
+        <div className="section-kicker">Holder board</div>
         <div className="section-head split-head">
-          <h2>Top Sherwood runners.</h2>
-          <p>The board resets every 24 hours. Every 30 minutes, the first 15 leaderboard wallets that also hold 1M+ Sherwood split the HoodX drop; ineligible wallets are skipped for the next eligible player.</p>
+          <h2>Top HyperHood holders.</h2>
+          <p>The board resets every 24 hours. Every 30 minutes, the first 15 board wallets that also hold 1M+ HHOOD split the HyperHood distribution; ineligible wallets are skipped for the next eligible player.</p>
         </div>
         <div className="leaderboard-summary">
           <article>
-            <span>Total Airdropped</span>
+            <span>Total Routed</span>
             <strong>{totalAirdropped > 0 ? totalAirdropped.toLocaleString(undefined, { maximumFractionDigits: 2 }) : "Awaiting"}</strong>
           </article>
           <article>
-            <span>Airdrop Hits</span>
+            <span>Receipt Hits</span>
             <strong>{recentHits > 0 ? recentHits.toLocaleString() : "Awaiting"}</strong>
           </article>
           <article>
@@ -333,7 +333,7 @@ export function SherwoodLeaderboard() {
             <strong>{latestReward?.normalRewardAmount && latestReward.normalRewardAmount > 0 ? `${(latestReward.rewardAmount / latestReward.normalRewardAmount).toLocaleString(undefined, { maximumFractionDigits: 2 })}x` : "Awaiting"}</strong>
           </article>
         </div>
-        <div className="history-card sherwood-board-card">
+        <div className="history-card hyperhood-board-card">
           <div className="table-wrap">
             <table>
               <thead>
@@ -352,7 +352,7 @@ export function SherwoodLeaderboard() {
                   board.map((row) => (
                     <tr key={row.wallet}>
                       <td>#{row.rank}</td>
-                      <td>{row.playerName || "Outlaw"}</td>
+                      <td>{row.playerName || "Holder"}</td>
                       <td>{compactAddress(row.wallet)}</td>
                       <td>{row.bestScore.toLocaleString()}</td>
                       <td>{row.bestDistance.toLocaleString()}m</td>
@@ -362,7 +362,7 @@ export function SherwoodLeaderboard() {
                   ))
                 ) : (
                   <tr>
-                    <td className="placeholder-cell" colSpan={7}>No Sherwood runs submitted yet.</td>
+                    <td className="placeholder-cell" colSpan={7}>No HyperHood holder runs submitted yet.</td>
                   </tr>
                 )}
               </tbody>

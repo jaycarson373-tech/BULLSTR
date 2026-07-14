@@ -98,7 +98,7 @@ h2 {
   background:
     linear-gradient(180deg, rgba(2, 4, 0, 0.08), rgba(2, 4, 0, 0.38)),
     linear-gradient(90deg, rgba(2, 4, 0, 0.46), rgba(2, 4, 0, 0.08) 48%, rgba(2, 4, 0, 0.44)),
-    url("/brand/sherwood-fire-banner.png") center / cover no-repeat,
+    url("/brand/hyperhood-fire-banner.png") center / cover no-repeat,
     radial-gradient(circle at 24% 18%, rgba(198, 255, 0, 0.18), transparent 18rem),
     radial-gradient(circle at 78% 24%, rgba(0, 255, 188, 0.12), transparent 20rem),
     radial-gradient(circle at 50% 78%, rgba(199, 0, 255, 0.1), transparent 24rem);
@@ -125,11 +125,11 @@ h2 {
   animation: grid-crawl 24s linear infinite;
 }
 
-.sherwood-run-page {
+.hyperhood-page {
   image-rendering: pixelated;
 }
 
-.sherwood-run-page::after {
+.hyperhood-page::after {
   background:
     linear-gradient(rgba(198, 255, 0, 0.04) 2px, transparent 2px),
     linear-gradient(90deg, rgba(0, 255, 188, 0.03) 2px, transparent 2px);
@@ -754,8 +754,8 @@ main,
 .lead,
 .section-head p,
 .share-card p,
-.sherwood-chart-fallback p,
-.sherwood-rail-grid p,
+.hyperhood-chart-fallback p,
+.hyperhood-rail-grid p,
 .lore-card p,
 .lookup-card,
 .footer p {
@@ -804,7 +804,7 @@ main,
 .hero-mini-dashboard span,
 .metric-card span,
 .share-card span,
-.sherwood-holdings-card span,
+.hyperhood-holdings-card span,
 .lookup-card label {
   color: var(--muted);
   font-size: 0.74rem;
@@ -817,7 +817,7 @@ main,
 .hero-total-distributed b,
 .metric-card strong,
 .share-card strong,
-.sherwood-holdings-card strong {
+.hyperhood-holdings-card strong {
   overflow-wrap: anywhere;
   color: var(--accent);
   font-size: clamp(1.3rem, 2.8vw, 2.55rem);
@@ -904,21 +904,21 @@ main,
   align-items: start;
 }
 
-.sherwood-rail-grid,
+.hyperhood-rail-grid,
 .lore-grid,
 .reward-flow,
 .share-example,
 .dashboard-grid,
-.sherwood-holdings-card,
+.hyperhood-holdings-card,
 .runner-position-grid,
 .tax-token-strip,
-.sherwood-layout,
-.sherwood-hud {
+.hyperhood-layout,
+.hyperhood-hud {
   display: grid;
   gap: 18px;
 }
 
-.sherwood-rail-grid {
+.hyperhood-rail-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -959,30 +959,30 @@ main,
   margin-bottom: 18px;
 }
 
-.sherwood-layout {
+.hyperhood-layout {
   grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
   margin-bottom: 18px;
 }
 
-.sherwood-game-shell {
+.hyperhood-game-shell {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(250px, 300px);
   gap: 16px;
   align-items: start;
 }
 
-.sherwood-game-shell.is-game-only {
+.hyperhood-game-shell.is-game-only {
   grid-template-columns: 1fr;
 }
 
-.sherwood-brand-strip {
+.hyperhood-brand-strip {
   display: flex;
   align-items: center;
   gap: 14px;
   margin-bottom: 18px;
 }
 
-.sherwood-brand-strip img {
+.hyperhood-brand-strip img {
   width: 78px;
   height: 78px;
   border: 1px solid rgba(198, 255, 0, 0.46);
@@ -992,22 +992,22 @@ main,
   box-shadow: 0 0 34px rgba(198, 255, 0, 0.28);
 }
 
-.sherwood-brand-strip .section-kicker {
+.hyperhood-brand-strip .section-kicker {
   margin: 0;
 }
 
-.sherwood-banner {
+.hyperhood-banner {
   min-height: 260px;
   margin-bottom: 18px;
   border: 1px solid rgba(198, 255, 0, 0.22);
   border-radius: 18px;
   background:
     linear-gradient(90deg, rgba(2, 4, 0, 0.08), rgba(2, 4, 0, 0.46) 68%, rgba(2, 4, 0, 0.82)),
-    url("/brand/sherwood-fire-banner.png") center / cover no-repeat;
+    url("/brand/hyperhood-fire-banner.png") center / cover no-repeat;
   box-shadow: inset 0 1px 0 rgba(245, 255, 229, 0.04), 0 24px 80px rgba(0, 0, 0, 0.28);
 }
 
-.sherwood-hud {
+.hyperhood-hud {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
   padding: 8px;
@@ -1023,24 +1023,24 @@ main,
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.sherwood-holdings-card {
+.hyperhood-holdings-card {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
 
-.sherwood-rail-grid article,
+.hyperhood-rail-grid article,
 .lore-card,
 .metric-card,
 .share-card,
 .reward-flow-card,
 .history-card,
 .lookup-card,
-.sherwood-holdings-card div,
-.sherwood-chart-card,
+.hyperhood-holdings-card div,
+.hyperhood-chart-card,
 .runner-countdown-card,
 .runner-position-card,
-.sherwood-game-card,
-.sherwood-submit-card,
-.sherwood-hud div,
+.hyperhood-game-card,
+.hyperhood-submit-card,
+.hyperhood-hud div,
 .tax-token-strip article {
   position: relative;
   border: 1px solid rgba(198, 255, 0, 0.24);
@@ -1066,20 +1066,20 @@ main,
   box-shadow: inset 0 1px 0 rgba(245, 255, 229, 0.04), 8px 8px 0 rgba(0, 0, 0, 0.38);
 }
 
-.sherwood-rail-grid article:hover,
+.hyperhood-rail-grid article:hover,
 .lore-card:hover,
 .metric-card:hover,
 .share-card:hover,
 .reward-flow-card:hover,
 .history-card:hover,
 .lookup-card:hover,
-.sherwood-holdings-card div:hover,
-.sherwood-chart-card:hover,
+.hyperhood-holdings-card div:hover,
+.hyperhood-chart-card:hover,
 .runner-countdown-card:hover,
 .runner-position-card:hover,
-.sherwood-game-card:hover,
-.sherwood-submit-card:hover,
-.sherwood-hud div:hover,
+.hyperhood-game-card:hover,
+.hyperhood-submit-card:hover,
+.hyperhood-hud div:hover,
 .tax-token-strip article:hover {
   border-color: rgba(198, 255, 0, 0.58);
   background:
@@ -1090,12 +1090,12 @@ main,
   transform: translateY(-5px);
 }
 
-.sherwood-rail-grid article {
+.hyperhood-rail-grid article {
   min-height: 300px;
   padding: clamp(24px, 4vw, 42px);
 }
 
-.sherwood-rail-grid article > span {
+.hyperhood-rail-grid article > span {
   display: block;
   color: var(--accent);
   font-size: clamp(4rem, 10vw, 9rem);
@@ -1103,7 +1103,7 @@ main,
   line-height: 0.82;
 }
 
-.sherwood-rail-grid strong {
+.hyperhood-rail-grid strong {
   display: block;
   margin-top: 28px;
   color: var(--text);
@@ -1141,10 +1141,10 @@ main,
 .metric-card,
 .share-card,
 .reward-flow-card,
-.sherwood-holdings-card div,
+.hyperhood-holdings-card div,
 .runner-countdown-card,
 .runner-position-card,
-.sherwood-hud div,
+.hyperhood-hud div,
 .tax-token-strip article {
   display: grid;
   min-height: 158px;
@@ -1157,11 +1157,11 @@ main,
   min-height: 238px;
 }
 
-.sherwood-game-card {
+.hyperhood-game-card {
   overflow: hidden;
 }
 
-.sherwood-hud div {
+.hyperhood-hud div {
   min-width: 0;
   min-height: 70px;
   padding: 10px;
@@ -1169,12 +1169,12 @@ main,
   box-shadow: none;
 }
 
-.sherwood-hud div:hover {
+.hyperhood-hud div:hover {
   transform: none;
 }
 
-.sherwood-hud span,
-.sherwood-submit-card label {
+.hyperhood-hud span,
+.hyperhood-submit-card label {
   display: block;
   color: var(--text-soft);
   font-size: 0.76rem;
@@ -1182,7 +1182,7 @@ main,
   text-transform: uppercase;
 }
 
-.sherwood-hud strong {
+.hyperhood-hud strong {
   display: block;
   overflow: hidden;
   margin-top: 4px;
@@ -1194,13 +1194,13 @@ main,
   white-space: nowrap;
 }
 
-.sherwood-canvas-wrap {
+.hyperhood-canvas-wrap {
   position: relative;
   min-height: 300px;
   aspect-ratio: 21 / 9;
 }
 
-.sherwood-canvas-wrap canvas {
+.hyperhood-canvas-wrap canvas {
   display: block;
   width: 100%;
   height: 100%;
@@ -1208,7 +1208,7 @@ main,
   image-rendering: crisp-edges;
 }
 
-.sherwood-overlay {
+.hyperhood-overlay {
   position: absolute;
   inset: 0;
   display: grid;
@@ -1218,7 +1218,7 @@ main,
   text-align: center;
 }
 
-.sherwood-overlay > div {
+.hyperhood-overlay > div {
   width: min(430px, 100%);
   border: 1px solid rgba(198, 255, 0, 0.32);
   border-radius: 4px;
@@ -1227,8 +1227,8 @@ main,
   box-shadow: 0 0 38px rgba(198, 255, 0, 0.16);
 }
 
-.sherwood-overlay h3,
-.sherwood-submit-card h3 {
+.hyperhood-overlay h3,
+.hyperhood-submit-card h3 {
   margin: 0 0 10px;
   color: var(--accent);
   font-size: clamp(1.6rem, 3.1vw, 2.6rem);
@@ -1236,23 +1236,23 @@ main,
   line-height: 0.9;
 }
 
-.sherwood-overlay p,
-.sherwood-submit-card p {
+.hyperhood-overlay p,
+.hyperhood-submit-card p {
   margin: 0 0 16px;
   color: var(--text-soft);
   line-height: 1.5;
 }
 
-.sherwood-submit-card {
+.hyperhood-submit-card {
   padding: 14px;
 }
 
-.sherwood-submit-card label {
+.hyperhood-submit-card label {
   margin: 10px 0 6px;
 }
 
-.sherwood-submit-card input,
-.sherwood-submit-card textarea {
+.hyperhood-submit-card input,
+.hyperhood-submit-card textarea {
   width: 100%;
   border: 1px solid rgba(198, 255, 0, 0.2);
   border-radius: 4px;
@@ -1261,24 +1261,24 @@ main,
   outline: none;
 }
 
-.sherwood-submit-card input {
+.hyperhood-submit-card input {
   min-height: 42px;
   padding: 0 12px;
 }
 
-.sherwood-submit-card textarea {
+.hyperhood-submit-card textarea {
   min-height: 76px;
   padding: 12px;
   resize: vertical;
 }
 
-.sherwood-submit-card button {
+.hyperhood-submit-card button {
   width: 100%;
   min-height: 46px;
   margin-top: 12px;
 }
 
-.sherwood-board-card {
+.hyperhood-board-card {
   margin-top: 18px;
 }
 
@@ -1394,24 +1394,24 @@ main,
   box-shadow: none;
 }
 
-.sherwood-chart-card {
+.hyperhood-chart-card {
   display: grid;
   min-height: 520px;
   gap: 16px;
   padding: 0;
 }
 
-.sherwood-chart-section {
+.hyperhood-chart-section {
   background:
     radial-gradient(circle at 50% 0%, rgba(198, 255, 0, 0.12), transparent 28rem),
     linear-gradient(180deg, #010200, #050900 52%, #010200);
 }
 
-.sherwood-chart-section .container {
+.hyperhood-chart-section .container {
   width: min(100%, 1320px);
 }
 
-.sherwood-chart-card {
+.hyperhood-chart-card {
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -1419,14 +1419,14 @@ main,
   backdrop-filter: none;
 }
 
-.sherwood-chart-card:hover {
+.hyperhood-chart-card:hover {
   border-color: transparent;
   background: transparent;
   box-shadow: none;
   transform: none;
 }
 
-.sherwood-chart-card iframe {
+.hyperhood-chart-card iframe {
   width: 100%;
   min-height: 460px;
   border: 0;
@@ -1434,11 +1434,11 @@ main,
   background: #020400;
 }
 
-.sherwood-chart-card .cta {
+.hyperhood-chart-card .cta {
   justify-self: start;
 }
 
-.sherwood-chart-fallback {
+.hyperhood-chart-fallback {
   display: grid;
   min-height: 460px;
   align-content: center;
@@ -1575,14 +1575,14 @@ main,
   }
 }
 
-.sherwood-chart-fallback span {
+.hyperhood-chart-fallback span {
   color: var(--accent);
   font-size: 0.82rem;
   font-weight: 950;
   letter-spacing: 0.14em;
 }
 
-.sherwood-chart-fallback strong {
+.hyperhood-chart-fallback strong {
   color: var(--accent);
   font-size: clamp(3.2rem, 10vw, 8.5rem);
   font-weight: 950;
@@ -1768,16 +1768,16 @@ tbody tr:hover {
   .home-game-layout,
   .split-head,
   .split-section,
-  .sherwood-rail-grid,
+  .hyperhood-rail-grid,
   .lore-grid,
   .reward-flow,
   .share-example,
   .dashboard-grid,
-  .sherwood-holdings-card,
+  .hyperhood-holdings-card,
   .runner-layout,
   .runner-position-grid,
-  .sherwood-layout,
-  .sherwood-game-shell,
+  .hyperhood-layout,
+  .hyperhood-game-shell,
   .home-airdrop-stats,
   .leaderboard-summary,
   .tax-token-strip {
@@ -1909,18 +1909,18 @@ tbody tr:hover {
     font-size: clamp(3.4rem, 18vw, 5.2rem);
   }
 
-  .sherwood-rail-grid article {
+  .hyperhood-rail-grid article {
     min-height: 230px;
   }
 
-  .sherwood-chart-card,
-  .sherwood-chart-card iframe,
-  .sherwood-chart-fallback,
-  .sherwood-canvas-wrap {
+  .hyperhood-chart-card,
+  .hyperhood-chart-card iframe,
+  .hyperhood-chart-fallback,
+  .hyperhood-canvas-wrap {
     min-height: 320px;
   }
 
-  .sherwood-hud {
+  .hyperhood-hud {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 

@@ -74,7 +74,7 @@ type ParsedTokenAccountInfo = {
   };
 };
 
-type SherwoodHoldings = {
+type HyperHoodHoldings = {
   wallet: string | null;
   solBalance: number | null;
   sourceTokenBalance: number | null;
@@ -259,9 +259,9 @@ async function tokenBalanceOrNull(connection: Connection, wallet: PublicKey, min
   }
 }
 
-async function sherwoodHoldingsOrNull(): Promise<SherwoodHoldings> {
+async function hyperHoodHoldingsOrNull(): Promise<HyperHoodHoldings> {
   const wallet = bagholderWalletPublicKey();
-  const sourceSymbol = symbolEnv("SOURCE_SYMBOL", "Sherwood");
+  const sourceSymbol = symbolEnv("SOURCE_SYMBOL", "HHOOD");
   const rewardSymbol = symbolEnv("REWARD_SYMBOL", sourceSymbol);
   const empty = {
     wallet: wallet?.toBase58() ?? null,
@@ -279,7 +279,7 @@ async function sherwoodHoldingsOrNull(): Promise<SherwoodHoldings> {
     const connection = new Connection(rpcUrl(), "confirmed");
     const [solLamports, sourceTokenBalance, rewardTokenBalance] = await Promise.all([
       connection.getBalance(wallet, "confirmed").catch((error) => {
-        console.warn("stats route could not fetch Sherwood wallet SOL balance", error);
+        console.warn("stats route could not fetch HyperHood wallet SOL balance", error);
         return null;
       }),
       tokenBalanceOrNull(connection, wallet, sourceTokenMint()),
@@ -293,7 +293,7 @@ async function sherwoodHoldingsOrNull(): Promise<SherwoodHoldings> {
       rewardTokenBalance
     };
   } catch (error) {
-    console.warn("stats route could not fetch Sherwood holdings", error);
+    console.warn("stats route could not fetch HyperHood holdings", error);
     return empty;
   }
 }
@@ -312,7 +312,7 @@ function payoutTime(row: Pick<PayoutRow, "updated_at" | "created_at" | "epoch_id
 }
 
 function rewardAsset(row: Pick<PayoutRow, "reward_asset">) {
-  return row.reward_asset?.trim() || "HoodX";
+  return row.reward_asset?.trim() || "HHOOD";
 }
 
 function rewardAssetRank(asset: string) {
@@ -496,7 +496,7 @@ export async function GET() {
 
   if (!config) {
     const latestEligibleHolders = await liveEligibleHolderCountOrNull();
-    const sherwoodHoldings = await sherwoodHoldingsOrNull();
+    const sherwoodHoldings = await hyperHoodHoldingsOrNull();
     return NextResponse.json({
       currentEpoch: 0,
       totalEpochs: 0,
@@ -620,7 +620,7 @@ export async function GET() {
       const claim = claimsByEpoch.get(epochId);
       const buy = buysByEpoch.get(epochId);
       const payoutSummary = payoutsByEpoch.get(epochId);
-      const sherSummary = payoutSummary?.rewardTotals.get("HoodX") ?? payoutSummary?.rewardTotals.get("Sherwood");
+      const sherSummary = payoutSummary?.rewardTotals.get("HHOOD") ?? payoutSummary?.rewardTotals.get("HyperHood");
       return {
         epoch: displayEpochById.get(epochId) ?? realEpochCount - index,
         status: row?.status === "completed" ? "completed" : "settled",
@@ -637,7 +637,7 @@ export async function GET() {
 
     const recentRewards = payoutRows.slice(0, 50).map((row) => ({
       epoch: displayEpochById.get(row.epoch_id) ?? epochNumber(row.epoch_id, 0),
-      rewardAsset: row.reward_asset ?? "HoodX",
+      rewardAsset: row.reward_asset ?? "HHOOD",
       wallet: row.wallet,
       rewardAmount: toNumber(row.reward_amount),
       normalRewardAmount: toNumber(row.normal_reward_amount),
@@ -670,7 +670,7 @@ export async function GET() {
     const latestEligibleHolders =
       storedEligibleHolders > 0 ? storedEligibleHolders : (await liveEligibleHolderCountOrNull()) ?? storedEligibleHolders;
     const eligibleBullstrHeld = holderStates.reduce((sum, row) => sum + toNumber(row.source_balance), 0);
-    const sherwoodHoldings = await sherwoodHoldingsOrNull();
+    const sherwoodHoldings = await hyperHoodHoldingsOrNull();
     const bagholderSolBalance = sherwoodHoldings.solBalance;
 
     return NextResponse.json({
@@ -692,7 +692,7 @@ export async function GET() {
   } catch (error) {
     console.error("stats route failed", error);
     const latestEligibleHolders = await liveEligibleHolderCountOrNull();
-    const sherwoodHoldings = await sherwoodHoldingsOrNull();
+    const sherwoodHoldings = await hyperHoodHoldingsOrNull();
     return NextResponse.json({
       currentEpoch: 0,
       totalEpochs: 0,

@@ -2,21 +2,21 @@ import { CopyCaChip } from "../ca-copy-chip";
 
 const DEFAULT_CA = "E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump";
 const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || DEFAULT_CA;
-const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/SherwoodRun";
+const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/HyperHood_";
 
 function SubpageNav() {
   return (
     <header className="nav">
       <div className="container nav-inner">
-        <a className="brand" href="/" aria-label="Sherwood Run home">
-          <img className="brand-logo" src="/brand/sherwood-fire-logo.png" alt="" />
-          <span>Sherwood Run</span>
+        <a className="brand" href="/" aria-label="HyperHood home">
+          <img className="brand-logo" src="/brand/hyperhood-logo.svg" alt="" />
+          <span>HyperHood</span>
         </a>
         <nav className="nav-links" aria-label="Primary navigation">
-          <a href="/">Play</a>
+          <a href="/">Flywheel</a>
           <a href="/dashboard">Dashboard</a>
-          <a href="/leaderboard">Leaderboard</a>
-          <a href="/lore">Lore</a>
+          <a href="/leaderboard">Holders</a>
+          <a href="/lore">Thesis</a>
         </nav>
         <CopyCaChip ca={CA} className="nav-ca-chip" />
         <a className="mini-button x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open X community">
@@ -29,48 +29,47 @@ function SubpageNav() {
 
 export default function LorePage() {
   return (
-    <div className="page sherwood-run-page">
+    <div className="page hyperhood-page">
       <SubpageNav />
       <main className="subpage-main">
         <section className="section lore-section" id="lore">
           <div className="container">
-            <div className="section-kicker">Robin Hood lore</div>
+            <div className="section-kicker">HyperHood thesis</div>
             <div className="section-head split-head">
-              <h2>Run the forest. Outscore the Sheriff. Share the spoils.</h2>
+              <h2>Real revenue. Hood yield. One flywheel.</h2>
               <p>
-                Sherwood Run pulls from the Robin Hood myth: a hidden camp in Sherwood Forest, a greedy Sheriff guarding
-                the treasury, and fast outlaws taking value back for the people. The site turns that story into a simple
-                flap-style forest game where holding opens the gate, play decides the winners, and HoodX goes to the top eligible outlaws.
+                HyperHood adapts the real-revenue thesis for the Hood ecosystem: fees accrue to the treasury, the treasury
+                routes capital into buybacks, launch liquidity, and holder airdrops, and every receipt stays visible for holders.
               </p>
             </div>
             <div className="lore-grid">
               <article className="lore-card lore-card-wide">
-                <span>The Legend</span>
-                <strong>Sherwood is the hideout.</strong>
+                <span>The Engine</span>
+                <strong>Fees become fuel.</strong>
                 <p>
-                  Robin Hood stories are built around a forest crew beating an unfair treasury. Sherwood Run keeps that
-                  spirit: the runner flies through the woods, grabs gold from each tree gate, and climbs the public board.
+                  Creator fees and token taxes flow into the Hood treasury. HyperHood turns that revenue into recurring
+                  market support, new launch capital, and transparent holder distributions.
                 </p>
               </article>
               <article className="lore-card">
-                <span>The Game</span>
-                <strong>Flap the forest.</strong>
-                <p>Press space, tap, or click to flap through Sherwood. Each tree gate has one gold coin in the middle, and collected coins are the score. The forest gets faster and the gaps tighten over time.</p>
+                <span>Buybacks</span>
+                <strong>Support the base token.</strong>
+                <p>The flywheel can route revenue back into HHOOD buy pressure, keeping the main token connected to activity across the ecosystem.</p>
               </article>
               <article className="lore-card">
-                <span>The Wallets</span>
-                <strong>Submit after.</strong>
-                <p>After a run, submit one Solana wallet. That wallet gets the run score and must hold 1M+ Sherwood to qualify for HoodX.</p>
+                <span>Launch Liquidity</span>
+                <strong>Fund the next Hood launch.</strong>
+                <p>Each cycle compounds toward fresh liquidity so the next Hood token can start stronger instead of relying on scattered one-off funding.</p>
               </article>
               <article className="lore-card">
-                <span>The Board</span>
-                <strong>Rank matters.</strong>
-                <p>The leaderboard resets every 24 hours. Each drop fills 15 prize slots from the first eligible wallets on the board.</p>
+                <span>Holder Access</span>
+                <strong>Snapshots decide eligibility.</strong>
+                <p>Qualified holders enter non-custodial snapshots for airdrops and allocation windows. No signature is required just to save a receiving address.</p>
               </article>
               <article className="lore-card">
-                <span>The Airdrop</span>
-                <strong>Winners get paid.</strong>
-                <p>Every 30 minutes, HoodX is split by rank share. Holding 1M+ without selling adds +10% weight per full day.</p>
+                <span>Receipts</span>
+                <strong>On-chain or it does not count.</strong>
+                <p>Dashboards show settled windows, recipient counts, and transaction links so holders can follow the loop from revenue to distribution.</p>
               </article>
             </div>
           </div>

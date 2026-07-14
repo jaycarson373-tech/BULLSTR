@@ -68,7 +68,7 @@ function normalizeWallet(value: unknown) {
 
 function normalizePlayerName(value: unknown) {
   const name = String(value ?? "").trim().replace(/\s+/g, " ");
-  if (!name) return "Outlaw";
+  if (!name) return "Holder";
   return name.slice(0, 24);
 }
 
@@ -142,7 +142,7 @@ export async function GET() {
     return NextResponse.json({ leaderboard: await leaderboard() });
   } catch (error) {
     console.error("sherwood leaderboard failed", error);
-    return NextResponse.json({ leaderboard: [], error: "Sherwood leaderboard unavailable." }, { status: 500 });
+    return NextResponse.json({ leaderboard: [], error: "HyperHood holder board unavailable." }, { status: 500 });
   }
 }
 
@@ -198,7 +198,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("sherwood score submit failed", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unable to submit Sherwood run." },
+      { error: error instanceof Error ? error.message : "Unable to submit HyperHood run." },
       { status: 500 }
     );
   }

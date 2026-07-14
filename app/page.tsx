@@ -1,24 +1,24 @@
 import { CopyCaChip } from "./ca-copy-chip";
 import { HomeAirdropStats } from "./home-strategy-data";
-import { HowItWorksPrompt, SherwoodRunnerGame } from "./sherwood-runner-game";
+import { HowItWorksPrompt, HyperHoodRunnerGame } from "./hyperhood-runner-game";
 
 const DEFAULT_CA = "E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump";
 const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || DEFAULT_CA;
-const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/SherwoodRun";
+const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/HyperHood_";
 
 function MainNav() {
   return (
     <header className="nav">
       <div className="container nav-inner">
-        <a className="brand" href="/" aria-label="Sherwood Run home">
-          <img className="brand-logo" src="/brand/sherwood-fire-logo.png" alt="" />
-          <span>Sherwood Run</span>
+        <a className="brand" href="/" aria-label="HyperHood home">
+          <img className="brand-logo" src="/brand/hyperhood-logo.svg" alt="" />
+          <span>HyperHood</span>
         </a>
         <nav className="nav-links" aria-label="Primary navigation">
-          <a href="/">Play</a>
+          <a href="/">Flywheel</a>
           <a href="/dashboard">Dashboard</a>
-          <a href="/leaderboard">Leaderboard</a>
-          <a href="/lore">Lore</a>
+          <a href="/leaderboard">Holders</a>
+          <a href="/lore">Thesis</a>
         </nav>
         <div className="nav-actions">
           <CopyCaChip ca={CA} className="nav-ca-chip" />
@@ -33,26 +33,26 @@ function MainNav() {
 
 export default function Page() {
   return (
-    <div className="page sherwood-run-page">
+    <div className="page hyperhood-page">
       <MainNav />
       <main className="game-home">
         <section className="home-game-hero" id="top">
           <div className="container home-game-layout">
             <div className="home-game-copy">
-              <img className="home-game-logo" src="/brand/sherwood-fire-logo.png" alt="" />
-              <div className="section-kicker">Sherwood</div>
+              <img className="home-game-logo" src="/brand/hyperhood-logo.svg" alt="" />
+              <div className="section-kicker">HyperHood</div>
               <h1>
-                <span>Sherwood</span>
-                <span>Run</span>
+                <span>Hyper</span>
+                <span>Hood</span>
               </h1>
               <p className="hero-subtitle">
-                Space to flap. Collect the gold coin in each tree gate. The forest gets faster and tighter the longer you survive.
+                Real revenue for the Hood flywheel. Creator fees and taxes route into buybacks, launch liquidity, and holder airdrops.
               </p>
               <HowItWorksPrompt />
             </div>
             <HomeAirdropStats />
-            <p className="hero-disclaimer">Cheaters will be blacklisted from all airdrops.</p>
-            <SherwoodRunnerGame />
+            <p className="hero-disclaimer">Non-custodial snapshots. No wallet signature required for address submission.</p>
+            <HyperHoodRunnerGame />
           </div>
         </section>
       </main>

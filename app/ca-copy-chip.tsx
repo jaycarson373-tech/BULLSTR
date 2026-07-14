@@ -16,7 +16,7 @@ export function CopyCaChip({ ca, className = "" }: { ca: string; className?: str
   }
 
   return (
-    <button type="button" className={`ca-chip ${className}`.trim()} onClick={copyCa} aria-label="Copy Sherwood Run contract address">
+    <button type="button" className={`ca-chip ${className}`.trim()} onClick={copyCa} aria-label="Copy HyperHood contract address">
       <span>{copied ? "Copied" : "CA"}</span>
       <b>{ca}</b>
     </button>
