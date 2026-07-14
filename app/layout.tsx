@@ -16,9 +16,9 @@ export const metadata: Metadata = {
     siteName: "HyperHood",
     images: [
       {
-        url: `${SITE_URL}/brand/hyperhood-logo.png`,
-        width: 1254,
-        height: 1254,
+        url: `${SITE_URL}/brand/hyperhood-landing-bg.png`,
+        width: 1280,
+        height: 720,
         alt: "HyperHood"
       }
     ],
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "HyperHood",
     description: SITE_DESCRIPTION,
-    images: [`${SITE_URL}/brand/hyperhood-logo.png`]
+    images: [`${SITE_URL}/brand/hyperhood-landing-bg.png`]
   },
   icons: {
     icon: [

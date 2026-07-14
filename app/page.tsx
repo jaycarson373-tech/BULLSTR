@@ -1,59 +1,45 @@
-import { CopyCaChip } from "./ca-copy-chip";
-import { FeeLoopChart, HomeAirdropStats } from "./home-strategy-data";
-import { HowItWorksPrompt, HyperHoodRunnerGame } from "./hyperhood-runner-game";
-
-const DEFAULT_CA = "E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump";
-const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || DEFAULT_CA;
-const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/HyperHood_";
-
-function MainNav() {
-  return (
-    <header className="nav">
-      <div className="container nav-inner">
-        <a className="brand" href="/" aria-label="HyperHood home">
-          <img className="brand-logo" src="/brand/hyperhood-logo.png" alt="" />
-          <span>HyperHood</span>
-        </a>
-        <nav className="nav-links" aria-label="Primary navigation">
-          <a href="/">Flywheel</a>
-          <a href="/dashboard">Dashboard</a>
-          <a href="/leaderboard">Holders</a>
-          <a href="/lore">Thesis</a>
-        </nav>
-        <div className="nav-actions">
-          <CopyCaChip ca={CA} className="nav-ca-chip" />
-          <a className="mini-button x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open X community">
-            X
-          </a>
-        </div>
-      </div>
-    </header>
-  );
-}
+import { FeeLoopChart, HomeAirdropStats, ProtocolTopStrip } from "./home-strategy-data";
+import { SiteNav } from "./site-nav";
 
 export default function Page() {
   return (
     <div className="page hyperhood-page">
-      <MainNav />
-      <main className="game-home">
-        <section className="home-game-hero" id="top">
-          <div className="container home-game-layout">
-            <div className="home-game-copy">
-              <img className="home-game-logo" src="/brand/hyperhood-logo.png" alt="" />
+      <SiteNav />
+      <main className="hyperhood-home">
+        <section className="hyperhood-landing" id="top">
+          <ProtocolTopStrip />
+          <div className="container hyperhood-landing-layout">
+            <div className="hyperhood-hero-copy">
+              <img className="hyperhood-hero-logo" src="/brand/hyperhood-logo.png" alt="" />
               <div className="section-kicker">HyperHood</div>
               <h1>
-                <span>Hyper</span>
-                <span>Hood</span>
+                <span>Liquidity</span>
+                <span>gets thick.</span>
               </h1>
               <p className="hero-subtitle">
-                Fees turn into HOOD airdrops and thicker HH/HOOD liquidity. Half feeds holders, half reinforces the pool.
+                HyperHood routes fees into HOOD airdrops and HH/HOOD liquidity. The pool gets deeper, LP fees compound back in, and aligned holders track the flywheel from one clean dashboard.
               </p>
-              <HowItWorksPrompt />
+              <div className="hero-actions">
+                <a className="cta" href="/dashboard">Open Dashboard</a>
+                <a className="cta cta-secondary" href="/lore">Read Hood Thesis</a>
+              </div>
             </div>
-            <HomeAirdropStats />
+            <div className="hyperhood-hero-panel">
+              <HomeAirdropStats />
+              <div className="hero-split-grid" aria-label="HyperHood fee split">
+                <article>
+                  <span>50%</span>
+                  <strong>HOOD airdrops</strong>
+                  <p>Fees buy HOOD for pool-bonus distributions when possible, or HH holders when routing requires it.</p>
+                </article>
+                <article>
+                  <span>50%</span>
+                  <strong>LP reinforcement</strong>
+                  <p>Fees add 25% HH and 25% HOOD back into the pool, then LP fees compound depth again.</p>
+                </article>
+              </div>
+            </div>
             <FeeLoopChart />
-            <p className="hero-disclaimer">Non-custodial snapshots. No wallet signature required for address submission.</p>
-            <HyperHoodRunnerGame />
           </div>
         </section>
       </main>

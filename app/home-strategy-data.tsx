@@ -143,6 +143,12 @@ function formatAmount(value: number, symbol: string, maximumFractionDigits = 2) 
   return `${formatNumber(value, maximumFractionDigits)} ${symbol}`;
 }
 
+function formatLiveNumber(value: number | null | undefined, fallback = "0", maximumFractionDigits = 2) {
+  const number = Number(value ?? 0);
+  if (!Number.isFinite(number) || number <= 0) return fallback;
+  return number.toLocaleString(undefined, { maximumFractionDigits });
+}
+
 function formatDate(value: string | null | undefined) {
   if (!value) return "Awaiting";
   const date = new Date(value);
@@ -199,6 +205,26 @@ function nextDropCountdown(stats: StatsResponse | null, now: number) {
   const configured = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const next = Number.isFinite(configured) && configured > 0 ? configured : Math.ceil(Date.now() / (DROP_INTERVAL_MINUTES * 60_000)) * DROP_INTERVAL_MINUTES * 60_000;
   return formatCountdown(next - now);
+}
+
+export function ProtocolTopStrip() {
+  const { stats } = useProtocolData();
+  const holdings = stats?.sherwoodHoldings;
+  const position = holdings?.sourceTokenBalance ?? 0;
+  const size = holdings?.rewardTokenBalance ?? 0;
+  const solBridged = stats?.bagholderSolBalance ?? holdings?.solBalance ?? 0;
+
+  return (
+    <div className="protocol-top-strip" aria-label="HyperHood live protocol strip">
+      <div className="container protocol-top-strip-inner">
+        <span>Current Position <strong>{formatLiveNumber(position)} {SOURCE_SYMBOL}</strong></span>
+        <span>Size <strong>{formatLiveNumber(size)} {REWARD_SYMBOL}</strong></span>
+        <span>Total SOL Bridged <strong>{formatLiveNumber(solBridged)} SOL</strong></span>
+        <span>HoodX Price <strong>Awaiting pool</strong></span>
+        <span>Total Burnt <strong>0</strong></span>
+      </div>
+    </div>
+  );
 }
 
 function MetricCard({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
@@ -273,6 +299,37 @@ export function FeeLoopChart() {
         <span>Roadmap</span>
         <strong>LP created at bond.</strong>
         <p>Once bonded, the HH/HOOD pool goes live and airdrop windows run every 15 minutes.</p>
+      </div>
+    </section>
+  );
+}
+
+export function HowItWorksSection() {
+  return (
+    <section className="section how-section" id="how-it-works">
+      <div className="container">
+        <div className="section-kicker">How it works</div>
+        <div className="section-head split-head">
+          <h2>Fees enter one loop, then reinforce the next loop.</h2>
+          <p>HyperHood is built to make the HH/HOOD pool harder to move over time while keeping live receipts visible on the dashboard.</p>
+        </div>
+        <div className="reward-flow">
+          <article className="reward-flow-card">
+            <span>01</span>
+            <strong>Fees are claimed.</strong>
+            <p>Protocol windows run every 15 minutes and read the live treasury state.</p>
+          </article>
+          <article className="reward-flow-card">
+            <span>02</span>
+            <strong>HOOD is routed.</strong>
+            <p>50% buys HOOD for airdrops to pool-aligned holders where possible, or HH holders when needed.</p>
+          </article>
+          <article className="reward-flow-card">
+            <span>03</span>
+            <strong>LP gets thicker.</strong>
+            <p>50% reinforces liquidity as HH plus HOOD, and LP fees cycle back into depth.</p>
+          </article>
+        </div>
       </div>
     </section>
   );
