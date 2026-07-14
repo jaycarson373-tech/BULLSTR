@@ -213,15 +213,27 @@ export function ProtocolTopStrip() {
   const position = holdings?.sourceTokenBalance ?? 0;
   const size = holdings?.rewardTokenBalance ?? 0;
   const solBridged = stats?.bagholderSolBalance ?? holdings?.solBalance ?? 0;
+  const tickerItems = [
+    ["Current Position", `${formatLiveNumber(position)} ${SOURCE_SYMBOL}`],
+    ["Size", `${formatLiveNumber(size)} ${REWARD_SYMBOL}`],
+    ["Total SOL Bridged", `${formatLiveNumber(solBridged)} SOL`],
+    ["HoodX Price", "Awaiting pool"],
+    ["Total Burnt", "0"]
+  ];
 
   return (
     <div className="protocol-top-strip" aria-label="HyperHood live protocol strip">
-      <div className="container protocol-top-strip-inner">
-        <span>Current Position <strong>{formatLiveNumber(position)} {SOURCE_SYMBOL}</strong></span>
-        <span>Size <strong>{formatLiveNumber(size)} {REWARD_SYMBOL}</strong></span>
-        <span>Total SOL Bridged <strong>{formatLiveNumber(solBridged)} SOL</strong></span>
-        <span>HoodX Price <strong>Awaiting pool</strong></span>
-        <span>Total Burnt <strong>0</strong></span>
+      <div className="protocol-top-strip-inner">
+        {[0, 1].map((copy) => (
+          <div className="protocol-ticker-track" aria-hidden={copy === 1} key={copy}>
+            {tickerItems.map(([label, value]) => (
+              <span className="protocol-ticker-item" key={`${copy}-${label}`}>
+                {label}
+                <strong>{value}</strong>
+              </span>
+            ))}
+          </div>
+        ))}
       </div>
     </div>
   );
