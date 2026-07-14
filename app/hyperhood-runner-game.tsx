@@ -492,14 +492,14 @@ function drawGame(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, game
   ctx.fillRect(0, 0, w, h);
   ctx.fillStyle = "#092016";
   ctx.fillRect(0, Math.floor(h * 0.46), w, Math.ceil(h * 0.54));
-  ctx.fillStyle = "#c6ff00";
+  ctx.fillStyle = "#b8ff00";
   pixelRect(ctx, w - 92, 36, 10, 10);
   pixelRect(ctx, w - 82, 28, 28, 28);
   pixelRect(ctx, w - 54, 38, 10, 10);
   [...game.trees].sort((a, b) => a.layer - b.layer).forEach((tree) => drawTree(ctx, game, tree));
   ctx.fillStyle = "#061008";
   ctx.fillRect(0, game.ground, w, h - game.ground);
-  ctx.fillStyle = "rgba(198,255,0,.42)";
+  ctx.fillStyle = "rgba(184, 255, 0,.42)";
   for (let x = -40; x < w + 40; x += 30) pixelRect(ctx, x, game.ground + ((x + Math.floor(game.distance * 9)) % 14), 18, 3);
   game.obstacles.forEach((obstacle) => {
     drawObstacle(ctx, obstacle);
@@ -521,7 +521,7 @@ function drawTree(ctx: CanvasRenderingContext2D, game: GameState, tree: GameStat
   pixelRect(ctx, crownX - 16 * scale, crownY - 26 * scale, 34 * scale, 24 * scale);
   pixelRect(ctx, crownX - 48 * scale, crownY + 30 * scale, 24 * scale, 18 * scale);
   pixelRect(ctx, crownX + 24 * scale, crownY + 28 * scale, 28 * scale, 18 * scale);
-  ctx.fillStyle = tree.layer === 0 ? "rgba(198,255,0,.08)" : "rgba(198,255,0,.2)";
+  ctx.fillStyle = tree.layer === 0 ? "rgba(184, 255, 0,.08)" : "rgba(184, 255, 0,.2)";
   pixelRect(ctx, crownX - 8 * scale, crownY - 18 * scale, 14 * scale, 8 * scale);
   pixelRect(ctx, crownX + 16 * scale, crownY + 4 * scale, 12 * scale, 8 * scale);
   ctx.fillStyle = "rgba(2,4,0,.56)";
@@ -544,7 +544,7 @@ function drawObstacle(ctx: CanvasRenderingContext2D, obstacle: { x: number; gapY
   ctx.fillStyle = "#1e4c25";
   pixelRect(ctx, obstacle.x, topH - 18, obstacle.w, 18);
   pixelRect(ctx, obstacle.x, bottomY, obstacle.w, 18);
-  ctx.fillStyle = "#c6ff00";
+  ctx.fillStyle = "#b8ff00";
   pixelRect(ctx, obstacle.x + 6, topH - 12, 12, 5);
   pixelRect(ctx, obstacle.x + obstacle.w - 18, bottomY + 7, 12, 5);
 }
@@ -574,7 +574,7 @@ function drawRunner(ctx: CanvasRenderingContext2D, game: GameState) {
   ctx.fillStyle = "#071108";
   pixelRect(ctx, 14, 44, 9, 16);
   pixelRect(ctx, 30, 44, 9, 16);
-  ctx.fillStyle = "#c6ff00";
+  ctx.fillStyle = "#b8ff00";
   pixelRect(ctx, 13, 58, 12, 4);
   pixelRect(ctx, 29, 58, 12, 4);
 
@@ -582,7 +582,7 @@ function drawRunner(ctx: CanvasRenderingContext2D, game: GameState) {
   pixelRect(ctx, 12, 20, 28, 26);
   pixelRect(ctx, 8, 28, 8, 14);
   pixelRect(ctx, 38, 29, 8, 14);
-  ctx.fillStyle = "#c6ff00";
+  ctx.fillStyle = "#b8ff00";
   pixelRect(ctx, 14, 34, 24, 5);
   pixelRect(ctx, 20, 23, 4, 6);
 
@@ -592,13 +592,13 @@ function drawRunner(ctx: CanvasRenderingContext2D, game: GameState) {
   pixelRect(ctx, 12, 15, 30, 13);
   ctx.fillStyle = "#020400";
   pixelRect(ctx, 20, 15, 15, 10);
-  ctx.fillStyle = "#c6ff00";
+  ctx.fillStyle = "#b8ff00";
   pixelRect(ctx, 22, 17, 3, 2);
   pixelRect(ctx, 31, 17, 3, 2);
 
   ctx.fillStyle = "#7c4a22";
   pixelRect(ctx, 4, 8, 5, 24);
-  ctx.fillStyle = "#c6ff00";
+  ctx.fillStyle = "#b8ff00";
   pixelRect(ctx, 1, 6, 13, 2);
   pixelRect(ctx, 2, 2, 2, 8);
   pixelRect(ctx, 7, 2, 2, 8);
@@ -608,7 +608,7 @@ function drawRunner(ctx: CanvasRenderingContext2D, game: GameState) {
   pixelRect(ctx, 48, 12, 4, 32);
   pixelRect(ctx, 43, 10, 9, 4);
   pixelRect(ctx, 43, 42, 9, 4);
-  ctx.fillStyle = "#c6ff00";
+  ctx.fillStyle = "#b8ff00";
   pixelRect(ctx, 52, 16, 2, 26);
   pixelRect(ctx, 39, 27, 15, 3);
 

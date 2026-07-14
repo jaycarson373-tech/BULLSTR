@@ -9,7 +9,7 @@ function SubpageNav() {
     <header className="nav">
       <div className="container nav-inner">
         <a className="brand" href="/" aria-label="HyperHood home">
-          <img className="brand-logo" src="/brand/hyperhood-logo.svg" alt="" />
+          <img className="brand-logo" src="/brand/hyperhood-logo.png" alt="" />
           <span>HyperHood</span>
         </a>
         <nav className="nav-links" aria-label="Primary navigation">

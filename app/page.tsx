@@ -11,7 +11,7 @@ function MainNav() {
     <header className="nav">
       <div className="container nav-inner">
         <a className="brand" href="/" aria-label="HyperHood home">
-          <img className="brand-logo" src="/brand/hyperhood-logo.svg" alt="" />
+          <img className="brand-logo" src="/brand/hyperhood-logo.png" alt="" />
           <span>HyperHood</span>
         </a>
         <nav className="nav-links" aria-label="Primary navigation">
@@ -39,7 +39,7 @@ export default function Page() {
         <section className="home-game-hero" id="top">
           <div className="container home-game-layout">
             <div className="home-game-copy">
-              <img className="home-game-logo" src="/brand/hyperhood-logo.svg" alt="" />
+              <img className="home-game-logo" src="/brand/hyperhood-logo.png" alt="" />
               <div className="section-kicker">HyperHood</div>
               <h1>
                 <span>Hyper</span>
