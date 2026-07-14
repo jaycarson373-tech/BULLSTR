@@ -280,7 +280,7 @@ export function HowItWorksPrompt() {
             </li>
             <li>
               <strong>Earn</strong>
-              <span>Every 30 minutes, HHOOD routes to the first 15 board wallets that also hold 1M+ HHOOD. Prize slots start at 15% for first and 10% for second, and holding without selling adds +10% weight per day.</span>
+              <span>Every 15 minutes, HHOOD routes to the first 15 board wallets that also hold 1M+ HHOOD. Prize slots start at 15% for first and 10% for second, and holding without selling adds +10% weight per day.</span>
             </li>
           </ol>
         </div>
@@ -313,7 +313,7 @@ export function HyperHoodLeaderboard() {
         <div className="section-kicker">Holder board</div>
         <div className="section-head split-head">
           <h2>Top HyperHood holders.</h2>
-          <p>The board resets every 24 hours. Every 30 minutes, the first 15 board wallets that also hold 1M+ HHOOD split the HyperHood distribution; ineligible wallets are skipped for the next eligible player.</p>
+          <p>The board resets every 24 hours. Every 15 minutes, the first 15 board wallets that also hold 1M+ HHOOD split the HyperHood distribution; ineligible wallets are skipped for the next eligible player.</p>
         </div>
         <div className="leaderboard-summary">
           <article>

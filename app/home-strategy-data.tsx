@@ -60,7 +60,7 @@ type StatsResponse = {
 };
 
 const REFRESH_MS = 12_000;
-const DROP_INTERVAL_MINUTES = 30;
+const DROP_INTERVAL_MINUTES = 15;
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HHOOD";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HHOOD";
 
@@ -222,7 +222,7 @@ export function HomeAirdropStats() {
       </article>
       <article>
         <span>Next Revenue Window</span>
-        <strong>{now ? nextDropCountdown(stats, now) : "30:00"}</strong>
+        <strong>{now ? nextDropCountdown(stats, now) : "15:00"}</strong>
       </article>
       <article>
         <span>Utility</span>
@@ -240,8 +240,8 @@ export function FeeLoopChart() {
         <h2>HyperHood makes the pool thicker every cycle.</h2>
         <p>
           Fees strengthen the HyperHood pool with HyperHood and HoodXStock. Half buys HOOD for pool bonus airdrops
-          when possible, or HH holders when not. The other half adds LP as 50% HH and 50% HOOD, then LP fees compound
-          back into the pool.
+          when possible, or HH holders when not. At bond, the LP is created, the other half adds LP as 50% HH and
+          50% HOOD, then LP fees compound back into the pool.
         </p>
       </div>
       <div className="fee-loop-visual" aria-hidden="true">
@@ -269,6 +269,11 @@ export function FeeLoopChart() {
           </div>
         </div>
       </div>
+      <div className="fee-roadmap" aria-label="HyperHood roadmap">
+        <span>Roadmap</span>
+        <strong>LP created at bond.</strong>
+        <p>Once bonded, the HH/HOOD pool goes live and airdrop windows run every 15 minutes.</p>
+      </div>
     </section>
   );
 }
@@ -291,8 +296,8 @@ export function LiveProtocolDashboard() {
         <div className="lux-grid dashboard-grid airdrop-grid">
           <MetricCard label="Total Yield Routed" value={formatAmount(total, REWARD_SYMBOL)} strong />
           <MetricCard label="Last Yield Route" value={formatAmount(last, REWARD_SYMBOL)} />
-          <MetricCard label="Next Revenue Window" value={now ? nextDropCountdown(stats, now) : "30:00"} />
-          <MetricCard label="Claim Cadence" value="Every 30 minutes" />
+          <MetricCard label="Next Revenue Window" value={now ? nextDropCountdown(stats, now) : "15:00"} />
+          <MetricCard label="Claim Cadence" value="Every 15 minutes" />
           <MetricCard label="Holder Gate" value={latestHolders > 0 ? latestHolders.toLocaleString() : "Awaiting holders"} />
           <MetricCard label="Revenue Split" value="50% HOOD drops / 50% HH-HOOD LP" />
           <MetricCard label="Last Receipt" value={latestReward ? `${compactAddress(latestReward.wallet)} / ${formatMultiplier(latestReward.rewardAmount, latestReward.normalRewardAmount)} / ${formatAmount(latestReward.rewardAmount, REWARD_SYMBOL)}` : "Awaiting route"} />
@@ -372,7 +377,7 @@ export function AirdropHistory() {
       <div className="container">
         <div className="section-kicker live-kicker"><span>Revenue history</span><LiveBadge /></div>
         <div className="section-head split-head">
-          <h2>30-minute HyperHood windows.</h2>
+          <h2>15-minute HyperHood windows.</h2>
           <p>Each window claims fees, snapshots the holder gate, fills eligible distribution slots, applies any hold-streak bonus, and records settled payouts.</p>
         </div>
         <div className="history-card">

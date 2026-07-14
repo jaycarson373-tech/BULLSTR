@@ -424,6 +424,42 @@ main,
   align-items: center;
 }
 
+.fee-roadmap {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: 10px 16px;
+  align-items: center;
+  border: 1px solid rgba(215, 255, 0, 0.24);
+  border-radius: 4px;
+  background:
+    linear-gradient(90deg, rgba(215, 255, 0, 0.16), rgba(2, 4, 0, 0.62) 44%, rgba(0, 255, 188, 0.08));
+  padding: 12px 14px;
+  box-shadow: inset 0 0 24px rgba(215, 255, 0, 0.06);
+}
+
+.fee-roadmap span {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.fee-roadmap strong {
+  color: var(--accent);
+  font-size: clamp(1.08rem, 2vw, 1.65rem);
+  font-weight: 950;
+  line-height: 1;
+}
+
+.fee-roadmap p {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  font-weight: 850;
+  line-height: 1.32;
+}
+
 .fee-pie {
   position: relative;
   display: grid;
@@ -1956,6 +1992,7 @@ tbody tr:hover {
   .hyperhood-game-shell,
   .fee-loop-card,
   .fee-loop-visual,
+  .fee-roadmap,
   .home-airdrop-stats,
   .leaderboard-summary,
   .tax-token-strip {

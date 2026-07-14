@@ -57,9 +57,9 @@ export default function LorePage() {
                 <p>HOOD bought with fees is aimed at the pool first when possible, then HH holders, giving deeper participation a stronger bonus path.</p>
               </article>
               <article className="lore-card">
-                <span>LP Thickness</span>
-                <strong>50% HH and 50% HOOD.</strong>
-                <p>The liquidity half is split into equal HH and HOOD legs, then added to the pool so depth grows instead of thinning out.</p>
+                <span>Roadmap</span>
+                <strong>LP created at bond.</strong>
+                <p>At bond, the HH/HOOD pool is created. From there, airdrop windows run every 15 minutes while liquidity keeps building.</p>
               </article>
               <article className="lore-card">
                 <span>Compounding</span>

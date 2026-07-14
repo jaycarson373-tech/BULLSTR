@@ -9,7 +9,8 @@ HyperHood is the Hood liquidity flywheel:
 - 50% of fees buy HOOD for pool-bonus airdrops when possible, or HH holders when pool routing is unavailable.
 - 50% of fees strengthen liquidity as 50% HH and 50% HOOD, making the LP thicker over time.
 - LP fees compound back into the pool so liquidity depth can keep reinforcing itself.
-- Every 30 minutes the worker claims, snapshots the 1M+ HHOOD holder gate, checks the active 24-hour holder board, and records settled distributions.
+- At bond, the HH/HOOD LP is created and the liquidity flywheel goes live.
+- Every 15 minutes the worker claims, snapshots the 1M+ HHOOD holder gate, checks the active 24-hour holder board, and records settled distributions.
 - Holding 1M+ HHOOD is the eligibility gate; the holder board decides who receives each distribution slot.
 - Eligible recipients get a +10% weight bonus for each full day they hold without selling.
 - The dashboard reads settled revenue windows, payouts, holders, wallet holdings, and recent records from Supabase.
@@ -68,7 +69,7 @@ CLAIM_ENABLED=false
 BUY_ENABLED=false
 AIRDROP_ENABLED=false
 
-EPOCH_MINUTES=30
+EPOCH_MINUTES=15
 ELIGIBILITY_MIN=1000000
 MAX_WALLETS_PER_EPOCH=200
 MAX_HOLDER_PCT=5
