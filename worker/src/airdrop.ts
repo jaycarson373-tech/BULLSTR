@@ -11,7 +11,7 @@ import {
 } from "@solana/spl-token";
 import { config, treasuryKeypair } from "./config.js";
 import { connection } from "./solana.js";
-import { SHERWOOD_PRIZE_BPS, dryRunPayout, failPayout, getSherwoodLeaderboard, planPayout, settlePayout, sherwoodRankPrizeBps } from "./db.js";
+import { dryRunPayout, failPayout, planPayout, settlePayout } from "./db.js";
 import type { Holder } from "./snapshot.js";
 
 const AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS = 25_000n;
@@ -81,43 +81,22 @@ function rewardAtaForOwner(owner: PublicKey, tokenProgram: PublicKey, mint = con
   );
 }
 
-export async function selectSherwoodPrizeRecipients(holders: Holder[]): Promise<Holder[]> {
-  const holderByWallet = new Map(holders.map((holder) => [holder.wallet, holder]));
-  const leaderboard = await getSherwoodLeaderboard();
-  const recipients: Holder[] = [];
-
-  for (const entry of leaderboard) {
-    const holder = holderByWallet.get(entry.wallet);
-    if (!holder) continue;
-    const prizeRank = recipients.length + 1;
-    recipients.push({
-      ...holder,
-      leaderboardRank: entry.leaderboardRank,
-      sherwoodRank: prizeRank,
-      prizeBps: sherwoodRankPrizeBps(prizeRank)
-    });
-    if (recipients.length >= SHERWOOD_PRIZE_BPS.length) break;
-  }
-
-  return recipients;
-}
-
 function computeStrategyWeights(holders: Holder[]): WeightedHolder[] {
   return holders
     .map((holder) => {
-    const holderBps = BigInt(holder.multiplierBps ?? 10_000);
-    const prizeBps = BigInt(holder.prizeBps ?? 0);
-    const weight = (prizeBps * holderBps) / 10_000n;
+      const holderBps = BigInt(holder.multiplierBps ?? 10_000);
+      const baseWeight = holder.rawBalance;
+      const weight = (baseWeight * holderBps) / 10_000n;
 
-    console.log(
-      `[WEIGHT] wallet=${holder.wallet} source=${holder.uiBalance} leaderboardRank=${holder.leaderboardRank ?? "none"} prizeRank=${holder.sherwoodRank ?? "none"} prizeBps=${prizeBps.toString()} holdBps=${holderBps.toString()} weight=${weight.toString()}`
-    );
+      console.log(
+        `[WEIGHT] wallet=${holder.wallet} source=${holder.uiBalance} baseWeight=${baseWeight.toString()} holdBps=${holderBps.toString()} weight=${weight.toString()}`
+      );
 
-    return {
-      holder,
-      baseWeight: prizeBps,
-      weight
-    };
+      return {
+        holder,
+        baseWeight,
+        weight
+      };
     })
     .filter((holder) => holder.baseWeight > 0n && holder.weight > 0n);
 }
@@ -258,7 +237,7 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
 export async function airdropTokenRewards(
   epochId: string,
   allocations: Allocation[],
-  rewardAsset = "Sherwood",
+  rewardAsset = "HoodX",
   mint = config.rewardTokenMint
 ): Promise<AirdropResult> {
   const treasury = treasuryKeypair();

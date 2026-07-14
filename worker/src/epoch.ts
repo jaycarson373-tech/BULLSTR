@@ -5,13 +5,12 @@ import {
   airdropTokenRewards,
   computeAllocations,
   estimateTokenPayoutReserveLamports,
-  selectSherwoodPrizeRecipients,
   treasuryRewardBalanceRaw
 } from "./airdrop.js";
 import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, recordClaim, startEpoch } from "./db.js";
 import { applyHolderState } from "./holder-state.js";
 import { currentEpochId } from "./time.js";
-import { eligibleHoldersFromSnapshot, snapshotSourceHolders } from "./snapshot.js";
+import { eligibleHoldersFromSnapshot, selectRewardRecipients, snapshotSourceHolders } from "./snapshot.js";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { connection } from "./solana.js";
 import { treasuryKeypair } from "./config.js";
@@ -48,7 +47,7 @@ export async function runEpoch(date = new Date()) {
       claim.txSig && treasuryBalanceAfterClaim > treasuryBalanceBeforeClaim
         ? treasuryBalanceAfterClaim - treasuryBalanceBeforeClaim
         : 0n;
-    console.log(`[${epochId}] claimed fee delta available for leaderboard airdrops: ${lamportsToSol(claimedLamports)} SOL`);
+    console.log(`[${epochId}] claimed fee delta available for holder airdrops: ${lamportsToSol(claimedLamports)} SOL`);
     if (claim.txSig && claimedLamports > 0n) {
       await recordClaim(epochId, lamportsToSol(claimedLamports).toString(), claim.txSig);
     }
@@ -68,11 +67,11 @@ export async function runEpoch(date = new Date()) {
     console.log(
       `[${epochId}] snapshot 1M+ eligible holders: ${eligibleHolders.length}/${balanceEligibleHolders.length} after holder-state rules`
     );
-    const holders = await selectSherwoodPrizeRecipients(eligibleHolders);
-    console.log(`[${epochId}] selected eligible Sherwood prize recipients from leaderboard: ${holders.length}`);
+    const holders = selectRewardRecipients(epochId, eligibleHolders, config.maxWalletsPerEpoch);
+    console.log(`[${epochId}] selected eligible holder reward recipients: ${holders.length}`);
 
     const payoutReserveLamports = await estimateTokenPayoutReserveLamports([
-      { wallets: holders.map((holder) => holder.wallet), mint: config.rewardTokenMint, label: "HoodX-to-eligible-top-15-players" }
+      { wallets: holders.map((holder) => holder.wallet), mint: config.rewardTokenMint, label: "HoodX-to-eligible-holders" }
     ]);
     const splitPlan = await treasurySolBudget(payoutReserveLamports);
     const splitBaseLamports = claimedLamports < splitPlan.usableLamports ? claimedLamports : splitPlan.usableLamports;
@@ -91,7 +90,7 @@ export async function runEpoch(date = new Date()) {
         reward_distributed: "0",
         status: "skipped"
       });
-      console.log(`[${epochId}] no eligible top-15 leaderboard players, skipped reward distribution`);
+      console.log(`[${epochId}] no eligible holder recipients, skipped reward distribution`);
       return;
     }
     if (sideTransfer.txSig) {
@@ -149,7 +148,7 @@ export async function runEpoch(date = new Date()) {
       ? await airdropTokenRewards(epochId, allocations, "HoodX")
       : { settledUi: 0, settledCount: 0, stoppedForReserve: false };
     if (tokenAirdrop.stoppedForReserve && tokenAirdrop.settledCount === 0) {
-      throw new Error("Sherwood leaderboard airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
+      throw new Error("Holder airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
     }
     const distributed = tokenAirdrop.settledUi;
     await completeEpoch(epochId, {
@@ -158,7 +157,7 @@ export async function runEpoch(date = new Date()) {
       reward_distributed: distributed.toString()
     });
     console.log(
-      `[${epochId}] summary: eligibleHolders=${eligibleHolders.length}, prizeRecipients=${tokenAirdrop.settledCount}/${allocations.length}, hoodBought=${buy.rewardReceivedUi}, hoodDistributed=${distributed}`
+      `[${epochId}] summary: eligibleHolders=${eligibleHolders.length}, rewardRecipients=${tokenAirdrop.settledCount}/${allocations.length}, hoodBought=${buy.rewardReceivedUi}, hoodDistributed=${distributed}`
     );
   } catch (error) {
     await failEpoch(epochId, error).catch((dbError) => {

@@ -13,22 +13,6 @@ export type PayoutMetadata = {
   normalRewardAmount?: string;
 };
 
-type SherwoodScoreRow = {
-  wallet: string;
-  score: number | null;
-  distance: number | null;
-  created_at: string | null;
-};
-
-export const SHERWOOD_PRIZE_BPS = [1500, 1000, 900, 800, 700, 700, 600, 600, 600, 500, 500, 500, 400, 400, 300] as const;
-
-export type SherwoodLeaderboardEntry = {
-  wallet: string;
-  leaderboardRank: number;
-  bestScore: number;
-  bestDistance: number;
-};
-
 function assertNoError<T>(result: { data: T; error: unknown }, label: string): T {
   if (result.error) throw new Error(`${label}: ${JSON.stringify(result.error)}`);
   return result.data;
@@ -202,57 +186,4 @@ export async function failPayout(epochId: string, wallet: string, error: unknown
     .eq("wallet", wallet)
     .eq("reward_asset", rewardAsset);
   assertNoError(result, "fail payout");
-}
-
-export function sherwoodRankPrizeBps(rank: number) {
-  return SHERWOOD_PRIZE_BPS[rank - 1] ?? 0;
-}
-
-function sherwoodSeasonStart() {
-  const seasonMs = 24 * 60 * 60 * 1000;
-  return new Date(Math.floor(Date.now() / seasonMs) * seasonMs).toISOString();
-}
-
-export async function getSherwoodLeaderboard() {
-  const result = await supabase
-    .from("sherwood_runs")
-    .select("wallet,score,distance,created_at")
-    .gte("created_at", sherwoodSeasonStart())
-    .order("score", { ascending: false })
-    .order("distance", { ascending: false })
-    .order("created_at", { ascending: true })
-    .limit(1000);
-
-  if (result.error) {
-    const message = JSON.stringify(result.error);
-    if (message.includes("sherwood_runs") || message.includes("42P01") || message.includes("PGRST205")) {
-      console.warn("[Sherwood] sherwood_runs table missing; game prizes disabled");
-      return [] as SherwoodLeaderboardEntry[];
-    }
-    throw result.error;
-  }
-
-  const bestByWallet = new Map<string, { wallet: string; bestScore: number; bestDistance: number; latestRunAt: string | null }>();
-  for (const row of (result.data ?? []) as SherwoodScoreRow[]) {
-    const score = Number(row.score ?? 0);
-    const distance = Number(row.distance ?? 0);
-    const existing = bestByWallet.get(row.wallet);
-    if (!existing || score > existing.bestScore || (score === existing.bestScore && distance > existing.bestDistance)) {
-      bestByWallet.set(row.wallet, {
-        wallet: row.wallet,
-        bestScore: score,
-        bestDistance: distance,
-        latestRunAt: row.created_at
-      });
-    }
-  }
-
-  return [...bestByWallet.values()]
-    .sort((a, b) => b.bestScore - a.bestScore || b.bestDistance - a.bestDistance || Date.parse(a.latestRunAt ?? "") - Date.parse(b.latestRunAt ?? ""))
-    .map((row, index) => ({
-      wallet: row.wallet,
-      leaderboardRank: index + 1,
-      bestScore: row.bestScore,
-      bestDistance: row.bestDistance
-    }));
 }
