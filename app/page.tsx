@@ -1,7 +1,8 @@
 import { FeeLoopChart, HomeAirdropStats, ProtocolTopStrip } from "./home-strategy-data";
 import { SiteNav } from "./site-nav";
 
-const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || "";
+const HYPERHOOD_CA = "24GqHZ7r7oLYsuKQCtuwYqkMwepEFvZSZvdoni21pump";
+const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || HYPERHOOD_CA;
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim() || (CA ? `https://pump.fun/coin/${CA}` : "https://pump.fun/");
 
 export default function Page() {
