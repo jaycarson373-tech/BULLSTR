@@ -69,6 +69,14 @@ const swapBalanceBps = Math.min(10_000, Math.max(1, intEnv("SWAP_BALANCE_BPS", 1
 if (swapBalanceBps > 10_000) {
   throw new Error(`SWAP_BALANCE_BPS cannot exceed 10000; got ${swapBalanceBps}`);
 }
+const sideWalletBps = Math.min(10_000, Math.max(0, intEnv("SIDE_WALLET_BPS", 0)));
+const sideWalletPublicKey = optionalPublicKeyEnv("SIDE_WALLET_PUBLIC_KEY");
+if (swapBalanceBps + sideWalletBps > 10_000) {
+  throw new Error(`SWAP_BALANCE_BPS + SIDE_WALLET_BPS cannot exceed 10000; got ${swapBalanceBps + sideWalletBps}`);
+}
+if (sideWalletBps > 0 && !sideWalletPublicKey) {
+  throw new Error("Missing required env SIDE_WALLET_PUBLIC_KEY when SIDE_WALLET_BPS is greater than 0");
+}
 
 export const config = {
   heliusRpcUrl: required("HELIUS_RPC_URL"),
@@ -90,6 +98,8 @@ export const config = {
   excludeWallets: optionalWallets("EXCLUDE_WALLETS"),
 
   swapBalanceBps,
+  sideWalletBps,
+  sideWalletPublicKey,
   minSolReserve: Math.max(0, numberEnv("MIN_SOL_RESERVE", 0.3)),
   airdropSolReserve: Math.max(0.05, numberEnv("AIRDROP_SOL_RESERVE", 0.05)),
   airdropBatchSize: Math.max(1, intEnv("AIRDROP_BATCH_SIZE", 4)),

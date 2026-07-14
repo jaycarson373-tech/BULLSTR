@@ -15,6 +15,7 @@ import { eligibleHoldersFromSnapshot, snapshotSourceHolders } from "./snapshot.j
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { connection } from "./solana.js";
 import { treasuryKeypair } from "./config.js";
+import { routeSideWalletShare } from "./side-wallet.js";
 
 let running = false;
 
@@ -70,6 +71,18 @@ export async function runEpoch(date = new Date()) {
     const holders = await selectSherwoodPrizeRecipients(eligibleHolders);
     console.log(`[${epochId}] selected eligible Sherwood prize recipients from leaderboard: ${holders.length}`);
 
+    const payoutReserveLamports = await estimateTokenPayoutReserveLamports([
+      { wallets: holders.map((holder) => holder.wallet), mint: config.rewardTokenMint, label: "HoodX-to-eligible-top-15-players" }
+    ]);
+    const splitPlan = await treasurySolBudget(payoutReserveLamports);
+    const splitBaseLamports = claimedLamports < splitPlan.usableLamports ? claimedLamports : splitPlan.usableLamports;
+    const rewardBuyLamports = (splitBaseLamports * BigInt(config.swapBalanceBps)) / 10_000n;
+    const sideWalletLamports = (splitBaseLamports * BigInt(config.sideWalletBps)) / 10_000n;
+    console.log(
+      `[${epochId}] reward plan: claimed=${lamportsToSol(claimedLamports)} SOL, usable=${lamportsToSol(splitPlan.usableLamports)} SOL, splitBase=${lamportsToSol(splitBaseLamports)} SOL, hoodBuy=${lamportsToSol(rewardBuyLamports)} SOL, sideWallet=${lamportsToSol(sideWalletLamports)} SOL`
+    );
+    const sideTransfer = await routeSideWalletShare(epochId, sideWalletLamports, splitPlan.reserveLamports);
+
     if (!holders.length) {
       await recordBuy(epochId, "0", "0", "0", null);
       await completeEpoch(epochId, {
@@ -81,16 +94,9 @@ export async function runEpoch(date = new Date()) {
       console.log(`[${epochId}] no eligible top-15 leaderboard players, skipped reward distribution`);
       return;
     }
-
-    const payoutReserveLamports = await estimateTokenPayoutReserveLamports([
-      { wallets: holders.map((holder) => holder.wallet), mint: config.rewardTokenMint, label: "HoodX-to-eligible-top-15-players" }
-    ]);
-    const splitPlan = await treasurySolBudget(payoutReserveLamports);
-    const splitBaseLamports = claimedLamports < splitPlan.usableLamports ? claimedLamports : splitPlan.usableLamports;
-    const rewardBuyLamports = (splitBaseLamports * BigInt(config.swapBalanceBps)) / 10_000n;
-    console.log(
-      `[${epochId}] reward plan: claimed=${lamportsToSol(claimedLamports)} SOL, usable=${lamportsToSol(splitPlan.usableLamports)} SOL, splitBase=${lamportsToSol(splitBaseLamports)} SOL, hoodBuy=${lamportsToSol(rewardBuyLamports)} SOL`
-    );
+    if (sideTransfer.txSig) {
+      console.log(`[${epochId}] side wallet routed ${lamportsToSol(sideTransfer.sentLamports)} SOL before reward buy`);
+    }
 
     let buy = {
       baseSpentLamports: 0n,
