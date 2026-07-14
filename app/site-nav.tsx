@@ -1,7 +1,6 @@
 import { CopyCaChip } from "./ca-copy-chip";
 
-const DEFAULT_CA = "E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump";
-const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || DEFAULT_CA;
+const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || "";
 const X_URL = process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/HyperHood_";
 
 export function SiteNav() {
@@ -18,7 +17,7 @@ export function SiteNav() {
           <a href="/lore">Hood Thesis</a>
         </nav>
         <div className="nav-actions">
-          <CopyCaChip ca={CA} className="nav-ca-chip" />
+          {CA ? <CopyCaChip ca={CA} className="nav-ca-chip" /> : null}
           <a className="mini-button x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open X">
             X
           </a>

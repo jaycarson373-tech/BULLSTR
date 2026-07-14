@@ -86,8 +86,6 @@ type HyperHoodHoldings = {
 
 const PUMP_PROGRAM_ID = new PublicKey("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P");
 const PUMP_AMM_PROGRAM_ID = new PublicKey("pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA");
-const DEFAULT_SOURCE_TOKEN_MINT = "E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump";
-const DEFAULT_BONUS_WALLET_PUBLIC_KEY = "51PVdNdsEiMSreFtp7RWXiHVrCdbu8Mq8cR3vNp7SR5s";
 const LIVE_ELIGIBLE_CACHE_MS = 90_000;
 
 let liveEligibleCache: { key: string; value: number; expiresAt: number } | null = null;
@@ -179,7 +177,7 @@ function toNumber(value: unknown) {
 }
 
 function sourceTokenMint() {
-  const value = process.env.SOURCE_TOKEN_MINT ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_SOURCE_TOKEN_MINT;
+  const value = process.env.SOURCE_TOKEN_MINT ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT;
   if (!value) return null;
   try {
     return new PublicKey(value);
@@ -205,8 +203,7 @@ function bagholderWalletPublicKey() {
     process.env.BAGHOLDER_WALLET_PUBLIC_KEY ??
     process.env.TREASURY_WALLET_PUBLIC_KEY ??
     process.env.SIDE_WALLET_PUBLIC_KEY ??
-    process.env.NEXT_PUBLIC_BAGHOLDER_WALLET_PUBLIC_KEY ??
-    DEFAULT_BONUS_WALLET_PUBLIC_KEY;
+    process.env.NEXT_PUBLIC_BAGHOLDER_WALLET_PUBLIC_KEY;
   if (!value) return null;
   try {
     return new PublicKey(value);
@@ -317,8 +314,8 @@ function rewardAsset(row: Pick<PayoutRow, "reward_asset">) {
 
 function rewardAssetRank(asset: string) {
   const upper = asset.toUpperCase();
-  if (upper === "HOODX") return 0;
-  if (upper === "SHERWOOD") return 1;
+  if (upper === "HOOD") return 0;
+  if (upper === "HHOOD" || upper === "HOODX") return 1;
   if (upper === "SOL") return 2;
   return 3;
 }
@@ -496,7 +493,7 @@ export async function GET() {
 
   if (!config) {
     const latestEligibleHolders = await liveEligibleHolderCountOrNull();
-    const sherwoodHoldings = await hyperHoodHoldingsOrNull();
+    const hyperHoodHoldings = await hyperHoodHoldingsOrNull();
     return NextResponse.json({
       currentEpoch: 0,
       totalEpochs: 0,
@@ -506,8 +503,8 @@ export async function GET() {
       totalRewardTotals: [],
       latestEligibleHolders: latestEligibleHolders ?? 0,
       eligibleBullstrHeld: 0,
-      bagholderSolBalance: sherwoodHoldings.solBalance,
-      sherwoodHoldings,
+      bagholderSolBalance: hyperHoodHoldings.solBalance,
+      hyperHoodHoldings,
       nextDropTime: nextDropTime(),
       epochHistory: [],
       roundHistory: [],
@@ -620,7 +617,7 @@ export async function GET() {
       const claim = claimsByEpoch.get(epochId);
       const buy = buysByEpoch.get(epochId);
       const payoutSummary = payoutsByEpoch.get(epochId);
-      const sherSummary = payoutSummary?.rewardTotals.get("HHOOD") ?? payoutSummary?.rewardTotals.get("HyperHood");
+      const hyperHoodSummary = payoutSummary?.rewardTotals.get("HHOOD") ?? payoutSummary?.rewardTotals.get("HyperHood");
       return {
         epoch: displayEpochById.get(epochId) ?? realEpochCount - index,
         status: row?.status === "completed" ? "completed" : "settled",
@@ -628,8 +625,8 @@ export async function GET() {
         duration: durationLabel(row?.started_at ?? null, row?.completed_at ?? payoutSummary?.latestTime ?? null),
         claimedSol: toNumber(claim?.amount_claimed),
         rewardBought: toNumber(row?.reward_bought),
-        normalRewardsSent: sherSummary?.normalRewardAmount ?? 0,
-        distributedPump: sherSummary?.rewardAmount ?? 0,
+        normalRewardsSent: hyperHoodSummary?.normalRewardAmount ?? 0,
+        distributedPump: hyperHoodSummary?.rewardAmount ?? 0,
         rewardTotals: serializeRewardTotals(payoutSummary?.rewardTotals),
         txSig: payoutSummary?.latestTxSig ?? claim?.tx_sig ?? buy?.tx_sig ?? null
       };
@@ -670,8 +667,8 @@ export async function GET() {
     const latestEligibleHolders =
       storedEligibleHolders > 0 ? storedEligibleHolders : (await liveEligibleHolderCountOrNull()) ?? storedEligibleHolders;
     const eligibleBullstrHeld = holderStates.reduce((sum, row) => sum + toNumber(row.source_balance), 0);
-    const sherwoodHoldings = await hyperHoodHoldingsOrNull();
-    const bagholderSolBalance = sherwoodHoldings.solBalance;
+    const hyperHoodHoldings = await hyperHoodHoldingsOrNull();
+    const bagholderSolBalance = hyperHoodHoldings.solBalance;
 
     return NextResponse.json({
       currentEpoch: realEpochCount,
@@ -683,7 +680,7 @@ export async function GET() {
       latestEligibleHolders,
       eligibleBullstrHeld,
       bagholderSolBalance,
-      sherwoodHoldings,
+      hyperHoodHoldings,
       nextDropTime: nextDropTime(),
       epochHistory,
       roundHistory,
@@ -692,7 +689,7 @@ export async function GET() {
   } catch (error) {
     console.error("stats route failed", error);
     const latestEligibleHolders = await liveEligibleHolderCountOrNull();
-    const sherwoodHoldings = await hyperHoodHoldingsOrNull();
+    const hyperHoodHoldings = await hyperHoodHoldingsOrNull();
     return NextResponse.json({
       currentEpoch: 0,
       totalEpochs: 0,
@@ -702,8 +699,8 @@ export async function GET() {
       totalRewardTotals: [],
       latestEligibleHolders: latestEligibleHolders ?? 0,
       eligibleBullstrHeld: 0,
-      bagholderSolBalance: sherwoodHoldings.solBalance,
-      sherwoodHoldings,
+      bagholderSolBalance: hyperHoodHoldings.solBalance,
+      hyperHoodHoldings,
       nextDropTime: nextDropTime(),
       epochHistory: [],
       roundHistory: [],

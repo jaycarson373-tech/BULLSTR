@@ -53,7 +53,7 @@ type StatsResponse = {
   latestEligibleHolders: number;
   eligibleBullstrHeld: number;
   bagholderSolBalance: number | null;
-  sherwoodHoldings?: HyperHoodHoldings;
+  hyperHoodHoldings?: HyperHoodHoldings;
   nextDropTime: string;
   roundHistory: Round[];
   recentRewards: Reward[];
@@ -74,7 +74,7 @@ const emptyStats: StatsResponse = {
   latestEligibleHolders: 0,
   eligibleBullstrHeld: 0,
   bagholderSolBalance: null,
-  sherwoodHoldings: {
+  hyperHoodHoldings: {
     wallet: null,
     solBalance: null,
     sourceTokenBalance: null,
@@ -128,25 +128,25 @@ function useProtocolData() {
 }
 
 function compactAddress(address: string) {
-  if (!address) return "Awaiting";
+  if (!address) return "0 wallets";
   if (address.length <= 12) return address;
   return `${address.slice(0, 4)}...${address.slice(-4)}`;
 }
 
 function formatNumber(value: number, maximumFractionDigits = 2) {
-  if (!Number.isFinite(value) || value <= 0) return "Awaiting";
+  if (!Number.isFinite(value) || value <= 0) return "0";
   return value.toLocaleString(undefined, { maximumFractionDigits });
 }
 
 function formatAmount(value: number, symbol: string, maximumFractionDigits = 2) {
-  if (!Number.isFinite(value) || value <= 0) return `Awaiting ${symbol}`;
+  if (!Number.isFinite(value) || value <= 0) return `0 ${symbol}`;
   return `${formatNumber(value, maximumFractionDigits)} ${symbol}`;
 }
 
 function formatDate(value: string | null | undefined) {
-  if (!value) return "Awaiting";
+  if (!value) return "0";
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "Awaiting" : date.toLocaleString();
+  return Number.isNaN(date.getTime()) ? "0" : date.toLocaleString();
 }
 
 function formatCountdown(ms: number) {
@@ -212,8 +212,8 @@ export function ProtocolTopStrip() {
   const tickerItems = [
     ["HOOD Purchased", formatAmount(purchased, "HOOD")],
     ["HOOD Airdropped", formatAmount(airdropped, "HOOD")],
-    ["Liquidity Added", "Awaiting LP"],
-    ["LP Fees Compounded", "Awaiting LP"],
+    ["Liquidity Added", "0 LP"],
+    ["LP Fees Compounded", "0 LP"],
     ["Next Distribution", now ? nextDropCountdown(stats, now) : "15:00"]
   ];
 
@@ -368,16 +368,16 @@ export function LiveProtocolDashboard() {
         <div className="section-kicker live-kicker"><span>HyperHood flywheel</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>Creator fees buy HOOD and add liquidity.</h2>
-          <p>Live values only. Empty cards mean the backend has not recorded that on-chain event yet.</p>
+          <p>Live values only. Zero values mean the backend has not recorded that on-chain event yet.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
           <MetricCard label="HOOD Purchased" value={formatAmount(purchased, "HOOD")} strong />
           <MetricCard label="HOOD Airdropped" value={formatAmount(total, "HOOD")} />
-          <MetricCard label="Liquidity Added" value="Awaiting LP" />
-          <MetricCard label="LP Fees Compounded" value="Awaiting LP" />
+          <MetricCard label="Liquidity Added" value="0 LP" />
+          <MetricCard label="LP Fees Compounded" value="0 LP" />
           <MetricCard label="Next Distribution" value={now ? nextDropCountdown(stats, now) : "15:00"} />
-          <MetricCard label="Eligible Holders" value={latestHolders > 0 ? latestHolders.toLocaleString() : "Awaiting holders"} />
-          <MetricCard label="Last Airdrop" value={latestReward ? `${compactAddress(latestReward.wallet)} / ${formatMultiplier(latestReward.rewardAmount, latestReward.normalRewardAmount)} / ${formatAmount(latestReward.rewardAmount || last, "HOOD")}` : "Awaiting distribution"} />
+          <MetricCard label="Eligible Holders" value={latestHolders > 0 ? latestHolders.toLocaleString() : "0"} />
+          <MetricCard label="Last Airdrop" value={latestReward ? `${compactAddress(latestReward.wallet)} / ${formatMultiplier(latestReward.rewardAmount, latestReward.normalRewardAmount)} / ${formatAmount(latestReward.rewardAmount || last, "HOOD")}` : "0 HOOD"} />
         </div>
       </div>
     </section>
@@ -394,7 +394,7 @@ export function RecentAirdrops() {
         <div className="section-kicker live-kicker"><span>Recent HOOD airdrops</span><LiveBadge /></div>
         <div className="section-head split-head">
           <h2>Settled holder receipts.</h2>
-          <p>Only settled HyperHood airdrops are shown. Empty rows mean no on-chain receipts are available yet.</p>
+          <p>Only settled HyperHood airdrops are shown. Zero rows mean no on-chain receipts are available yet.</p>
         </div>
         <div className="history-card">
           <div className="table-wrap">
@@ -426,14 +426,14 @@ export function RecentAirdrops() {
                             Solscan
                           </a>
                         ) : (
-                          "Awaiting tx"
+                          "0 tx"
                         )}
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td className="placeholder-cell" colSpan={7}>Awaiting settled HyperHood distributions.</td>
+                    <td className="placeholder-cell" colSpan={7}>0 settled HyperHood distributions.</td>
                   </tr>
                 )}
               </tbody>
@@ -480,7 +480,7 @@ export function AirdropHistory() {
                         <td>#{round.epoch}</td>
                         <td>{statusLabel(round.status)}</td>
                         <td>{round.duration}</td>
-                        <td>{recipients > 0 ? recipients.toLocaleString() : "Awaiting"}</td>
+                        <td>{recipients > 0 ? recipients.toLocaleString() : "0"}</td>
                         <td>{formatAmount(total, "HOOD")}</td>
                         <td>
                           {round.txSig ? (
@@ -488,7 +488,7 @@ export function AirdropHistory() {
                               Solscan
                             </a>
                           ) : (
-                            "Awaiting tx"
+                            "0 tx"
                           )}
                         </td>
                       </tr>
@@ -496,7 +496,7 @@ export function AirdropHistory() {
                   })
                 ) : (
                   <tr>
-                    <td className="placeholder-cell" colSpan={6}>Awaiting settled HyperHood distributions.</td>
+                    <td className="placeholder-cell" colSpan={6}>0 settled HyperHood distributions.</td>
                   </tr>
                 )}
               </tbody>

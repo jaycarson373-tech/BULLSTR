@@ -1,9 +1,8 @@
 import { FeeLoopChart, HomeAirdropStats, ProtocolTopStrip } from "./home-strategy-data";
 import { SiteNav } from "./site-nav";
 
-const DEFAULT_CA = "E2U8ot8N9i6jF7f41PAQR7ofN4nStkEkjMaeA4izpump";
-const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || DEFAULT_CA;
-const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim() || `https://pump.fun/coin/${CA}`;
+const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || "";
+const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim() || (CA ? `https://pump.fun/coin/${CA}` : "https://pump.fun/");
 
 export default function Page() {
   return (
@@ -24,8 +23,9 @@ export default function Page() {
             <div className="hyperhood-hero-copy">
               <img className="hyperhood-hero-logo" src="/brand/hyperhood-logo.png" alt="" />
               <div className="section-kicker">HyperHood</div>
-              <h1>
+              <h1 aria-label="THE PERPETUAL LONG ON HOOD.">
                 <span>THE PERPETUAL</span>
+                {" "}
                 <span>LONG ON HOOD.</span>
               </h1>
               <p className="hero-subtitle">
