@@ -1,38 +1,38 @@
 import type { Metadata } from "next";
-import { AppPolish } from "./app-polish";
 import "./globals.css";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hyperhood.xyz";
-const SITE_DESCRIPTION = "HyperHood uses creator fees to buy HOOD, airdrop eligible holders, add HH/HOOD liquidity, and compound LP fees back into the pool.";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://blackcashbull.xyz";
+const SITE_DESCRIPTION =
+  "The Black Cash Bull is a simple meme coin utility site: hold BCB and receive ANSEM airdrops every 5 minutes.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "HyperHood",
+  title: "The Black Cash Bull | BCB",
   description: SITE_DESCRIPTION,
   openGraph: {
-    title: "HyperHood",
+    title: "The Black Cash Bull | BCB",
     description: SITE_DESCRIPTION,
     url: SITE_URL,
-    siteName: "HyperHood",
+    siteName: "The Black Cash Bull",
     images: [
       {
-        url: `${SITE_URL}/brand/hyperhood-landing-bg.png`,
-        width: 1280,
-        height: 720,
-        alt: "HyperHood"
+        url: `${SITE_URL}/og.png`,
+        width: 1200,
+        height: 1200,
+        alt: "The Black Cash Bull"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "HyperHood",
+    title: "The Black Cash Bull | BCB",
     description: SITE_DESCRIPTION,
-    images: [`${SITE_URL}/brand/hyperhood-landing-bg.png`]
+    images: [`${SITE_URL}/og.png`]
   },
   icons: {
     icon: [
-      { url: "/brand/hyperhood-logo.png", type: "image/png" },
+      { url: "/brand/bcb-logo.png", type: "image/png" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" }
@@ -44,10 +44,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>
-        <AppPolish />
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

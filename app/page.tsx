@@ -1,67 +1,73 @@
-import { FeeLoopChart, HomeAirdropStats, ProtocolTopStrip } from "./home-strategy-data";
-import { SiteNav } from "./site-nav";
-
-const HYPERHOOD_CA = "24GqHZ7r7oLYsuKQCtuwYqkMwepEFvZSZvdoni21pump";
-const CA = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() || HYPERHOOD_CA;
-const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim() || (CA ? `https://pump.fun/coin/${CA}` : "https://pump.fun/");
+const features = ["Hold BCB", "Every 5 minutes", "$ANSEM airdrops"];
 
 export default function Page() {
   return (
-    <div className="page hyperhood-page">
-      <SiteNav />
-      <main className="hyperhood-home">
-        <section className="hyperhood-landing" id="top">
-          <div className="landing-fx" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-            <span />
-            <span />
-            <span />
+    <main className="site-shell">
+      <nav className="topbar" aria-label="BCB navigation">
+        <a className="brand" href="#top" aria-label="The Black Cash Bull home">
+          <img src="/brand/bcb-logo.png" alt="" />
+          <span>BCB</span>
+        </a>
+        <a className="nav-pill" href="#utility">Utility</a>
+      </nav>
+
+      <section className="hero" id="top">
+        <div className="copy">
+          <p className="eyebrow">The Black Cash Bull</p>
+          <h1>BCB</h1>
+          <p className="subhead">
+            A simple meme coin for holders who like their bags black, cash-heavy,
+            and rewarded on repeat.
+          </p>
+
+          <div className="feature-row" aria-label="BCB utility highlights">
+            {features.map((feature) => (
+              <span key={feature}>{feature}</span>
+            ))}
           </div>
-          <ProtocolTopStrip />
-          <div className="container hyperhood-landing-layout">
-            <div className="hyperhood-hero-copy">
-              <img className="hyperhood-hero-logo" src="/brand/hyperhood-logo.png" alt="" />
-              <div className="section-kicker">HyperHood</div>
-              <h1 aria-label="THE PERPETUAL LONG ON HOOD.">
-                <span>THE PERPETUAL</span>
-                {" "}
-                <span>LONG ON HOOD.</span>
-              </h1>
-              <p className="hero-subtitle">
-                Every trade buys more Robinhood stock and builds deeper HH/HOOD liquidity.
-              </p>
-              <p className="hero-tagline">LIQUIDITY GETS THICK.</p>
-              <div className="hero-actions">
-                <a className="cta" href={BUY_URL} target="_blank" rel="noreferrer">BUY HYPERHOOD</a>
-                <a className="cta cta-secondary" href="#flywheel">VIEW LIVE FLYWHEEL</a>
-              </div>
-            </div>
-            <div className="hyperhood-hero-panel">
-              <HomeAirdropStats />
-              <div className="hero-split-grid" aria-label="HyperHood fee split">
-                <article>
-                  <span>50%</span>
-                  <strong>HOOD AIRDROPS</strong>
-                  <p>Creator fees buy fractional HOOD stock and airdrop it to eligible holders.</p>
-                </article>
-                <article>
-                  <span>50%</span>
-                  <strong>ADDED TO LP</strong>
-                  <p>Creator fees add HH and HOOD into liquidity so the pool gets deeper.</p>
-                </article>
-                <article>
-                  <span>∞</span>
-                  <strong>LP FEES COMPOUND FOREVER</strong>
-                  <p>LP fees recycle back into liquidity, then the flywheel repeats.</p>
-                </article>
-              </div>
-            </div>
-            <FeeLoopChart />
+
+          <div className="cta-row">
+            <a className="button primary" href="#utility">See utility</a>
+            <a className="button secondary" href="#airdrop">Airdrop cadence</a>
           </div>
-        </section>
-      </main>
-    </div>
+        </div>
+
+        <div className="logo-card" aria-label="The Black Cash Bull logo">
+          <img src="/brand/bcb-logo.png" alt="The Black Cash Bull logo" />
+        </div>
+      </section>
+
+      <section className="utility" id="utility">
+        <p className="eyebrow">Utility</p>
+        <h2>Every 5 minutes, BCB holders get $ANSEM.</h2>
+        <p>
+          That is the whole pitch. Hold The Black Cash Bull, stay in the holder
+          set, and the airdrop loop runs every 5 minutes.
+        </p>
+      </section>
+
+      <section className="airdrop-grid" id="airdrop" aria-label="Airdrop details">
+        <article>
+          <span>01</span>
+          <h3>Buy BCB</h3>
+          <p>Enter the holder set.</p>
+        </article>
+        <article>
+          <span>02</span>
+          <h3>Hold BCB</h3>
+          <p>Keep your wallet eligible.</p>
+        </article>
+        <article>
+          <span>03</span>
+          <h3>Get $ANSEM</h3>
+          <p>Airdrops run every 5 minutes.</p>
+        </article>
+      </section>
+
+      <footer>
+        <strong>The Black Cash Bull</strong>
+        <span>Ticker: BCB</span>
+      </footer>
+    </main>
   );
 }
