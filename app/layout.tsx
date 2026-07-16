@@ -1,43 +1,39 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://blackcashbull.xyz";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://bull.fyi";
 const SITE_DESCRIPTION =
-  "The Black Cash Bull is a simple meme coin utility site: hold BCB and receive ANSEM airdrops every 5 minutes.";
+  "BULL is a simple emoji token dashboard: hold 1M+ BULL and every 5 minutes fees swap for ANSEM airdrops to eligible holders.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "The Black Cash Bull | BCB",
+  title: "🐂 BULL",
   description: SITE_DESCRIPTION,
   openGraph: {
-    title: "The Black Cash Bull | BCB",
+    title: "🐂 BULL",
     description: SITE_DESCRIPTION,
     url: SITE_URL,
-    siteName: "The Black Cash Bull",
+    siteName: "BULL",
     images: [
       {
-        url: `${SITE_URL}/og.png`,
+        url: `${SITE_URL}/og.svg`,
         width: 1200,
-        height: 1200,
-        alt: "The Black Cash Bull"
+        height: 630,
+        alt: "BULL"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "The Black Cash Bull | BCB",
+    title: "🐂 BULL",
     description: SITE_DESCRIPTION,
-    images: [`${SITE_URL}/og.png`]
+    images: [`${SITE_URL}/og.svg`]
   },
   icons: {
-    icon: [
-      { url: "/brand/bcb-logo.png", type: "image/png" },
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/icon-512.png", sizes: "512x512", type: "image/png" }
-    ],
-    apple: "/apple-touch-icon.png"
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg"
   }
 };
 

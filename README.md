@@ -1,7 +1,9 @@
-# The Black Cash Bull
+# BULL
 
-Ticker: `BCB`
+Simple bull emoji site for emoji day.
 
-Simple meme site.
+- Ticker: `BULL`
+- Eligibility: hold `1M+ BULL`
+- Utility: every 5 minutes, fees swap into `$ANSEM` and airdrop eligible holders.
 
-Utility: every 5 minutes, `$ANSEM` is airdropped to BCB holders.
+Set `NEXT_PUBLIC_BULL_X_URL` and `NEXT_PUBLIC_BULL_CA` when the X account and CA are ready.
