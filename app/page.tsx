@@ -93,7 +93,7 @@ function buildStats(rounds: RoundRow[]): Stat[] {
     {
       label: "Reward cadence",
       value: brand.rewardInterval,
-      note: `${brand.rewardSymbol} rotation`
+      note: `${brand.rewardRotation.length}-token rotation`
     },
     {
       label: "Eligible balance",
@@ -158,18 +158,94 @@ export default async function Page() {
         ))}
       </section>
 
-      <section className="index-panel" id="basket" aria-label="Diamond Index 6900 methodology preview">
+      <section className="basket-panel" id="basket" aria-label="Current experimental Diamond Basket">
+        <div className="basket-heading">
+          <div>
+            <p className="eyebrow">Current Diamond Basket</p>
+            <h2>The strongest holders. The strongest communities.</h2>
+          </div>
+          <p>{brand.scoreDescription}</p>
+        </div>
+
+        <div className="scanner-status" aria-label="Diamond Scanner status">
+          <div className="scanner-title">
+            <span className="scanner-pulse" aria-hidden="true" />
+            <strong>Diamond Scanner</strong>
+          </div>
+          <article>
+            <strong>{brand.scanner.projectsScanned}</strong>
+            <span>Projects Scanned</span>
+          </article>
+          <article>
+            <strong>{brand.basket.length}</strong>
+            <span>Current Index Members</span>
+          </article>
+          <article>
+            <strong>{brand.scanner.refreshCycle}</strong>
+            <span>Refresh Cycle</span>
+          </article>
+          <article>
+            <strong>{brand.scanner.status}</strong>
+            <span>Methodology Status</span>
+          </article>
+        </div>
+
+        <div className="basket-grid">
+          {brand.basket.map((token, index) => {
+            const statusClass = token.status.toLowerCase().replace(/\s+/g, "-");
+            return (
+              <article className="basket-card" key={token.name}>
+                <div className="token-row">
+                  <span className="token-logo" aria-hidden="true">{token.symbol.slice(0, 2)}</span>
+                  <div>
+                    <span>#{index + 1} Index Member</span>
+                    <strong>{token.name}</strong>
+                  </div>
+                </div>
+                <div className="score-row">
+                  <span>Diamond Score</span>
+                  <strong>{token.score}</strong>
+                </div>
+                <span className={`status-pill status-${statusClass}`}>{token.status}</span>
+              </article>
+            );
+          })}
+        </div>
+
+        <p className="basket-disclosure">
+          Experimental launch basket supplied by the project owner. Token mints and score inputs must be verified before
+          rewards are enabled. Public rankings and supporting analytics are coming soon.
+        </p>
+      </section>
+
+      <section className="index-panel" aria-label="Diamond Index 6900 methodology preview">
         <div>
-          <p className="eyebrow">Diamond basket</p>
-          <h2>Pressure-tested meme communities.</h2>
+          <p className="eyebrow">How the index works</p>
+          <h2>Conviction, measured.</h2>
         </div>
         <ol>
-          <li>Tokens are evaluated</li>
+          <li>Wallets are analyzed</li>
           <li>Diamond Scores are calculated</li>
-          <li>The basket is selected</li>
-          <li>Holder snapshots are recorded</li>
-          <li>Reward rounds are published</li>
+          <li>Top communities qualify</li>
+          <li>Index weights are assigned</li>
+          <li>Rewards are distributed</li>
         </ol>
+      </section>
+
+      <section className="rotation-panel" aria-label="Diamond Index 6900 reward rotation">
+        <div>
+          <p className="eyebrow">5-token reward rotation</p>
+          <h2>Every epoch drops a different basket token.</h2>
+        </div>
+        <div className="rotation-list">
+          {brand.rewardRotation.map((token, index) => (
+            <article key={`${token}-${index}`}>
+              <span>Slot {index + 1}</span>
+              <strong>{token}</strong>
+              <em>{index === 0 ? "Current cycle starts here" : "Rotates in sequence"}</em>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="rounds-panel" id="rounds" aria-label="Latest reward rounds">
@@ -193,6 +269,21 @@ export default async function Page() {
               <em>Connect Supabase envs to show settled rewards.</em>
             </article>
           )}
+        </div>
+      </section>
+
+      <section className="roadmap-panel" aria-label="Diamond Index 6900 roadmap">
+        <div>
+          <p className="eyebrow">Coming soon</p>
+          <h2>The Diamond Terminal expands.</h2>
+        </div>
+        <div className="roadmap-list">
+          {brand.roadmap.map((item) => (
+            <article key={item}>
+              <span aria-hidden="true" />
+              <strong>{item}</strong>
+            </article>
+          ))}
         </div>
       </section>
 
