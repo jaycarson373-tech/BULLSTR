@@ -24,6 +24,15 @@ export const brand = {
   },
   scoreDescription:
     "Diamond Score is our proprietary conviction metric that analyzes holder quality, retention, distribution, and long-term wallet behavior to identify the strongest meme communities on Solana.",
+  multiplierDescription:
+    "Diamond Hand Score tracks continuous holder time. Every full day adds 0.10x to a wallet's proportional airdrop weight; selling resets the streak.",
+  multiplierTiers: [
+    { diamonds: "💎", window: "Eligible", multiplier: "1.00x" },
+    { diamonds: "💎💎", window: "1 day held", multiplier: "1.10x" },
+    { diamonds: "💎💎💎", window: "2 days held", multiplier: "1.20x" },
+    { diamonds: "💎💎💎💎", window: "3 days held", multiplier: "1.30x" },
+    { diamonds: "💎💎💎💎💎", window: "4+ days held", multiplier: "1.40x+" }
+  ],
   basket: [
     { name: "SPX6900", symbol: "SPX", score: "97.4", status: "Stable" },
     { name: "MOG", symbol: "MOG", score: "95.8", status: "Rising" },
@@ -35,7 +44,6 @@ export const brand = {
     "Diamond Terminal",
     "Full rankings",
     "Top 100 leaderboard",
-    "Wallet lookup",
     "Historical Diamond Scores",
     "Community comparison"
   ],

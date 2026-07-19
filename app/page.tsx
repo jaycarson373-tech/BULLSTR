@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { createClient } from "@supabase/supabase-js";
 import { brand } from "./brand";
+import { WalletProofLookup } from "./WalletProofLookup";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,7 @@ type RoundRow = {
   recipients: number;
   status: string;
   rewardAsset: string;
+  proofs: string[];
 };
 
 type Stat = {
@@ -53,32 +55,36 @@ async function getRewardRounds(): Promise<RoundRow[]> {
     const epochIds = (epochs ?? []).map((epoch) => String(epoch.epoch_id));
     const { data: payouts } = await supabase
       .from("payouts")
-      .select("epoch_id,reward_amount,status,reward_asset")
+      .select("epoch_id,reward_amount,status,reward_asset,tx_sig")
       .eq("status", "settled")
       .in("epoch_id", epochIds.length ? epochIds : ["__none__"]);
 
-    const totals = new Map<string, { amount: number; recipients: number; rewardAsset: string }>();
+    const totals = new Map<string, { amount: number; recipients: number; rewardAsset: string; proofs: Set<string> }>();
     for (const payout of payouts ?? []) {
       const epochId = String(payout.epoch_id);
       const rewardAsset = String(payout.reward_asset ?? brand.rewardSymbol);
       const key = `${epochId}:${rewardAsset}`;
-      const current = totals.get(key) ?? { amount: 0, recipients: 0, rewardAsset };
+      const current = totals.get(key) ?? { amount: 0, recipients: 0, rewardAsset, proofs: new Set<string>() };
       current.amount += Number(payout.reward_amount ?? 0);
       current.recipients += 1;
+      if (payout.tx_sig) current.proofs.add(String(payout.tx_sig));
       totals.set(key, current);
     }
 
-    return (epochs ?? []).map((epoch) => {
-      const epochId = String(epoch.epoch_id);
-      const settled = [...totals.entries()].find(([key]) => key.startsWith(`${epochId}:`))?.[1];
-      return {
-        epochId,
-        amount: settled?.amount ?? 0,
-        recipients: settled?.recipients ?? 0,
-        rewardAsset: settled?.rewardAsset ?? brand.rewardSymbol,
-        status: String(epoch.status ?? "scheduled")
-      };
-    });
+    return (epochs ?? [])
+      .map((epoch) => {
+        const epochId = String(epoch.epoch_id);
+        const settled = [...totals.entries()].find(([key]) => key.startsWith(`${epochId}:`))?.[1];
+        return {
+          epochId,
+          amount: settled?.amount ?? 0,
+          recipients: settled?.recipients ?? 0,
+          rewardAsset: settled?.rewardAsset ?? brand.rewardSymbol,
+          proofs: [...(settled?.proofs ?? [])].slice(0, 3),
+          status: String(epoch.status ?? "scheduled")
+        };
+      })
+      .filter((round) => round.amount > 0 && round.proofs.length > 0);
   } catch {
     return [];
   }
@@ -138,7 +144,7 @@ export default async function Page() {
 
             <div className="hero-actions">
               <a href="#basket">View Diamond Basket</a>
-              <a href="#rounds">Reward Rounds</a>
+              <a href="#proofs">View Proofs</a>
             </div>
           </div>
 
@@ -248,10 +254,27 @@ export default async function Page() {
         </div>
       </section>
 
-      <section className="rounds-panel" id="rounds" aria-label="Latest reward rounds">
+      <section className="multiplier-panel" aria-label="Diamond Hand Score multiplier">
+        <div className="multiplier-copy">
+          <p className="eyebrow">Diamond Hand Score</p>
+          <h2>Hold longer. Weigh more.</h2>
+          <p>{brand.multiplierDescription}</p>
+        </div>
+        <div className="multiplier-ladder">
+          {brand.multiplierTiers.map((tier) => (
+            <article key={tier.diamonds}>
+              <strong>{tier.diamonds}</strong>
+              <span>{tier.window}</span>
+              <em>{tier.multiplier}</em>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounds-panel" id="proofs" aria-label="On-chain distribution proofs">
         <div className="panel-heading">
-          <p className="eyebrow">Reward reporting</p>
-          <h2>Latest completed distributions</h2>
+          <p className="eyebrow">On-chain proofs</p>
+          <h2>Every settled distribution is verifiable.</h2>
         </div>
         <div className="round-list">
           {rounds.length ? (
@@ -260,16 +283,42 @@ export default async function Page() {
                 <span>{formatEpoch(round.epochId)}</span>
                 <strong>{formatAmount(round.amount)} {round.rewardAsset}</strong>
                 <em>{round.recipients} wallets · {round.status}</em>
+                <div className="round-proof-links">
+                  {round.proofs.length ? (
+                    round.proofs.map((signature, index) => (
+                      <a
+                        href={`https://solscan.io/tx/${signature}`}
+                        key={signature}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        Proof {index + 1}
+                      </a>
+                    ))
+                  ) : (
+                    <span>No settled transaction</span>
+                  )}
+                </div>
               </article>
             ))
           ) : (
-            <article className="empty-round">
-              <span>Round data unavailable</span>
-              <strong>0 {brand.rewardSymbol}</strong>
-              <em>Connect Supabase envs to show settled rewards.</em>
-            </article>
+            <div className="proof-empty">
+              <strong>No completed distributions yet.</strong>
+              <span>Settled transaction proofs will appear here automatically.</span>
+            </div>
           )}
         </div>
+      </section>
+
+      <section className="wallet-proof-panel" aria-label="Wallet airdrop proof lookup">
+        <div className="wallet-proof-heading">
+          <div>
+            <p className="eyebrow">Wallet proof lookup</p>
+            <h2>See every airdrop you received.</h2>
+          </div>
+          <p>Paste any public Solana wallet to view its indexed balance, Diamond Hand Score, reward totals, and transaction proofs.</p>
+        </div>
+        <WalletProofLookup />
       </section>
 
       <section className="roadmap-panel" aria-label="Diamond Index 6900 roadmap">

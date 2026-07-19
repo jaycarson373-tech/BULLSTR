@@ -7,6 +7,8 @@ Diamond Index 6900 is a Solana-focused index and reward reporting surface.
 - Tagline: `Paper hands trade. Diamond hands collect.`
 - Reward cadence: configurable, defaulting to every 5 minutes.
 - Reward rotation: five configured basket tokens rotate one per epoch.
+- Proofs: settled distribution transactions and per-wallet reward totals are published on the site.
+- Diamond Hand Score: continuous holding adds `0.10x` allocation weight per full day.
 
 ## Values the project owner must provide
 
