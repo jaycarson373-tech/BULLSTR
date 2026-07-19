@@ -1,0 +1,20 @@
+export const brand = {
+  name: "Diamond Index 6900",
+  displayName: "Diamond Index 6900",
+  ticker: "$DIAMOND",
+  tagline: "Paper hands trade. Diamond hands collect.",
+  secondaryTagline: "The index of Solana's strongest meme communities.",
+  shortCopy: "Hold the index. Track the strongest communities.",
+  logoPath: "/brand/di6900-logo.png",
+  faviconPath: "/favicon.png",
+  bannerPath: "/brand/di6900-banner.png",
+  ogPath: "/og.png",
+  rewardSymbol: process.env.NEXT_PUBLIC_REWARD_SYMBOL?.trim() || "CAS",
+  tokenMint: process.env.NEXT_PUBLIC_DIAMOND_TOKEN_MINT?.trim() || "",
+  xUrl: process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/DiamondIndex_",
+  telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "",
+  discordUrl: process.env.NEXT_PUBLIC_DISCORD_URL?.trim() || "",
+  minimumEligibleBalance: process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "1,000,000",
+  rewardInterval: process.env.NEXT_PUBLIC_REWARD_INTERVAL?.trim() || "5 minutes",
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://diamondindex6900.xyz"
+};

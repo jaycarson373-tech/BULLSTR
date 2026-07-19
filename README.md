@@ -1,9 +1,22 @@
-# BULL
+# Diamond Index 6900
 
-Simple bull emoji site for emoji day.
+Diamond Index 6900 is a Solana-focused index and reward reporting surface.
 
-- Ticker: `BULL`
-- Eligibility: hold `1M+ BULL`
-- Utility: every 5 minutes, fees swap into `$ANSEM` and airdrop eligible holders.
+- Project: `Diamond Index 6900`
+- Ticker: `$DIAMOND`
+- Tagline: `Paper hands trade. Diamond hands collect.`
+- Reward cadence: configurable, defaulting to every 5 minutes.
 
-Set `NEXT_PUBLIC_BULL_X_URL` and `NEXT_PUBLIC_BULL_CA` when the X account and CA are ready.
+## Values the project owner must provide
+
+- `$DIAMOND` mint address
+- Treasury public address
+- Reward asset configuration
+- Solana network
+- RPC endpoint
+- Snapshot interval
+- Minimum eligible balance
+- Holding-window rules
+- Approved token universe
+- Social links
+- Legal disclosure approval
