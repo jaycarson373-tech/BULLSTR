@@ -9,7 +9,7 @@ create table if not exists public.diamond_tokens (
 -- MOG: official NTT bridge (April 2025), ~$35K liquidity; expect fewer sampled holders.
 -- GIGA: native, ~$1.5M liquidity.
 -- FARTCOIN: native, ~$5.7M liquidity.
--- RETARDIO: native, ~$317K liquidity; expected top scorer on unmoved percentage.
+-- ANSEM: verified Solana reward asset supplied by the project owner.
 
 delete from public.diamond_tokens
 where mint not in (
@@ -17,7 +17,7 @@ where mint not in (
   '26VfKb7jjtdEdvfovoBijScoZmJbWWasFZkgfUD5w7cy',
   '63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9',
   '9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump',
-  '6ogzHhzdrQr9Pgv6hZ2MNze7UrzBMAFyBBWUYp1Fhitx'
+  '9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump'
 );
 
 insert into public.diamond_tokens (mint, symbol, enabled) values
@@ -25,7 +25,7 @@ insert into public.diamond_tokens (mint, symbol, enabled) values
   ('26VfKb7jjtdEdvfovoBijScoZmJbWWasFZkgfUD5w7cy', 'MOG', true),
   ('63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9', 'GIGA', true),
   ('9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump', 'FARTCOIN', true),
-  ('6ogzHhzdrQr9Pgv6hZ2MNze7UrzBMAFyBBWUYp1Fhitx', 'RETARDIO', true)
+  ('9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump', 'ANSEM', true)
 on conflict (mint) do update
 set symbol = excluded.symbol,
     enabled = true;

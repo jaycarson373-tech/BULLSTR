@@ -1,17 +1,18 @@
-const fallbackRewardRotation = ["SPX6900", "MOG", "GIGA", "FARTCOIN", "RETARDIO"];
+const fallbackRewardRotation = ["SPX6900", "MOG", "GIGA", "FARTCOIN", "ANSEM"];
 const configuredRewardRotation =
   process.env.NEXT_PUBLIC_REWARD_ROTATION?.split(",")
     .map((token) => token.trim())
     .filter(Boolean) ?? [];
 
 export const brand = {
-  name: "Diamond Index 6900",
-  displayName: "Diamond Index 6900",
+  name: "DI6900",
+  displayName: "DI6900",
+  descriptor: "Diamond Index",
   ticker: "$DIAMOND",
   tagline: "Paper hands trade. Diamond hands collect.",
   secondaryTagline: "The index of Solana's strongest meme communities.",
   shortCopy: "Hold the index. Track the strongest communities.",
-  logoPath: "/brand/di6900-logo.png",
+  logoPath: "/brand/di6900-logo-transparent.png",
   faviconPath: "/favicon.png",
   bannerPath: "/brand/di6900-banner.png",
   ogPath: "/og.png",
@@ -20,7 +21,8 @@ export const brand = {
   scanner: {
     projectsScanned: process.env.NEXT_PUBLIC_SCANNED_PROJECTS?.trim() || "Not published",
     refreshCycle: process.env.NEXT_PUBLIC_SCANNER_REFRESH_CYCLE?.trim() || "24h",
-    status: "Experimental"
+    lastUpdated: process.env.NEXT_PUBLIC_SCANNER_LAST_UPDATED?.trim() || "Pending first scan",
+    status: "Active"
   },
   scoreDescription:
     "Diamond Score is our proprietary conviction metric that analyzes holder quality, retention, distribution, and long-term wallet behavior to identify the strongest meme communities on Solana.",
@@ -34,11 +36,11 @@ export const brand = {
     { diamonds: "💎💎💎💎💎", window: "4+ days held", multiplier: "1.40x+" }
   ],
   basket: [
-    { name: "SPX6900", symbol: "SPX", score: "97.4", status: "Stable" },
-    { name: "MOG", symbol: "MOG", score: "95.8", status: "Rising" },
-    { name: "GIGA", symbol: "GIGA", score: "94.9", status: "Stable" },
-    { name: "FARTCOIN", symbol: "FART", score: "93.7", status: "Rising" },
-    { name: "RETARDIO", symbol: "RETARDIO", score: "Pending", status: "Enabled" }
+    { name: "SPX6900", symbol: "SPX", logoPath: "/tokens/spx6900.jpg", score: "97.4", conviction: "Stable", retention: "Indexing", momentum: "Indexing", social: "Indexing" },
+    { name: "MOG", symbol: "MOG", logoPath: "/tokens/mog.jpg", score: "95.8", conviction: "Rising", retention: "Indexing", momentum: "Indexing", social: "Indexing" },
+    { name: "GIGA", symbol: "GIGA", logoPath: "/tokens/giga.jpg", score: "94.9", conviction: "Stable", retention: "Indexing", momentum: "Indexing", social: "Indexing" },
+    { name: "FARTCOIN", symbol: "FART", logoPath: "/tokens/fartcoin.jpg", score: "93.7", conviction: "Rising", retention: "Indexing", momentum: "Indexing", social: "Indexing" },
+    { name: "$ANSEM", symbol: "ANSEM", logoPath: "/tokens/ansem.png", score: "Pending", conviction: "Indexing", retention: "Indexing", momentum: "Indexing", social: "Indexing" }
   ],
   roadmap: [
     "Diamond Terminal",

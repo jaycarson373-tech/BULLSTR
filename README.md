@@ -1,8 +1,8 @@
-# Diamond Index 6900
+# DI6900
 
-Diamond Index 6900 is a Solana-focused index and reward reporting surface.
+DI6900 is a Solana-focused Diamond Index and reward reporting surface.
 
-- Project: `Diamond Index 6900`
+- Project: `DI6900`
 - Ticker: `$DIAMOND`
 - Tagline: `Paper hands trade. Diamond hands collect.`
 - Reward cadence: configurable, defaulting to every 5 minutes.

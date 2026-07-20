@@ -6,10 +6,10 @@ const siteDescription = `${brand.tagline} ${brand.secondaryTagline}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(brand.siteUrl),
-  title: `${brand.name} | ${brand.displayName}`,
+  title: `${brand.name} | ${brand.descriptor}`,
   description: siteDescription,
   openGraph: {
-    title: `${brand.name} | ${brand.displayName}`,
+    title: `${brand.name} | ${brand.descriptor}`,
     description: siteDescription,
     url: brand.siteUrl,
     siteName: brand.name,
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${brand.name} | ${brand.displayName}`,
+    title: `${brand.name} | ${brand.descriptor}`,
     description: siteDescription,
     images: [`${brand.siteUrl}${brand.ogPath}`]
   },

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { createClient } from "@supabase/supabase-js";
 import { brand } from "./brand";
+import { ScoreCounter } from "./ScoreCounter";
 import { WalletProofLookup } from "./WalletProofLookup";
 
 export const dynamic = "force-dynamic";
@@ -117,6 +118,7 @@ function buildStats(rounds: RoundRow[]): Stat[] {
 export default async function Page() {
   const rounds = await getRewardRounds();
   const stats = buildStats(rounds);
+  const leadingScore = brand.basket.find((token) => Number.isFinite(Number.parseFloat(token.score)))?.score ?? "Pending";
 
   return (
     <main className="diamond-page">
@@ -127,7 +129,10 @@ export default async function Page() {
         <nav className="topbar" aria-label="Primary links">
           <div className="brand-mark">
             <Image src={brand.logoPath} alt="" width={48} height={48} priority />
-            <span>{brand.displayName}</span>
+            <div>
+              <span>{brand.displayName}</span>
+              <small>{brand.descriptor}</small>
+            </div>
           </div>
           <div className="nav-actions">
             {brand.xUrl ? <a href={brand.xUrl}>X</a> : <span>X pending</span>}
@@ -146,15 +151,38 @@ export default async function Page() {
               <a href="#basket">View Diamond Basket</a>
               <a href="#proofs">View Proofs</a>
             </div>
+
+            <div className="hero-scanner" aria-label="Live DI6900 scanner status">
+              <div className="hero-scanner-state">
+                <span className="scanner-pulse" aria-hidden="true" />
+                <div>
+                  <small>Scanner Status</small>
+                  <strong>{brand.scanner.status}</strong>
+                </div>
+              </div>
+              <article>
+                <small>DI Score</small>
+                <strong><ScoreCounter value={leadingScore} /></strong>
+              </article>
+              <article>
+                <small>Projects Scanned</small>
+                <strong>{brand.scanner.projectsScanned}</strong>
+              </article>
+              <article>
+                <small>Last Updated</small>
+                <strong>{brand.scanner.lastUpdated}</strong>
+              </article>
+            </div>
           </div>
 
           <div className="logo-stage" aria-label={`${brand.displayName} logo`}>
+            <span className="logo-aura" aria-hidden="true" />
             <Image src={brand.logoPath} alt={`${brand.displayName} logo`} width={520} height={520} priority />
           </div>
         </div>
       </section>
 
-      <section className="stats-panel" aria-label="Diamond Index 6900 live status">
+      <section className="stats-panel" aria-label="DI6900 live status">
         {stats.map((stat) => (
           <article key={stat.label}>
             <span>{stat.label}</span>
@@ -167,52 +195,46 @@ export default async function Page() {
       <section className="basket-panel" id="basket" aria-label="Current experimental Diamond Basket">
         <div className="basket-heading">
           <div>
-            <p className="eyebrow">Current Diamond Basket</p>
-            <h2>The strongest holders. The strongest communities.</h2>
+            <p className="eyebrow">Diamond Index · Market Intelligence</p>
+            <h2>Top DI6900 Rankings</h2>
           </div>
           <p>{brand.scoreDescription}</p>
         </div>
 
-        <div className="scanner-status" aria-label="Diamond Scanner status">
-          <div className="scanner-title">
-            <span className="scanner-pulse" aria-hidden="true" />
-            <strong>Diamond Scanner</strong>
-          </div>
-          <article>
-            <strong>{brand.scanner.projectsScanned}</strong>
-            <span>Projects Scanned</span>
-          </article>
-          <article>
-            <strong>{brand.basket.length}</strong>
-            <span>Current Index Members</span>
-          </article>
-          <article>
-            <strong>{brand.scanner.refreshCycle}</strong>
-            <span>Refresh Cycle</span>
-          </article>
-          <article>
-            <strong>{brand.scanner.status}</strong>
-            <span>Methodology Status</span>
-          </article>
+        <div className="ranking-header" aria-hidden="true">
+          <span>Rank / Project</span>
+          <span>DI Score</span>
+          <span>Market Signals</span>
+          <span>Conviction</span>
         </div>
-
-        <div className="basket-grid">
+        <div className="basket-grid" aria-label="Top five DI6900 projects">
           {brand.basket.map((token, index) => {
-            const statusClass = token.status.toLowerCase().replace(/\s+/g, "-");
+            const statusClass = token.conviction.toLowerCase().replace(/\s+/g, "-");
             return (
               <article className="basket-card" key={token.name}>
                 <div className="token-row">
-                  <span className="token-logo" aria-hidden="true">{token.symbol.slice(0, 2)}</span>
+                  <span className="ranking-number">{String(index + 1).padStart(2, "0")}</span>
+                  <span className="token-logo" aria-hidden="true">
+                    <Image src={token.logoPath} alt="" width={42} height={42} />
+                  </span>
                   <div>
-                    <span>#{index + 1} Index Member</span>
+                    <span>{token.symbol} · Index Member</span>
                     <strong>{token.name}</strong>
                   </div>
                 </div>
                 <div className="score-row">
                   <span>Diamond Score</span>
-                  <strong>{token.score}</strong>
+                  <strong><ScoreCounter value={token.score} /></strong>
                 </div>
-                <span className={`status-pill status-${statusClass}`}>{token.status}</span>
+                <div className="signal-grid">
+                  <div><span>Holder Retention</span><strong>{token.retention}</strong></div>
+                  <div><span>Momentum</span><strong>{token.momentum}</strong></div>
+                  <div><span>Social Strength</span><strong>{token.social}</strong></div>
+                </div>
+                <div className="conviction-cell">
+                  <span>Conviction</span>
+                  <strong className={`status-pill status-${statusClass}`}>{token.conviction}</strong>
+                </div>
               </article>
             );
           })}
@@ -224,7 +246,7 @@ export default async function Page() {
         </p>
       </section>
 
-      <section className="index-panel" aria-label="Diamond Index 6900 methodology preview">
+      <section className="index-panel" aria-label="DI6900 methodology preview">
         <div>
           <p className="eyebrow">How the index works</p>
           <h2>Conviction, measured.</h2>
@@ -238,7 +260,7 @@ export default async function Page() {
         </ol>
       </section>
 
-      <section className="rotation-panel" aria-label="Diamond Index 6900 reward rotation">
+      <section className="rotation-panel" aria-label="DI6900 reward rotation">
         <div>
           <p className="eyebrow">5-token reward rotation</p>
           <h2>Every epoch drops a different basket token.</h2>
@@ -321,7 +343,7 @@ export default async function Page() {
         <WalletProofLookup />
       </section>
 
-      <section className="roadmap-panel" aria-label="Diamond Index 6900 roadmap">
+      <section className="roadmap-panel" aria-label="DI6900 roadmap">
         <div>
           <p className="eyebrow">Coming soon</p>
           <h2>The Diamond Terminal expands.</h2>
