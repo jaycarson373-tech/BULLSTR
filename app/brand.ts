@@ -1,4 +1,4 @@
-const fallbackRewardRotation = ["SPX6900", "MOG", "GIGA", "FARTCOIN", "PEPE"];
+const fallbackRewardRotation = ["SPX6900", "MOG", "GIGA", "FARTCOIN", "RETARDIO"];
 const configuredRewardRotation =
   process.env.NEXT_PUBLIC_REWARD_ROTATION?.split(",")
     .map((token) => token.trim())
@@ -38,7 +38,7 @@ export const brand = {
     { name: "MOG", symbol: "MOG", score: "95.8", status: "Rising" },
     { name: "GIGA", symbol: "GIGA", score: "94.9", status: "Stable" },
     { name: "FARTCOIN", symbol: "FART", score: "93.7", status: "Rising" },
-    { name: "PEPE", symbol: "PEPE", score: "92.4", status: "Under Review" }
+    { name: "RETARDIO", symbol: "RETARDIO", score: "Pending", status: "Enabled" }
   ],
   roadmap: [
     "Diamond Terminal",
