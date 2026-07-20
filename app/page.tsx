@@ -151,7 +151,7 @@ export default async function Page() {
           <a href="#multipliers">Multipliers</a>
           <a href="#leaderboard">Leaderboard</a>
           <a href="#proofs">Proofs</a>
-          {brand.xUrl ? <a href={brand.xUrl} rel="noreferrer" target="_blank">X</a> : null}
+          <a href={brand.communityUrl} rel="noreferrer" target="_blank">Community</a>
         </nav>
         <a
           className={`contract-link${brand.tokenMint ? "" : " is-pending"}`}

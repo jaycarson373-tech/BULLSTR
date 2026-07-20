@@ -13,7 +13,9 @@ export const brand = {
     process.env.NEXT_PUBLIC_CA?.trim() ||
     process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ||
     "FF6PEm5XKPsFjeFZGupHS5K417ryw48C4U3DncKnpump",
-  xUrl: process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/i/communities/2029250283063394361",
+  communityUrl:
+    process.env.NEXT_PUBLIC_COMMUNITY_URL?.trim() ||
+    "https://x.com/i/communities/2029250283063394361",
   rewardInterval: process.env.NEXT_PUBLIC_REWARD_INTERVAL?.trim() || "5 minutes",
   minimumEligibleBalance: process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "1,000,000",
   holdTiers: [
