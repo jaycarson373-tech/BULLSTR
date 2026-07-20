@@ -2,6 +2,8 @@
 
 Proof of Conviction is an on-chain holding reputation protocol with alternating SOL and PUMP rewards on Solana.
 
+Live execution is fail-closed: `EMERGENCY_STOP=true` by default. Set it to `false` only after rotating credentials and completing a dry run.
+
 - Project: `Proof of Conviction`
 - Ticker: `$POC`
 - Reward cadence: alternating SOL and PUMP every 5 minutes

@@ -6,7 +6,7 @@ const rewardRotation = config.rewardTokens.map((token) => token.symbol).join(" -
 
 console.log(`Proof of Conviction worker started. Schedule: every ${config.epochMinutes} minutes.`);
 console.log(
-  `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
+  `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}, EMERGENCY_STOP=${config.emergencyStop}`
 );
 console.log(
   config.rewardMode === "sol"
@@ -32,4 +32,9 @@ function scheduleFirstRun() {
   });
 }
 
-scheduleFirstRun();
+if (config.emergencyStop) {
+  console.error("[EMERGENCY STOP] Worker is parked. No claims, buys, or airdrops will execute.");
+  setInterval(() => console.log("[EMERGENCY STOP] Worker remains parked."), 60_000);
+} else {
+  scheduleFirstRun();
+}

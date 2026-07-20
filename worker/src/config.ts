@@ -128,6 +128,7 @@ export const config = {
   claimEnabled: boolEnv("CLAIM_ENABLED", false),
   buyEnabled: boolEnv("BUY_ENABLED", false),
   airdropEnabled: boolEnv("AIRDROP_ENABLED", false),
+  emergencyStop: boolEnv("EMERGENCY_STOP", true),
 
   epochMinutes: Math.max(1, intEnv("EPOCH_MINUTES", 15)),
   eligibilityMin: numberEnv("ELIGIBILITY_MIN", 1_000_000),

@@ -26,6 +26,11 @@ function lamportsToSol(lamports: bigint) {
 }
 
 export async function runEpoch(date = new Date()) {
+  if (config.emergencyStop) {
+    console.error("[EMERGENCY STOP] Epoch execution is disabled.");
+    return;
+  }
+
   if (running) {
     console.log("[SKIP] previous epoch still running");
     return;
