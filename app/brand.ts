@@ -51,6 +51,8 @@ export const brand = {
   ],
   tokenMint:
     process.env.NEXT_PUBLIC_DIAMOND_TOKEN_MINT?.trim() ||
+    process.env.NEXT_PUBLIC_CA?.trim() ||
+    process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ||
     "Ey7uCtMRCrc45g2HmQF1L5CJXx5zDFFMfQXt5Huxpump",
   xUrl: process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/DiamondIndex_",
   telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "",
