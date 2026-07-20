@@ -5,7 +5,7 @@ Proof of Conviction is an on-chain holding reputation protocol with alternating 
 - Project: `Proof of Conviction`
 - Ticker: `$POC`
 - Reward cadence: alternating SOL and PUMP every 5 minutes
-- SOL reward pool: 75% of spendable treasury SOL after configured reserves
+- SOL reward pool: 50% of spendable treasury SOL after configured reserves
 - PUMP epochs: claimed SOL is swapped to the configured PUMP mint before distribution
 - Weighting: token balance × holding-time multiplier × holder-rank multiplier
 - Permanent rule: any indexed balance decrease permanently ends reward eligibility
