@@ -129,7 +129,16 @@ export async function runEpoch(date = new Date()) {
       console.log(`[${epochId}] SOL reward epoch; token buys and side-wallet routing are disabled`);
     }
 
-    const availableRewardRaw = await treasuryRewardBalanceRaw(payoutReserveLamports, rewardToken.mint, rewardToken.kind);
+    const treasuryAvailableRewardRaw = await treasuryRewardBalanceRaw(
+      payoutReserveLamports,
+      rewardToken.mint,
+      rewardToken.kind
+    );
+    const availableRewardRaw = isSolEpoch
+      ? claimedLamports < treasuryAvailableRewardRaw
+        ? claimedLamports
+        : treasuryAvailableRewardRaw
+      : treasuryAvailableRewardRaw;
     const rewardBps = isSolEpoch ? config.solAirdropBalanceBps : config.airdropRewardBps;
     const rewardPoolRaw = (availableRewardRaw * BigInt(rewardBps)) / 10_000n;
     if (isSolEpoch) {
@@ -142,7 +151,7 @@ export async function runEpoch(date = new Date()) {
       await recordBuy(epochId, "0", rewardPoolRaw.toString(), buy.rewardReceivedUi.toString(), null);
     }
     console.log(
-      `[${epochId}] reward pool: ${rewardPoolRaw.toString()} raw of ${availableRewardRaw.toString()} raw treasury balance (${rewardBps} bps)`
+      `[${epochId}] reward pool: ${rewardPoolRaw.toString()} raw of ${availableRewardRaw.toString()} raw epoch-available balance (${rewardBps} bps)`
     );
     const allocations =
       isSolEpoch
