@@ -70,10 +70,27 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
       const current = currentByWallet.get(state.wallet);
       const previousRaw = parseRaw(state.source_balance_raw);
 
+      const soldAfterEligibility = previousRaw > 0n && (!current || current.rawBalance < previousRaw);
       const droppedBelowThreshold = !current || current.uiBalance < config.eligibilityMin;
       const atOrAboveHolderCap = current && current.holderPct >= config.maxHolderPct;
 
-      if (atOrAboveHolderCap) {
+      if (soldAfterEligibility) {
+        updates.push({
+          wallet: state.wallet,
+          source_balance: current?.uiBalance.toString() ?? "0",
+          source_balance_raw: current?.rawBalance.toString() ?? "0",
+          highest_source_balance_raw: state.highest_source_balance_raw ?? state.source_balance_raw ?? "0",
+          permanently_ineligible: true,
+          ineligible_reason: "sold_after_eligibility",
+          ineligible_at: now,
+          last_seen_at: now,
+          last_epoch_id: epochId,
+          updated_at: now,
+          current_streak_epochs: 0,
+          current_multiplier_bps: 10_000
+        });
+        permanentlyRemoved.add(state.wallet);
+      } else if (atOrAboveHolderCap) {
         updates.push({
           wallet: state.wallet,
           source_balance: current.uiBalance.toString(),
@@ -148,12 +165,9 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
       const existing = stateByWallet.get(holder.wallet);
       if (existing?.permanently_ineligible || permanentlyRemoved.has(holder.wallet)) continue;
 
-      const previousRaw = parseRaw(existing?.source_balance_raw);
       const highestRaw = parseRaw(existing?.highest_source_balance_raw);
-      const soldSinceLastSnapshot = Boolean(existing && previousRaw > 0n && holder.rawBalance < previousRaw);
-
-      const nextStreak = soldSinceLastSnapshot ? 1 : existing ? (existing.current_streak_epochs ?? 0) + 1 : 1;
-      const eligibleSince = soldSinceLastSnapshot ? now : existing?.eligible_since ?? now;
+      const nextStreak = existing ? (existing.current_streak_epochs ?? 0) + 1 : 1;
+      const eligibleSince = existing?.eligible_since ?? now;
       const multiplierBps = holdMultiplierBps(eligibleSince, nowMs);
       const nextHighest = highestRaw > holder.rawBalance ? highestRaw : holder.rawBalance;
 

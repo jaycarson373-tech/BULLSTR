@@ -21,6 +21,12 @@ type Stat = {
   note: string;
 };
 
+type FallenWallet = {
+  wallet: string;
+  reason: string;
+  fallenAt: string | null;
+};
+
 function formatAmount(value: number) {
   if (!Number.isFinite(value) || value <= 0) return "0";
   return value.toLocaleString(undefined, { maximumFractionDigits: 4 });
@@ -91,6 +97,38 @@ async function getRewardRounds(): Promise<RoundRow[]> {
   }
 }
 
+async function getFallenWallets(): Promise<FallenWallet[]> {
+  const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRole = process.env.SUPABASE_SERVICE_ROLE;
+  if (!supabaseUrl || !serviceRole) return [];
+
+  try {
+    const supabase = createClient(supabaseUrl, serviceRole, {
+      auth: { persistSession: false }
+    });
+    const { data, error } = await supabase
+      .from("holder_states")
+      .select("wallet,ineligible_reason,ineligible_at")
+      .eq("permanently_ineligible", true)
+      .eq("ineligible_reason", "sold_after_eligibility")
+      .order("ineligible_at", { ascending: false })
+      .limit(20);
+
+    if (error) return [];
+    return (data ?? []).map((row) => ({
+      wallet: String(row.wallet),
+      reason: "Balance decreased after eligibility",
+      fallenAt: row.ineligible_at ? String(row.ineligible_at) : null
+    }));
+  } catch {
+    return [];
+  }
+}
+
+function shortWallet(wallet: string) {
+  return `${wallet.slice(0, 6)}...${wallet.slice(-6)}`;
+}
+
 function buildStats(rounds: RoundRow[]): Stat[] {
   const completed = rounds.filter((round) => round.amount > 0);
   const distributed = completed.reduce((sum, round) => sum + round.amount, 0);
@@ -116,7 +154,7 @@ function buildStats(rounds: RoundRow[]): Stat[] {
 }
 
 export default async function Page() {
-  const rounds = await getRewardRounds();
+  const [rounds, fallenWallets] = await Promise.all([getRewardRounds(), getFallenWallets()]);
   const stats = buildStats(rounds);
   const leadingScore = brand.basket.find((token) => Number.isFinite(Number.parseFloat(token.score)))?.score ?? "Pending";
 
@@ -341,6 +379,39 @@ export default async function Page() {
           <p>Paste any public Solana wallet to view its indexed balance, Diamond Hand Score, reward totals, and transaction proofs.</p>
         </div>
         <WalletProofLookup />
+      </section>
+
+      <section className="fallen-panel" aria-label="Permanently ineligible wallets">
+        <div className="fallen-heading">
+          <div>
+            <p className="eyebrow">Diamond hands rule</p>
+            <h2>Fallen Wallets</h2>
+          </div>
+          <p>Any indexed DI6900 balance decrease permanently removes that wallet from future reward rounds.</p>
+        </div>
+        {fallenWallets.length ? (
+          <div className="fallen-list">
+            <div className="fallen-list-header" aria-hidden="true">
+              <span>Wallet</span>
+              <span>Status</span>
+              <span>Recorded</span>
+            </div>
+            {fallenWallets.map((entry) => (
+              <article key={entry.wallet}>
+                <a href={`https://solscan.io/account/${entry.wallet}`} rel="noreferrer" target="_blank">
+                  {shortWallet(entry.wallet)}
+                </a>
+                <strong>Fallen</strong>
+                <span>{formatEpoch(entry.fallenAt ?? "")}</span>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="fallen-empty">
+            <strong>0 fallen wallets</strong>
+            <span>No permanent sell disqualifications have been recorded.</span>
+          </div>
+        )}
       </section>
 
       <section className="roadmap-panel" aria-label="DI6900 roadmap">
