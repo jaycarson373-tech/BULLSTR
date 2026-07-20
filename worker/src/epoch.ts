@@ -134,11 +134,9 @@ export async function runEpoch(date = new Date()) {
       rewardToken.mint,
       rewardToken.kind
     );
-    const availableRewardRaw = isSolEpoch
-      ? claimedLamports < treasuryAvailableRewardRaw
-        ? claimedLamports
-        : treasuryAvailableRewardRaw
-      : treasuryAvailableRewardRaw;
+    const epochRewardRaw = isSolEpoch ? claimedLamports : buy.rewardReceivedRaw;
+    const availableRewardRaw =
+      epochRewardRaw < treasuryAvailableRewardRaw ? epochRewardRaw : treasuryAvailableRewardRaw;
     const rewardBps = isSolEpoch ? config.solAirdropBalanceBps : config.airdropRewardBps;
     const rewardPoolRaw = (availableRewardRaw * BigInt(rewardBps)) / 10_000n;
     if (isSolEpoch) {
