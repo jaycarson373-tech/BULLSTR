@@ -9,11 +9,11 @@ console.log(
   `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
 );
 console.log(
-  `Reward split: ${config.swapBalanceBps / 100}% claimed SOL buys the current Diamond Index rotation token for eligible $DIAMOND holder airdrops; ${config.sideWalletBps / 100}% routes to side wallet.`
+  `Reward split: ${config.swapBalanceBps / 100}% claimed SOL buys the current Diamond Index rotation token for eligible $DI6900 holder airdrops; ${config.sideWalletBps / 100}% routes to side wallet.`
 );
 console.log(`Reward rotation: ${rewardRotation}`);
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
-console.log(`Eligibility gate: holder must hold ${config.eligibilityMin.toLocaleString()} DIAMOND tokens`);
+console.log(`Eligibility gate: holder must hold ${config.eligibilityMin.toLocaleString()} DI6900 tokens`);
 
 async function loop() {
   await runEpoch();

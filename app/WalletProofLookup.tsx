@@ -103,7 +103,7 @@ export function WalletProofLookup() {
                 <em>{result.holder ? `${result.holder.multiplier} allocation weight` : "No holder snapshot found"}</em>
               </article>
               <article>
-                <span>Current $DIAMOND</span>
+                <span>Current $DI6900</span>
                 <strong>{formatDecimal(result.holder?.sourceBalance ?? "0")}</strong>
                 <em>
                   {result.holder?.permanentlyIneligible

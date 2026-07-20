@@ -3,7 +3,7 @@
 DI6900 is a Solana-focused Diamond Index and reward reporting surface.
 
 - Project: `DI6900`
-- Ticker: `$DIAMOND`
+- Ticker: `$DI6900`
 - Tagline: `Paper hands trade. Diamond hands collect.`
 - Reward cadence: configurable, defaulting to every 5 minutes.
 - Reward rotation: five configured basket tokens rotate one per epoch.
@@ -12,7 +12,7 @@ DI6900 is a Solana-focused Diamond Index and reward reporting surface.
 
 ## Values the project owner must provide
 
-- `$DIAMOND` mint address
+- `$DI6900` mint address
 - Treasury public address
 - Reward asset configuration
 - Five reward token mint addresses for the rotation

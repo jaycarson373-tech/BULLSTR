@@ -8,7 +8,7 @@ export const brand = {
   name: "DI6900",
   displayName: "DI6900",
   descriptor: "Diamond Index",
-  ticker: "$DIAMOND",
+  ticker: "$DI6900",
   tagline: "Paper hands trade. Diamond hands collect.",
   secondaryTagline: "The index of Solana's strongest meme communities.",
   shortCopy: "Hold the index. Track the strongest communities.",
