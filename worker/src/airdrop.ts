@@ -52,7 +52,6 @@ type PayoutReserve = {
 };
 
 async function tokenProgramForMint(mint = config.rewardTokenMint) {
-  if (config.rewardMode === "sol") throw new Error("Token mint lookup is not used when REWARD_MODE=sol");
   const info = await connection.getAccountInfo(mint);
   if (!info) throw new Error(`Reward mint not found: ${mint.toBase58()}`);
   if (info.owner.equals(TOKEN_PROGRAM_ID)) return TOKEN_PROGRAM_ID;
@@ -65,7 +64,6 @@ function rawToUi(raw: bigint, decimals: number) {
 }
 
 async function rewardDecimals(mint = config.rewardTokenMint) {
-  if (config.rewardMode === "sol") return 9;
   const tokenProgram = await tokenProgramForMint(mint);
   const mintInfo = await getMint(connection, mint, "confirmed", tokenProgram);
   return mintInfo.decimals;
@@ -101,9 +99,13 @@ function computeStrategyWeights(holders: Holder[]): WeightedHolder[] {
     .filter((holder) => holder.baseWeight > 0n && holder.weight > 0n);
 }
 
-export async function treasuryRewardBalanceRaw(reserveLamports = 0n, mint = config.rewardTokenMint) {
+export async function treasuryRewardBalanceRaw(
+  reserveLamports = 0n,
+  mint = config.rewardTokenMint,
+  rewardKind: "sol" | "token" = config.rewardMode === "sol" ? "sol" : "token"
+) {
   const treasury = treasuryKeypair();
-  if (config.rewardMode === "sol") {
+  if (rewardKind === "sol") {
     const balance = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
     return balance > reserveLamports ? balance - reserveLamports : 0n;
   }
@@ -186,22 +188,11 @@ export async function estimatePayoutReserveLamports(wallets: string[]) {
   const airdropReserveLamports = BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
   if (!wallets.length) return permanentReserveLamports + airdropReserveLamports;
 
-  if (config.rewardMode === "sol") {
-    const batchCount = BigInt(Math.max(1, Math.ceil(wallets.length / config.airdropBatchSize)));
-    const estimatedFeeLamports = batchCount * AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS;
-    const totalLamports = permanentReserveLamports + airdropReserveLamports + estimatedFeeLamports;
-    console.log(
-      `[RESERVE] SOL payout reserve for ${wallets.length} wallets: total=${totalLamports}, permanent=${permanentReserveLamports}, buffer=${airdropReserveLamports}, fees=${estimatedFeeLamports}`
-    );
-    return totalLamports;
-  }
-
-  const tokenProgram = await tokenProgramForMint();
-  const atas = wallets.map((wallet) => rewardAtaForOwner(new PublicKey(wallet), tokenProgram));
-  const reserve = await payoutReserveForAtas(atas);
-  const totalLamports = permanentReserveLamports + reserve.totalLamports;
+  const batchCount = BigInt(Math.max(1, Math.ceil(wallets.length / config.airdropBatchSize)));
+  const estimatedFeeLamports = batchCount * AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS;
+  const totalLamports = permanentReserveLamports + airdropReserveLamports + estimatedFeeLamports;
   console.log(
-    `[RESERVE] token payout reserve for ${wallets.length} wallets: total=${totalLamports}, permanent=${permanentReserveLamports}, buffer=${reserve.reserveLamports}, ataRent=${reserve.estimatedRentLamports}, missingAtas=${reserve.missingAtas.size}, fees=${reserve.estimatedFeeLamports}`
+    `[RESERVE] SOL payout reserve for ${wallets.length} wallets: total=${totalLamports}, permanent=${permanentReserveLamports}, buffer=${airdropReserveLamports}, fees=${estimatedFeeLamports}`
   );
   return totalLamports;
 }

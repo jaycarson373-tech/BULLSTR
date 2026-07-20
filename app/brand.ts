@@ -4,16 +4,16 @@ export const brand = {
   descriptor: "On-chain holding reputation",
   ticker: "$POC",
   tagline: "Conviction is earned on-chain.",
-  secondaryTagline: "Hold longer. Rank higher. Earn a larger share of every five-minute SOL epoch.",
-  logoPath: "/brand/proof-of-conviction-green.jpg",
-  faviconPath: "/favicon-green.jpg",
-  ogPath: "/og-green.jpg",
+  secondaryTagline: "Hold longer. Rank higher. Earn a larger share of alternating SOL and $PUMP epochs.",
+  logoPath: "/brand/proof-of-conviction-live.png",
+  faviconPath: "/favicon-live.png",
+  ogPath: "/og-live.png",
   tokenMint:
     process.env.NEXT_PUBLIC_POC_TOKEN_MINT?.trim() ||
     process.env.NEXT_PUBLIC_CA?.trim() ||
     process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ||
-    "",
-  xUrl: process.env.NEXT_PUBLIC_X_URL?.trim() || "",
+    "FF6PEm5XKPsFjeFZGupHS5K417ryw48C4U3DncKnpump",
+  xUrl: process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/POC_sol",
   rewardInterval: process.env.NEXT_PUBLIC_REWARD_INTERVAL?.trim() || "5 minutes",
   minimumEligibleBalance: process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "1,000,000",
   holdTiers: [

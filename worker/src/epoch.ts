@@ -43,6 +43,7 @@ export async function runEpoch(date = new Date()) {
 
     await startEpoch(epochId);
     const rewardToken = rewardTokenForEpoch(epochId);
+    const isSolEpoch = rewardToken.kind === "sol";
     console.log(`[${epochId}] selected reward asset: ${rewardToken.symbol}`);
     const treasury = treasuryKeypair();
     const treasuryBalanceBeforeClaim = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
@@ -76,7 +77,7 @@ export async function runEpoch(date = new Date()) {
     console.log(`[${epochId}] selected eligible holder reward recipients: ${holders.length}`);
 
     const payoutReserveLamports =
-      config.rewardMode === "sol"
+      isSolEpoch
         ? await estimatePayoutReserveLamports(holders.map((holder) => holder.wallet))
         : await estimateTokenPayoutReserveLamports([
             {
@@ -104,7 +105,7 @@ export async function runEpoch(date = new Date()) {
       txSig: null as string | null
     };
 
-    if (config.rewardMode === "token") {
+    if (!isSolEpoch) {
       const splitPlan = await treasurySolBudget(payoutReserveLamports);
       const splitBaseLamports = claimedLamports < splitPlan.usableLamports ? claimedLamports : splitPlan.usableLamports;
       const rewardBuyLamports = (splitBaseLamports * BigInt(config.swapBalanceBps)) / 10_000n;
@@ -125,13 +126,13 @@ export async function runEpoch(date = new Date()) {
         buy.txSig
       );
     } else {
-      console.log(`[${epochId}] REWARD_MODE=sol, token buys and side-wallet routing are disabled`);
+      console.log(`[${epochId}] SOL reward epoch; token buys and side-wallet routing are disabled`);
     }
 
-    const availableRewardRaw = await treasuryRewardBalanceRaw(payoutReserveLamports, rewardToken.mint);
-    const rewardBps = config.rewardMode === "sol" ? config.solAirdropBalanceBps : config.airdropRewardBps;
+    const availableRewardRaw = await treasuryRewardBalanceRaw(payoutReserveLamports, rewardToken.mint, rewardToken.kind);
+    const rewardBps = isSolEpoch ? config.solAirdropBalanceBps : config.airdropRewardBps;
     const rewardPoolRaw = (availableRewardRaw * BigInt(rewardBps)) / 10_000n;
-    if (config.rewardMode === "sol") {
+    if (isSolEpoch) {
       buy = {
         baseSpentLamports: 0n,
         rewardReceivedRaw: rewardPoolRaw,
@@ -144,7 +145,7 @@ export async function runEpoch(date = new Date()) {
       `[${epochId}] reward pool: ${rewardPoolRaw.toString()} raw of ${availableRewardRaw.toString()} raw treasury balance (${rewardBps} bps)`
     );
     const allocations =
-      config.rewardMode === "sol"
+      isSolEpoch
         ? await computeSolAllocations(holders, rewardPoolRaw)
         : rewardPoolRaw > config.minRewardRawToAirdrop
           ? await computeAllocations(holders, rewardPoolRaw, rewardToken.mint)
@@ -162,7 +163,7 @@ export async function runEpoch(date = new Date()) {
     }
 
     const rewardAirdrop = allocations.length
-      ? config.rewardMode === "sol"
+        ? isSolEpoch
         ? await airdropSolRewards(epochId, allocations, "SOL")
         : await airdropTokenRewards(epochId, allocations, rewardToken.symbol, rewardToken.mint)
       : { settledUi: 0, settledCount: 0, stoppedForReserve: false };

@@ -181,9 +181,9 @@ export default async function Page() {
 
         <div className="hero-visual">
           <div className="image-halo" aria-hidden="true" />
-          <Image src={brand.logoPath} alt="Hands protecting a diamond" width={1024} height={1008} priority />
+          <Image src={brand.logoPath} alt="Hands protecting a diamond" width={1254} height={1254} priority />
           <div className="next-drop">
-            <span>Next SOL airdrop</span>
+            <span>Next reward airdrop</span>
             <strong><EpochCountdown minutes={countdownMinutes} /></strong>
             <em>Live 5-minute epoch</em>
           </div>
@@ -191,7 +191,7 @@ export default async function Page() {
       </section>
 
       <section className="protocol-strip" aria-label="Protocol status">
-        <article><span>SOL airdrop epochs</span><strong>LIVE</strong><em>treasury-funded rewards</em></article>
+        <article><span>Reward rotation</span><strong>SOL / $PUMP</strong><em>alternating airdrop epochs</em></article>
         <article><span>Epoch cadence</span><strong>{brand.rewardInterval}</strong><em>on-chain settlement cycle</em></article>
         <article><span>Eligible wallets</span><strong>{data.activeWallets}</strong><em>currently indexed</em></article>
         <article><span>SOL distributed</span><strong>{formatAmount(totalDistributed)} SOL</strong><em>settled proofs only</em></article>
@@ -206,7 +206,7 @@ export default async function Page() {
         <div className="mechanism-flow">
           <article><span>01</span><strong>Hold $POC</strong><p>Establish an eligible on-chain balance.</p></article>
           <article><span>02</span><strong>Build conviction</strong><p>Time and rank increase your allocation weight.</p></article>
-          <article><span>03</span><strong>Receive SOL</strong><p>Treasury-funded SOL is distributed every five minutes, with an operating reserve retained.</p></article>
+          <article><span>03</span><strong>Receive rewards</strong><p>SOL and $PUMP alternate every five minutes, with an operating reserve retained.</p></article>
           <article><span>04</span><strong>Keep the proof</strong><p>Every settled payout remains publicly verifiable.</p></article>
         </div>
       </section>

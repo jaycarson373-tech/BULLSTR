@@ -1,11 +1,12 @@
 # Proof of Conviction
 
-Proof of Conviction is an on-chain holding reputation and SOL reward protocol on Solana.
+Proof of Conviction is an on-chain holding reputation protocol with alternating SOL and PUMP rewards on Solana.
 
 - Project: `Proof of Conviction`
 - Ticker: `$POC`
-- Reward cadence: every 5 minutes
-- Reward pool: 75% of spendable treasury SOL after configured reserves
+- Reward cadence: alternating SOL and PUMP every 5 minutes
+- SOL reward pool: 75% of spendable treasury SOL after configured reserves
+- PUMP epochs: claimed SOL is swapped to the configured PUMP mint before distribution
 - Weighting: token balance × holding-time multiplier × holder-rank multiplier
 - Permanent rule: any indexed balance decrease permanently ends reward eligibility
 - Proofs: settled SOL transaction signatures and per-wallet totals are published on the site
@@ -23,6 +24,7 @@ Never commit or share treasury private keys, Supabase service-role keys, or RPC 
 ## Owner-provided values
 
 - `$POC` mint address
+- Official PUMP mint address
 - Treasury wallet and creator-fee authority
 - Solana RPC endpoint
 - Supabase project credentials

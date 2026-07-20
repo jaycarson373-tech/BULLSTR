@@ -11,6 +11,8 @@ console.log(
 console.log(
   config.rewardMode === "sol"
     ? `SOL rewards: ${config.solAirdropBalanceBps / 100}% of spendable treasury balance per epoch.`
+    : config.rewardMode === "alternating"
+      ? `Alternating rewards: SOL -> ${rewardRotation} every adjacent ${config.epochMinutes}-minute epoch.`
     : `Token rewards: ${config.swapBalanceBps / 100}% claimed SOL buys ${rewardRotation}; ${config.sideWalletBps / 100}% routes to side wallet.`
 );
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);

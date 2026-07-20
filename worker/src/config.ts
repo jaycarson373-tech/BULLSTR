@@ -1,6 +1,7 @@
 import "dotenv/config";
 import bs58 from "bs58";
 import { Keypair, PublicKey } from "@solana/web3.js";
+import { rewardKindForEpoch, type RewardMode } from "./reward-cycle.js";
 
 function required(name: string) {
   const value = process.env[name];
@@ -46,8 +47,8 @@ function listEnv(name: string) {
 
 function rewardModeEnv() {
   const value = (process.env.REWARD_MODE ?? "token").toLowerCase();
-  if (value === "sol" || value === "token") return value;
-  throw new Error(`Invalid REWARD_MODE=${value}; expected sol or token`);
+  if (value === "sol" || value === "token" || value === "alternating") return value as RewardMode;
+  throw new Error(`Invalid REWARD_MODE=${value}; expected sol, token, or alternating`);
 }
 
 function optionalWallets(name: string) {
@@ -71,11 +72,16 @@ function parseSecret(raw: string) {
 let cachedTreasury: Keypair | null = null;
 const rewardMode = rewardModeEnv();
 const configuredRewardTokenMint = optionalPublicKeyEnv("REWARD_TOKEN_MINT");
+const configuredPumpTokenMint = optionalPublicKeyEnv("PUMP_TOKEN_MINT");
 const rewardTokenMints = listEnv("REWARD_TOKEN_MINTS").map((mint) => new PublicKey(mint));
 const rewardTokenSymbols = listEnv("REWARD_TOKEN_SYMBOLS");
 const fallbackRewardSymbol =
   process.env.REWARD_TOKEN_SYMBOL?.trim() || process.env.NEXT_PUBLIC_REWARD_SYMBOL?.trim() || "REWARD";
-const configuredRewardTokens = rewardTokenMints.length
+const configuredRewardTokens = rewardMode === "alternating"
+  ? configuredPumpTokenMint
+    ? [{ mint: configuredPumpTokenMint, symbol: "PUMP" }]
+    : []
+  : rewardTokenMints.length
   ? rewardTokenMints.map((mint, index) => ({
       mint,
       symbol: rewardTokenSymbols[index] || `REWARD-${index + 1}`
@@ -84,10 +90,14 @@ const configuredRewardTokens = rewardTokenMints.length
     ? [{ mint: configuredRewardTokenMint, symbol: fallbackRewardSymbol }]
     : [];
 
-if (rewardMode === "token" && configuredRewardTokens.length === 0) {
-  throw new Error("Missing required env REWARD_TOKEN_MINT or REWARD_TOKEN_MINTS when REWARD_MODE=token");
+if ((rewardMode === "token" || rewardMode === "alternating") && configuredRewardTokens.length === 0) {
+  throw new Error(
+    rewardMode === "alternating"
+      ? "Missing required env PUMP_TOKEN_MINT when REWARD_MODE=alternating"
+      : "Missing required env REWARD_TOKEN_MINT or REWARD_TOKEN_MINTS when REWARD_MODE=token"
+  );
 }
-if (rewardTokenSymbols.length > 0 && rewardTokenSymbols.length !== configuredRewardTokens.length) {
+if (rewardMode !== "alternating" && rewardTokenSymbols.length > 0 && rewardTokenSymbols.length !== configuredRewardTokens.length) {
   throw new Error(
     `REWARD_TOKEN_SYMBOLS count must match configured reward token count; got ${rewardTokenSymbols.length} symbols for ${configuredRewardTokens.length} mints`
   );
@@ -150,18 +160,20 @@ export function treasuryKeypair() {
 }
 
 export function rewardTokenForEpoch(epochId: string) {
-  if (config.rewardMode === "sol" || config.rewardTokens.length === 0) {
-    return { mint: config.rewardTokenMint, symbol: "SOL", index: 0, count: 1 };
-  }
-
   const timestamp = Date.parse(epochId);
   const epochSizeMs = config.epochMinutes * 60_000;
   const epochIndex = Number.isFinite(timestamp) ? Math.floor(timestamp / epochSizeMs) : 0;
+  const kind = rewardKindForEpoch(epochId, config.epochMinutes, config.rewardMode);
+  if (kind === "sol") {
+    return { mint: config.rewardTokenMint, symbol: "SOL", index: 0, count: 2, kind } as const;
+  }
+
   const rotationIndex = ((epochIndex % config.rewardTokens.length) + config.rewardTokens.length) % config.rewardTokens.length;
   const rewardToken = config.rewardTokens[rotationIndex];
   return {
     ...rewardToken,
     index: rotationIndex,
-    count: config.rewardTokens.length
+    count: config.rewardMode === "alternating" ? 2 : config.rewardTokens.length,
+    kind
   };
 }
