@@ -49,7 +49,9 @@ export const brand = {
     "Historical Diamond Scores",
     "Community comparison"
   ],
-  tokenMint: process.env.NEXT_PUBLIC_DIAMOND_TOKEN_MINT?.trim() || "",
+  tokenMint:
+    process.env.NEXT_PUBLIC_DIAMOND_TOKEN_MINT?.trim() ||
+    "Ey7uCtMRCrc45g2HmQF1L5CJXx5zDFFMfQXt5Huxpump",
   xUrl: process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/DiamondIndex_",
   telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "",
   discordUrl: process.env.NEXT_PUBLIC_DISCORD_URL?.trim() || "",
