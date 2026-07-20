@@ -310,6 +310,14 @@ export default async function Page() {
 
       <footer>
         <div><Image src={brand.logoPath} alt="" width={46} height={38} /><span><strong>Proof of Conviction</strong><small>Diamond hands leave a record.</small></span></div>
+        <a
+          className="dexscreener-button"
+          href={`https://dexscreener.com/solana/${brand.tokenMint}`}
+          rel="noreferrer"
+          target="_blank"
+        >
+          View on Dexscreener
+        </a>
         <p>Experimental on-chain rewards protocol. Digital assets are volatile. Eligibility and rewards depend on published rules, available treasury funds, and successful settlement.</p>
       </footer>
     </main>
