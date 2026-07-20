@@ -1,28 +1,32 @@
-# DI6900
+# Proof of Conviction
 
-DI6900 is a Solana-focused Diamond Index and reward reporting surface.
+Proof of Conviction is an on-chain holding reputation and SOL reward protocol on Solana.
 
-- Project: `DI6900`
-- Ticker: `$DI6900`
-- Tagline: `Paper hands trade. Diamond hands collect.`
-- Reward cadence: configurable, defaulting to every 5 minutes.
-- Reward rotation: five configured basket tokens rotate one per epoch.
-- Proofs: settled distribution transactions and per-wallet reward totals are published on the site.
-- Diamond Hand Score: continuous holding adds `0.10x` allocation weight per full day.
+- Project: `Proof of Conviction`
+- Ticker: `$POC`
+- Reward cadence: every 5 minutes
+- Reward pool: 75% of spendable treasury SOL after configured reserves
+- Weighting: token balance × holding-time multiplier × holder-rank multiplier
+- Permanent rule: any indexed balance decrease permanently ends reward eligibility
+- Proofs: settled SOL transaction signatures and per-wallet totals are published on the site
 
-## Values the project owner must provide
+## Conviction multipliers
 
-- `$DI6900` mint address
-- Treasury public address
-- Reward asset configuration
-- Five reward token mint addresses for the rotation
-- Confirmed Solana mint for every displayed basket member
-- Auditable scanner project count, or leave `NEXT_PUBLIC_SCANNED_PROJECTS` unset
-- Solana network
-- RPC endpoint
-- Snapshot interval
+Holding tiers range from `1x` at baseline to `15x` after one month. Rank tiers add `2x` for Top 10, `1.5x` for Top 50, and `1.25x` for Top 100. The two multipliers stack.
+
+## Production safety
+
+Mainnet gates default to false. Review at least one complete dry-run epoch before enabling distributions. The worker requires `holder_states`; it fails closed when permanent eligibility tracking is unavailable.
+
+Never commit or share treasury private keys, Supabase service-role keys, or RPC credentials.
+
+## Owner-provided values
+
+- `$POC` mint address
+- Treasury wallet and creator-fee authority
+- Solana RPC endpoint
+- Supabase project credentials
 - Minimum eligible balance
-- Holding-window rules
-- Approved token universe
-- Social links
-- Legal disclosure approval
+- Excluded system wallets
+- Public website and social links
+- Approved legal and risk disclosure

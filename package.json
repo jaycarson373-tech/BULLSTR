@@ -1,5 +1,5 @@
 {
-  "name": "diamond-index",
+  "name": "proof-of-conviction",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -14,7 +14,8 @@
     "worker:dev": "tsx worker/src/scheduler.ts",
     "worker:build": "tsc -p worker/tsconfig.json",
     "worker:start": "node worker/dist/scheduler.js",
-    "check": "npm run typecheck && npm run worker:build && npm run build"
+    "test": "tsx --test worker/src/*.test.ts",
+    "check": "npm run typecheck && npm run test && npm run worker:build && npm run build"
   },
   "dependencies": {
     "@solana/spl-token": "^0.4.14",

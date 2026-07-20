@@ -25,10 +25,6 @@ function addDecimalStrings(left: string, right: string) {
   return fraction ? `${whole}.${fraction}` : whole;
 }
 
-function holderTier(multiplierBps: number) {
-  return Math.min(5, Math.max(1, 1 + Math.floor((multiplierBps - 10_000) / 1_000)));
-}
-
 export async function GET(request: NextRequest) {
   const wallet = request.nextUrl.searchParams.get("wallet")?.trim() ?? "";
   if (!wallet) return NextResponse.json({ error: "Enter a Solana wallet address." }, { status: 400 });
@@ -103,7 +99,6 @@ export async function GET(request: NextRequest) {
             streakEpochs: Number(holder.current_streak_epochs ?? 0),
             multiplierBps,
             multiplier: `${(multiplierBps / 10_000).toFixed(2)}x`,
-            diamondTier: holderTier(multiplierBps),
             permanentlyIneligible: Boolean(holder.permanently_ineligible),
             ineligibilityReason: holder.ineligible_reason
           }

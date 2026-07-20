@@ -1,442 +1,317 @@
 import Image from "next/image";
 import { createClient } from "@supabase/supabase-js";
 import { brand } from "./brand";
-import { ScoreCounter } from "./ScoreCounter";
+import { EpochCountdown } from "./EpochCountdown";
 import { WalletProofLookup } from "./WalletProofLookup";
 
 export const dynamic = "force-dynamic";
 
-type RoundRow = {
+type RewardRound = {
   epochId: string;
   amount: number;
   recipients: number;
-  status: string;
-  rewardAsset: string;
   proofs: string[];
 };
 
-type Stat = {
-  label: string;
-  value: string;
-  note: string;
+type ConvictionWallet = {
+  wallet: string;
+  balance: number;
+  multiplier: number;
+  eligibleSince: string | null;
 };
 
 type FallenWallet = {
   wallet: string;
-  reason: string;
   fallenAt: string | null;
 };
 
-function formatAmount(value: number) {
+type ProtocolData = {
+  rounds: RewardRound[];
+  leaders: ConvictionWallet[];
+  fallen: FallenWallet[];
+  activeWallets: number;
+};
+
+const emptyData: ProtocolData = { rounds: [], leaders: [], fallen: [], activeWallets: 0 };
+
+function formatAmount(value: number, maximumFractionDigits = 4) {
   if (!Number.isFinite(value) || value <= 0) return "0";
-  return value.toLocaleString(undefined, { maximumFractionDigits: 4 });
+  return value.toLocaleString(undefined, { maximumFractionDigits });
 }
 
-function formatEpoch(epochId: string) {
-  const date = Date.parse(epochId);
-  if (!Number.isFinite(date)) return epochId.slice(0, 16);
+function formatDate(value: string | null) {
+  if (!value) return "Not recorded";
+  const parsed = Date.parse(value);
+  if (!Number.isFinite(parsed)) return "Not recorded";
   return new Intl.DateTimeFormat("en", {
     month: "short",
     day: "numeric",
     hour: "numeric",
     minute: "2-digit"
-  }).format(new Date(date));
-}
-
-async function getRewardRounds(): Promise<RoundRow[]> {
-  const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRole = process.env.SUPABASE_SERVICE_ROLE;
-  if (!supabaseUrl || !serviceRole) return [];
-
-  try {
-    const supabase = createClient(supabaseUrl, serviceRole, {
-      auth: { persistSession: false }
-    });
-
-    const { data: epochs } = await supabase
-      .from("epochs")
-      .select("epoch_id,status,started_at")
-      .order("started_at", { ascending: false })
-      .limit(6);
-
-    const epochIds = (epochs ?? []).map((epoch) => String(epoch.epoch_id));
-    const { data: payouts } = await supabase
-      .from("payouts")
-      .select("epoch_id,reward_amount,status,reward_asset,tx_sig")
-      .eq("status", "settled")
-      .in("epoch_id", epochIds.length ? epochIds : ["__none__"]);
-
-    const totals = new Map<string, { amount: number; recipients: number; rewardAsset: string; proofs: Set<string> }>();
-    for (const payout of payouts ?? []) {
-      const epochId = String(payout.epoch_id);
-      const rewardAsset = String(payout.reward_asset ?? brand.rewardSymbol);
-      const key = `${epochId}:${rewardAsset}`;
-      const current = totals.get(key) ?? { amount: 0, recipients: 0, rewardAsset, proofs: new Set<string>() };
-      current.amount += Number(payout.reward_amount ?? 0);
-      current.recipients += 1;
-      if (payout.tx_sig) current.proofs.add(String(payout.tx_sig));
-      totals.set(key, current);
-    }
-
-    return (epochs ?? [])
-      .map((epoch) => {
-        const epochId = String(epoch.epoch_id);
-        const settled = [...totals.entries()].find(([key]) => key.startsWith(`${epochId}:`))?.[1];
-        return {
-          epochId,
-          amount: settled?.amount ?? 0,
-          recipients: settled?.recipients ?? 0,
-          rewardAsset: settled?.rewardAsset ?? brand.rewardSymbol,
-          proofs: [...(settled?.proofs ?? [])].slice(0, 3),
-          status: String(epoch.status ?? "scheduled")
-        };
-      })
-      .filter((round) => round.amount > 0 && round.proofs.length > 0);
-  } catch {
-    return [];
-  }
-}
-
-async function getFallenWallets(): Promise<FallenWallet[]> {
-  const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRole = process.env.SUPABASE_SERVICE_ROLE;
-  if (!supabaseUrl || !serviceRole) return [];
-
-  try {
-    const supabase = createClient(supabaseUrl, serviceRole, {
-      auth: { persistSession: false }
-    });
-    const { data, error } = await supabase
-      .from("holder_states")
-      .select("wallet,ineligible_reason,ineligible_at")
-      .eq("permanently_ineligible", true)
-      .eq("ineligible_reason", "sold_after_eligibility")
-      .order("ineligible_at", { ascending: false })
-      .limit(20);
-
-    if (error) return [];
-    return (data ?? []).map((row) => ({
-      wallet: String(row.wallet),
-      reason: "Balance decreased after eligibility",
-      fallenAt: row.ineligible_at ? String(row.ineligible_at) : null
-    }));
-  } catch {
-    return [];
-  }
+  }).format(new Date(parsed));
 }
 
 function shortWallet(wallet: string) {
   return `${wallet.slice(0, 6)}...${wallet.slice(-6)}`;
 }
 
-function buildStats(rounds: RoundRow[]): Stat[] {
-  const completed = rounds.filter((round) => round.amount > 0);
-  const distributed = completed.reduce((sum, round) => sum + round.amount, 0);
-  const recipients = completed.reduce((sum, round) => sum + round.recipients, 0);
+async function getProtocolData(): Promise<ProtocolData> {
+  const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRole = process.env.SUPABASE_SERVICE_ROLE;
+  if (!supabaseUrl || !serviceRole) return emptyData;
 
-  return [
-    {
-      label: "Reward cadence",
-      value: brand.rewardInterval,
-      note: `${brand.rewardRotation.length}-token rotation`
-    },
-    {
-      label: "Eligible balance",
-      value: brand.minimumEligibleBalance,
-      note: `${brand.ticker} minimum`
-    },
-    {
-      label: "Settled rewards",
-      value: `${formatAmount(distributed)} ${brand.rewardSymbol}`,
-      note: `${recipients} recipient records`
+  try {
+    const supabase = createClient(supabaseUrl, serviceRole, { auth: { persistSession: false } });
+    const [epochsResult, leadersResult, activeResult, fallenResult] = await Promise.all([
+      supabase.from("epochs").select("epoch_id,started_at").order("started_at", { ascending: false }).limit(8),
+      supabase
+        .from("holder_states")
+        .select("wallet,source_balance,current_multiplier_bps,eligible_since")
+        .eq("permanently_ineligible", false)
+        .order("source_balance", { ascending: false })
+        .limit(10),
+      supabase.from("holder_states").select("wallet", { count: "exact", head: true }).eq("permanently_ineligible", false),
+      supabase
+        .from("holder_states")
+        .select("wallet,ineligible_at")
+        .eq("permanently_ineligible", true)
+        .eq("ineligible_reason", "sold_after_eligibility")
+        .order("ineligible_at", { ascending: false })
+        .limit(20)
+    ]);
+
+    if (epochsResult.error || leadersResult.error || activeResult.error || fallenResult.error) return emptyData;
+
+    const epochIds = (epochsResult.data ?? []).map((epoch) => String(epoch.epoch_id));
+    const payoutResult = await supabase
+      .from("payouts")
+      .select("epoch_id,reward_amount,tx_sig")
+      .eq("status", "settled")
+      .eq("reward_asset", "SOL")
+      .in("epoch_id", epochIds.length ? epochIds : ["__none__"]);
+
+    if (payoutResult.error) return emptyData;
+
+    const totals = new Map<string, { amount: number; recipients: number; proofs: Set<string> }>();
+    for (const payout of payoutResult.data ?? []) {
+      const epochId = String(payout.epoch_id);
+      const current = totals.get(epochId) ?? { amount: 0, recipients: 0, proofs: new Set<string>() };
+      current.amount += Number(payout.reward_amount ?? 0);
+      current.recipients += 1;
+      if (payout.tx_sig) current.proofs.add(String(payout.tx_sig));
+      totals.set(epochId, current);
     }
-  ];
+
+    const rounds = (epochsResult.data ?? [])
+      .map((epoch) => {
+        const epochId = String(epoch.epoch_id);
+        const total = totals.get(epochId);
+        return {
+          epochId,
+          amount: total?.amount ?? 0,
+          recipients: total?.recipients ?? 0,
+          proofs: [...(total?.proofs ?? [])].slice(0, 3)
+        };
+      })
+      .filter((round) => round.amount > 0 && round.proofs.length > 0);
+
+    return {
+      rounds,
+      activeWallets: activeResult.count ?? 0,
+      leaders: (leadersResult.data ?? []).map((row) => ({
+        wallet: String(row.wallet),
+        balance: Number(row.source_balance ?? 0),
+        multiplier: Number(row.current_multiplier_bps ?? 10_000) / 10_000,
+        eligibleSince: row.eligible_since ? String(row.eligible_since) : null
+      })),
+      fallen: (fallenResult.data ?? []).map((row) => ({
+        wallet: String(row.wallet),
+        fallenAt: row.ineligible_at ? String(row.ineligible_at) : null
+      }))
+    };
+  } catch {
+    return emptyData;
+  }
 }
 
 export default async function Page() {
-  const [rounds, fallenWallets] = await Promise.all([getRewardRounds(), getFallenWallets()]);
-  const stats = buildStats(rounds);
-  const leadingScore = brand.basket.find((token) => Number.isFinite(Number.parseFloat(token.score)))?.score ?? "Pending";
+  const data = await getProtocolData();
+  const totalDistributed = data.rounds.reduce((sum, round) => sum + round.amount, 0);
+  const countdownMinutes = Number.parseInt(brand.rewardInterval, 10) || 5;
 
   return (
-    <main className="diamond-page">
-      <div className="diamond-orbit" aria-hidden="true" />
-      <div className="chrome-grid" aria-hidden="true" />
-
-      <section className="hero-shell" aria-label={`${brand.name} overview`}>
-        <nav className="topbar" aria-label="Primary links">
-          <div className="brand-mark">
-            <Image src={brand.logoPath} alt="" width={48} height={48} priority />
-            <div>
-              <span>{brand.displayName}</span>
-              <small>{brand.descriptor}</small>
-            </div>
-          </div>
-          <div className="nav-actions">
-            {brand.xUrl ? <a href={brand.xUrl}>X</a> : <span>X pending</span>}
-            <span>{brand.tokenMint ? `CA: ${brand.tokenMint}` : "CA pending"}</span>
-          </div>
+    <main className="poc-page">
+      <div className="crystal-field" aria-hidden="true" />
+      <header className="site-header">
+        <a className="identity" href="#top">
+          <Image src={brand.logoPath} alt="" width={42} height={35} priority />
+          <span><strong>POC</strong><small>Proof of Conviction</small></span>
+        </a>
+        <nav aria-label="Primary navigation">
+          <a href="#multipliers">Multipliers</a>
+          <a href="#leaderboard">Leaderboard</a>
+          <a href="#proofs">Proofs</a>
+          {brand.xUrl ? <a href={brand.xUrl} rel="noreferrer" target="_blank">X</a> : null}
         </nav>
+        <a
+          className={`contract-link${brand.tokenMint ? "" : " is-pending"}`}
+          href={brand.tokenMint ? `https://solscan.io/token/${brand.tokenMint}` : undefined}
+          rel="noreferrer"
+          target={brand.tokenMint ? "_blank" : undefined}
+          title={brand.tokenMint || "Contract address pending"}
+        >
+          <span>CA</span>{brand.tokenMint ? shortWallet(brand.tokenMint) : "Pending"}
+        </a>
+      </header>
 
-        <div className="hero-grid">
-          <div className="hero-copy">
-            <p className="eyebrow">{brand.ticker} on Solana</p>
-            <h1>{brand.name}</h1>
-            <p className="tagline">{brand.tagline}</p>
-            <p className="subcopy">{brand.secondaryTagline}</p>
-
-            <div className="hero-actions">
-              <a href="#basket">View Diamond Basket</a>
-              <a href="#proofs">View Proofs</a>
-            </div>
-
-            <div className="hero-scanner" aria-label="Live DI6900 scanner status">
-              <div className="hero-scanner-state">
-                <span className="scanner-pulse" aria-hidden="true" />
-                <div>
-                  <small>Scanner Status</small>
-                  <strong>{brand.scanner.status}</strong>
-                </div>
-              </div>
-              <article>
-                <small>DI Score</small>
-                <strong><ScoreCounter value={leadingScore} /></strong>
-              </article>
-              <article>
-                <small>Projects Scanned</small>
-                <strong>{brand.scanner.projectsScanned}</strong>
-              </article>
-              <article>
-                <small>Last Updated</small>
-                <strong>{brand.scanner.lastUpdated}</strong>
-              </article>
-            </div>
+      <section className="hero" id="top">
+        <div className="hero-copy">
+          <p className="kicker"><span /> On-chain reputation protocol</p>
+          <h1>PROOF OF<br /><em>CONVICTION.</em></h1>
+          <p className="hero-lede">{brand.secondaryTagline}</p>
+          <div className="hero-actions">
+            <a className="primary-action" href="#wallet">Check your conviction</a>
+            <a className="secondary-action" href="#mechanism">View the protocol</a>
           </div>
+          <div className="rule-line">
+            <span>Diamond hands only</span>
+            <strong>Sell once. Eligibility ends forever.</strong>
+          </div>
+        </div>
 
-          <div className="logo-stage" aria-label={`${brand.displayName} logo`}>
-            <span className="logo-aura" aria-hidden="true" />
-            <Image src={brand.logoPath} alt={`${brand.displayName} logo`} width={520} height={520} priority />
+        <div className="hero-visual">
+          <div className="image-halo" aria-hidden="true" />
+          <Image src={brand.logoPath} alt="Diamond fist logo" width={480} height={396} priority />
+          <div className="next-drop">
+            <span>Next SOL distribution</span>
+            <strong><EpochCountdown minutes={countdownMinutes} /></strong>
+            <em>Live 5-minute epoch</em>
           </div>
         </div>
       </section>
 
-      <section className="stats-panel" aria-label="DI6900 live status">
-        {stats.map((stat) => (
-          <article key={stat.label}>
-            <span>{stat.label}</span>
-            <strong>{stat.value}</strong>
-            <em>{stat.note}</em>
-          </article>
-        ))}
+      <section className="protocol-strip" aria-label="Protocol status">
+        <article><span>Treasury distributed</span><strong>{brand.treasuryDistribution}</strong><em>of spendable SOL per epoch</em></article>
+        <article><span>Reward cadence</span><strong>{brand.rewardInterval}</strong><em>on-chain settlement cycle</em></article>
+        <article><span>Eligible wallets</span><strong>{data.activeWallets}</strong><em>currently indexed</em></article>
+        <article><span>SOL distributed</span><strong>{formatAmount(totalDistributed)} SOL</strong><em>settled proofs only</em></article>
       </section>
 
-      <section className="basket-panel" id="basket" aria-label="Current experimental Diamond Basket">
-        <div className="basket-heading">
-          <div>
-            <p className="eyebrow">Diamond Index · Market Intelligence</p>
-            <h2>Top DI6900 Rankings</h2>
-          </div>
-          <p>{brand.scoreDescription}</p>
+      <section className="mechanism-section" id="mechanism">
+        <div className="section-heading">
+          <p className="kicker">The mechanism</p>
+          <h2>Your wallet becomes<br />your reputation.</h2>
+          <p>POC converts uninterrupted holding time and holder rank into a transparent allocation weight. Every round is calculated from public snapshots and settled on Solana.</p>
         </div>
+        <div className="mechanism-flow">
+          <article><span>01</span><strong>Hold $POC</strong><p>Establish an eligible on-chain balance.</p></article>
+          <article><span>02</span><strong>Build conviction</strong><p>Time and rank increase your allocation weight.</p></article>
+          <article><span>03</span><strong>Receive SOL</strong><p>75% of spendable treasury SOL enters each reward pool.</p></article>
+          <article><span>04</span><strong>Keep the proof</strong><p>Every settled payout remains publicly verifiable.</p></article>
+        </div>
+      </section>
 
-        <div className="ranking-header" aria-hidden="true">
-          <span>Rank / Project</span>
-          <span>DI Score</span>
-          <span>Market Signals</span>
-          <span>Conviction</span>
+      <section className="multiplier-section" id="multipliers">
+        <div className="section-heading compact">
+          <p className="kicker">Conviction engine</p>
+          <h2>Time × rank.</h2>
+          <p>Your holding multiplier and holder-rank multiplier combine to determine reward weight.</p>
         </div>
-        <div className="basket-grid" aria-label="Top five DI6900 projects">
-          {brand.basket.map((token, index) => {
-            const statusClass = token.conviction.toLowerCase().replace(/\s+/g, "-");
-            return (
-              <article className="basket-card" key={token.name}>
-                <div className="token-row">
-                  <span className="ranking-number">{String(index + 1).padStart(2, "0")}</span>
-                  <span className="token-logo" aria-hidden="true">
-                    <Image src={token.logoPath} alt="" width={42} height={42} />
-                  </span>
-                  <div>
-                    <span>{token.symbol} · Index Member</span>
-                    <strong>{token.name}</strong>
-                  </div>
-                </div>
-                <div className="score-row">
-                  <span>Diamond Score</span>
-                  <strong><ScoreCounter value={token.score} /></strong>
-                </div>
-                <div className="signal-grid">
-                  <div><span>Holder Retention</span><strong>{token.retention}</strong></div>
-                  <div><span>Momentum</span><strong>{token.momentum}</strong></div>
-                  <div><span>Social Strength</span><strong>{token.social}</strong></div>
-                </div>
-                <div className="conviction-cell">
-                  <span>Conviction</span>
-                  <strong className={`status-pill status-${statusClass}`}>{token.conviction}</strong>
-                </div>
+        <div className="multiplier-grid">
+          <div className="tier-panel hold-panel">
+            <div className="tier-title"><span>Holding time</span><strong>Up to 15x</strong></div>
+            {brand.holdTiers.map((tier, index) => (
+              <article className={index === brand.holdTiers.length - 1 ? "tier-peak" : ""} key={tier.window}>
+                <span><i>{String(index).padStart(2, "0")}</i>{tier.window}</span>
+                <strong>{tier.multiplier}</strong>
               </article>
-            );
-          })}
+            ))}
+          </div>
+          <div className="tier-panel rank-panel">
+            <div className="tier-title"><span>Holder rank</span><strong>Stackable</strong></div>
+            {brand.rankTiers.map((tier, index) => (
+              <article key={tier.rank}>
+                <span><i>{String(index + 1).padStart(2, "0")}</i><b>{tier.rank}</b><small>{tier.note}</small></span>
+                <strong>{tier.multiplier}</strong>
+              </article>
+            ))}
+            <p className="multiplier-note">Example: one-month conviction at Top 10 rank produces a combined 30x allocation weight.</p>
+          </div>
         </div>
-
-        <p className="basket-disclosure">
-          Experimental launch basket supplied by the project owner. Token mints and score inputs must be verified before
-          rewards are enabled. Public rankings and supporting analytics are coming soon.
-        </p>
       </section>
 
-      <section className="index-panel" aria-label="DI6900 methodology preview">
-        <div>
-          <p className="eyebrow">How the index works</p>
-          <h2>Conviction, measured.</h2>
+      <section className="leaderboard-section" id="leaderboard">
+        <div className="section-heading row-heading">
+          <div><p className="kicker">Live conviction board</p><h2>Reputation, ranked.</h2></div>
+          <p>Only current, eligible wallet snapshots appear. Balances and weights update with the worker.</p>
         </div>
-        <ol>
-          <li>Wallets are analyzed</li>
-          <li>Diamond Scores are calculated</li>
-          <li>Top communities qualify</li>
-          <li>Index weights are assigned</li>
-          <li>Rewards are distributed</li>
-        </ol>
-      </section>
-
-      <section className="rotation-panel" aria-label="DI6900 reward rotation">
-        <div>
-          <p className="eyebrow">5-token reward rotation</p>
-          <h2>Every epoch drops a different basket token.</h2>
-        </div>
-        <div className="rotation-list">
-          {brand.rewardRotation.map((token, index) => (
-            <article key={`${token}-${index}`}>
-              <span>Slot {index + 1}</span>
-              <strong>{token}</strong>
-              <em>{index === 0 ? "Current cycle starts here" : "Rotates in sequence"}</em>
+        <div className="leaderboard-table">
+          <div className="table-head"><span>Rank / Wallet</span><span>POC held</span><span>Conviction since</span><span>Weight</span></div>
+          {data.leaders.length ? data.leaders.map((wallet, index) => (
+            <article key={wallet.wallet}>
+              <span><b>{String(index + 1).padStart(2, "0")}</b><a href={`https://solscan.io/account/${wallet.wallet}`} rel="noreferrer" target="_blank">{shortWallet(wallet.wallet)}</a></span>
+              <strong>{formatAmount(wallet.balance, 2)}</strong>
+              <span>{formatDate(wallet.eligibleSince)}</span>
+              <em>{wallet.multiplier.toFixed(2)}x</em>
             </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="multiplier-panel" aria-label="Diamond Hand Score multiplier">
-        <div className="multiplier-copy">
-          <p className="eyebrow">Diamond Hand Score</p>
-          <h2>Hold longer. Weigh more.</h2>
-          <p>{brand.multiplierDescription}</p>
-        </div>
-        <div className="multiplier-ladder">
-          {brand.multiplierTiers.map((tier) => (
-            <article key={tier.diamonds}>
-              <strong>{tier.diamonds}</strong>
-              <span>{tier.window}</span>
-              <em>{tier.multiplier}</em>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="rounds-panel" id="proofs" aria-label="On-chain distribution proofs">
-        <div className="panel-heading">
-          <p className="eyebrow">On-chain proofs</p>
-          <h2>Every settled distribution is verifiable.</h2>
-        </div>
-        <div className="round-list">
-          {rounds.length ? (
-            rounds.map((round) => (
-              <article key={round.epochId}>
-                <span>{formatEpoch(round.epochId)}</span>
-                <strong>{formatAmount(round.amount)} {round.rewardAsset}</strong>
-                <em>{round.recipients} wallets · {round.status}</em>
-                <div className="round-proof-links">
-                  {round.proofs.length ? (
-                    round.proofs.map((signature, index) => (
-                      <a
-                        href={`https://solscan.io/tx/${signature}`}
-                        key={signature}
-                        rel="noreferrer"
-                        target="_blank"
-                      >
-                        Proof {index + 1}
-                      </a>
-                    ))
-                  ) : (
-                    <span>No settled transaction</span>
-                  )}
-                </div>
-              </article>
-            ))
-          ) : (
-            <div className="proof-empty">
-              <strong>No completed distributions yet.</strong>
-              <span>Settled transaction proofs will appear here automatically.</span>
-            </div>
+          )) : (
+            <div className="data-empty"><strong>0 indexed wallets</strong><span>The first completed holder snapshot will populate this board.</span></div>
           )}
         </div>
       </section>
 
-      <section className="wallet-proof-panel" aria-label="Wallet airdrop proof lookup">
-        <div className="wallet-proof-heading">
-          <div>
-            <p className="eyebrow">Wallet proof lookup</p>
-            <h2>See every airdrop you received.</h2>
-          </div>
-          <p>Paste any public Solana wallet to view its indexed balance, Diamond Hand Score, reward totals, and transaction proofs.</p>
+      <section className="proof-section" id="proofs">
+        <div className="section-heading row-heading">
+          <div><p className="kicker">On-chain proofs</p><h2>Every SOL matters.</h2></div>
+          <p>Only settled distributions with transaction signatures are published.</p>
+        </div>
+        <div className="proof-grid">
+          {data.rounds.length ? data.rounds.map((round) => (
+            <article key={round.epochId}>
+              <span>{formatDate(round.epochId)}</span>
+              <strong>{formatAmount(round.amount)} SOL</strong>
+              <em>{round.recipients} recipient{round.recipients === 1 ? "" : "s"}</em>
+              <div>{round.proofs.map((signature, index) => <a href={`https://solscan.io/tx/${signature}`} key={signature} rel="noreferrer" target="_blank">Proof {index + 1}</a>)}</div>
+            </article>
+          )) : <div className="data-empty"><strong>0 settled distributions</strong><span>Verified SOL transactions will appear after the first completed epoch.</span></div>}
+        </div>
+      </section>
+
+      <section className="wallet-section" id="wallet">
+        <div className="section-heading row-heading">
+          <div><p className="kicker">Wallet reputation</p><h2>Read your proof.</h2></div>
+          <p>No connection and no signature. Paste a public Solana wallet to inspect its reputation and settled rewards.</p>
         </div>
         <WalletProofLookup />
       </section>
 
-      <section className="fallen-panel" aria-label="Permanently ineligible wallets">
-        <div className="fallen-heading">
-          <div>
-            <p className="eyebrow">Diamond hands rule</p>
-            <h2>Fallen Wallets</h2>
-          </div>
-          <p>Any indexed DI6900 balance decrease permanently removes that wallet from future reward rounds.</p>
+      <section className="fallen-section">
+        <div className="section-heading row-heading">
+          <div><p className="kicker danger">Permanent record</p><h2>Fallen wallets.</h2></div>
+          <p>Any indexed balance decrease permanently ends reward eligibility for that wallet.</p>
         </div>
-        {fallenWallets.length ? (
-          <div className="fallen-list">
-            <div className="fallen-list-header" aria-hidden="true">
-              <span>Wallet</span>
-              <span>Status</span>
-              <span>Recorded</span>
-            </div>
-            {fallenWallets.map((entry) => (
-              <article key={entry.wallet}>
-                <a href={`https://solscan.io/account/${entry.wallet}`} rel="noreferrer" target="_blank">
-                  {shortWallet(entry.wallet)}
-                </a>
-                <strong>Fallen</strong>
-                <span>{formatEpoch(entry.fallenAt ?? "")}</span>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className="fallen-empty">
-            <strong>0 fallen wallets</strong>
-            <span>No permanent sell disqualifications have been recorded.</span>
-          </div>
-        )}
-      </section>
-
-      <section className="roadmap-panel" aria-label="DI6900 roadmap">
-        <div>
-          <p className="eyebrow">Coming soon</p>
-          <h2>The Diamond Terminal expands.</h2>
-        </div>
-        <div className="roadmap-list">
-          {brand.roadmap.map((item) => (
-            <article key={item}>
-              <span aria-hidden="true" />
-              <strong>{item}</strong>
+        <div className="fallen-table">
+          {data.fallen.length ? data.fallen.map((wallet) => (
+            <article key={wallet.wallet}>
+              <a href={`https://solscan.io/account/${wallet.wallet}`} rel="noreferrer" target="_blank">{shortWallet(wallet.wallet)}</a>
+              <strong>Conviction broken</strong>
+              <span>{formatDate(wallet.fallenAt)}</span>
             </article>
-          ))}
+          )) : <div className="data-empty"><strong>0 fallen wallets</strong><span>No permanent sell disqualifications have been recorded.</span></div>}
         </div>
       </section>
 
-      <section className="risk-panel" aria-label="Risk disclosure">
-        Diamond Score is an experimental analytical metric. It does not measure future performance and is not financial
-        advice. Digital assets are volatile and may lose substantial or all of their value.
+      <section className="roadmap-section">
+        <div className="section-heading compact"><p className="kicker">Beyond the beta</p><h2>The conviction ecosystem.</h2></div>
+        <div className="roadmap-grid">
+          {brand.roadmap.map((item) => <article key={item.title}><span>{item.phase}</span><strong>{item.title}</strong><p>{item.copy}</p></article>)}
+        </div>
       </section>
 
-      <div className="bottom-banner" aria-label={`${brand.displayName} banner`}>
-        <Image src={brand.bannerPath} alt={`${brand.displayName} diamond banner`} width={1280} height={426} />
-      </div>
+      <footer>
+        <div><Image src={brand.logoPath} alt="" width={46} height={38} /><span><strong>Proof of Conviction</strong><small>Diamond hands leave a record.</small></span></div>
+        <p>Experimental on-chain rewards protocol. Digital assets are volatile. Eligibility and rewards depend on published rules, available treasury funds, and successful settlement.</p>
+      </footer>
     </main>
   );
 }

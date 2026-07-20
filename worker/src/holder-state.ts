@@ -1,6 +1,7 @@
 import { config } from "./config.js";
 import { supabase } from "./db.js";
 import type { Holder } from "./snapshot.js";
+import { combinedMultiplierBps, holdMultiplierBps, rankMultiplierBps } from "./conviction.js";
 
 type HolderStateRow = {
   wallet: string;
@@ -14,20 +15,12 @@ type HolderStateRow = {
   ineligible_reason: string | null;
 };
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-
 function parseRaw(value: unknown) {
   try {
     return BigInt(String(value ?? "0"));
   } catch {
     return 0n;
   }
-}
-
-function holdMultiplierBps(eligibleSince: string | null | undefined, nowMs: number) {
-  const startedAt = eligibleSince ? Date.parse(eligibleSince) : nowMs;
-  const heldDays = Number.isFinite(startedAt) ? Math.max(0, Math.floor((nowMs - startedAt) / DAY_MS)) : 0;
-  return 10_000 + heldDays * 1_000;
 }
 
 function isMissingHolderStateTable(error: unknown) {
@@ -72,7 +65,7 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
 
       const soldAfterEligibility = previousRaw > 0n && (!current || current.rawBalance < previousRaw);
       const droppedBelowThreshold = !current || current.uiBalance < config.eligibilityMin;
-      const atOrAboveHolderCap = current && current.holderPct >= config.maxHolderPct;
+      const atOrAboveHolderCap = config.enforceMaxHolderPct && current && current.holderPct >= config.maxHolderPct;
 
       if (soldAfterEligibility) {
         updates.push({
@@ -142,7 +135,7 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
     for (const holder of currentHolders) {
       const existing = stateByWallet.get(holder.wallet);
       if (existing || permanentlyRemoved.has(holder.wallet)) continue;
-      if (holder.holderPct < config.maxHolderPct) continue;
+      if (!config.enforceMaxHolderPct || holder.holderPct < config.maxHolderPct) continue;
 
       updates.push({
         wallet: holder.wallet,
@@ -161,14 +154,19 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
       permanentlyRemoved.add(holder.wallet);
     }
 
+    let activeRank = 0;
     for (const holder of eligibleHolders) {
       const existing = stateByWallet.get(holder.wallet);
       if (existing?.permanently_ineligible || permanentlyRemoved.has(holder.wallet)) continue;
 
+      activeRank += 1;
+
       const highestRaw = parseRaw(existing?.highest_source_balance_raw);
       const nextStreak = existing ? (existing.current_streak_epochs ?? 0) + 1 : 1;
       const eligibleSince = existing?.eligible_since ?? now;
-      const multiplierBps = holdMultiplierBps(eligibleSince, nowMs);
+      const holdingBps = holdMultiplierBps(eligibleSince, nowMs);
+      const rankingBps = rankMultiplierBps(activeRank, config);
+      const multiplierBps = combinedMultiplierBps(holdingBps, rankingBps);
       const nextHighest = highestRaw > holder.rawBalance ? highestRaw : holder.rawBalance;
 
       updates.push({
@@ -203,10 +201,7 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
     }
     return eligible;
   } catch (error) {
-    if (isMissingHolderStateTable(error)) {
-      console.warn(`[${epochId}] holder_states table missing; multiplier/permanent-ineligibility tracking is disabled`);
-      return eligibleHolders.map((holder) => ({ ...holder, multiplierBps: 10_000, streakEpochs: 1, eligibleSince: null }));
-    }
+    if (isMissingHolderStateTable(error)) throw new Error("holder_states table is required for Proof of Conviction eligibility");
     throw error;
   }
 }

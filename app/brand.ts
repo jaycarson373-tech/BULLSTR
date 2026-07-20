@@ -1,63 +1,41 @@
-const fallbackRewardRotation = ["SPX6900", "MOG", "GIGA", "FARTCOIN", "ANSEM"];
-const configuredRewardRotation =
-  process.env.NEXT_PUBLIC_REWARD_ROTATION?.split(",")
-    .map((token) => token.trim())
-    .filter(Boolean) ?? [];
-
 export const brand = {
-  name: "DI6900",
-  displayName: "DI6900",
-  descriptor: "Diamond Index",
-  ticker: "$DI6900",
-  tagline: "Paper hands trade. Diamond hands collect.",
-  secondaryTagline: "The index of Solana's strongest meme communities.",
-  shortCopy: "Hold the index. Track the strongest communities.",
-  logoPath: "/brand/di6900-logo-transparent.png",
-  faviconPath: "/favicon.png",
-  bannerPath: "/brand/di6900-banner.png",
-  ogPath: "/og.png",
-  rewardSymbol: process.env.NEXT_PUBLIC_REWARD_SYMBOL?.trim() || "CAS",
-  rewardRotation: configuredRewardRotation.length ? configuredRewardRotation : fallbackRewardRotation,
-  scanner: {
-    projectsScanned: process.env.NEXT_PUBLIC_SCANNED_PROJECTS?.trim() || "Not published",
-    refreshCycle: process.env.NEXT_PUBLIC_SCANNER_REFRESH_CYCLE?.trim() || "24h",
-    lastUpdated: process.env.NEXT_PUBLIC_SCANNER_LAST_UPDATED?.trim() || "Pending first scan",
-    status: "Active"
-  },
-  scoreDescription:
-    "Diamond Score is our proprietary conviction metric that analyzes holder quality, retention, distribution, and long-term wallet behavior to identify the strongest meme communities on Solana.",
-  multiplierDescription:
-    "Diamond Hand Score tracks continuous holder time. Every full day adds 0.10x to a wallet's proportional airdrop weight; any indexed balance decrease permanently ends eligibility.",
-  multiplierTiers: [
-    { diamonds: "💎", window: "Eligible", multiplier: "1.00x" },
-    { diamonds: "💎💎", window: "1 day held", multiplier: "1.10x" },
-    { diamonds: "💎💎💎", window: "2 days held", multiplier: "1.20x" },
-    { diamonds: "💎💎💎💎", window: "3 days held", multiplier: "1.30x" },
-    { diamonds: "💎💎💎💎💎", window: "4+ days held", multiplier: "1.40x+" }
-  ],
-  basket: [
-    { name: "SPX6900", symbol: "SPX", logoPath: "/tokens/spx6900.jpg", score: "97.4", conviction: "Stable", retention: "Indexing", momentum: "Indexing", social: "Indexing" },
-    { name: "MOG", symbol: "MOG", logoPath: "/tokens/mog.jpg", score: "95.8", conviction: "Rising", retention: "Indexing", momentum: "Indexing", social: "Indexing" },
-    { name: "GIGA", symbol: "GIGA", logoPath: "/tokens/giga.jpg", score: "94.9", conviction: "Stable", retention: "Indexing", momentum: "Indexing", social: "Indexing" },
-    { name: "FARTCOIN", symbol: "FART", logoPath: "/tokens/fartcoin.jpg", score: "93.7", conviction: "Rising", retention: "Indexing", momentum: "Indexing", social: "Indexing" },
-    { name: "$ANSEM", symbol: "ANSEM", logoPath: "/tokens/ansem.png", score: "Pending", conviction: "Indexing", retention: "Indexing", momentum: "Indexing", social: "Indexing" }
-  ],
-  roadmap: [
-    "Diamond Terminal",
-    "Full rankings",
-    "Top 100 leaderboard",
-    "Historical Diamond Scores",
-    "Community comparison"
-  ],
+  name: "Proof of Conviction",
+  displayName: "Proof of Conviction",
+  descriptor: "On-chain holding reputation",
+  ticker: "$POC",
+  tagline: "Conviction is earned on-chain.",
+  secondaryTagline: "Hold longer. Rank higher. Earn a larger share of every SOL distribution.",
+  logoPath: "/brand/proof-of-conviction.jpg",
+  faviconPath: "/favicon.jpg",
+  ogPath: "/og.jpg",
   tokenMint:
-    process.env.NEXT_PUBLIC_DIAMOND_TOKEN_MINT?.trim() ||
+    process.env.NEXT_PUBLIC_POC_TOKEN_MINT?.trim() ||
     process.env.NEXT_PUBLIC_CA?.trim() ||
     process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ||
-    "Ey7uCtMRCrc45g2HmQF1L5CJXx5zDFFMfQXt5Huxpump",
-  xUrl: process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/DiamondIndex_",
-  telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "",
-  discordUrl: process.env.NEXT_PUBLIC_DISCORD_URL?.trim() || "",
-  minimumEligibleBalance: process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "1,000,000",
+    "",
+  xUrl: process.env.NEXT_PUBLIC_X_URL?.trim() || "",
   rewardInterval: process.env.NEXT_PUBLIC_REWARD_INTERVAL?.trim() || "5 minutes",
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://diamondindex6900.xyz"
+  minimumEligibleBalance: process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "1,000,000",
+  treasuryDistribution: "75%",
+  holdTiers: [
+    { window: "Baseline", multiplier: "1.00x" },
+    { window: "1 hour", multiplier: "1.25x" },
+    { window: "12 hours", multiplier: "1.50x" },
+    { window: "1 day", multiplier: "2.00x" },
+    { window: "3 days", multiplier: "3.00x" },
+    { window: "1 week", multiplier: "5.00x" },
+    { window: "1 month", multiplier: "15.00x" }
+  ],
+  rankTiers: [
+    { rank: "Top 10", multiplier: "2.00x", note: "Highest conviction" },
+    { rank: "Top 50", multiplier: "1.50x", note: "Deep conviction" },
+    { rank: "Top 100", multiplier: "1.25x", note: "Established conviction" },
+    { rank: "All eligible", multiplier: "1.00x", note: "Base rank weight" }
+  ],
+  roadmap: [
+    { phase: "Beta 01", title: "Conviction profiles", copy: "A portable, public reputation layer for wallets that hold through time." },
+    { phase: "Beta 02", title: "Conviction campaigns", copy: "Projects create transparent holding challenges with published rules and proofs." },
+    { phase: "Future", title: "Conviction marketplace", copy: "Wallet reputation becomes a signal across an open conviction ecosystem." }
+  ],
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://proofofconviction.xyz"
 };

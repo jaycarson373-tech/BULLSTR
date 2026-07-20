@@ -74,11 +74,11 @@ const configuredRewardTokenMint = optionalPublicKeyEnv("REWARD_TOKEN_MINT");
 const rewardTokenMints = listEnv("REWARD_TOKEN_MINTS").map((mint) => new PublicKey(mint));
 const rewardTokenSymbols = listEnv("REWARD_TOKEN_SYMBOLS");
 const fallbackRewardSymbol =
-  process.env.REWARD_TOKEN_SYMBOL?.trim() || process.env.NEXT_PUBLIC_REWARD_SYMBOL?.trim() || "CAS";
+  process.env.REWARD_TOKEN_SYMBOL?.trim() || process.env.NEXT_PUBLIC_REWARD_SYMBOL?.trim() || "REWARD";
 const configuredRewardTokens = rewardTokenMints.length
   ? rewardTokenMints.map((mint, index) => ({
       mint,
-      symbol: rewardTokenSymbols[index] || `CAS-${index + 1}`
+      symbol: rewardTokenSymbols[index] || `REWARD-${index + 1}`
     }))
   : configuredRewardTokenMint
     ? [{ mint: configuredRewardTokenMint, symbol: fallbackRewardSymbol }]
@@ -121,9 +121,14 @@ export const config = {
 
   epochMinutes: Math.max(1, intEnv("EPOCH_MINUTES", 15)),
   eligibilityMin: numberEnv("ELIGIBILITY_MIN", 1_000_000),
-  maxWalletsPerEpoch: Math.max(1, intEnv("MAX_WALLETS_PER_EPOCH", 75)),
+  maxWalletsPerEpoch: Math.max(1, intEnv("MAX_WALLETS_PER_EPOCH", 100)),
   maxHolderPct: numberEnv("MAX_HOLDER_PCT", 5),
+  enforceMaxHolderPct: boolEnv("ENFORCE_MAX_HOLDER_PCT", false),
   excludeWallets: optionalWallets("EXCLUDE_WALLETS"),
+
+  top10MultiplierBps: Math.max(10_000, intEnv("TOP_10_MULTIPLIER_BPS", 20_000)),
+  top50MultiplierBps: Math.max(10_000, intEnv("TOP_50_MULTIPLIER_BPS", 15_000)),
+  top100MultiplierBps: Math.max(10_000, intEnv("TOP_100_MULTIPLIER_BPS", 12_500)),
 
   swapBalanceBps,
   sideWalletBps,
@@ -132,6 +137,7 @@ export const config = {
   airdropSolReserve: Math.max(0.05, numberEnv("AIRDROP_SOL_RESERVE", 0.05)),
   airdropBatchSize: Math.max(1, intEnv("AIRDROP_BATCH_SIZE", 4)),
   airdropRewardBps: Math.min(10_000, Math.max(1, intEnv("AIRDROP_REWARD_BPS", 10000))),
+  solAirdropBalanceBps: Math.min(10_000, Math.max(1, intEnv("SOL_AIRDROP_BALANCE_BPS", 7500))),
   swapSlippageBps: Math.max(1, intEnv("SWAP_SLIPPAGE_BPS", 300)),
   priorityFeeSol: numberEnv("PRIORITY_FEE_SOL", 0.000001),
   minRewardRawToAirdrop: BigInt(Math.max(0, intEnv("MIN_REWARD_RAW_TO_AIRDROP", 1))),
