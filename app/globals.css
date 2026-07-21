@@ -3,7 +3,7 @@
 :root {
   --ink: #111613;
   --muted: #5f6962;
-  --paper: #f7faf7;
+  --paper: #ffffff;
   --white: #ffffff;
   --green: #0b7a3e;
   --green-dark: #07542c;
@@ -59,7 +59,7 @@ button, input { font: inherit; }
 
 .site-header {
   align-items: center;
-  background: rgba(247, 250, 247, 0.88);
+  background: rgba(255, 255, 255, 0.92);
   border-bottom: 1px solid var(--line);
   display: grid;
   gap: 24px;
@@ -145,7 +145,7 @@ button, input { font: inherit; }
 .minimum-rule strong { color: var(--ink); }
 .hero-visual { inset: 0; pointer-events: none; position: absolute; z-index: 1; }
 .bull-frame { height: 100%; position: absolute; right: -3%; top: 0; width: 66%; }
-.bull-frame::after { background: rgba(247, 250, 247, .23); content: ""; inset: 0; position: absolute; }
+.bull-frame::after { background: rgba(255, 255, 255, .23); content: ""; inset: 0; position: absolute; }
 .bull-frame img { height: 100%; object-fit: contain; object-position: right center; width: 100%; }
 .next-drop {
   background: var(--ink);
@@ -172,8 +172,8 @@ button, input { font: inherit; }
 .protocol-strip strong { font-family: "Archivo Black", sans-serif; font-size: clamp(22px, 2.4vw, 36px); }
 
 .how-section, .boost-section, .leaderboard-section, .proof-section, .wallet-section { padding: 110px clamp(24px, 7vw, 110px); }
-.how-section, .leaderboard-section, .wallet-section { background: rgba(255,255,255,.9); }
-.boost-section, .proof-section { background: rgba(238, 246, 240, .92); border-bottom: 1px solid var(--line); border-top: 1px solid var(--line); }
+.how-section, .leaderboard-section, .wallet-section { background: #ffffff; }
+.boost-section, .proof-section { background: #f5fbf7; border-bottom: 1px solid var(--line); border-top: 1px solid var(--line); }
 .section-heading { max-width: 780px; }
 .section-heading h2 { font-family: "Archivo Black", sans-serif; font-size: clamp(42px, 5vw, 76px); line-height: .95; margin: 0; }
 .section-heading > p:last-child, .row-heading > p { color: var(--muted); font-size: 15px; line-height: 1.7; max-width: 590px; }
