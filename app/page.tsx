@@ -13,15 +13,6 @@ type RewardRound = {
   proofs: string[];
 };
 
-type RewardReceipt = {
-  epochId: string;
-  wallet: string;
-  amount: number;
-  status: string;
-  txSig: string | null;
-  updatedAt: string | null;
-};
-
 type CashbullHolder = {
   wallet: string;
   balance: number;
@@ -31,25 +22,12 @@ type CashbullHolder = {
 
 type ProtocolData = {
   rounds: RewardRound[];
-  receipts: RewardReceipt[];
   leaders: CashbullHolder[];
   activeWallets: number;
   totalDistributed: number;
-  distributedToday: number;
-  completedCycles: number;
-  latestConfirmedTx: string | null;
 };
 
-const emptyData: ProtocolData = {
-  rounds: [],
-  receipts: [],
-  leaders: [],
-  activeWallets: 0,
-  totalDistributed: 0,
-  distributedToday: 0,
-  completedCycles: 0,
-  latestConfirmedTx: null
-};
+const emptyData: ProtocolData = { rounds: [], leaders: [], activeWallets: 0, totalDistributed: 0 };
 
 function formatAmount(value: number, maximumFractionDigits = 4) {
   if (!Number.isFinite(value) || value <= 0) return "0";
@@ -72,13 +50,6 @@ function shortWallet(wallet: string) {
   return `${wallet.slice(0, 5)}...${wallet.slice(-5)}`;
 }
 
-function statusLabel(status: string) {
-  if (status === "settled") return "CONFIRMED";
-  if (status === "planned") return "QUEUED";
-  if (status === "failed") return "FAILED";
-  return status.toUpperCase();
-}
-
 async function getProtocolData(): Promise<ProtocolData> {
   if (!brand.tokenMint) return emptyData;
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -98,7 +69,8 @@ async function getProtocolData(): Promise<ProtocolData> {
       supabase.from("holder_states").select("wallet", { count: "exact", head: true }).eq("permanently_ineligible", false),
       supabase
         .from("payouts")
-        .select("epoch_id,wallet,reward_amount,status,tx_sig,updated_at")
+        .select("epoch_id,reward_amount,tx_sig")
+        .eq("status", "settled")
         .eq("reward_asset", brand.rewardSymbol)
         .order("updated_at", { ascending: false })
         .limit(2000)
@@ -108,20 +80,11 @@ async function getProtocolData(): Promise<ProtocolData> {
 
     const epochIds = new Set((epochsResult.data ?? []).map((epoch) => String(epoch.epoch_id)));
     const totals = new Map<string, { amount: number; recipients: number; proofs: Set<string> }>();
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
     let totalDistributed = 0;
-    let distributedToday = 0;
-    const settledEpochs = new Set<string>();
     for (const payout of payoutResult.data ?? []) {
-      if (payout.status !== "settled") continue;
       const amount = Number(payout.reward_amount ?? 0);
       totalDistributed += Number.isFinite(amount) ? amount : 0;
-      if (payout.updated_at && Date.parse(String(payout.updated_at)) >= todayStart.getTime()) {
-        distributedToday += Number.isFinite(amount) ? amount : 0;
-      }
       const epochId = String(payout.epoch_id);
-      settledEpochs.add(epochId);
       if (!epochIds.has(epochId)) continue;
       const current = totals.get(epochId) ?? { amount: 0, recipients: 0, proofs: new Set<string>() };
       current.amount += amount;
@@ -143,26 +106,9 @@ async function getProtocolData(): Promise<ProtocolData> {
       })
       .filter((round) => round.amount > 0 && round.proofs.length > 0);
 
-    const receipts = (payoutResult.data ?? [])
-      .slice(0, 12)
-      .map((payout) => ({
-        epochId: String(payout.epoch_id),
-        wallet: String(payout.wallet),
-        amount: Number(payout.reward_amount ?? 0),
-        status: String(payout.status ?? "planned"),
-        txSig: payout.tx_sig ? String(payout.tx_sig) : null,
-        updatedAt: payout.updated_at ? String(payout.updated_at) : null
-      }));
-
-    const latestConfirmedTx = receipts.find((receipt) => receipt.status === "settled" && receipt.txSig)?.txSig ?? null;
-
     return {
       rounds,
-      receipts,
       totalDistributed,
-      distributedToday,
-      completedCycles: settledEpochs.size,
-      latestConfirmedTx,
       activeWallets: activeResult.count ?? 0,
       leaders: (leadersResult.data ?? []).map((row) => ({
         wallet: String(row.wallet),
@@ -179,7 +125,6 @@ async function getProtocolData(): Promise<ProtocolData> {
 export default async function Page() {
   const data = await getProtocolData();
   const countdownMinutes = Number.parseInt(brand.rewardInterval, 10) || 5;
-  const buyHref = brand.buyUrl || "#top";
 
   return (
     <main className="cashbull-page">
@@ -193,14 +138,11 @@ export default async function Page() {
           <span><strong>CASHBULL</strong><small>USDC rewards protocol</small></span>
         </a>
         <nav aria-label="Primary navigation">
-          <a href="#terminal">Live Payouts</a>
           <a href="#how">How it works</a>
-          <a href="#eligibility">Eligibility</a>
-          <a href="#receipts">Receipts</a>
-          <a href="#treasury">Treasury</a>
+          <a href="#boost">Multiplier</a>
+          <a href="#proofs">Proofs</a>
           {brand.articleUrl ? <a href={brand.articleUrl} rel="noreferrer" target="_blank">Article</a> : null}
-          <a href={buyHref} rel={brand.buyUrl ? "noreferrer" : undefined} target={brand.buyUrl ? "_blank" : undefined}>Buy</a>
-          <a href="#wallet">Connect Wallet</a>
+          {brand.communityUrl ? <a href={brand.communityUrl} rel="noreferrer" target="_blank">Community</a> : null}
         </nav>
         {brand.tokenMint ? (
           <a className="contract-link" href={`https://solscan.io/token/${brand.tokenMint}`} rel="noreferrer" target="_blank">
@@ -211,20 +153,15 @@ export default async function Page() {
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="kicker"><span /> Live USDC distribution terminal</p>
-          <h1>The bull that pays in cash.</h1>
+          <p className="kicker"><span /> Five-minute USDC rewards</p>
+          <h1>CASH<br /><em>BULL.</em></h1>
+          <p className="hero-tagline">{brand.tagline}</p>
           <p className="hero-lede">{brand.secondaryTagline}</p>
           <div className="hero-actions">
-            <a className={`primary-action${brand.buyUrl ? "" : " is-disabled"}`} href={buyHref} rel={brand.buyUrl ? "noreferrer" : undefined} target={brand.buyUrl ? "_blank" : undefined}>Buy $CASHBULL</a>
-            <a className="secondary-action" href="#receipts">View live payouts</a>
+            <a className="primary-action" href="#wallet">Check eligibility</a>
+            {brand.articleUrl ? <a className="secondary-action" href={brand.articleUrl} rel="noreferrer" target="_blank">Read the article</a> : <a className="secondary-action" href="#how">See how it works</a>}
           </div>
           <p className="minimum-rule">Hold at least <strong>{Number(brand.minimumEligibleBalance).toLocaleString()} $CASHBULL</strong> to enter the reward pool.</p>
-          <div className="hero-metrics" aria-label="Hero live metrics">
-            <article><span>Next distribution</span><strong><EpochCountdown minutes={countdownMinutes} /></strong></article>
-            <article><span>Current USDC pool</span><strong>$0</strong><em>No live pool source</em></article>
-            <article><span>Eligible holders</span><strong>{data.activeWallets}</strong></article>
-            <article><span>Total USDC distributed</span><strong>${formatAmount(data.totalDistributed, 2)}</strong></article>
-          </div>
         </div>
 
         <div className="hero-visual">
@@ -239,52 +176,33 @@ export default async function Page() {
         </div>
       </section>
 
-      <section className="terminal-section" id="terminal">
-        <div className="terminal-head">
-          <div><p className="kicker"><span /> Live cash terminal</p><h2>Protocol cash flow.</h2></div>
-          <p>Real values appear as the worker records snapshots, payouts, and settled transaction signatures.</p>
-        </div>
-        <div className="terminal-grid">
-          <article><span>Treasury balance</span><strong>0 SOL</strong><em>Balance feed not exposed</em></article>
-          <article><span>Current distribution pool</span><strong>$0</strong><em>No live pool source</em></article>
-          <article><span>Next payout</span><strong><EpochCountdown minutes={countdownMinutes} /></strong><em>{brand.rewardInterval} cycles</em></article>
-          <article><span>USDC distributed today</span><strong>${formatAmount(data.distributedToday, 2)}</strong><em>Settled today only</em></article>
-          <article><span>Total USDC distributed</span><strong>${formatAmount(data.totalDistributed, 2)}</strong><em>Confirmed receipts</em></article>
-          <article><span>Completed cycles</span><strong>{data.completedCycles}</strong><em>Settled epochs</em></article>
-          <article><span>Eligible holders</span><strong>{data.activeWallets}</strong><em>Current holder state</em></article>
-          <article><span>Latest confirmed tx</span><strong>{data.latestConfirmedTx ? shortWallet(data.latestConfirmedTx) : "None yet"}</strong><em>{data.latestConfirmedTx ? "Solana confirmed" : "Waiting for first receipt"}</em></article>
-        </div>
+      <section className="protocol-strip" aria-label="Protocol status">
+        <article><span>Reward asset</span><strong>USDC</strong><em>one clear reward</em></article>
+        <article><span>Drop cadence</span><strong>{brand.rewardInterval}</strong><em>automatic epochs</em></article>
+        <article><span>Eligible wallets</span><strong>{data.activeWallets}</strong><em>live indexed holders</em></article>
+        <article><span>USDC distributed</span><strong>${formatAmount(data.totalDistributed, 2)}</strong><em>settled proofs only</em></article>
       </section>
 
       <section className="how-section" id="how">
         <div className="section-heading">
-          <p className="kicker"><span /> How it works</p>
-          <h2>Hold. Qualify. Distribute. Receive.</h2>
-          <p>Cashbull tracks eligible holders, routes protocol revenue into the active USDC distribution pool, and publishes settled payouts on-chain.</p>
+          <p className="kicker">Simple by design</p>
+          <h2>Hold. Boost. Get paid.</h2>
+          <p>Cashbull tracks eligible holders, converts claimed creator fees into USDC, and publishes every settled reward on-chain.</p>
         </div>
         <div className="step-flow">
-          <article><span>01</span><strong>Hold</strong><p>Hold the required amount of $CASHBULL.</p></article>
+          <article><span>01</span><strong>Hold $CASHBULL</strong><p>Meet the minimum balance and stay indexed.</p></article>
           <i aria-hidden="true" />
-          <article><span>02</span><strong>Qualify</strong><p>The protocol identifies eligible wallets at each snapshot.</p></article>
+          <article><span>02</span><strong>Build your boost</strong><p>Longer holds and higher rank increase reward weight.</p></article>
           <i aria-hidden="true" />
-          <article><span>03</span><strong>Distribute</strong><p>Protocol revenue funds the active USDC distribution pool.</p></article>
-          <i aria-hidden="true" />
-          <article><span>04</span><strong>Receive</strong><p>Qualifying wallets receive USDC when a cycle completes.</p></article>
+          <article><span>03</span><strong>Receive USDC</strong><p>Eligible wallets share each settled five-minute reward epoch.</p></article>
         </div>
-        <p className="disclosure-line">Payout amounts depend on available protocol revenue, eligibility rules, network conditions, and successful transaction execution.</p>
       </section>
 
-      <section className="boost-section" id="eligibility">
+      <section className="boost-section" id="boost">
         <div className="section-heading compact">
-          <p className="kicker"><span /> Eligibility</p>
-          <h2>Stay in the cycle.</h2>
-          <p>Eligibility is evaluated from the live holder state and configurable protocol rules.</p>
-        </div>
-        <div className="eligibility-grid">
-          <article><span>Minimum token balance</span><strong>{Number(brand.minimumEligibleBalance).toLocaleString()} $CASHBULL</strong></article>
-          <article><span>Snapshot cadence</span><strong>{brand.rewardInterval}</strong></article>
-          <article><span>Excluded wallets</span><strong>Config driven</strong></article>
-          <article><span>Selling rule</span><strong>Balance decrease can end eligibility</strong></article>
+          <p className="kicker">Holder multiplier</p>
+          <h2>Strong hands earn more weight.</h2>
+          <p>Time and holder rank stack together. Rewards still depend on available fees and successful settlement.</p>
         </div>
         <div className="boost-layout">
           <div className="time-track">
@@ -320,59 +238,29 @@ export default async function Page() {
         </div>
       </section>
 
-      <section className="proof-section" id="receipts">
+      <section className="proof-section" id="proofs">
         <div className="section-heading row-heading">
-          <div><p className="kicker"><span /> Payout receipts</p><h2>Cash leaves proof.</h2></div>
-          <p>Every confirmed row links to a real Solana transaction. No fake hashes, no demo payouts.</p>
+          <div><p className="kicker">On-chain receipts</p><h2>Cash leaves proof.</h2></div>
+          <p>Only settled USDC payouts with transaction signatures are published.</p>
         </div>
-        <div className="receipt-table">
-          <div className="table-head"><span>Recipient</span><span>Amount</span><span>Cycle</span><span>Timestamp</span><span>Status</span><span>Explorer</span></div>
-          {data.receipts.length ? data.receipts.map((receipt) => (
-            <article key={`${receipt.epochId}-${receipt.wallet}-${receipt.txSig ?? receipt.status}`}>
-              <span>{shortWallet(receipt.wallet)}</span>
-              <strong>${formatAmount(receipt.amount, 2)} USDC</strong>
-              <span>{receipt.epochId}</span>
-              <span>{formatDate(receipt.updatedAt)}</span>
-              <em className={`status-pill status-${receipt.status}`}>{statusLabel(receipt.status)}</em>
-              {receipt.txSig ? <a href={`https://solscan.io/tx/${receipt.txSig}`} rel="noreferrer" target="_blank">View</a> : <span>No tx yet</span>}
+        <div className="proof-grid">
+          {data.rounds.length ? data.rounds.map((round) => (
+            <article key={round.epochId}>
+              <span>{formatDate(round.epochId)}</span>
+              <strong>${formatAmount(round.amount, 2)} USDC</strong>
+              <em>{round.recipients} recipient{round.recipients === 1 ? "" : "s"}</em>
+              <div>{round.proofs.map((signature, index) => <a href={`https://solscan.io/tx/${signature}`} key={signature} rel="noreferrer" target="_blank">Proof {index + 1}</a>)}</div>
             </article>
-          )) : <div className="data-empty"><strong>0 payout receipts</strong><span>Confirmed USDC transactions will appear here after the first completed Cashbull cycle.</span></div>}
-        </div>
-      </section>
-
-      <section className="treasury-section" id="treasury">
-        <div className="section-heading row-heading">
-          <div><p className="kicker"><span /> Treasury transparency</p><h2>Follow the cash.</h2></div>
-          <p>Addresses are configurable so the public can verify movement through Solana explorers.</p>
-        </div>
-        <div className="treasury-grid">
-          <article><span>Treasury wallet</span><strong>{brand.treasuryAddress ? shortWallet(brand.treasuryAddress) : "Not configured"}</strong>{brand.treasuryAddress ? <a href={`https://solscan.io/account/${brand.treasuryAddress}`} rel="noreferrer" target="_blank">Open explorer</a> : null}</article>
-          <article><span>Distribution wallet</span><strong>{brand.distributionAddress ? shortWallet(brand.distributionAddress) : "Not configured"}</strong>{brand.distributionAddress ? <a href={`https://solscan.io/account/${brand.distributionAddress}`} rel="noreferrer" target="_blank">Open explorer</a> : null}</article>
-          <article><span>Current USDC balance</span><strong>$0</strong><em>No live balance source</em></article>
-          <article><span>Recent inflows</span><strong>0</strong><em>Not exposed by current API</em></article>
-          <article><span>Recent distributions</span><strong>{data.completedCycles}</strong><em>Settled cycles</em></article>
+          )) : <div className="data-empty"><strong>0 settled USDC drops</strong><span>Verified transactions will appear after the first completed Cashbull epoch.</span></div>}
         </div>
       </section>
 
       <section className="wallet-section" id="wallet">
         <div className="section-heading row-heading">
-          <div><p className="kicker"><span /> Wallet checker</p><h2>Count your cash.</h2></div>
+          <div><p className="kicker">Wallet checker</p><h2>Count your cash.</h2></div>
           <p>No connection and no signature. Paste a public Solana wallet to inspect eligibility and settled USDC rewards.</p>
         </div>
         <WalletProofLookup />
-      </section>
-
-      <section className="banner-cta">
-        <Image src={brand.bannerPath} alt="Cashbull market banner" loading="eager" width={1500} height={490} />
-        <div>
-          <p className="kicker"><span /> Final call</p>
-          <h2>Stay bullish. Stay in the cycle.</h2>
-          <p>Hold $CASHBULL, remain eligible, and follow every USDC distribution on-chain.</p>
-          <div className="hero-actions">
-            <a className={`primary-action${brand.buyUrl ? "" : " is-disabled"}`} href={buyHref} rel={brand.buyUrl ? "noreferrer" : undefined} target={brand.buyUrl ? "_blank" : undefined}>Buy $CASHBULL</a>
-            <a className="secondary-action" href="#receipts">View receipts</a>
-          </div>
-        </div>
       </section>
 
       <footer>
