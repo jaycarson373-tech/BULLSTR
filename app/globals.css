@@ -79,15 +79,32 @@ button, input { font: inherit; }
 .site-header nav { display: flex; gap: 28px; }
 .site-header nav a { font-size: 13px; font-weight: 700; transition: color .2s ease; }
 .site-header nav a:hover { color: var(--green); }
-.contract-link {
+.header-actions { align-items: center; display: flex; gap: 9px; justify-self: end; }
+.x-link {
   align-items: center;
   border: 1px solid var(--line);
   border-radius: 7px;
+  color: var(--green);
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 900;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 13px;
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.x-link:hover { border-color: var(--green); box-shadow: 0 8px 24px rgba(11, 122, 62, .14); transform: translateY(-2px); }
+.contract-link {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: var(--ink);
+  cursor: pointer;
   display: flex;
   font-family: monospace;
   font-size: 12px;
   gap: 8px;
-  justify-self: end;
   min-height: 40px;
   padding: 0 13px;
   transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
@@ -290,6 +307,8 @@ footer > p { color: #b9d1c0; font-size: 10px; justify-self: end; line-height: 1.
   .site-header { min-height: 68px; padding: 9px 16px; }
   .identity small { display: none; }
   .identity img { height: 40px; width: 40px; }
+  .header-actions { gap: 7px; }
+  .x-link { min-height: 38px; padding: 0 10px; }
   .contract-link { min-height: 38px; padding: 0 9px; }
   .hero { align-items: flex-start; min-height: 780px; padding: 70px 20px 120px; }
   .hero h1 { font-size: clamp(72px, 24vw, 110px); }

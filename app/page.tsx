@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { createClient } from "@supabase/supabase-js";
 import { brand } from "./brand";
+import { CopyContract } from "./CopyContract";
 import { EpochCountdown } from "./EpochCountdown";
 import { WalletProofLookup } from "./WalletProofLookup";
 
@@ -144,11 +145,10 @@ export default async function Page() {
           {brand.articleUrl ? <a href={brand.articleUrl} rel="noreferrer" target="_blank">Article</a> : null}
           {brand.communityUrl ? <a href={brand.communityUrl} rel="noreferrer" target="_blank">Community</a> : null}
         </nav>
-        {brand.tokenMint ? (
-          <a className="contract-link" href={`https://solscan.io/token/${brand.tokenMint}`} rel="noreferrer" target="_blank">
-            <span>CA</span>{shortWallet(brand.tokenMint)}
-          </a>
-        ) : <span className="contract-link is-pending"><span>CA</span>Pending</span>}
+        <div className="header-actions">
+          {brand.communityUrl ? <a className="x-link" href={brand.communityUrl} rel="noreferrer" target="_blank">X</a> : null}
+          {brand.tokenMint ? <CopyContract mint={brand.tokenMint} /> : <span className="contract-link is-pending"><span>CA</span>Pending</span>}
+        </div>
       </header>
 
       <section className="hero" id="top">
