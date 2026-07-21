@@ -16,7 +16,7 @@ function format(seconds: number) {
 }
 
 export function EpochCountdown({ minutes = 5 }: { minutes?: number }) {
-  const [seconds, setSeconds] = useState(() => remainingSeconds(minutes));
+  const [seconds, setSeconds] = useState(Math.max(1, minutes) * 60);
 
   useEffect(() => {
     const update = () => setSeconds(remainingSeconds(minutes));
