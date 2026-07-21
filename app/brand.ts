@@ -12,7 +12,7 @@ export const brand = {
   ogPath: "/brand/cashbull.jpg",
   tokenMint: cashbullMint,
   communityUrl: process.env.NEXT_PUBLIC_CASHBULL_X_URL?.trim() || "",
-  articleUrl: process.env.NEXT_PUBLIC_ARTICLE_URL?.trim() || "",
+  articleUrl: process.env.NEXT_PUBLIC_ARTICLE_URL?.trim() || "https://www.bloomberg.com/opinion/articles/2026-07-21/private-credit-and-data-center-wraps-are-2008-redux?taid=6a5f677b22b42c0001524ed2&utm_campaign=trueanthem&utm_content=business&utm_medium=social&utm_source=twitter",
   rewardInterval: process.env.NEXT_PUBLIC_REWARD_INTERVAL?.trim() || "5 minutes",
   minimumEligibleBalance: process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "1000000",
   rewardSymbol: "USDC",
