@@ -27,7 +27,6 @@ export function SiteHeader() {
         <a href="/#fallen">Fallen</a>
         <a href="/#proofs">Proofs</a>
         <a href="/dashboard">Dashboard</a>
-        {brand.xUrl ? <a href={brand.xUrl} rel="noreferrer" target="_blank">X</a> : null}
       </nav>
       <div className="header-actions">
         {brand.xUrl ? <a className="x-link" href={brand.xUrl} rel="noreferrer" target="_blank">X</a> : null}

@@ -33,8 +33,6 @@ export const brand = {
   pumpUrl,
   buyUrl,
   rewardInterval: process.env.NEXT_PUBLIC_REWARD_INTERVAL?.trim() || "5 minutes",
-  firstEpochStart: process.env.NEXT_PUBLIC_FIRST_EPOCH_START?.trim() || "3:45 PM EDT",
-  firstAirdropAt: process.env.NEXT_PUBLIC_FIRST_AIRDROP_AT?.trim() || "3:50 PM EDT",
   minimumEligibleBalance: process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "500000",
   rewardSymbol: "SOL",
   maxHolderPercent: process.env.NEXT_PUBLIC_MAX_HOLDER_PCT?.trim() || "4",

@@ -11,7 +11,7 @@ export default async function Page() {
   const data = await getProtocolData({ epochLimit: 10, fallenLimit: 10, leaderLimit: 10, payoutLimit: 2000 });
   const countdownMinutes = Number.parseInt(brand.rewardInterval, 10) || 5;
   const buyHref = brand.buyUrl || "#top";
-  const hasSettledDrops = data.rounds.length > 0;
+  const isLive = Boolean(brand.tokenMint);
 
   return (
     <main className="conviction-page">
@@ -44,15 +44,15 @@ export default async function Page() {
           </div>
           <div className="next-drop">
             <span>Next SOL epoch</span>
-            {!hasSettledDrops ? (
-              <>
-                <strong className="launch-message">Epoch 1 opens {brand.firstEpochStart}</strong>
-                <em>First SOL airdrop {brand.firstAirdropAt}</em>
-              </>
-            ) : (
+            {isLive ? (
               <>
                 <strong><EpochCountdown minutes={countdownMinutes} /></strong>
                 <em>{brand.rewardInterval} cadence</em>
+              </>
+            ) : (
+              <>
+                <strong className="launch-message">Epoch 1 starts at launch.</strong>
+                <em>Countdown starts once live</em>
               </>
             )}
           </div>

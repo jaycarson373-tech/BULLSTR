@@ -6,7 +6,7 @@ function remainingSeconds(minutes: number) {
   const epochSeconds = Math.max(1, minutes) * 60;
   const nowSeconds = Math.floor(Date.now() / 1000);
   const elapsed = nowSeconds % epochSeconds;
-  return elapsed === 0 ? epochSeconds : epochSeconds - elapsed;
+  return elapsed === 0 ? 0 : epochSeconds - elapsed;
 }
 
 function format(seconds: number) {
