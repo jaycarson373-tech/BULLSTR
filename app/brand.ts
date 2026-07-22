@@ -25,7 +25,10 @@ export const brand = {
   tokenMint: convictionMint,
   rewardTokenMint: "",
   xUrl: process.env.NEXT_PUBLIC_CONVICTION_X_URL?.trim() || process.env.NEXT_PUBLIC_X_URL?.trim() || "",
-  communityUrl: process.env.NEXT_PUBLIC_CONVICTION_COMMUNITY_URL?.trim() || process.env.NEXT_PUBLIC_COMMUNITY_URL?.trim() || "",
+  communityUrl:
+    process.env.NEXT_PUBLIC_CONVICTION_COMMUNITY_URL?.trim() ||
+    process.env.NEXT_PUBLIC_COMMUNITY_URL?.trim() ||
+    "https://x.com/i/communities/2032569869326004522",
   dexscreenerUrl,
   pumpUrl,
   buyUrl,
