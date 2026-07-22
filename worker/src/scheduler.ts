@@ -25,11 +25,14 @@ async function loop() {
 }
 
 function scheduleFirstRun() {
-  console.log("First epoch run starting immediately.");
-  loop().catch((error) => {
-    console.error("worker crashed", error);
-    process.exit(1);
-  });
+  const waitMs = msUntilNextEpoch(new Date()) + 500;
+  console.log(`First epoch run scheduled in ${Math.round(waitMs / 1000)} seconds.`);
+  setTimeout(() => {
+    loop().catch((error) => {
+      console.error("worker crashed", error);
+      process.exit(1);
+    });
+  }, waitMs);
 }
 
 if (config.emergencyStop) {
