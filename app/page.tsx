@@ -150,6 +150,9 @@ export default async function Page() {
 
   return (
     <main className="himothy-page">
+      <div className="money-rain" aria-hidden="true">
+        {Array.from({ length: 24 }, (_, index) => <span key={index}>$</span>)}
+      </div>
       <div className="meme-ticker" aria-hidden="true">
         {[...brand.memeStrips, ...brand.memeStrips].map((line, index) => <span key={`${line}-${index}`}>{line}</span>)}
       </div>
@@ -175,7 +178,7 @@ export default async function Page() {
       <section className="hero" id="top">
         <div className="hero-copy">
           <p className="kicker"><span /> We are all Himothy</p>
-          <h1>HIM<br /><em>OTHY.</em></h1>
+          <h1><em>HIMOTHY</em></h1>
           <p className="hero-tagline">{brand.tagline}</p>
           <p className="hero-lede">{brand.secondaryTagline}</p>
           <div className="hero-actions">
@@ -327,6 +330,10 @@ export default async function Page() {
           <p>No connection and no signature. Paste a public Solana wallet to inspect eligibility and settled JIMOTHY rewards.</p>
         </div>
         <WalletProofLookup />
+      </section>
+
+      <section className="banner-section" aria-label="Himothy banner">
+        <Image src={brand.bannerPath} alt="Himothy banner" width={1280} height={500} loading="eager" />
       </section>
 
       <footer>

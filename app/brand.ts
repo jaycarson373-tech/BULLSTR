@@ -11,8 +11,9 @@ export const brand = {
   secondaryTagline:
     "Hold $HIMOTHY, stay Himothy, and receive $JIMOTHY airdrops every five minutes when protocol rewards settle.",
   logoPath: "/brand/himothy-logo.jpg",
+  bannerPath: "/brand/himothy-banner.jpg",
   faviconPath: "/brand/himothy-logo.jpg",
-  ogPath: "/brand/himothy-logo.jpg",
+  ogPath: "/brand/himothy-banner.jpg",
   tokenMint: himothyMint,
   rewardTokenMint: jimothyMint,
   communityUrl: process.env.NEXT_PUBLIC_HIMOTHY_X_URL?.trim() || "",
@@ -38,6 +39,7 @@ export const brand = {
   ],
   memeStrips: [
     "WE ARE ALL HIMOTHY",
+    "WE ARE HIM",
     "JIMOTHY RAN",
     "SELL ONCE, NOT HIMOTHY",
     "FIVE-MINUTE JIMOTHY DROPS",
