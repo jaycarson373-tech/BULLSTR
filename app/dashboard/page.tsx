@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { brand } from "../brand";
 import { EpochCountdown } from "../EpochCountdown";
-import { SiteHeader, TopTicker } from "../SiteChrome";
+import { SiteFooter, SiteHeader, TopTicker } from "../SiteChrome";
 import { WalletProofLookup } from "../WalletProofLookup";
 import { formatAmount, formatDate, getProtocolData, shortSignature, shortWallet } from "../protocolData";
 
@@ -113,6 +113,8 @@ export default async function DashboardPage() {
         </div>
         <WalletProofLookup />
       </section>
+
+      <SiteFooter />
     </main>
   );
 }

@@ -2,7 +2,7 @@ import Image from "next/image";
 import { brand } from "./brand";
 import { EpochCountdown } from "./EpochCountdown";
 import { MemeBank } from "./MemeBank";
-import { SiteHeader, TopTicker } from "./SiteChrome";
+import { SiteFooter, SiteHeader, TopTicker } from "./SiteChrome";
 import { WalletProofLookup } from "./WalletProofLookup";
 import { formatAmount, formatDate, getProtocolData, shortWallet } from "./protocolData";
 
@@ -181,15 +181,7 @@ export default async function Page() {
         <Image src={brand.bannerPath} alt="Himothy banner" width={1280} height={500} loading="eager" />
       </section>
 
-      <footer>
-        <div><Image src={brand.logoPath} alt="" width={56} height={56} /><span><strong>HIMOTHY</strong><small>We are all Himothy.</small></span></div>
-        <div className="footer-links">
-          {brand.communityUrl ? <a href={brand.communityUrl} rel="noreferrer" target="_blank">X</a> : null}
-          {brand.tokenMint ? <a href={`https://dexscreener.com/solana/${brand.tokenMint}`} rel="noreferrer" target="_blank">Himothy chart</a> : null}
-          {brand.rewardTokenMint ? <a href={`https://dexscreener.com/solana/${brand.rewardTokenMint}`} rel="noreferrer" target="_blank">Jimothy chart</a> : null}
-        </div>
-        <p>Experimental rewards protocol. Rewards depend on available funds, eligibility rules, and successful on-chain settlement. Digital assets are volatile.</p>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

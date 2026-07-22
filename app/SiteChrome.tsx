@@ -27,12 +27,28 @@ export function SiteHeader() {
         <a href="/#fallen">Fallen</a>
         <a href="/#proofs">Drops</a>
         <a href="/dashboard">Dashboard</a>
-        {brand.communityUrl ? <a href={brand.communityUrl} rel="noreferrer" target="_blank">X</a> : null}
+        <a href={brand.xUrl} rel="noreferrer" target="_blank">X</a>
       </nav>
       <div className="header-actions">
         {brand.buyUrl ? <a className="x-link" href={brand.buyUrl} rel="noreferrer" target="_blank">Buy</a> : null}
         {brand.tokenMint ? <CopyContract mint={brand.tokenMint} /> : <span className="contract-link is-pending"><span>CA</span>Pending</span>}
       </div>
     </header>
+  );
+}
+
+export function SiteFooter() {
+  return (
+    <footer>
+      <div><Image src={brand.logoPath} alt="" width={56} height={56} /><span><strong>HIMOTHY</strong><small>We are all Himothy.</small></span></div>
+      <div className="footer-links">
+        <a href={brand.xUrl} rel="noreferrer" target="_blank">X</a>
+        <a href={brand.communityUrl} rel="noreferrer" target="_blank">Community</a>
+        <a href={brand.dexscreenerUrl} rel="noreferrer" target="_blank">Dex Screener</a>
+        <a href={brand.pumpUrl} rel="noreferrer" target="_blank">Pump.fun</a>
+        <a href={brand.buyUrl} rel="noreferrer" target="_blank">Buy Himothy</a>
+      </div>
+      <p>Experimental rewards protocol. Rewards depend on available funds, eligibility rules, and successful on-chain settlement. Digital assets are volatile.</p>
+    </footer>
   );
 }

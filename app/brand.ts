@@ -1,5 +1,7 @@
 const himothyMint = process.env.NEXT_PUBLIC_HIMOTHY_TOKEN_MINT?.trim() || "";
 const jimothyMint = process.env.NEXT_PUBLIC_JIMOTHY_TOKEN_MINT?.trim() || "";
+const pumpUrl = process.env.NEXT_PUBLIC_PUMP_URL?.trim() || (himothyMint ? `https://pump.fun/coin/${himothyMint}` : "https://pump.fun");
+const dexscreenerUrl = process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || (himothyMint ? `https://dexscreener.com/solana/${himothyMint}` : "https://dexscreener.com");
 
 export const brand = {
   name: "Himothy",
@@ -16,8 +18,11 @@ export const brand = {
   ogPath: "/brand/himothy-banner.jpg",
   tokenMint: himothyMint,
   rewardTokenMint: jimothyMint,
-  communityUrl: process.env.NEXT_PUBLIC_HIMOTHY_X_URL?.trim() || "",
-  buyUrl: process.env.NEXT_PUBLIC_BUY_URL?.trim() || (himothyMint ? `https://pump.fun/coin/${himothyMint}` : ""),
+  xUrl: process.env.NEXT_PUBLIC_HIMOTHY_X_URL?.trim() || process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com",
+  communityUrl: process.env.NEXT_PUBLIC_HIMOTHY_COMMUNITY_URL?.trim() || process.env.NEXT_PUBLIC_COMMUNITY_URL?.trim() || "https://x.com/i/communities",
+  dexscreenerUrl,
+  pumpUrl,
+  buyUrl: process.env.NEXT_PUBLIC_BUY_URL?.trim() || pumpUrl,
   rewardInterval: process.env.NEXT_PUBLIC_REWARD_INTERVAL?.trim() || "5 minutes",
   minimumEligibleBalance: process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "500000",
   rewardSymbol: "JIMOTHY",
