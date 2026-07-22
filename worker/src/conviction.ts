@@ -8,7 +8,8 @@ export function holdMultiplierBps(eligibleSince: string | null | undefined, nowM
   if (heldMs >= 7 * DAY_MS) return 50_000;
   if (heldMs >= 3 * DAY_MS) return 30_000;
   if (heldMs >= DAY_MS) return 20_000;
-  if (heldMs >= 12 * HOUR_MS) return 15_000;
+  if (heldMs >= 12 * HOUR_MS) return 17_500;
+  if (heldMs >= 4 * HOUR_MS) return 15_000;
   if (heldMs >= HOUR_MS) return 12_500;
   return 10_000;
 }

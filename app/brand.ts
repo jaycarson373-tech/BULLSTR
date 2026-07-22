@@ -35,8 +35,9 @@ export const brand = {
   maxHolderPercent: process.env.NEXT_PUBLIC_MAX_HOLDER_PCT?.trim() || "4",
   holdTiers: [
     { window: "Start", multiplier: "1.00x" },
-    { window: "1 hour", multiplier: "1.10x" },
-    { window: "12 hours", multiplier: "1.50x" },
+    { window: "1 hour", multiplier: "1.25x" },
+    { window: "4 hours", multiplier: "1.50x" },
+    { window: "12 hours", multiplier: "1.75x" },
     { window: "1 day", multiplier: "2.00x" },
     { window: "3 days", multiplier: "3.00x" },
     { window: "1 week", multiplier: "5.00x" },
