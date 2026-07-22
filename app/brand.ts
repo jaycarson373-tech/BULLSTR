@@ -22,7 +22,7 @@ export const brand = {
   ogPath: "/brand/himothy-banner.jpg",
   tokenMint: himothyMint,
   rewardTokenMint: jimothyMint,
-  xUrl: process.env.NEXT_PUBLIC_HIMOTHY_X_URL?.trim() || process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com",
+  xUrl: process.env.NEXT_PUBLIC_HIMOTHY_X_URL?.trim() || process.env.NEXT_PUBLIC_X_URL?.trim() || "https://x.com/Himothy_sol",
   communityUrl: process.env.NEXT_PUBLIC_HIMOTHY_COMMUNITY_URL?.trim() || process.env.NEXT_PUBLIC_COMMUNITY_URL?.trim() || "https://x.com/i/communities",
   dexscreenerUrl,
   pumpUrl,

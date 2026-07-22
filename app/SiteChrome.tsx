@@ -30,6 +30,7 @@ export function SiteHeader() {
         <a href={brand.xUrl} rel="noreferrer" target="_blank">X</a>
       </nav>
       <div className="header-actions">
+        <a className="x-link" href={brand.xUrl} rel="noreferrer" target="_blank">X</a>
         {brand.buyUrl ? <a className="x-link" href={brand.buyUrl} rel="noreferrer" target="_blank">Buy</a> : null}
         {brand.tokenMint ? <CopyContract mint={brand.tokenMint} /> : <span className="contract-link is-pending"><span>CA</span>Pending</span>}
       </div>
