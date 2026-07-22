@@ -1,4 +1,4 @@
-import { BrandMark } from "../BrandMark";
+import Image from "next/image";
 import { brand } from "../brand";
 import { EpochCountdown } from "../EpochCountdown";
 import { SiteFooter, SiteHeader, TopTicker } from "../SiteChrome";
@@ -38,7 +38,7 @@ export default async function DashboardPage() {
           <p>Full holder state, fallen wallets, settled SOL proof rows, and wallet lookup in one place.</p>
         </div>
         <div className="dashboard-logo">
-          <BrandMark />
+          <Image src={brand.logoPath} alt="Proof of Conviction logo" width={400} height={400} priority />
         </div>
       </section>
 

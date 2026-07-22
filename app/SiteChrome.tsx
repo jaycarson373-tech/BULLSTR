@@ -1,4 +1,4 @@
-import { BrandMark } from "./BrandMark";
+import Image from "next/image";
 import { brand } from "./brand";
 import { CopyContract } from "./CopyContract";
 
@@ -18,7 +18,7 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <a className="identity" href="/#top">
-        <BrandMark />
+        <Image src={brand.logoPath} alt="" width={48} height={48} priority />
         <span><strong>CONVICTION</strong><small>SOL reward protocol</small></span>
       </a>
       <nav aria-label="Primary navigation">
@@ -41,7 +41,7 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer>
-      <div><BrandMark /><span><strong>CONVICTION</strong><small>Diamond hands only.</small></span></div>
+      <div><Image src={brand.logoPath} alt="" width={56} height={56} /><span><strong>CONVICTION</strong><small>Diamond hands only.</small></span></div>
       <div className="footer-links">
         {brand.xUrl ? <a href={brand.xUrl} rel="noreferrer" target="_blank">X</a> : null}
         {brand.communityUrl ? <a href={brand.communityUrl} rel="noreferrer" target="_blank">Community</a> : null}

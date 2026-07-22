@@ -1,4 +1,4 @@
-import { BrandMark } from "./BrandMark";
+import Image from "next/image";
 import { brand } from "./brand";
 import { EpochCountdown } from "./EpochCountdown";
 import { SiteFooter, SiteHeader, TopTicker } from "./SiteChrome";
@@ -40,7 +40,7 @@ export default async function Page() {
 
         <div className="hero-visual">
           <div className="logo-frame">
-            <BrandMark className="hero-mark" />
+            <Image src={brand.logoPath} alt="Proof of Conviction logo" width={1200} height={1200} priority />
           </div>
           <div className="next-drop">
             <span>Next SOL epoch</span>
@@ -177,6 +177,10 @@ export default async function Page() {
           <p>No connection and no signature. Paste a public Solana wallet to inspect eligibility and settled SOL rewards.</p>
         </div>
         <WalletProofLookup />
+      </section>
+
+      <section className="banner-section" aria-label="Proof of Conviction banner">
+        <Image src={brand.bannerPath} alt="Proof of Conviction banner" width={1280} height={500} loading="eager" />
       </section>
 
       <SiteFooter />
