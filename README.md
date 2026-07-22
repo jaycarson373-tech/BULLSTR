@@ -1,11 +1,11 @@
-# Himothy
+# Proof of Conviction
 
-Himothy is a Solana holder-rewards site and worker that buys and distributes `$JIMOTHY` to eligible `$HIMOTHY` holders on five-minute epochs.
+Proof of Conviction is a Solana holder-rewards site and worker that distributes SOL to eligible `$CONVICTION` holders on five-minute epochs.
 
 Core rules:
 
-- Minimum eligible balance: configurable, default `500,000 $HIMOTHY`
-- Reward asset: `$JIMOTHY`
+- Minimum eligible balance: configurable, default `500,000 $CONVICTION`
+- Reward asset: `SOL`
 - Cadence: every five minutes
 - Holder-state rule: wallets that sell after eligibility are marked ineligible by the worker
 - Whale filter: configurable, default excludes wallets above `4%`
@@ -28,10 +28,10 @@ The worker is fail-closed by default. Production execution requires the Railway 
 
 - `EMERGENCY_STOP=false`
 - `CLAIM_ENABLED=true`
-- `BUY_ENABLED=true`
+- `BUY_ENABLED=false` for SOL-only rewards
 - `AIRDROP_ENABLED=true`
-- `SOURCE_TOKEN_MINT=<HIMOTHY mint>`
-- `REWARD_TOKEN_MINT=<JIMOTHY mint>`
+- `REWARD_MODE=sol`
+- `SOURCE_TOKEN_MINT=<CONVICTION mint>`
 - `TREASURY_WALLET_SECRET=<fresh treasury secret>`
 - `HELIUS_RPC_URL=<mainnet RPC>`
 - `SUPABASE_URL=<project URL>`
@@ -39,8 +39,7 @@ The worker is fail-closed by default. Production execution requires the Railway 
 
 ## Required Owner Values
 
-- `$HIMOTHY` mint address
-- `$JIMOTHY` mint address
+- `$CONVICTION` mint address
 - X/community URL
 - Treasury wallet secret for the live worker
 - Supabase project URL, anon key, and service role key

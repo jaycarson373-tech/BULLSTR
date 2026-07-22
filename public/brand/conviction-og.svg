@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" role="img" aria-label="Proof of Conviction preview">
+  <rect width="1280" height="640" fill="#03130f"/>
+  <path d="M0 0h1280v640H0z" fill="url(#bg)"/>
+  <g opacity=".16" stroke="#38f8c3">
+    <path d="M80 88h1120M80 184h1120M80 280h1120M80 376h1120M80 472h1120"/>
+    <path d="M160 56v528M304 56v528M448 56v528M592 56v528M736 56v528M880 56v528M1024 56v528"/>
+  </g>
+  <g transform="translate(830 110)">
+    <circle cx="170" cy="170" r="152" fill="none" stroke="#14f195" stroke-width="8" opacity=".7"/>
+    <path d="M170 36 292 138 170 324 48 138Z" fill="url(#diamond)" stroke="#effff8" stroke-width="6"/>
+    <path d="M48 138h244M106 138l64 186M234 138l-64 186M106 138l64-102 64 102" fill="none" stroke="#03130f" stroke-width="7" opacity=".62"/>
+    <path d="M64 260c58 62 154 62 212 0" fill="none" stroke="#14f195" stroke-width="17" stroke-linecap="round"/>
+  </g>
+  <text x="88" y="152" fill="#14f195" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="900" letter-spacing="8">PROOF OF CONVICTION</text>
+  <text x="88" y="292" fill="#effff8" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="86" font-weight="900">HOLD CONVICTION.</text>
+  <text x="88" y="386" fill="#38f8c3" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="86" font-weight="900">EARN SOL.</text>
+  <text x="92" y="464" fill="#8ecbb4" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Diamond hands stay eligible. Sell once and fall forever.</text>
+  <defs>
+    <radialGradient id="bg" cx="0" cy="0" r="1" gradientTransform="matrix(810 0 0 640 1018 150)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#14f195" stop-opacity=".28"/>
+      <stop offset=".55" stop-color="#00c2ff" stop-opacity=".1"/>
+      <stop offset="1" stop-color="#03130f" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="diamond" x1="48" y1="36" x2="292" y2="324" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#effff8"/>
+      <stop offset=".45" stop-color="#38f8c3"/>
+      <stop offset="1" stop-color="#00c2ff"/>
+    </linearGradient>
+  </defs>
+</svg>

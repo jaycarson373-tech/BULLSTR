@@ -18,7 +18,7 @@ export type RewardRound = {
   proofs: string[];
 };
 
-export type HimothyHolder = {
+export type ConvictionHolder = {
   wallet: string;
   balance: number;
   multiplier: number;
@@ -27,7 +27,7 @@ export type HimothyHolder = {
   lastSeenAt: string | null;
 };
 
-export type FallenHimothy = {
+export type FallenWallet = {
   wallet: string;
   reason: string | null;
   lastSeenAt: string | null;
@@ -37,8 +37,8 @@ export type FallenHimothy = {
 export type ProtocolData = {
   rounds: RewardRound[];
   latestPayouts: RewardProof[];
-  leaders: HimothyHolder[];
-  fallen: FallenHimothy[];
+  leaders: ConvictionHolder[];
+  fallen: FallenWallet[];
   activeWallets: number;
   totalDistributed: number;
 };

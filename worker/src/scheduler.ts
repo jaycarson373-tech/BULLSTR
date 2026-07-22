@@ -4,7 +4,7 @@ import { msUntilNextEpoch } from "./time.js";
 
 const rewardRotation = config.rewardTokens.map((token) => token.symbol).join(" -> ") || "SOL";
 
-console.log(`Himothy worker started. Schedule: every ${config.epochMinutes} minutes.`);
+console.log(`Proof of Conviction worker started. Schedule: every ${config.epochMinutes} minutes.`);
 console.log(
   `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}, EMERGENCY_STOP=${config.emergencyStop}`
 );
@@ -16,7 +16,7 @@ console.log(
     : `Token rewards: ${config.swapBalanceBps / 100}% claimed SOL buys ${rewardRotation}; ${config.sideWalletBps / 100}% routes to side wallet.`
 );
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
-console.log(`Eligibility gate: holder must hold ${config.eligibilityMin.toLocaleString()} HIMOTHY tokens without decreasing balance`);
+console.log(`Eligibility gate: holder must hold ${config.eligibilityMin.toLocaleString()} CONVICTION tokens without decreasing balance`);
 
 async function loop() {
   await runEpoch();

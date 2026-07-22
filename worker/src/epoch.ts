@@ -75,7 +75,7 @@ export async function runEpoch(date = new Date()) {
         holder_pct: holder.holderPct.toString()
       }))
     );
-    console.log(`[${epochId}] snapshot eligible HIMOTHY holders: ${eligibleHolders.length}/${balanceEligibleHolders.length} after holder rules`);
+    console.log(`[${epochId}] snapshot eligible CONVICTION holders: ${eligibleHolders.length}/${balanceEligibleHolders.length} after holder rules`);
     const holders = selectRewardRecipients(epochId, eligibleHolders, config.maxWalletsPerEpoch);
     console.log(`[${epochId}] selected eligible holder reward recipients: ${holders.length}`);
 
@@ -86,7 +86,7 @@ export async function runEpoch(date = new Date()) {
             {
               wallets: holders.map((holder) => holder.wallet),
               mint: rewardToken.mint,
-              label: `${rewardToken.symbol}-to-eligible-HIMOTHY-holders`
+              label: `${rewardToken.symbol}-to-eligible-CONVICTION-holders`
             }
           ]);
 
