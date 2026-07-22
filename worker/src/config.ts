@@ -137,10 +137,6 @@ export const config = {
   enforceMaxHolderPct: boolEnv("ENFORCE_MAX_HOLDER_PCT", false),
   excludeWallets: optionalWallets("EXCLUDE_WALLETS"),
 
-  top10MultiplierBps: Math.max(10_000, intEnv("TOP_10_MULTIPLIER_BPS", 20_000)),
-  top50MultiplierBps: Math.max(10_000, intEnv("TOP_50_MULTIPLIER_BPS", 15_000)),
-  top100MultiplierBps: Math.max(10_000, intEnv("TOP_100_MULTIPLIER_BPS", 12_500)),
-
   swapBalanceBps,
   sideWalletBps,
   sideWalletPublicKey,

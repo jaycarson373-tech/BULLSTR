@@ -1,7 +1,7 @@
 import { config } from "./config.js";
 import { supabase } from "./db.js";
 import type { Holder } from "./snapshot.js";
-import { combinedMultiplierBps, holdMultiplierBps, rankMultiplierBps } from "./conviction.js";
+import { holdMultiplierBps } from "./conviction.js";
 
 type HolderStateRow = {
   wallet: string;
@@ -154,19 +154,14 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
       permanentlyRemoved.add(holder.wallet);
     }
 
-    let activeRank = 0;
     for (const holder of eligibleHolders) {
       const existing = stateByWallet.get(holder.wallet);
       if (existing?.permanently_ineligible || permanentlyRemoved.has(holder.wallet)) continue;
 
-      activeRank += 1;
-
       const highestRaw = parseRaw(existing?.highest_source_balance_raw);
       const nextStreak = existing ? (existing.current_streak_epochs ?? 0) + 1 : 1;
       const eligibleSince = existing?.eligible_since ?? now;
-      const holdingBps = holdMultiplierBps(eligibleSince, nowMs);
-      const rankingBps = rankMultiplierBps(activeRank, config);
-      const multiplierBps = combinedMultiplierBps(holdingBps, rankingBps);
+      const multiplierBps = holdMultiplierBps(eligibleSince, nowMs);
       const nextHighest = highestRaw > holder.rawBalance ? highestRaw : holder.rawBalance;
 
       updates.push({

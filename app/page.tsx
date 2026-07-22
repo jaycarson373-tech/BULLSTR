@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { brand } from "./brand";
 import { CopyContract } from "./CopyContract";
 import { EpochCountdown } from "./EpochCountdown";
+import { MemeBank } from "./MemeBank";
 import { WalletProofLookup } from "./WalletProofLookup";
 
 export const dynamic = "force-dynamic";
@@ -146,7 +147,6 @@ async function getProtocolData(): Promise<ProtocolData> {
 export default async function Page() {
   const data = await getProtocolData();
   const countdownMinutes = Number.parseInt(brand.rewardInterval, 10) || 5;
-  const buyHref = brand.buyUrl || "#top";
 
   return (
     <main className="himothy-page">
@@ -241,7 +241,7 @@ export default async function Page() {
         <div className="section-heading compact">
           <p className="kicker">Holder multiplier</p>
           <h2>Longer holds become more Himothy.</h2>
-          <p>Time and holder rank stack together. Rewards still depend on available rewards and successful settlement.</p>
+          <p>Only holding time boosts rewards. Wallet size and leaderboard rank do not add extra multipliers.</p>
         </div>
         <div className="boost-layout">
           <div className="time-track">
@@ -251,9 +251,10 @@ export default async function Page() {
               </article>
             ))}
           </div>
-          <div className="rank-boosts">
-            <span>Rank boost</span>
-            {brand.rankTiers.map((tier) => <article key={tier.rank}><strong>{tier.rank}</strong><em>{tier.multiplier}</em></article>)}
+          <div className="hold-only-panel">
+            <span>No rank bonus</span>
+            <strong>Hold longer. That is it.</strong>
+            <p>Top holders still appear on the board, but the reward boost comes from staying eligible over time.</p>
           </div>
         </div>
         <p className="rule-notice"><strong>Eligibility rule:</strong> selling after eligibility makes a wallet a fallen Himothy under the current protocol rules.</p>
@@ -265,7 +266,7 @@ export default async function Page() {
           <p>Only eligible wallets appear. No demo wallets and no fabricated balances.</p>
         </div>
         <div className="leaderboard-table">
-          <div className="table-head"><span>Rank / Wallet</span><span>HIMOTHY held</span><span>Holding since</span><span>Boost</span></div>
+          <div className="table-head"><span>Rank / Wallet</span><span>HIMOTHY held</span><span>Holding since</span><span>Hold boost</span></div>
           {data.leaders.length ? data.leaders.map((wallet, index) => (
             <article key={wallet.wallet}>
               <span><b>{String(index + 1).padStart(2, "0")}</b><a href={`https://solscan.io/account/${wallet.wallet}`} rel="noreferrer" target="_blank">{shortWallet(wallet.wallet)}</a></span>
@@ -313,15 +314,10 @@ export default async function Page() {
       <section className="meme-bank">
         <div className="section-heading">
           <p className="kicker">Meme bank</p>
-          <h2>Beta placeholders for the Himothy archive.</h2>
-          <p>Add Jimothy edits, celebration memes, and community bangers here without changing the reward logic.</p>
+          <h2>The Himothy archive.</h2>
+          <p>Click any image to pause the belt. Download the selected meme directly from the archive.</p>
         </div>
-        <div className="meme-grid">
-          <article>WE ARE ALL HIMOTHY</article>
-          <article>JIMOTHY RAN</article>
-          <article>HIMOTHY HELD</article>
-          <article>NOT HIMOTHY</article>
-        </div>
+        <MemeBank />
       </section>
 
       <section className="wallet-section" id="wallet">

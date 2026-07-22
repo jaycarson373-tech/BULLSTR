@@ -31,12 +31,6 @@ export const brand = {
     { window: "3 days", multiplier: "3.00x" },
     { window: "1 week", multiplier: "5.00x" }
   ],
-  rankTiers: [
-    { rank: "Top 10 Himothys", multiplier: "2.00x" },
-    { rank: "Top 50 Himothys", multiplier: "1.50x" },
-    { rank: "Top 100 Himothys", multiplier: "1.25x" },
-    { rank: "All Himothys", multiplier: "1.00x" }
-  ],
   memeStrips: [
     "WE ARE ALL HIMOTHY",
     "WE ARE HIM",

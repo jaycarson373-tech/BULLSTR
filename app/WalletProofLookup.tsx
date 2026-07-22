@@ -81,7 +81,7 @@ export function WalletProofLookup() {
           <div className="lookup-results">
             <div className="lookup-summary">
               <article><span>Status</span><strong>{statusCopy(result.holder)}</strong><em>Current protocol rule</em></article>
-              <article><span>Reward boost</span><strong>{result.holder?.multiplier ?? "0.00x"}</strong><em>Time × holder rank</em></article>
+              <article><span>Reward boost</span><strong>{result.holder?.multiplier ?? "0.00x"}</strong><em>Hold-time only</em></article>
               <article><span>Current {brand.ticker}</span><strong>{formatDecimal(result.holder?.sourceBalance ?? "0")}</strong><em>Indexed {formatDate(result.holder?.lastSeenAt ?? null)}</em></article>
               <article><span>Settled drops</span><strong>{result.distributionCount}</strong><em>{result.roundCount} {brand.rewardSymbol} rounds</em></article>
             </div>
