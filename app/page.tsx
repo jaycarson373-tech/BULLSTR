@@ -1,179 +1,25 @@
 import Image from "next/image";
-import { createClient } from "@supabase/supabase-js";
 import { brand } from "./brand";
-import { CopyContract } from "./CopyContract";
 import { EpochCountdown } from "./EpochCountdown";
 import { MemeBank } from "./MemeBank";
+import { SiteHeader, TopTicker } from "./SiteChrome";
 import { WalletProofLookup } from "./WalletProofLookup";
+import { formatAmount, formatDate, getProtocolData, shortWallet } from "./protocolData";
 
 export const dynamic = "force-dynamic";
 
-type RewardRound = {
-  epochId: string;
-  startedAt: string | null;
-  amount: number;
-  recipients: number;
-  proofs: string[];
-};
-
-type HimothyHolder = {
-  wallet: string;
-  balance: number;
-  multiplier: number;
-  eligibleSince: string | null;
-};
-
-type FallenHimothy = {
-  wallet: string;
-  reason: string | null;
-  lastSeenAt: string | null;
-};
-
-type ProtocolData = {
-  rounds: RewardRound[];
-  leaders: HimothyHolder[];
-  fallen: FallenHimothy[];
-  activeWallets: number;
-  totalDistributed: number;
-};
-
-const emptyData: ProtocolData = { rounds: [], leaders: [], fallen: [], activeWallets: 0, totalDistributed: 0 };
-
-function formatAmount(value: number, maximumFractionDigits = 4) {
-  if (!Number.isFinite(value) || value <= 0) return "0";
-  return value.toLocaleString(undefined, { maximumFractionDigits });
-}
-
-function formatDate(value: string | null) {
-  if (!value) return "Not indexed";
-  const parsed = Date.parse(value);
-  if (!Number.isFinite(parsed)) return "Not indexed";
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit"
-  }).format(new Date(parsed));
-}
-
-function shortWallet(wallet: string) {
-  return `${wallet.slice(0, 5)}...${wallet.slice(-5)}`;
-}
-
-async function getProtocolData(): Promise<ProtocolData> {
-  if (!brand.tokenMint) return emptyData;
-  const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRole = process.env.SUPABASE_SERVICE_ROLE;
-  if (!supabaseUrl || !serviceRole) return emptyData;
-
-  try {
-    const supabase = createClient(supabaseUrl, serviceRole, { auth: { persistSession: false } });
-    const [epochsResult, leadersResult, fallenResult, activeResult, payoutResult] = await Promise.all([
-      supabase.from("epochs").select("epoch_id,started_at").order("started_at", { ascending: false }).limit(10),
-      supabase
-        .from("holder_states")
-        .select("wallet,source_balance,current_multiplier_bps,eligible_since")
-        .eq("permanently_ineligible", false)
-        .order("source_balance", { ascending: false })
-        .limit(10),
-      supabase
-        .from("holder_states")
-        .select("wallet,ineligible_reason,last_seen_at")
-        .eq("permanently_ineligible", true)
-        .order("last_seen_at", { ascending: false })
-        .limit(8),
-      supabase.from("holder_states").select("wallet", { count: "exact", head: true }).eq("permanently_ineligible", false),
-      supabase
-        .from("payouts")
-        .select("epoch_id,reward_amount,tx_sig")
-        .eq("status", "settled")
-        .eq("reward_asset", brand.rewardSymbol)
-        .order("updated_at", { ascending: false })
-        .limit(2000)
-    ]);
-
-    if (epochsResult.error || leadersResult.error || fallenResult.error || activeResult.error || payoutResult.error) return emptyData;
-
-    const epochIds = new Set((epochsResult.data ?? []).map((epoch) => String(epoch.epoch_id)));
-    const totals = new Map<string, { amount: number; recipients: number; proofs: Set<string> }>();
-    let totalDistributed = 0;
-    for (const payout of payoutResult.data ?? []) {
-      const amount = Number(payout.reward_amount ?? 0);
-      totalDistributed += Number.isFinite(amount) ? amount : 0;
-      const epochId = String(payout.epoch_id);
-      if (!epochIds.has(epochId)) continue;
-      const current = totals.get(epochId) ?? { amount: 0, recipients: 0, proofs: new Set<string>() };
-      current.amount += amount;
-      current.recipients += 1;
-      if (payout.tx_sig) current.proofs.add(String(payout.tx_sig));
-      totals.set(epochId, current);
-    }
-
-    const rounds = (epochsResult.data ?? [])
-      .map((epoch) => {
-        const epochId = String(epoch.epoch_id);
-        const total = totals.get(epochId);
-        return {
-          epochId,
-          startedAt: epoch.started_at ? String(epoch.started_at) : epochId,
-          amount: total?.amount ?? 0,
-          recipients: total?.recipients ?? 0,
-          proofs: [...(total?.proofs ?? [])].slice(0, 3)
-        };
-      })
-      .filter((round) => round.amount > 0 && round.proofs.length > 0);
-
-    return {
-      rounds,
-      totalDistributed,
-      activeWallets: activeResult.count ?? 0,
-      leaders: (leadersResult.data ?? []).map((row) => ({
-        wallet: String(row.wallet),
-        balance: Number(row.source_balance ?? 0),
-        multiplier: Number(row.current_multiplier_bps ?? 10_000) / 10_000,
-        eligibleSince: row.eligible_since ? String(row.eligible_since) : null
-      })),
-      fallen: (fallenResult.data ?? []).map((row) => ({
-        wallet: String(row.wallet),
-        reason: row.ineligible_reason ? String(row.ineligible_reason) : null,
-        lastSeenAt: row.last_seen_at ? String(row.last_seen_at) : null
-      }))
-    };
-  } catch {
-    return emptyData;
-  }
-}
-
 export default async function Page() {
-  const data = await getProtocolData();
+  const data = await getProtocolData({ epochLimit: 10, fallenLimit: 10, leaderLimit: 10, payoutLimit: 2000 });
   const countdownMinutes = Number.parseInt(brand.rewardInterval, 10) || 5;
+  const buyHref = brand.buyUrl || "#top";
 
   return (
     <main className="himothy-page">
       <div className="money-rain" aria-hidden="true">
         {Array.from({ length: 24 }, (_, index) => <span key={index}>$</span>)}
       </div>
-      <div className="meme-ticker" aria-hidden="true">
-        {[...brand.memeStrips, ...brand.memeStrips].map((line, index) => <span key={`${line}-${index}`}>{line}</span>)}
-      </div>
-
-      <header className="site-header">
-        <a className="identity" href="#top">
-          <Image src={brand.logoPath} alt="" width={48} height={48} priority />
-          <span><strong>HIMOTHY</strong><small>Jimothy reward protocol</small></span>
-        </a>
-        <nav aria-label="Primary navigation">
-          <a href="#jimothy">Jimothy</a>
-          <a href="#leaderboard">Top Himothys</a>
-          <a href="#fallen">Fallen</a>
-          <a href="#proofs">Drops</a>
-          {brand.communityUrl ? <a href={brand.communityUrl} rel="noreferrer" target="_blank">X</a> : null}
-        </nav>
-        <div className="header-actions">
-          {brand.buyUrl ? <a className="x-link" href={brand.buyUrl} rel="noreferrer" target="_blank">Buy</a> : null}
-          {brand.tokenMint ? <CopyContract mint={brand.tokenMint} /> : <span className="contract-link is-pending"><span>CA</span>Pending</span>}
-        </div>
-      </header>
+      <TopTicker />
+      <SiteHeader />
 
       <section className="hero" id="top">
         <div className="hero-copy">
@@ -182,7 +28,7 @@ export default async function Page() {
           <p className="hero-tagline">{brand.tagline}</p>
           <p className="hero-lede">{brand.secondaryTagline}</p>
           <div className="hero-actions">
-            <a className="primary-action" href="#wallet">Check Himothy status</a>
+            <a className="primary-action" href={buyHref} rel={brand.buyUrl ? "noreferrer" : undefined} target={brand.buyUrl ? "_blank" : undefined}>Buy Himothy</a>
             <a className="secondary-action" href="#proofs">View Jimothy drops</a>
           </div>
           <p className="minimum-rule">
@@ -263,7 +109,8 @@ export default async function Page() {
       <section className="leaderboard-section" id="leaderboard">
         <div className="section-heading row-heading">
           <div><p className="kicker">Top Himothys</p><h2>The Himothy board.</h2></div>
-          <p>Only eligible wallets appear. No demo wallets and no fabricated balances.</p>
+          <p>Only the top 10 show here. The full holder board lives on the dashboard.</p>
+          <a className="section-link" href="/dashboard#leaderboard">View more</a>
         </div>
         <div className="leaderboard-table">
           <div className="table-head"><span>Rank / Wallet</span><span>HIMOTHY held</span><span>Holding since</span><span>Hold boost</span></div>
@@ -281,7 +128,8 @@ export default async function Page() {
       <section className="fallen-section" id="fallen">
         <div className="section-heading row-heading">
           <div><p className="kicker">Fallen Himothys</p><h2>They sold. They fell.</h2></div>
-          <p>Wallets that break the holding rule are shown separately once holder-state data exists.</p>
+          <p>Only the latest 10 show here. The full fallen list lives on the dashboard.</p>
+          <a className="section-link" href="/dashboard#fallen">View more</a>
         </div>
         <div className="fallen-grid">
           {data.fallen.length ? data.fallen.map((wallet) => (
@@ -298,6 +146,7 @@ export default async function Page() {
         <div className="section-heading row-heading">
           <div><p className="kicker">Jimothy drops</p><h2>Receipts or it did not run.</h2></div>
           <p>Only settled JIMOTHY payouts with transaction signatures are published.</p>
+          <a className="section-link" href="/dashboard#proofs">Full proofs</a>
         </div>
         <div className="proof-grid">
           {data.rounds.length ? data.rounds.map((round) => (
