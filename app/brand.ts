@@ -30,6 +30,8 @@ export const brand = {
   pumpUrl,
   buyUrl,
   rewardInterval: process.env.NEXT_PUBLIC_REWARD_INTERVAL?.trim() || "5 minutes",
+  firstEpochStart: process.env.NEXT_PUBLIC_FIRST_EPOCH_START?.trim() || "3:40 PM EDT",
+  firstAirdropAt: process.env.NEXT_PUBLIC_FIRST_AIRDROP_AT?.trim() || "3:45 PM EDT",
   minimumEligibleBalance: process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "500000",
   rewardSymbol: "SOL",
   maxHolderPercent: process.env.NEXT_PUBLIC_MAX_HOLDER_PCT?.trim() || "4",
@@ -51,5 +53,5 @@ export const brand = {
     "FIVE-MINUTE SOL EPOCHS",
     "CONVICTION ONLY"
   ],
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://proofofconviction.fun"
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://www.proofofconviction.xyz"
 };

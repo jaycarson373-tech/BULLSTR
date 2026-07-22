@@ -11,7 +11,7 @@ export default async function Page() {
   const data = await getProtocolData({ epochLimit: 10, fallenLimit: 10, leaderLimit: 10, payoutLimit: 2000 });
   const countdownMinutes = Number.parseInt(brand.rewardInterval, 10) || 5;
   const buyHref = brand.buyUrl || "#top";
-  const isPreLaunch = data.rounds.length === 0 && !brand.tokenMint;
+  const hasSettledDrops = data.rounds.length > 0;
 
   return (
     <main className="conviction-page">
@@ -44,10 +44,10 @@ export default async function Page() {
           </div>
           <div className="next-drop">
             <span>Next SOL epoch</span>
-            {isPreLaunch ? (
+            {!hasSettledDrops ? (
               <>
-                <strong className="launch-message">First epoch begins at launch.</strong>
-                <em>CA pending</em>
+                <strong className="launch-message">Epoch 1 opens {brand.firstEpochStart}</strong>
+                <em>First SOL airdrop {brand.firstAirdropAt}</em>
               </>
             ) : (
               <>
