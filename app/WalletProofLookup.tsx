@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { brand } from "./brand";
 
 type ProofResult = {
   wallet: string;
@@ -81,11 +82,11 @@ export function WalletProofLookup() {
             <div className="lookup-summary">
               <article><span>Status</span><strong>{statusCopy(result.holder)}</strong><em>Current protocol rule</em></article>
               <article><span>Reward boost</span><strong>{result.holder?.multiplier ?? "0.00x"}</strong><em>Time × holder rank</em></article>
-              <article><span>Current $CASHBULL</span><strong>{formatDecimal(result.holder?.sourceBalance ?? "0")}</strong><em>Indexed {formatDate(result.holder?.lastSeenAt ?? null)}</em></article>
-              <article><span>Settled drops</span><strong>{result.distributionCount}</strong><em>{result.roundCount} USDC rounds</em></article>
+              <article><span>Current {brand.ticker}</span><strong>{formatDecimal(result.holder?.sourceBalance ?? "0")}</strong><em>Indexed {formatDate(result.holder?.lastSeenAt ?? null)}</em></article>
+              <article><span>Settled drops</span><strong>{result.distributionCount}</strong><em>{result.roundCount} {brand.rewardSymbol} rounds</em></article>
             </div>
             <div className="asset-totals">
-              {result.totals.length ? result.totals.map((total) => <article key={total.asset}><span>{total.asset} received</span><strong>{formatDecimal(total.amount)}</strong></article>) : <article><span>USDC received</span><strong>0</strong></article>}
+              {result.totals.length ? result.totals.map((total) => <article key={total.asset}><span>{total.asset} received</span><strong>{formatDecimal(total.amount)}</strong></article>) : <article><span>{brand.rewardSymbol} received</span><strong>0</strong></article>}
             </div>
             {result.proofs.length ? <div className="wallet-proofs"><span>Latest proofs</span>{result.proofs.map((proof) => <a href={`https://solscan.io/tx/${proof.signature}`} key={proof.signature} rel="noreferrer" target="_blank"><strong>{formatDecimal(proof.rewardAmount)} {proof.rewardAsset}</strong><em>{shortSignature(proof.signature)}</em></a>)}</div> : null}
           </div>

@@ -201,7 +201,7 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
     }
     return eligible;
   } catch (error) {
-    if (isMissingHolderStateTable(error)) throw new Error("holder_states table is required for Cashbull eligibility");
+    if (isMissingHolderStateTable(error)) throw new Error("holder_states table is required for Himothy eligibility");
     throw error;
   }
 }

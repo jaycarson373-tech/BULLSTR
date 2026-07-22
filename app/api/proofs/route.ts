@@ -1,6 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+import { brand } from "../../brand";
 
 export const dynamic = "force-dynamic";
 
@@ -49,7 +50,7 @@ export async function GET(request: NextRequest) {
       .select("epoch_id,reward_asset,reward_amount,tx_sig,updated_at")
       .eq("wallet", wallet)
       .eq("status", "settled")
-      .eq("reward_asset", "USDC")
+      .eq("reward_asset", brand.rewardSymbol)
       .order("updated_at", { ascending: false })
       .limit(1000),
     supabase

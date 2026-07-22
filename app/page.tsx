@@ -9,26 +9,34 @@ export const dynamic = "force-dynamic";
 
 type RewardRound = {
   epochId: string;
+  startedAt: string | null;
   amount: number;
   recipients: number;
   proofs: string[];
 };
 
-type CashbullHolder = {
+type HimothyHolder = {
   wallet: string;
   balance: number;
   multiplier: number;
   eligibleSince: string | null;
 };
 
+type FallenHimothy = {
+  wallet: string;
+  reason: string | null;
+  lastSeenAt: string | null;
+};
+
 type ProtocolData = {
   rounds: RewardRound[];
-  leaders: CashbullHolder[];
+  leaders: HimothyHolder[];
+  fallen: FallenHimothy[];
   activeWallets: number;
   totalDistributed: number;
 };
 
-const emptyData: ProtocolData = { rounds: [], leaders: [], activeWallets: 0, totalDistributed: 0 };
+const emptyData: ProtocolData = { rounds: [], leaders: [], fallen: [], activeWallets: 0, totalDistributed: 0 };
 
 function formatAmount(value: number, maximumFractionDigits = 4) {
   if (!Number.isFinite(value) || value <= 0) return "0";
@@ -59,7 +67,7 @@ async function getProtocolData(): Promise<ProtocolData> {
 
   try {
     const supabase = createClient(supabaseUrl, serviceRole, { auth: { persistSession: false } });
-    const [epochsResult, leadersResult, activeResult, payoutResult] = await Promise.all([
+    const [epochsResult, leadersResult, fallenResult, activeResult, payoutResult] = await Promise.all([
       supabase.from("epochs").select("epoch_id,started_at").order("started_at", { ascending: false }).limit(10),
       supabase
         .from("holder_states")
@@ -67,6 +75,12 @@ async function getProtocolData(): Promise<ProtocolData> {
         .eq("permanently_ineligible", false)
         .order("source_balance", { ascending: false })
         .limit(10),
+      supabase
+        .from("holder_states")
+        .select("wallet,ineligible_reason,last_seen_at")
+        .eq("permanently_ineligible", true)
+        .order("last_seen_at", { ascending: false })
+        .limit(8),
       supabase.from("holder_states").select("wallet", { count: "exact", head: true }).eq("permanently_ineligible", false),
       supabase
         .from("payouts")
@@ -77,7 +91,7 @@ async function getProtocolData(): Promise<ProtocolData> {
         .limit(2000)
     ]);
 
-    if (epochsResult.error || leadersResult.error || activeResult.error || payoutResult.error) return emptyData;
+    if (epochsResult.error || leadersResult.error || fallenResult.error || activeResult.error || payoutResult.error) return emptyData;
 
     const epochIds = new Set((epochsResult.data ?? []).map((epoch) => String(epoch.epoch_id)));
     const totals = new Map<string, { amount: number; recipients: number; proofs: Set<string> }>();
@@ -100,6 +114,7 @@ async function getProtocolData(): Promise<ProtocolData> {
         const total = totals.get(epochId);
         return {
           epochId,
+          startedAt: epoch.started_at ? String(epoch.started_at) : epochId,
           amount: total?.amount ?? 0,
           recipients: total?.recipients ?? 0,
           proofs: [...(total?.proofs ?? [])].slice(0, 3)
@@ -116,6 +131,11 @@ async function getProtocolData(): Promise<ProtocolData> {
         balance: Number(row.source_balance ?? 0),
         multiplier: Number(row.current_multiplier_bps ?? 10_000) / 10_000,
         eligibleSince: row.eligible_since ? String(row.eligible_since) : null
+      })),
+      fallen: (fallenResult.data ?? []).map((row) => ({
+        wallet: String(row.wallet),
+        reason: row.ineligible_reason ? String(row.ineligible_reason) : null,
+        lastSeenAt: row.last_seen_at ? String(row.last_seen_at) : null
       }))
     };
   } catch {
@@ -126,88 +146,104 @@ async function getProtocolData(): Promise<ProtocolData> {
 export default async function Page() {
   const data = await getProtocolData();
   const countdownMinutes = Number.parseInt(brand.rewardInterval, 10) || 5;
+  const buyHref = brand.buyUrl || "#top";
 
   return (
-    <main className="cashbull-page">
-      <div className="cash-rain" aria-hidden="true">
-        {Array.from({ length: 24 }, (_, index) => <span key={index}>$</span>)}
+    <main className="himothy-page">
+      <div className="meme-ticker" aria-hidden="true">
+        {[...brand.memeStrips, ...brand.memeStrips].map((line, index) => <span key={`${line}-${index}`}>{line}</span>)}
       </div>
 
       <header className="site-header">
         <a className="identity" href="#top">
           <Image src={brand.logoPath} alt="" width={48} height={48} priority />
-          <span><strong>CASHBULL</strong><small>USDC rewards protocol</small></span>
+          <span><strong>HIMOTHY</strong><small>Jimothy reward protocol</small></span>
         </a>
         <nav aria-label="Primary navigation">
-          <a href="#how">How it works</a>
-          <a href="#boost">Multiplier</a>
-          <a href="#proofs">Proofs</a>
-          {brand.articleUrl ? <a href={brand.articleUrl} rel="noreferrer" target="_blank">Article</a> : null}
-          {brand.communityUrl ? <a href={brand.communityUrl} rel="noreferrer" target="_blank">Community</a> : null}
+          <a href="#jimothy">Jimothy</a>
+          <a href="#leaderboard">Top Himothys</a>
+          <a href="#fallen">Fallen</a>
+          <a href="#proofs">Drops</a>
+          {brand.communityUrl ? <a href={brand.communityUrl} rel="noreferrer" target="_blank">X</a> : null}
         </nav>
         <div className="header-actions">
-          {brand.communityUrl ? <a className="x-link" href={brand.communityUrl} rel="noreferrer" target="_blank">X</a> : null}
+          {brand.buyUrl ? <a className="x-link" href={brand.buyUrl} rel="noreferrer" target="_blank">Buy</a> : null}
           {brand.tokenMint ? <CopyContract mint={brand.tokenMint} /> : <span className="contract-link is-pending"><span>CA</span>Pending</span>}
         </div>
       </header>
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="kicker"><span /> Five-minute USDC rewards</p>
-          <h1>CASH<br /><em>BULL.</em></h1>
+          <p className="kicker"><span /> We are all Himothy</p>
+          <h1>HIM<br /><em>OTHY.</em></h1>
           <p className="hero-tagline">{brand.tagline}</p>
           <p className="hero-lede">{brand.secondaryTagline}</p>
           <div className="hero-actions">
-            <a className="primary-action" href="#wallet">Check eligibility</a>
-            {brand.articleUrl ? <a className="secondary-action" href={brand.articleUrl} rel="noreferrer" target="_blank">Read the article</a> : <a className="secondary-action" href="#how">See how it works</a>}
+            <a className="primary-action" href="#wallet">Check Himothy status</a>
+            <a className="secondary-action" href="#proofs">View Jimothy drops</a>
           </div>
-          <p className="minimum-rule">Hold at least <strong>{Number(brand.minimumEligibleBalance).toLocaleString()} $CASHBULL</strong> to enter the reward pool.</p>
+          <p className="minimum-rule">
+            Hold at least <strong>{Number(brand.minimumEligibleBalance).toLocaleString()} $HIMOTHY</strong>. Wallets above <strong>{brand.maxHolderPercent}%</strong> are excluded.
+          </p>
         </div>
 
         <div className="hero-visual">
-          <div className="bull-frame">
-            <Image src={brand.logoPath} alt="Bull folded from US dollar bills" width={1200} height={982} priority />
+          <div className="logo-frame">
+            <Image src={brand.logoPath} alt="Himothy logo" width={1200} height={1200} priority />
           </div>
           <div className="next-drop">
-            <span>Next USDC drop</span>
+            <span>Next Jimothy drop</span>
             <strong><EpochCountdown minutes={countdownMinutes} /></strong>
-            <em>Settles on Solana</em>
+            <em>Every five minutes</em>
           </div>
         </div>
       </section>
 
       <section className="protocol-strip" aria-label="Protocol status">
-        <article><span>Reward asset</span><strong>USDC</strong><em>one clear reward</em></article>
+        <article><span>Reward asset</span><strong>JIMOTHY</strong><em>runner rewards</em></article>
         <article><span>Drop cadence</span><strong>{brand.rewardInterval}</strong><em>automatic epochs</em></article>
-        <article><span>Eligible wallets</span><strong>{data.activeWallets}</strong><em>live indexed holders</em></article>
-        <article><span>USDC distributed</span><strong>${formatAmount(data.totalDistributed, 2)}</strong><em>settled proofs only</em></article>
+        <article><span>Eligible Himothys</span><strong>{data.activeWallets}</strong><em>live holder state</em></article>
+        <article><span>Jimothy distributed</span><strong>{formatAmount(data.totalDistributed, 2)}</strong><em>settled proofs only</em></article>
       </section>
 
-      <section className="how-section" id="how">
+      <section className="lore-section" id="jimothy">
         <div className="section-heading">
-          <p className="kicker">Simple by design</p>
-          <h2>Hold. Boost. Get paid.</h2>
-          <p>Cashbull tracks eligible holders, converts claimed creator fees into USDC, and publishes every settled reward on-chain.</p>
+          <p className="kicker">Jimothy lore</p>
+          <h2>Jimothy ran. Himothy held.</h2>
+          <p>
+            Jimothy is the runner. Himothy is the status. Holders who stay in the race keep their airdrop eligibility;
+            wallets that sell once leave the rotation.
+          </p>
         </div>
-        <div className="step-flow">
-          <article><span>01</span><strong>Hold $CASHBULL</strong><p>Meet the minimum balance and stay indexed.</p></article>
-          <i aria-hidden="true" />
-          <article><span>02</span><strong>Build your boost</strong><p>Longer holds and higher rank increase reward weight.</p></article>
-          <i aria-hidden="true" />
-          <article><span>03</span><strong>Receive USDC</strong><p>Eligible wallets share each settled five-minute reward epoch.</p></article>
+        <div className="price-grid">
+          <article>
+            <span>Himothy price</span>
+            <strong>Live chart</strong>
+            {brand.tokenMint ? <a href={`https://dexscreener.com/solana/${brand.tokenMint}`} rel="noreferrer" target="_blank">Open chart</a> : <em>CA pending</em>}
+          </article>
+          <article>
+            <span>Jimothy price</span>
+            <strong>Live chart</strong>
+            {brand.rewardTokenMint ? <a href={`https://dexscreener.com/solana/${brand.rewardTokenMint}`} rel="noreferrer" target="_blank">Open chart</a> : <em>Jimothy CA pending</em>}
+          </article>
+          <article>
+            <span>Rule</span>
+            <strong>Sell once, not Himothy.</strong>
+            <em>Permanent ineligibility is tracked in holder state.</em>
+          </article>
         </div>
       </section>
 
       <section className="boost-section" id="boost">
         <div className="section-heading compact">
           <p className="kicker">Holder multiplier</p>
-          <h2>Strong hands earn more weight.</h2>
-          <p>Time and holder rank stack together. Rewards still depend on available fees and successful settlement.</p>
+          <h2>Longer holds become more Himothy.</h2>
+          <p>Time and holder rank stack together. Rewards still depend on available rewards and successful settlement.</p>
         </div>
         <div className="boost-layout">
           <div className="time-track">
-            {brand.holdTiers.map((tier, index) => (
-              <article className={index === brand.holdTiers.length - 1 ? "is-max" : ""} key={tier.window}>
+            {brand.holdTiers.map((tier) => (
+              <article key={tier.window}>
                 <span>{tier.window}</span><strong>{tier.multiplier}</strong>
               </article>
             ))}
@@ -217,16 +253,16 @@ export default async function Page() {
             {brand.rankTiers.map((tier) => <article key={tier.rank}><strong>{tier.rank}</strong><em>{tier.multiplier}</em></article>)}
           </div>
         </div>
-        <p className="rule-notice"><strong>Holding rule:</strong> an indexed balance decrease ends eligibility under the current protocol rules.</p>
+        <p className="rule-notice"><strong>Eligibility rule:</strong> selling after eligibility makes a wallet a fallen Himothy under the current protocol rules.</p>
       </section>
 
-      <section className="leaderboard-section" id="holders">
+      <section className="leaderboard-section" id="leaderboard">
         <div className="section-heading row-heading">
-          <div><p className="kicker">Live holders</p><h2>The bull pen.</h2></div>
-          <p>Only current eligible snapshots appear. No demo wallets and no fabricated balances.</p>
+          <div><p className="kicker">Top Himothys</p><h2>The Himothy board.</h2></div>
+          <p>Only eligible wallets appear. No demo wallets and no fabricated balances.</p>
         </div>
         <div className="leaderboard-table">
-          <div className="table-head"><span>Rank / Wallet</span><span>CASHBULL held</span><span>Holding since</span><span>Boost</span></div>
+          <div className="table-head"><span>Rank / Wallet</span><span>HIMOTHY held</span><span>Holding since</span><span>Boost</span></div>
           {data.leaders.length ? data.leaders.map((wallet, index) => (
             <article key={wallet.wallet}>
               <span><b>{String(index + 1).padStart(2, "0")}</b><a href={`https://solscan.io/account/${wallet.wallet}`} rel="noreferrer" target="_blank">{shortWallet(wallet.wallet)}</a></span>
@@ -234,43 +270,73 @@ export default async function Page() {
               <span>{formatDate(wallet.eligibleSince)}</span>
               <em>{wallet.multiplier.toFixed(2)}x</em>
             </article>
-          )) : <div className="data-empty"><strong>0 indexed wallets</strong><span>The first Cashbull holder snapshot will populate this board.</span></div>}
+          )) : <div className="data-empty"><strong>0 Himothys indexed</strong><span>The first holder snapshot will populate this board.</span></div>}
+        </div>
+      </section>
+
+      <section className="fallen-section" id="fallen">
+        <div className="section-heading row-heading">
+          <div><p className="kicker">Fallen Himothys</p><h2>They sold. They fell.</h2></div>
+          <p>Wallets that break the holding rule are shown separately once holder-state data exists.</p>
+        </div>
+        <div className="fallen-grid">
+          {data.fallen.length ? data.fallen.map((wallet) => (
+            <article key={wallet.wallet}>
+              <strong>{shortWallet(wallet.wallet)}</strong>
+              <span>{wallet.reason === "sold_after_eligibility" ? "Sold after eligibility" : wallet.reason ?? "Ineligible"}</span>
+              <em>{formatDate(wallet.lastSeenAt)}</em>
+            </article>
+          )) : <div className="data-empty"><strong>0 fallen Himothys</strong><span>Clean board until the first wallet breaks the holding rule.</span></div>}
         </div>
       </section>
 
       <section className="proof-section" id="proofs">
         <div className="section-heading row-heading">
-          <div><p className="kicker">On-chain receipts</p><h2>Cash leaves proof.</h2></div>
-          <p>Only settled USDC payouts with transaction signatures are published.</p>
+          <div><p className="kicker">Jimothy drops</p><h2>Receipts or it did not run.</h2></div>
+          <p>Only settled JIMOTHY payouts with transaction signatures are published.</p>
         </div>
         <div className="proof-grid">
           {data.rounds.length ? data.rounds.map((round) => (
             <article key={round.epochId}>
-              <span>{formatDate(round.epochId)}</span>
-              <strong>${formatAmount(round.amount, 2)} USDC</strong>
+              <span>{formatDate(round.startedAt)}</span>
+              <strong>{formatAmount(round.amount, 2)} JIMOTHY</strong>
               <em>{round.recipients} recipient{round.recipients === 1 ? "" : "s"}</em>
               <div>{round.proofs.map((signature, index) => <a href={`https://solscan.io/tx/${signature}`} key={signature} rel="noreferrer" target="_blank">Proof {index + 1}</a>)}</div>
             </article>
-          )) : <div className="data-empty"><strong>0 settled USDC drops</strong><span>Verified transactions will appear after the first completed Cashbull epoch.</span></div>}
+          )) : <div className="data-empty"><strong>0 settled Jimothy drops</strong><span>Verified transactions will appear after the first completed Himothy epoch.</span></div>}
+        </div>
+      </section>
+
+      <section className="meme-bank">
+        <div className="section-heading">
+          <p className="kicker">Meme bank</p>
+          <h2>Beta placeholders for the Himothy archive.</h2>
+          <p>Add Jimothy edits, celebration memes, and community bangers here without changing the reward logic.</p>
+        </div>
+        <div className="meme-grid">
+          <article>WE ARE ALL HIMOTHY</article>
+          <article>JIMOTHY RAN</article>
+          <article>HIMOTHY HELD</article>
+          <article>NOT HIMOTHY</article>
         </div>
       </section>
 
       <section className="wallet-section" id="wallet">
         <div className="section-heading row-heading">
-          <div><p className="kicker">Wallet checker</p><h2>Count your cash.</h2></div>
-          <p>No connection and no signature. Paste a public Solana wallet to inspect eligibility and settled USDC rewards.</p>
+          <div><p className="kicker">Wallet checker</p><h2>Check your Himothy.</h2></div>
+          <p>No connection and no signature. Paste a public Solana wallet to inspect eligibility and settled JIMOTHY rewards.</p>
         </div>
         <WalletProofLookup />
       </section>
 
       <footer>
-        <div><Image src={brand.logoPath} alt="" width={56} height={56} /><span><strong>CASHBULL</strong><small>Hold the bull. Catch the cash.</small></span></div>
+        <div><Image src={brand.logoPath} alt="" width={56} height={56} /><span><strong>HIMOTHY</strong><small>We are all Himothy.</small></span></div>
         <div className="footer-links">
-          {brand.articleUrl ? <a href={brand.articleUrl} rel="noreferrer" target="_blank">Article</a> : null}
-          {brand.communityUrl ? <a href={brand.communityUrl} rel="noreferrer" target="_blank">Community</a> : null}
-          {brand.tokenMint ? <a href={`https://dexscreener.com/solana/${brand.tokenMint}`} rel="noreferrer" target="_blank">Dexscreener</a> : null}
+          {brand.communityUrl ? <a href={brand.communityUrl} rel="noreferrer" target="_blank">X</a> : null}
+          {brand.tokenMint ? <a href={`https://dexscreener.com/solana/${brand.tokenMint}`} rel="noreferrer" target="_blank">Himothy chart</a> : null}
+          {brand.rewardTokenMint ? <a href={`https://dexscreener.com/solana/${brand.rewardTokenMint}`} rel="noreferrer" target="_blank">Jimothy chart</a> : null}
         </div>
-        <p>Experimental rewards protocol. Rewards depend on available fees, eligibility rules, and successful on-chain settlement. Digital assets are volatile.</p>
+        <p>Experimental rewards protocol. Rewards depend on available funds, eligibility rules, and successful on-chain settlement. Digital assets are volatile.</p>
       </footer>
     </main>
   );

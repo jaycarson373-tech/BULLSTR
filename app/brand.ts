@@ -1,36 +1,47 @@
-const cashbullMint = process.env.NEXT_PUBLIC_CASHBULL_TOKEN_MINT?.trim() || "3zZkJdgboNjvmLPbP59pwtVDLMX819fDNF8zUWUApump";
+const himothyMint = process.env.NEXT_PUBLIC_HIMOTHY_TOKEN_MINT?.trim() || "";
+const jimothyMint = process.env.NEXT_PUBLIC_JIMOTHY_TOKEN_MINT?.trim() || "";
 
 export const brand = {
-  name: "Cashbull",
-  displayName: "Cashbull",
-  descriptor: "Five-minute USDC rewards",
-  ticker: "$CASHBULL",
-  tagline: "Hold the bull. Catch the cash.",
-  secondaryTagline: "Every five minutes, creator fees buy USDC for eligible Cashbull holders.",
-  logoPath: "/brand/cashbull.jpg",
-  faviconPath: "/brand/cashbull.jpg",
-  ogPath: "/brand/cashbull.jpg",
-  tokenMint: cashbullMint,
-  communityUrl: process.env.NEXT_PUBLIC_CASHBULL_X_URL?.trim() || "https://x.com/Cashbullpf",
-  articleUrl: process.env.NEXT_PUBLIC_ARTICLE_URL?.trim() || "https://www.bloomberg.com/opinion/articles/2026-07-21/private-credit-and-data-center-wraps-are-2008-redux?taid=6a5f677b22b42c0001524ed2&utm_campaign=trueanthem&utm_content=business&utm_medium=social&utm_source=twitter",
+  name: "Himothy",
+  displayName: "Himothy",
+  descriptor: "Five-minute Jimothy rewards",
+  ticker: "$HIMOTHY",
+  rewardTicker: "$JIMOTHY",
+  tagline: "We are all Himothy.",
+  secondaryTagline:
+    "Hold $HIMOTHY, stay Himothy, and receive $JIMOTHY airdrops every five minutes when protocol rewards settle.",
+  logoPath: "/brand/himothy-logo.jpg",
+  faviconPath: "/brand/himothy-logo.jpg",
+  ogPath: "/brand/himothy-logo.jpg",
+  tokenMint: himothyMint,
+  rewardTokenMint: jimothyMint,
+  communityUrl: process.env.NEXT_PUBLIC_HIMOTHY_X_URL?.trim() || "",
+  buyUrl: process.env.NEXT_PUBLIC_BUY_URL?.trim() || (himothyMint ? `https://pump.fun/coin/${himothyMint}` : ""),
   rewardInterval: process.env.NEXT_PUBLIC_REWARD_INTERVAL?.trim() || "5 minutes",
-  minimumEligibleBalance: process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "1000000",
-  rewardSymbol: "USDC",
-  usdcMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  minimumEligibleBalance: process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "500000",
+  rewardSymbol: "JIMOTHY",
+  maxHolderPercent: process.env.NEXT_PUBLIC_MAX_HOLDER_PCT?.trim() || "4",
   holdTiers: [
     { window: "Start", multiplier: "1.00x" },
-    { window: "1 hour", multiplier: "1.25x" },
-    { window: "12 hours", multiplier: "1.50x" },
+    { window: "1 hour", multiplier: "1.10x" },
+    { window: "6 hours", multiplier: "1.35x" },
+    { window: "12 hours", multiplier: "1.60x" },
     { window: "1 day", multiplier: "2.00x" },
     { window: "3 days", multiplier: "3.00x" },
-    { window: "1 week", multiplier: "5.00x" },
-    { window: "1 month", multiplier: "15.00x" }
+    { window: "1 week", multiplier: "5.00x" }
   ],
   rankTiers: [
-    { rank: "Top 10", multiplier: "2.00x" },
-    { rank: "Top 50", multiplier: "1.50x" },
-    { rank: "Top 100", multiplier: "1.25x" },
-    { rank: "All eligible", multiplier: "1.00x" }
+    { rank: "Top 10 Himothys", multiplier: "2.00x" },
+    { rank: "Top 50 Himothys", multiplier: "1.50x" },
+    { rank: "Top 100 Himothys", multiplier: "1.25x" },
+    { rank: "All Himothys", multiplier: "1.00x" }
   ],
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://cashbull.xyz"
+  memeStrips: [
+    "WE ARE ALL HIMOTHY",
+    "JIMOTHY RAN",
+    "SELL ONCE, NOT HIMOTHY",
+    "FIVE-MINUTE JIMOTHY DROPS",
+    "STAY HIMOTHY"
+  ],
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://himothy.fun"
 };
