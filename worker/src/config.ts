@@ -131,7 +131,7 @@ export const config = {
   emergencyStop: boolEnv("EMERGENCY_STOP", true),
 
   epochMinutes: Math.max(1, intEnv("EPOCH_MINUTES", 15)),
-  eligibilityMin: numberEnv("ELIGIBILITY_MIN", 1_000_000),
+  eligibilityMin: numberEnv("ELIGIBILITY_MIN", 500_000),
   maxWalletsPerEpoch: Math.max(1, intEnv("MAX_WALLETS_PER_EPOCH", 100)),
   maxHolderPct: numberEnv("MAX_HOLDER_PCT", 5),
   enforceMaxHolderPct: boolEnv("ENFORCE_MAX_HOLDER_PCT", false),
