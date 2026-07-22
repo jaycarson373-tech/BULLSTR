@@ -39,10 +39,10 @@ export const brand = {
   memeStrips: [
     "WE ARE ALL HIMOTHY",
     "WE ARE HIM",
-    "JIMOTHY RAN",
-    "SELL ONCE, NOT HIMOTHY",
+    "JIMOTHY RAN.",
+    "SELL ONCE, NOT HIMOTHY.",
     "FIVE-MINUTE JIMOTHY DROPS",
     "STAY HIMOTHY"
   ],
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://himothy.fun"
+  siteUrl: "https://www.himothy.tech"
 };

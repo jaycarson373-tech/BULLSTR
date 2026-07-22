@@ -12,6 +12,7 @@ export default async function Page() {
   const data = await getProtocolData({ epochLimit: 10, fallenLimit: 10, leaderLimit: 10, payoutLimit: 2000 });
   const countdownMinutes = Number.parseInt(brand.rewardInterval, 10) || 5;
   const buyHref = brand.buyUrl || "#top";
+  const isPreLaunch = data.rounds.length === 0 && !brand.tokenMint;
 
   return (
     <main className="himothy-page">
@@ -33,6 +34,8 @@ export default async function Page() {
           </div>
           <p className="minimum-rule">
             Hold at least <strong>{Number(brand.minimumEligibleBalance).toLocaleString()} $HIMOTHY</strong>. Wallets above <strong>{brand.maxHolderPercent}%</strong> are excluded.
+            <br />
+            <strong>Sell once and your wallet is blacklisted. Forever not Himothy.</strong>
           </p>
         </div>
 
@@ -42,8 +45,17 @@ export default async function Page() {
           </div>
           <div className="next-drop">
             <span>Next Jimothy drop</span>
-            <strong><EpochCountdown minutes={countdownMinutes} /></strong>
-            <em>Every five minutes</em>
+            {isPreLaunch ? (
+              <>
+                <strong className="launch-message">First epoch begins at launch.</strong>
+                <em>CA pending</em>
+              </>
+            ) : (
+              <>
+                <strong><EpochCountdown minutes={countdownMinutes} /></strong>
+                <em>Every five minutes</em>
+              </>
+            )}
           </div>
         </div>
       </section>

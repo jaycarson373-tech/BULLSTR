@@ -55,14 +55,19 @@ export function WalletProofLookup() {
     try {
       const response = await fetch(`/api/proofs?wallet=${encodeURIComponent(wallet.trim())}`, { cache: "no-store" });
       const payload = (await response.json()) as ProofResult & { error?: string };
-      if (!response.ok) throw new Error(payload.error || "Wallet lookup failed.");
+      if (!response.ok) {
+        throw new Error(response.status === 400 ? "invalid-wallet" : "protocol-not-live");
+      }
       setResult(payload);
     } catch (lookupError) {
-      setError(lookupError instanceof Error ? lookupError.message : "Wallet lookup failed.");
+      const message = lookupError instanceof Error ? lookupError.message : "";
+      setError(message === "invalid-wallet" ? "That's not a Solana wallet." : "Protocol not live yet. Check back at launch.");
     } finally {
       setLoading(false);
     }
   }
+
+  const emptyResult = result && !result.holder && result.distributionCount === 0 && result.roundCount === 0 && result.totals.length === 0 && result.proofs.length === 0;
 
   return (
     <div className="wallet-lookup">
@@ -77,7 +82,9 @@ export function WalletProofLookup() {
 
       <div aria-live="polite">
         {error ? <p className="lookup-error">{error}</p> : null}
-        {result ? (
+        {emptyResult ? (
+          <p className="lookup-error">Protocol not live yet. Check back at launch.</p>
+        ) : result ? (
           <div className="lookup-results">
             <div className="lookup-summary">
               <article><span>Status</span><strong>{statusCopy(result.holder)}</strong><em>Current protocol rule</em></article>
