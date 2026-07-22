@@ -26,7 +26,7 @@ export default async function DashboardPage() {
   return (
     <main className="conviction-page dashboard-page">
       <div className="diamond-rain" aria-hidden="true">
-        {Array.from({ length: 24 }, (_, index) => <span key={index}>◆</span>)}
+        {Array.from({ length: 24 }, (_, index) => <span key={index}>💎</span>)}
       </div>
       <TopTicker />
       <SiteHeader />

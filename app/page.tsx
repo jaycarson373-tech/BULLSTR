@@ -16,7 +16,7 @@ export default async function Page() {
   return (
     <main className="conviction-page">
       <div className="diamond-rain" aria-hidden="true">
-        {Array.from({ length: 24 }, (_, index) => <span key={index}>◆</span>)}
+        {Array.from({ length: 24 }, (_, index) => <span key={index}>💎</span>)}
       </div>
       <TopTicker />
       <SiteHeader />
