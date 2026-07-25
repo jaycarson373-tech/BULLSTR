@@ -37,8 +37,8 @@ function shortSignature(value: string) {
 
 function statusCopy(holder: ProofResult["holder"]) {
   if (!holder) return "Not indexed";
-  if (!holder.permanentlyIneligible) return "Eligible";
-  return holder.ineligibilityReason === "sold_after_eligibility" ? "Holding rule broken" : "Ineligible";
+  if (!holder.permanentlyIneligible) return "Citizen";
+  return holder.ineligibilityReason === "sold_after_eligibility" ? "Exiled by holder rule" : "Not eligible";
 }
 
 export function WalletProofLookup() {
@@ -72,10 +72,10 @@ export function WalletProofLookup() {
   return (
     <div className="wallet-lookup">
       <form onSubmit={submit}>
-        <label htmlFor="proof-wallet">Public Solana wallet</label>
+        <label htmlFor="proof-wallet">Citizen wallet</label>
         <div>
           <input id="proof-wallet" onChange={(event) => setWallet(event.target.value)} placeholder="Paste wallet address" spellCheck={false} value={wallet} />
-          <button disabled={loading || !wallet.trim()} type="submit">{loading ? "Checking..." : "Check wallet"}</button>
+          <button disabled={loading || !wallet.trim()} type="submit">{loading ? "Checking..." : "Check citizen"}</button>
         </div>
         <p>No wallet connection or signature required.</p>
       </form>
@@ -88,14 +88,14 @@ export function WalletProofLookup() {
           <div className="lookup-results">
             <div className="lookup-summary">
               <article><span>Status</span><strong>{statusCopy(result.holder)}</strong><em>Current protocol rule</em></article>
-              <article><span>Reward boost</span><strong>{result.holder?.multiplier ?? "0.00x"}</strong><em>Hold-time only</em></article>
+              <article><span>Ledger factor</span><strong>{result.holder?.multiplier ?? "0.00x"}</strong><em>Reserve accounting</em></article>
               <article><span>Current {brand.ticker}</span><strong>{formatDecimal(result.holder?.sourceBalance ?? "0")}</strong><em>Indexed {formatDate(result.holder?.lastSeenAt ?? null)}</em></article>
-              <article><span>Settled drops</span><strong>{result.distributionCount}</strong><em>{result.roundCount} {brand.rewardSymbol} rounds</em></article>
+              <article><span>Settled cycles</span><strong>{result.distributionCount}</strong><em>{result.roundCount} {brand.rewardSymbol} rounds</em></article>
             </div>
             <div className="asset-totals">
-              {result.totals.length ? result.totals.map((total) => <article key={total.asset}><span>{total.asset} received</span><strong>{formatDecimal(total.amount)}</strong></article>) : <article><span>{brand.rewardSymbol} received</span><strong>0</strong></article>}
+              {result.totals.length ? result.totals.map((total) => <article key={total.asset}><span>{total.asset} redistributed</span><strong>{formatDecimal(total.amount)}</strong></article>) : <article><span>{brand.rewardSymbol} redistributed</span><strong>0</strong></article>}
             </div>
-            {result.proofs.length ? <div className="wallet-proofs"><span>Latest proofs</span>{result.proofs.map((proof) => <a href={`https://solscan.io/tx/${proof.signature}`} key={proof.signature} rel="noreferrer" target="_blank"><strong>{formatDecimal(proof.rewardAmount)} {proof.rewardAsset}</strong><em>{shortSignature(proof.signature)}</em></a>)}</div> : null}
+            {result.proofs.length ? <div className="wallet-proofs"><span>Latest receipts</span>{result.proofs.map((proof) => <a href={`https://solscan.io/tx/${proof.signature}`} key={proof.signature} rel="noreferrer" target="_blank"><strong>{formatDecimal(proof.rewardAmount)} {proof.rewardAsset}</strong><em>{shortSignature(proof.signature)}</em></a>)}</div> : null}
           </div>
         ) : null}
       </div>

@@ -1,10 +1,10 @@
-# Proof of Conviction
+# United Solana Socialist Reserve
 
-Proof of Conviction is a Solana holder-rewards site and worker that distributes SOL to eligible `$CONVICTION` holders on five-minute epochs.
+United Solana Socialist Reserve is a satirical Solana holder-rewards site and worker that distributes SOL to eligible `$USSR` holders on five-minute redistribution cycles.
 
 Core rules:
 
-- Minimum eligible balance: configurable, default `500,000 $CONVICTION`
+- Minimum eligible balance: configurable, default `500,000 $USSR`
 - Reward asset: `SOL`
 - Cadence: every five minutes
 - Holder-state rule: wallets that sell after eligibility are marked ineligible by the worker
@@ -31,7 +31,7 @@ The worker is fail-closed by default. Production execution requires the Railway 
 - `BUY_ENABLED=false` for SOL-only rewards
 - `AIRDROP_ENABLED=true`
 - `REWARD_MODE=sol`
-- `SOURCE_TOKEN_MINT=<CONVICTION mint>`
+- `SOURCE_TOKEN_MINT=<USSR mint>`
 - `TREASURY_WALLET_SECRET=<fresh treasury secret>`
 - `HELIUS_RPC_URL=<mainnet RPC>`
 - `SUPABASE_URL=<project URL>`
@@ -39,7 +39,7 @@ The worker is fail-closed by default. Production execution requires the Railway 
 
 ## Required Owner Values
 
-- `$CONVICTION` mint address
+- `$USSR` mint address
 - X/community URL
 - Treasury wallet secret for the live worker
 - Supabase project URL, anon key, and service role key

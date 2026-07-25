@@ -18,7 +18,7 @@ export type RewardRound = {
   proofs: string[];
 };
 
-export type ConvictionHolder = {
+export type ReserveHolder = {
   wallet: string;
   balance: number;
   multiplier: number;
@@ -37,7 +37,7 @@ export type FallenWallet = {
 export type ProtocolData = {
   rounds: RewardRound[];
   latestPayouts: RewardProof[];
-  leaders: ConvictionHolder[];
+  leaders: ReserveHolder[];
   fallen: FallenWallet[];
   activeWallets: number;
   totalDistributed: number;

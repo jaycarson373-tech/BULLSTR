@@ -1,34 +1,34 @@
-const convictionMint =
-  process.env.NEXT_PUBLIC_CONVICTION_TOKEN_MINT?.trim() ||
+const ussrMint =
+  process.env.NEXT_PUBLIC_USSR_TOKEN_MINT?.trim() ||
   process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ||
   process.env.NEXT_PUBLIC_CA?.trim() ||
   "";
-const pumpUrl = process.env.NEXT_PUBLIC_PUMP_URL?.trim() || (convictionMint ? `https://pump.fun/coin/${convictionMint}` : "https://pump.fun");
-const dexscreenerUrl = process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || (convictionMint ? `https://dexscreener.com/solana/${convictionMint}` : "https://dexscreener.com");
+const pumpUrl = process.env.NEXT_PUBLIC_PUMP_URL?.trim() || (ussrMint ? `https://pump.fun/coin/${ussrMint}` : "https://pump.fun");
+const dexscreenerUrl = process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || (ussrMint ? `https://dexscreener.com/solana/${ussrMint}` : "https://dexscreener.com");
 const buyUrl =
   process.env.NEXT_PUBLIC_BUY_URL?.trim() ||
-  (convictionMint ? `https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=${convictionMint}` : pumpUrl);
+  (ussrMint ? `https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=${ussrMint}` : pumpUrl);
 
 export const brand = {
-  name: "Proof of Conviction",
-  displayName: "Proof of Conviction",
-  descriptor: "Five-minute SOL conviction rewards",
-  ticker: "$CONVICTION",
+  name: "United Solana Socialist Reserve",
+  displayName: "United Solana Socialist Reserve",
+  descriptor: "The People's Treasury",
+  ticker: "$USSR",
   rewardTicker: "SOL",
-  tagline: "Hold conviction. Earn SOL.",
+  tagline: "Equality. Enforced by Code.",
   secondaryTagline:
-    "Diamond hands stay eligible for SOL reward epochs. Sell once and the wallet is out forever.",
-  logoPath: "/brand/conviction-logo.jpg",
-  bannerPath: "/brand/conviction-banner.jpg",
-  faviconPath: "/brand/conviction-favicon.png",
-  ogPath: "/brand/conviction-banner.jpg",
-  tokenMint: convictionMint,
+    "The People's Treasury redistributes protocol rewards to eligible citizens every five minutes.",
+  logoPath: "/brand/ussr-logo.png",
+  bannerPath: "/brand/ussr-banner.png",
+  faviconPath: "/brand/ussr-favicon.png",
+  ogPath: "/brand/ussr-banner.png",
+  tokenMint: ussrMint,
   rewardTokenMint: "",
-  xUrl: process.env.NEXT_PUBLIC_CONVICTION_X_URL?.trim() || process.env.NEXT_PUBLIC_X_URL?.trim() || "",
+  xUrl: process.env.NEXT_PUBLIC_USSR_X_URL?.trim() || process.env.NEXT_PUBLIC_X_URL?.trim() || "",
   communityUrl:
-    process.env.NEXT_PUBLIC_CONVICTION_COMMUNITY_URL?.trim() ||
+    process.env.NEXT_PUBLIC_USSR_COMMUNITY_URL?.trim() ||
     process.env.NEXT_PUBLIC_COMMUNITY_URL?.trim() ||
-    "https://x.com/i/communities/2032569869326004522",
+    "",
   dexscreenerUrl,
   pumpUrl,
   buyUrl,
@@ -47,12 +47,12 @@ export const brand = {
     { window: "1 month", multiplier: "15.00x" }
   ],
   memeStrips: [
-    "PROOF OF CONVICTION",
-    "HOLD CONVICTION",
-    "DIAMOND HANDS EARN SOL",
-    "SELL ONCE, INELIGIBLE FOREVER",
-    "FIVE-MINUTE SOL EPOCHS",
-    "CONVICTION ONLY"
+    "UNITED SOLANA SOCIALIST RESERVE",
+    "THE PEOPLE'S TREASURY",
+    "EQUALITY ENFORCED BY CODE",
+    "REDISTRIBUTING WEALTH",
+    "POWER TO THE HOLDERS",
+    "FIVE-MINUTE REDISTRIBUTION"
   ],
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://www.proofofconviction.xyz"
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://ussr.fun"
 };
