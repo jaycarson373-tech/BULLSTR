@@ -9,6 +9,9 @@ const dexscreenerUrl = process.env.NEXT_PUBLIC_USSR_DEXSCREENER_URL?.trim() || (
 const buyUrl =
   process.env.NEXT_PUBLIC_USSR_BUY_URL?.trim() ||
   (ussrMint ? `https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=${ussrMint}` : "");
+const minimumEligibleBalance =
+  process.env.NEXT_PUBLIC_USSR_MINIMUM_ELIGIBLE_BALANCE?.trim() ||
+  "1000000";
 
 export const brand = {
   name: "United Solana Socialist Reserve",
@@ -33,7 +36,7 @@ export const brand = {
   pumpUrl,
   buyUrl,
   rewardInterval: process.env.NEXT_PUBLIC_REWARD_INTERVAL?.trim() || "5 minutes",
-  minimumEligibleBalance: process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "1000000",
+  minimumEligibleBalance,
   rewardSymbol: "SOL",
   maxHolderPercent: process.env.NEXT_PUBLIC_MAX_HOLDER_PCT?.trim() || "4",
   holdTiers: [
