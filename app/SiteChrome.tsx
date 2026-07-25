@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { brand } from "./brand";
-import { CopyContract } from "./CopyContract";
 
 export function TopTicker() {
   const tickerLines = Array.from({ length: 4 }, () => brand.memeStrips).flat();
@@ -31,7 +30,6 @@ export function SiteHeader() {
       <div className="header-actions">
         {brand.xUrl ? <a className="x-link" href={brand.xUrl} rel="noreferrer" target="_blank">X</a> : null}
         {brand.buyUrl ? <a className="x-link" href={brand.buyUrl} rel="noreferrer" target="_blank">Buy</a> : null}
-        {brand.tokenMint ? <CopyContract mint={brand.tokenMint} /> : <span className="contract-link is-pending"><span>CA</span>Soon</span>}
       </div>
     </header>
   );
