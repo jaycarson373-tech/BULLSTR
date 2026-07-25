@@ -1,6 +1,9 @@
+const defaultUssrMint = "5Ei1t81hLfrV7qvezM1GE9ti5t7gh8xD8mHCcaAXpump";
+const defaultUssrXUrl = "https://x.com/USSR_solana_";
+
 const ussrMint =
   process.env.NEXT_PUBLIC_USSR_TOKEN_MINT?.trim() ||
-  "";
+  defaultUssrMint;
 const pumpUrl = process.env.NEXT_PUBLIC_USSR_PUMP_URL?.trim() || (ussrMint ? `https://pump.fun/coin/${ussrMint}` : "");
 const dexscreenerUrl = process.env.NEXT_PUBLIC_USSR_DEXSCREENER_URL?.trim() || (ussrMint ? `https://dexscreener.com/solana/${ussrMint}` : "");
 const buyUrl =
@@ -22,7 +25,7 @@ export const brand = {
   ogPath: "/brand/ussr-banner.png",
   tokenMint: ussrMint,
   rewardTokenMint: "",
-  xUrl: process.env.NEXT_PUBLIC_USSR_X_URL?.trim() || "",
+  xUrl: process.env.NEXT_PUBLIC_USSR_X_URL?.trim() || defaultUssrXUrl,
   communityUrl:
     process.env.NEXT_PUBLIC_USSR_COMMUNITY_URL?.trim() ||
     "",
