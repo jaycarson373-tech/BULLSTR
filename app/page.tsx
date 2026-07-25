@@ -180,7 +180,7 @@ export default async function Page() {
       </section>
 
       <section className="banner-section" aria-label="United Solana Socialist Reserve banner">
-        <Image src={brand.bannerPath} alt="United Solana Socialist Reserve banner" width={1280} height={500} loading="eager" />
+        <Image src={brand.bannerPath} alt="United Solana Socialist Reserve banner" width={1280} height={426} loading="eager" />
       </section>
 
       <SiteFooter />

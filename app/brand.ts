@@ -1,13 +1,11 @@
 const ussrMint =
   process.env.NEXT_PUBLIC_USSR_TOKEN_MINT?.trim() ||
-  process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ||
-  process.env.NEXT_PUBLIC_CA?.trim() ||
   "";
-const pumpUrl = process.env.NEXT_PUBLIC_PUMP_URL?.trim() || (ussrMint ? `https://pump.fun/coin/${ussrMint}` : "https://pump.fun");
-const dexscreenerUrl = process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() || (ussrMint ? `https://dexscreener.com/solana/${ussrMint}` : "https://dexscreener.com");
+const pumpUrl = process.env.NEXT_PUBLIC_USSR_PUMP_URL?.trim() || (ussrMint ? `https://pump.fun/coin/${ussrMint}` : "");
+const dexscreenerUrl = process.env.NEXT_PUBLIC_USSR_DEXSCREENER_URL?.trim() || (ussrMint ? `https://dexscreener.com/solana/${ussrMint}` : "");
 const buyUrl =
-  process.env.NEXT_PUBLIC_BUY_URL?.trim() ||
-  (ussrMint ? `https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=${ussrMint}` : pumpUrl);
+  process.env.NEXT_PUBLIC_USSR_BUY_URL?.trim() ||
+  (ussrMint ? `https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=${ussrMint}` : "");
 
 export const brand = {
   name: "United Solana Socialist Reserve",
@@ -24,10 +22,9 @@ export const brand = {
   ogPath: "/brand/ussr-banner.png",
   tokenMint: ussrMint,
   rewardTokenMint: "",
-  xUrl: process.env.NEXT_PUBLIC_USSR_X_URL?.trim() || process.env.NEXT_PUBLIC_X_URL?.trim() || "",
+  xUrl: process.env.NEXT_PUBLIC_USSR_X_URL?.trim() || "",
   communityUrl:
     process.env.NEXT_PUBLIC_USSR_COMMUNITY_URL?.trim() ||
-    process.env.NEXT_PUBLIC_COMMUNITY_URL?.trim() ||
     "",
   dexscreenerUrl,
   pumpUrl,

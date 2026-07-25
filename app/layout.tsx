@@ -20,7 +20,7 @@ export const metadata: Metadata = {
       {
         url: `${brand.siteUrl}${brand.ogPath}`,
         width: 1280,
-        height: 500,
+        height: 426,
         alt: `${brand.displayName} banner`
       }
     ],

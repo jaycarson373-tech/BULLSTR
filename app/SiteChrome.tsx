@@ -31,7 +31,7 @@ export function SiteHeader() {
       <div className="header-actions">
         {brand.xUrl ? <a className="x-link" href={brand.xUrl} rel="noreferrer" target="_blank">X</a> : null}
         {brand.buyUrl ? <a className="x-link" href={brand.buyUrl} rel="noreferrer" target="_blank">Join</a> : null}
-        {brand.tokenMint ? <CopyContract mint={brand.tokenMint} /> : <span className="contract-link is-pending"><span>CA</span>Pending</span>}
+        {brand.tokenMint ? <CopyContract mint={brand.tokenMint} /> : <span className="contract-link is-pending"><span>CA</span>Soon</span>}
       </div>
     </header>
   );
@@ -44,9 +44,9 @@ export function SiteFooter() {
       <div className="footer-links">
         {brand.xUrl ? <a href={brand.xUrl} rel="noreferrer" target="_blank">X</a> : null}
         {brand.communityUrl ? <a href={brand.communityUrl} rel="noreferrer" target="_blank">Community</a> : null}
-        <a href={brand.dexscreenerUrl} rel="noreferrer" target="_blank">Dex Screener</a>
-        <a href={brand.pumpUrl} rel="noreferrer" target="_blank">Pump.fun</a>
-        <a href={brand.buyUrl} rel="noreferrer" target="_blank">Join the Reserve</a>
+        {brand.dexscreenerUrl ? <a href={brand.dexscreenerUrl} rel="noreferrer" target="_blank">Dex Screener</a> : null}
+        {brand.pumpUrl ? <a href={brand.pumpUrl} rel="noreferrer" target="_blank">Pump.fun</a> : null}
+        {brand.buyUrl ? <a href={brand.buyUrl} rel="noreferrer" target="_blank">Join the Reserve</a> : null}
       </div>
       <p>Equality isn't promised. It's programmed. Experimental on-chain parody; rewards depend on available funds, eligibility rules, and successful settlement.</p>
     </footer>
