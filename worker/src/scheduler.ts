@@ -25,7 +25,7 @@ async function loop() {
 }
 
 function scheduleFirstRun() {
-  const waitMs = msUntilNextEpoch(new Date()) + 500;
+  const waitMs = msUntilNextEpoch(new Date()) + config.firstRunDelayEpochs * config.epochMinutes * 60_000 + 500;
   console.log(`First epoch run scheduled in ${Math.round(waitMs / 1000)} seconds.`);
   setTimeout(() => {
     loop().catch((error) => {
