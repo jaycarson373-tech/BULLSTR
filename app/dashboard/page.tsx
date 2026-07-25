@@ -8,9 +8,8 @@ import { formatAmount, formatDate, getProtocolData, shortSignature, shortWallet 
 export const dynamic = "force-dynamic";
 
 function reasonCopy(reason: string | null) {
-  if (reason === "sold_after_eligibility") return "Sold after eligibility";
-  if (reason === "max_holder_excluded") return "Above max holder cap";
-  return reason ?? "Ineligible";
+  if (reason === "holder_pct_at_or_above_max" || reason === "max_holder_excluded") return "Above max holder cap";
+  return reason ?? "Outside current rules";
 }
 
 export default async function DashboardPage() {
@@ -35,7 +34,7 @@ export default async function DashboardPage() {
         <div>
           <p className="kicker"><span /> Reserve dashboard</p>
           <h1>The People's Treasury.</h1>
-          <p>Current treasury state, eligible citizens, redistribution receipts, and wallet lookup in one government-grade terminal.</p>
+          <p>Current treasury state, eligible citizens, redistribution receipts, and wallet lookup in one on-chain government terminal.</p>
         </div>
         <div className="dashboard-logo">
           <Image src={brand.logoPath} alt="United Solana Socialist Reserve logo" width={400} height={400} priority />
@@ -71,8 +70,8 @@ export default async function DashboardPage() {
 
       <section className="dashboard-section" id="fallen">
         <div className="section-heading row-heading">
-          <div><p className="kicker">Exile registry</p><h2>Removed citizens.</h2></div>
-          <p>Wallets appear here when holder-state rules mark them ineligible.</p>
+          <div><p className="kicker">Policy exclusions</p><h2>The reserve filter.</h2></div>
+          <p>Wallets appear here only when current protocol rules exclude them, such as the max-holder cap.</p>
         </div>
         <div className="leaderboard-table dashboard-table fallen-dashboard-table">
           <div className="table-head"><span>Wallet</span><span>Last balance</span><span>Registry reason</span><span>Last seen</span></div>
@@ -83,7 +82,7 @@ export default async function DashboardPage() {
               <span>{reasonCopy(wallet.reason)}</span>
               <em>{formatDate(wallet.lastSeenAt)}</em>
             </article>
-          )) : <div className="data-empty"><strong>0 removed citizens</strong><span>The registry is clean before the first reserve cycle.</span></div>}
+          )) : <div className="data-empty"><strong>0 policy exclusions</strong><span>The reserve filter is clean before the first cycle.</span></div>}
         </div>
       </section>
 

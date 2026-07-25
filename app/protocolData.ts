@@ -188,7 +188,7 @@ export async function getProtocolData(options: ProtocolDataOptions = {}): Promis
         balance: Number(row.source_balance ?? 0),
         reason: row.ineligible_reason ? String(row.ineligible_reason) : null,
         lastSeenAt: row.last_seen_at ? String(row.last_seen_at) : null
-      }))
+      })).filter((row) => row.reason !== "sold_after_eligibility")
     };
   } catch {
     return emptyData;

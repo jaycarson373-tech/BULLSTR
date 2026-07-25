@@ -15,7 +15,7 @@ export const brand = {
   rewardTicker: "SOL",
   tagline: "Equality. Enforced by Code.",
   secondaryTagline:
-    "The People's Treasury redistributes protocol rewards to eligible citizens every five minutes.",
+    "Creator fees are collectivized into the People's Treasury and redistributed on-chain every five minutes.",
   logoPath: "/brand/ussr-logo.png",
   bannerPath: "/brand/ussr-banner.png",
   faviconPath: "/brand/ussr-favicon.png",
@@ -30,7 +30,7 @@ export const brand = {
   pumpUrl,
   buyUrl,
   rewardInterval: process.env.NEXT_PUBLIC_REWARD_INTERVAL?.trim() || "5 minutes",
-  minimumEligibleBalance: process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "500000",
+  minimumEligibleBalance: process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "1000000",
   rewardSymbol: "SOL",
   maxHolderPercent: process.env.NEXT_PUBLIC_MAX_HOLDER_PCT?.trim() || "4",
   holdTiers: [
@@ -45,9 +45,11 @@ export const brand = {
   ],
   memeStrips: [
     "UNITED SOLANA SOCIALIST RESERVE",
+    "ON-CHAIN COMMUNISM",
     "THE PEOPLE'S TREASURY",
+    "FEES TO THE COLLECTIVE",
     "EQUALITY ENFORCED BY CODE",
-    "REDISTRIBUTING WEALTH",
+    "PUBLIC LEDGER REDISTRIBUTION",
     "POWER TO THE HOLDERS",
     "FIVE-MINUTE REDISTRIBUTION"
   ],

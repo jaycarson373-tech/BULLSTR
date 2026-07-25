@@ -26,14 +26,14 @@ export default async function Page() {
           <p className="kicker"><span /> The People's Treasury</p>
           <h1><em>THE UNITED SOLANA SOCIALIST RESERVE</em></h1>
           <p className="hero-tagline">{brand.tagline}</p>
-          <p className="hero-lede">Every creator fee enters the People's Treasury. Every 5 minutes the reserve redistributes to eligible holders.</p>
+          <p className="hero-lede">Every creator fee is collectivized into the People's Treasury. Every 5 minutes the reserve runs a public redistribution cycle for eligible holders.</p>
           <p className="hero-lede propaganda-line">Communism worked on paper. Now we're testing it on-chain.</p>
           <div className="hero-actions">
             <a className="primary-action" href={buyHref} rel={brand.buyUrl ? "noreferrer" : undefined} target={brand.buyUrl ? "_blank" : undefined}>Join the Reserve</a>
             <a className="secondary-action" href="#proofs">View Redistributions</a>
           </div>
           <p className="minimum-rule">
-            Hold at least <strong>{Number(brand.minimumEligibleBalance).toLocaleString()} {brand.ticker}</strong> to become an eligible citizen. Wallets above <strong>{brand.maxHolderPercent}%</strong> are excluded.
+            Hold at least <strong>{Number(brand.minimumEligibleBalance).toLocaleString()} {brand.ticker}</strong> to enter the collective. Eligibility is checked fresh every cycle. Wallets above <strong>{brand.maxHolderPercent}%</strong> are excluded.
             <br />
             <strong>Power to the holders. Audited by the chain.</strong>
           </p>
@@ -70,17 +70,17 @@ export default async function Page() {
       <section className="how-section" id="how">
         <div className="section-heading">
           <p className="kicker">The People's Economy</p>
-          <h2>Creator fees enter. Citizens receive.</h2>
+          <h2>Fees enter the collective. Citizens receive.</h2>
           <p>
-            United Solana Socialist Reserve is an on-chain parody treasury. The reserve watches eligible holders,
-            records every redistribution cycle, and publishes receipts when the treasury settles.
+            United Solana Socialist Reserve is an on-chain parody treasury. The reserve watches current eligible holders,
+            runs five-minute redistribution cycles, and publishes receipts when the treasury settles.
           </p>
         </div>
         <div className="price-grid">
           <article>
             <span>Treasury</span>
             <strong>People's Treasury</strong>
-            <em>Every creator fee enters the reserve.</em>
+            <em>Creator fees are collectivized into the reserve.</em>
           </article>
           <article>
             <span>Redistribution</span>
@@ -90,7 +90,7 @@ export default async function Page() {
           <article>
             <span>Equality</span>
             <strong>One reserve</strong>
-            <em>Eligible holders share the public distribution pool.</em>
+            <em>Current eligible holders share the public distribution pool.</em>
           </article>
         </div>
       </section>
@@ -99,22 +99,22 @@ export default async function Page() {
         <div className="section-heading compact">
           <p className="kicker">Reserve doctrine</p>
           <h2>Equality. Enforced by Code.</h2>
-          <p>A satirical government portal for a live crypto treasury: transparent inputs, scheduled redistributions, and receipts anyone can inspect.</p>
+          <p>A satirical government portal for on-chain communism: transparent inputs, scheduled redistributions, and receipts anyone can inspect.</p>
         </div>
         <div className="boost-layout">
           <div className="time-track">
             <article><span>01</span><strong>Workers Loading</strong></article>
-            <article><span>02</span><strong>Calculating Equality</strong></article>
-            <article><span>03</span><strong>Redistributing Wealth</strong></article>
-            <article><span>04</span><strong>Power to Holders</strong></article>
+            <article><span>02</span><strong>Collectivizing Fees</strong></article>
+            <article><span>03</span><strong>Calculating Equality</strong></article>
+            <article><span>04</span><strong>Redistributing On-Chain</strong></article>
           </div>
           <div className="hold-only-panel">
             <span>Government notice</span>
             <strong>The Treasury Grows.</strong>
-            <p>Rewards depend on live treasury funds, eligible holder state, and successful on-chain execution.</p>
+            <p>Distributions depend on live treasury funds, current-cycle eligibility, and successful on-chain execution.</p>
           </div>
         </div>
-        <p className="rule-notice"><strong>Protocol rule:</strong> eligibility is evaluated by the reserve at each redistribution cycle.</p>
+        <p className="rule-notice"><strong>Protocol rule:</strong> eligibility is evaluated fresh by the reserve at each redistribution cycle. Balance changes only affect current-cycle eligibility.</p>
       </section>
 
       <section className="leaderboard-section" id="leaderboard">
@@ -138,18 +138,18 @@ export default async function Page() {
 
       <section className="fallen-section" id="fallen">
         <div className="section-heading row-heading">
-          <div><p className="kicker">Removed citizens</p><h2>The exile registry.</h2></div>
-          <p>Only the latest 10 show here. The full public registry lives on the dashboard.</p>
+          <div><p className="kicker">Policy exclusions</p><h2>The reserve filter.</h2></div>
+          <p>Only current rule-based exclusions show here. The full public registry lives on the dashboard.</p>
           <a className="section-link" href="/dashboard#fallen">View more</a>
         </div>
         <div className="fallen-grid">
           {data.fallen.length ? data.fallen.map((wallet) => (
             <article key={wallet.wallet}>
               <strong>{shortWallet(wallet.wallet)}</strong>
-              <span>{wallet.reason === "sold_after_eligibility" ? "Sold after eligibility" : wallet.reason ?? "Ineligible"}</span>
+              <span>{wallet.reason === "holder_pct_at_or_above_max" ? "Above holder cap" : wallet.reason ?? "Outside current rules"}</span>
               <em>{formatDate(wallet.lastSeenAt)}</em>
             </article>
-          )) : <div className="data-empty"><strong>0 removed citizens</strong><span>The registry is clean before the first reserve cycle.</span></div>}
+          )) : <div className="data-empty"><strong>0 policy exclusions</strong><span>The reserve filter is clean before the first cycle.</span></div>}
         </div>
       </section>
 

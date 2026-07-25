@@ -1,13 +1,13 @@
 # United Solana Socialist Reserve
 
-United Solana Socialist Reserve is a satirical Solana holder-rewards site and worker that distributes SOL to eligible `$USSR` holders on five-minute redistribution cycles.
+United Solana Socialist Reserve is a satirical on-chain communism experiment: creator fees enter the People's Treasury, and SOL is redistributed to eligible `$USSR` holders on five-minute cycles.
 
 Core rules:
 
-- Minimum eligible balance: configurable, default `500,000 $USSR`
+- Minimum eligible balance: configurable, default `1,000,000 $USSR`
 - Reward asset: `SOL`
 - Cadence: every five minutes
-- Holder-state rule: wallets that sell after eligibility are marked ineligible by the worker
+- Eligibility rule: wallets qualify per cycle when they meet the minimum balance; balance changes only affect current-cycle eligibility
 - Whale filter: configurable, default excludes wallets above `4%`
 
 ## Local Setup

@@ -24,7 +24,7 @@ export function SiteHeader() {
       <nav aria-label="Primary navigation">
         <a href="/#how">People's Economy</a>
         <a href="/#leaderboard">Citizens</a>
-        <a href="/#fallen">Exiles</a>
+        <a href="/#fallen">Exclusions</a>
         <a href="/#proofs">Distributions</a>
         <a href="/dashboard">Dashboard</a>
       </nav>
@@ -48,7 +48,7 @@ export function SiteFooter() {
         {brand.pumpUrl ? <a href={brand.pumpUrl} rel="noreferrer" target="_blank">Pump.fun</a> : null}
         {brand.buyUrl ? <a href={brand.buyUrl} rel="noreferrer" target="_blank">Join the Reserve</a> : null}
       </div>
-      <p>Equality isn't promised. It's programmed. Experimental on-chain parody; rewards depend on available funds, eligibility rules, and successful settlement.</p>
+      <p>Equality isn't promised. It's programmed. Experimental on-chain parody; distributions depend on available treasury funds, current-cycle eligibility, and successful settlement.</p>
     </footer>
   );
 }

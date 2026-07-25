@@ -16,7 +16,7 @@ console.log(
     : `Token rewards: ${config.swapBalanceBps / 100}% claimed SOL buys ${rewardRotation}; ${config.sideWalletBps / 100}% routes to side wallet.`
 );
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
-console.log(`Eligibility gate: citizen must hold ${config.eligibilityMin.toLocaleString()} USSR tokens without decreasing balance`);
+console.log(`Eligibility gate: citizen must hold ${config.eligibilityMin.toLocaleString()} USSR tokens at each cycle`);
 
 async function loop() {
   await runEpoch();

@@ -28,6 +28,10 @@ function isMissingHolderStateTable(error: unknown) {
   return message.includes("holder_states") || message.includes("42P01") || message.includes("PGRST205");
 }
 
+function isPermanentRuleExclusion(state: HolderStateRow | undefined) {
+  return Boolean(state?.permanently_ineligible && state.ineligible_reason !== "sold_after_eligibility");
+}
+
 async function getHolderStates() {
   const result = await supabase
     .from("holder_states")
@@ -59,31 +63,13 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
     const permanentlyRemoved = new Set<string>();
 
     for (const state of states) {
-      if (state.permanently_ineligible) continue;
+      if (isPermanentRuleExclusion(state)) continue;
       const current = currentByWallet.get(state.wallet);
-      const previousRaw = parseRaw(state.source_balance_raw);
 
-      const soldAfterEligibility = previousRaw > 0n && (!current || current.rawBalance < previousRaw);
       const droppedBelowThreshold = !current || current.uiBalance < config.eligibilityMin;
       const atOrAboveHolderCap = config.enforceMaxHolderPct && current && current.holderPct >= config.maxHolderPct;
 
-      if (soldAfterEligibility) {
-        updates.push({
-          wallet: state.wallet,
-          source_balance: current?.uiBalance.toString() ?? "0",
-          source_balance_raw: current?.rawBalance.toString() ?? "0",
-          highest_source_balance_raw: state.highest_source_balance_raw ?? state.source_balance_raw ?? "0",
-          permanently_ineligible: true,
-          ineligible_reason: "sold_after_eligibility",
-          ineligible_at: now,
-          last_seen_at: now,
-          last_epoch_id: epochId,
-          updated_at: now,
-          current_streak_epochs: 0,
-          current_multiplier_bps: 10_000
-        });
-        permanentlyRemoved.add(state.wallet);
-      } else if (atOrAboveHolderCap) {
+      if (atOrAboveHolderCap) {
         updates.push({
           wallet: state.wallet,
           source_balance: current.uiBalance.toString(),
@@ -105,6 +91,7 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
           source_balance: current?.uiBalance.toString() ?? state.source_balance ?? "0",
           source_balance_raw: current?.rawBalance.toString() ?? state.source_balance_raw ?? "0",
           highest_source_balance_raw: state.highest_source_balance_raw ?? state.source_balance_raw ?? "0",
+          eligible_since: null,
           last_seen_at: now,
           last_epoch_id: epochId,
           updated_at: now,
@@ -156,7 +143,7 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
 
     for (const holder of eligibleHolders) {
       const existing = stateByWallet.get(holder.wallet);
-      if (existing?.permanently_ineligible || permanentlyRemoved.has(holder.wallet)) continue;
+      if (isPermanentRuleExclusion(existing) || permanentlyRemoved.has(holder.wallet)) continue;
 
       const highestRaw = parseRaw(existing?.highest_source_balance_raw);
       const nextStreak = existing ? (existing.current_streak_epochs ?? 0) + 1 : 1;
@@ -192,7 +179,7 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
 
     const removed = eligibleHolders.length - eligible.length;
     if (removed > 0) {
-      console.log(`[${epochId}] holder-state removed ${removed} permanently ineligible holders`);
+      console.log(`[${epochId}] holder-state removed ${removed} rule-excluded holders`);
     }
     return eligible;
   } catch (error) {

@@ -38,7 +38,7 @@ function shortSignature(value: string) {
 function statusCopy(holder: ProofResult["holder"]) {
   if (!holder) return "Not indexed";
   if (!holder.permanentlyIneligible) return "Citizen";
-  return holder.ineligibilityReason === "sold_after_eligibility" ? "Exiled by holder rule" : "Not eligible";
+  return "Outside current rules";
 }
 
 export function WalletProofLookup() {
