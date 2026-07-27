@@ -1,7 +1,6 @@
 import "dotenv/config";
 import bs58 from "bs58";
 import { Keypair, PublicKey } from "@solana/web3.js";
-import { rewardKindForEpoch, type RewardMode } from "./reward-cycle.js";
 
 function required(name: string) {
   const value = process.env[name];
@@ -36,19 +35,10 @@ function optionalPublicKeyEnv(name: string) {
   return value ? new PublicKey(value) : null;
 }
 
-function listEnv(name: string) {
-  const value = process.env[name];
-  if (!value) return [];
-  return value
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
 function rewardModeEnv() {
   const value = (process.env.REWARD_MODE ?? "token").toLowerCase();
-  if (value === "sol" || value === "token" || value === "alternating") return value as RewardMode;
-  throw new Error(`Invalid REWARD_MODE=${value}; expected sol, token, or alternating`);
+  if (value === "sol" || value === "token") return value;
+  throw new Error(`Invalid REWARD_MODE=${value}; expected sol or token`);
 }
 
 function optionalWallets(name: string) {
@@ -72,35 +62,8 @@ function parseSecret(raw: string) {
 let cachedTreasury: Keypair | null = null;
 const rewardMode = rewardModeEnv();
 const configuredRewardTokenMint = optionalPublicKeyEnv("REWARD_TOKEN_MINT");
-const configuredPumpTokenMint = optionalPublicKeyEnv("PUMP_TOKEN_MINT");
-const rewardTokenMints = listEnv("REWARD_TOKEN_MINTS").map((mint) => new PublicKey(mint));
-const rewardTokenSymbols = listEnv("REWARD_TOKEN_SYMBOLS");
-const fallbackRewardSymbol =
-  process.env.REWARD_TOKEN_SYMBOL?.trim() || process.env.NEXT_PUBLIC_REWARD_SYMBOL?.trim() || "REWARD";
-const configuredRewardTokens = rewardMode === "alternating"
-  ? configuredPumpTokenMint
-    ? [{ mint: configuredPumpTokenMint, symbol: "PUMP" }]
-    : []
-  : rewardTokenMints.length
-  ? rewardTokenMints.map((mint, index) => ({
-      mint,
-      symbol: rewardTokenSymbols[index] || `REWARD-${index + 1}`
-    }))
-  : configuredRewardTokenMint
-    ? [{ mint: configuredRewardTokenMint, symbol: fallbackRewardSymbol }]
-    : [];
-
-if ((rewardMode === "token" || rewardMode === "alternating") && configuredRewardTokens.length === 0) {
-  throw new Error(
-    rewardMode === "alternating"
-      ? "Missing required env PUMP_TOKEN_MINT when REWARD_MODE=alternating"
-      : "Missing required env REWARD_TOKEN_MINT or REWARD_TOKEN_MINTS when REWARD_MODE=token"
-  );
-}
-if (rewardMode !== "alternating" && rewardTokenSymbols.length > 0 && rewardTokenSymbols.length !== configuredRewardTokens.length) {
-  throw new Error(
-    `REWARD_TOKEN_SYMBOLS count must match configured reward token count; got ${rewardTokenSymbols.length} symbols for ${configuredRewardTokens.length} mints`
-  );
+if (rewardMode === "token" && !configuredRewardTokenMint) {
+  throw new Error("Missing required env REWARD_TOKEN_MINT when REWARD_MODE=token");
 }
 const swapBalanceBps = Math.min(10_000, Math.max(1, intEnv("SWAP_BALANCE_BPS", 10000)));
 if (swapBalanceBps > 10_000) {
@@ -119,8 +82,7 @@ export const config = {
   heliusRpcUrl: required("HELIUS_RPC_URL"),
   sourceTokenMint: publicKeyEnv("SOURCE_TOKEN_MINT"),
   rewardMode,
-  rewardTokens: configuredRewardTokens,
-  rewardTokenMint: configuredRewardTokens[0]?.mint ?? new PublicKey("So11111111111111111111111111111111111111112"),
+  rewardTokenMint: configuredRewardTokenMint ?? new PublicKey("So11111111111111111111111111111111111111112"),
   treasuryWalletSecret: required("TREASURY_WALLET_SECRET"),
   supabaseUrl: required("SUPABASE_URL"),
   supabaseServiceRole: required("SUPABASE_SERVICE_ROLE"),
@@ -128,14 +90,11 @@ export const config = {
   claimEnabled: boolEnv("CLAIM_ENABLED", false),
   buyEnabled: boolEnv("BUY_ENABLED", false),
   airdropEnabled: boolEnv("AIRDROP_ENABLED", false),
-  emergencyStop: boolEnv("EMERGENCY_STOP", true),
 
   epochMinutes: Math.max(1, intEnv("EPOCH_MINUTES", 15)),
-  firstRunDelayEpochs: Math.max(0, intEnv("FIRST_RUN_DELAY_EPOCHS", 1)),
   eligibilityMin: numberEnv("ELIGIBILITY_MIN", 1_000_000),
-  maxWalletsPerEpoch: Math.max(1, intEnv("MAX_WALLETS_PER_EPOCH", 100)),
+  maxWalletsPerEpoch: Math.max(1, intEnv("MAX_WALLETS_PER_EPOCH", 75)),
   maxHolderPct: numberEnv("MAX_HOLDER_PCT", 5),
-  enforceMaxHolderPct: boolEnv("ENFORCE_MAX_HOLDER_PCT", false),
   excludeWallets: optionalWallets("EXCLUDE_WALLETS"),
 
   swapBalanceBps,
@@ -145,7 +104,6 @@ export const config = {
   airdropSolReserve: Math.max(0.05, numberEnv("AIRDROP_SOL_RESERVE", 0.05)),
   airdropBatchSize: Math.max(1, intEnv("AIRDROP_BATCH_SIZE", 4)),
   airdropRewardBps: Math.min(10_000, Math.max(1, intEnv("AIRDROP_REWARD_BPS", 10000))),
-  solAirdropBalanceBps: Math.min(10_000, Math.max(1, intEnv("SOL_AIRDROP_BALANCE_BPS", 5000))),
   swapSlippageBps: Math.max(1, intEnv("SWAP_SLIPPAGE_BPS", 300)),
   priorityFeeSol: numberEnv("PRIORITY_FEE_SOL", 0.000001),
   minRewardRawToAirdrop: BigInt(Math.max(0, intEnv("MIN_REWARD_RAW_TO_AIRDROP", 1))),
@@ -155,23 +113,4 @@ export const config = {
 export function treasuryKeypair() {
   cachedTreasury ??= Keypair.fromSecretKey(parseSecret(config.treasuryWalletSecret));
   return cachedTreasury;
-}
-
-export function rewardTokenForEpoch(epochId: string) {
-  const timestamp = Date.parse(epochId);
-  const epochSizeMs = config.epochMinutes * 60_000;
-  const epochIndex = Number.isFinite(timestamp) ? Math.floor(timestamp / epochSizeMs) : 0;
-  const kind = rewardKindForEpoch(epochId, config.epochMinutes, config.rewardMode);
-  if (kind === "sol") {
-    return { mint: config.rewardTokenMint, symbol: "SOL", index: 0, count: 2, kind } as const;
-  }
-
-  const rotationIndex = ((epochIndex % config.rewardTokens.length) + config.rewardTokens.length) % config.rewardTokens.length;
-  const rewardToken = config.rewardTokens[rotationIndex];
-  return {
-    ...rewardToken,
-    index: rotationIndex,
-    count: config.rewardMode === "alternating" ? 2 : config.rewardTokens.length,
-    kind
-  };
 }

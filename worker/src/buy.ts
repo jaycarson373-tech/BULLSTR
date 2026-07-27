@@ -109,6 +109,11 @@ export async function buyToken(
   explicitReserveLamports?: bigint,
   maxSwapLamports?: bigint
 ): Promise<BuyResult> {
+  if (config.rewardMode === "sol") {
+    console.log(`[${epochId}] REWARD_MODE=sol, buy path disabled`);
+    return { baseSpentLamports: 0n, rewardReceivedRaw: 0n, rewardReceivedUi: 0, txSig: null };
+  }
+
   const treasury = treasuryKeypair();
   const { amount, balance, reserveLamports } = await treasurySwapAmount(explicitReserveLamports, maxSwapLamports);
   const decimals = await tokenDecimals(outputMint);
@@ -146,5 +151,5 @@ export async function buyToken(
 }
 
 export async function buyReward(epochId: string, explicitReserveLamports?: bigint, maxSwapLamports?: bigint) {
-  return buyToken(epochId, config.rewardTokenMint, config.rewardTokens[0]?.symbol ?? "REWARD", explicitReserveLamports, maxSwapLamports);
+  return buyToken(epochId, config.rewardTokenMint, "ANSEM", explicitReserveLamports, maxSwapLamports);
 }
