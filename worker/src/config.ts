@@ -26,6 +26,11 @@ function intEnv(name: string, defaultValue: number) {
   return Math.floor(numberEnv(name, defaultValue));
 }
 
+function stringEnv(name: string, defaultValue: string) {
+  const value = process.env[name]?.trim();
+  return value || defaultValue;
+}
+
 function publicKeyEnv(name: string) {
   return new PublicKey(required(name));
 }
@@ -79,6 +84,10 @@ if (sideWalletBps > 0 && !sideWalletPublicKey) {
 }
 
 export const config = {
+  projectName: stringEnv("PROJECT_NAME", process.env.NEXT_PUBLIC_PROJECT_NAME ?? "CryptoCat"),
+  sourceSymbol: stringEnv("SOURCE_SYMBOL", process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CC"),
+  rewardSymbol: stringEnv("REWARD_TOKEN_SYMBOL", process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "TOKEN"),
+
   heliusRpcUrl: required("HELIUS_RPC_URL"),
   sourceTokenMint: publicKeyEnv("SOURCE_TOKEN_MINT"),
   rewardMode,

@@ -1,7 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="#fffef7"/>
-  <circle cx="930" cy="120" r="220" fill="#ffe26b" opacity="0.45"/>
-  <text x="120" y="210" font-family="Impact, Arial Black, Arial, sans-serif" font-size="72" fill="#111">since it&apos;s emoji day</text>
-  <text x="120" y="450" font-family="Impact, Arial Black, Arial, sans-serif" font-size="245" fill="#111">BULL</text>
-  <text x="870" y="365" text-anchor="middle" font-size="220">🐂</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#070711"/>
+      <stop offset=".45" stop-color="#181136"/>
+      <stop offset="1" stop-color="#080818"/>
+    </linearGradient>
+    <linearGradient id="cat" x1="690" y1="100" x2="1030" y2="470" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff7adf"/>
+      <stop offset=".5" stop-color="#72f8ff"/>
+      <stop offset="1" stop-color="#ffe872"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(875 308) rotate(90) scale(260)">
+      <stop stop-color="#ff7adf" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#ff7adf" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="52" y="52" width="1096" height="526" rx="42" fill="none" stroke="#fff" stroke-opacity=".14"/>
+  <circle cx="875" cy="308" r="260" fill="url(#glow)"/>
+  <text x="96" y="160" fill="#65ffb8" font-family="Arial Black, Arial, sans-serif" font-size="34" letter-spacing="8">AI TREASURY CAT ONLINE</text>
+  <text x="90" y="330" fill="#fff9ff" font-family="Impact, Arial Black, Arial, sans-serif" font-size="164" letter-spacing="-8">CryptoCat</text>
+  <text x="100" y="392" fill="#ffe872" font-family="Arial Black, Arial, sans-serif" font-size="48">Ticker: $CC</text>
+  <text x="100" y="462" fill="#fff9ff" fill-opacity=".75" font-family="Arial, sans-serif" font-size="32">The on-chain cat that scans, learns, posts,</text>
+  <text x="100" y="506" fill="#fff9ff" fill-opacity=".75" font-family="Arial, sans-serif" font-size="32">drops missions, and watches the treasury.</text>
+  <path d="M790 255 742 132l126 65h120l126-65-48 123c38 38 56 87 56 143 0 122-88 182-194 182s-194-60-194-182c0-56 18-105 56-143Z" fill="url(#cat)" stroke="#fff" stroke-opacity=".8" stroke-width="8"/>
+  <circle cx="858" cy="340" r="29" fill="#090911"/>
+  <circle cx="998" cy="340" r="29" fill="#090911"/>
+  <path d="M900 408h56l-28 32-28-32Z" fill="#090911"/>
+  <path d="M850 466c45 39 111 39 156 0" fill="none" stroke="#090911" stroke-width="18" stroke-linecap="round"/>
+  <text x="928" y="238" text-anchor="middle" fill="#090911" font-family="Arial Black, Arial, sans-serif" font-size="82">CC</text>
 </svg>

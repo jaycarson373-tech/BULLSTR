@@ -65,20 +65,20 @@ export async function runEpoch(date = new Date()) {
       }))
     );
     console.log(
-      `[${epochId}] snapshot 1M+ eligible holders: ${eligibleHolders.length}/${balanceEligibleHolders.length} after holder-state rules`
+      `[${epochId}] snapshot ${config.eligibilityMin.toLocaleString()}+ eligible holders: ${eligibleHolders.length}/${balanceEligibleHolders.length} after holder-state rules`
     );
     const holders = selectRewardRecipients(epochId, eligibleHolders, config.maxWalletsPerEpoch);
     console.log(`[${epochId}] selected eligible holder reward recipients: ${holders.length}`);
 
     const payoutReserveLamports = await estimateTokenPayoutReserveLamports([
-      { wallets: holders.map((holder) => holder.wallet), mint: config.rewardTokenMint, label: "ANSEM-to-eligible-BULL-holders" }
+      { wallets: holders.map((holder) => holder.wallet), mint: config.rewardTokenMint, label: `${config.rewardSymbol}-to-eligible-${config.sourceSymbol}-holders` }
     ]);
     const splitPlan = await treasurySolBudget(payoutReserveLamports);
     const splitBaseLamports = claimedLamports < splitPlan.usableLamports ? claimedLamports : splitPlan.usableLamports;
     const rewardBuyLamports = (splitBaseLamports * BigInt(config.swapBalanceBps)) / 10_000n;
     const sideWalletLamports = (splitBaseLamports * BigInt(config.sideWalletBps)) / 10_000n;
     console.log(
-      `[${epochId}] reward plan: claimed=${lamportsToSol(claimedLamports)} SOL, usable=${lamportsToSol(splitPlan.usableLamports)} SOL, splitBase=${lamportsToSol(splitBaseLamports)} SOL, ansemBuy=${lamportsToSol(rewardBuyLamports)} SOL, sideWallet=${lamportsToSol(sideWalletLamports)} SOL`
+      `[${epochId}] reward plan: claimed=${lamportsToSol(claimedLamports)} SOL, usable=${lamportsToSol(splitPlan.usableLamports)} SOL, splitBase=${lamportsToSol(splitBaseLamports)} SOL, ${config.rewardSymbol}Buy=${lamportsToSol(rewardBuyLamports)} SOL, sideWallet=${lamportsToSol(sideWalletLamports)} SOL`
     );
     const sideTransfer = await routeSideWalletShare(epochId, sideWalletLamports, splitPlan.reserveLamports);
 
@@ -140,12 +140,12 @@ export async function runEpoch(date = new Date()) {
         reward_distributed: "0",
         status: "skipped"
       });
-      console.log(`[${epochId}] no ANSEM reward balance, skipped airdrop`);
+      console.log(`[${epochId}] no ${config.rewardSymbol} reward balance, skipped airdrop`);
       return;
     }
 
     const tokenAirdrop = allocations.length
-      ? await airdropTokenRewards(epochId, allocations, "ANSEM")
+      ? await airdropTokenRewards(epochId, allocations, config.rewardSymbol)
       : { settledUi: 0, settledCount: 0, stoppedForReserve: false };
     if (tokenAirdrop.stoppedForReserve && tokenAirdrop.settledCount === 0) {
       throw new Error("Holder airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
@@ -157,7 +157,7 @@ export async function runEpoch(date = new Date()) {
       reward_distributed: distributed.toString()
     });
     console.log(
-      `[${epochId}] summary: eligibleHolders=${eligibleHolders.length}, rewardRecipients=${tokenAirdrop.settledCount}/${allocations.length}, ansemBought=${buy.rewardReceivedUi}, ansemDistributed=${distributed}`
+      `[${epochId}] summary: eligibleHolders=${eligibleHolders.length}, rewardRecipients=${tokenAirdrop.settledCount}/${allocations.length}, ${config.rewardSymbol}Bought=${buy.rewardReceivedUi}, ${config.rewardSymbol}Distributed=${distributed}`
     );
   } catch (error) {
     await failEpoch(epochId, error).catch((dbError) => {

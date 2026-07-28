@@ -1,161 +1,171 @@
 import type { CSSProperties } from "react";
-import { createClient } from "@supabase/supabase-js";
-import { BullCursor } from "./bull-cursor";
+import { CatCursor } from "./cat-cursor";
 
-export const dynamic = "force-dynamic";
+const X_URL = process.env.NEXT_PUBLIC_CC_X_URL?.trim() || process.env.NEXT_PUBLIC_X_URL?.trim();
+const CA = process.env.NEXT_PUBLIC_CC_CA?.trim() || process.env.NEXT_PUBLIC_CA?.trim();
+const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim();
 
-const X_URL = process.env.NEXT_PUBLIC_BULL_X_URL?.trim();
-const CA = process.env.NEXT_PUBLIC_BULL_CA?.trim();
-
-type EpochDrop = {
-  epochId: string;
-  amount: number;
-  recipients: number;
-  status: string;
-};
-
-const floatingBulls = [
-  ["4%", "9%", "1.6rem", "18s"],
-  ["11%", "76%", "2.2rem", "22s"],
-  ["18%", "27%", "1.1rem", "16s"],
-  ["27%", "88%", "1.8rem", "21s"],
-  ["34%", "14%", "2.4rem", "19s"],
-  ["42%", "68%", "1.2rem", "17s"],
-  ["51%", "35%", "2rem", "24s"],
-  ["59%", "8%", "1.4rem", "20s"],
-  ["66%", "80%", "2.6rem", "23s"],
-  ["74%", "18%", "1.2rem", "16s"],
-  ["82%", "58%", "2.1rem", "25s"],
-  ["91%", "32%", "1.5rem", "18s"]
+const floatingCats = [
+  ["5%", "14%", "1.3rem", "18s", "🐾"],
+  ["10%", "74%", "1.9rem", "22s", "✨"],
+  ["18%", "33%", "1.2rem", "16s", "🧶"],
+  ["27%", "86%", "1.5rem", "21s", "🐱"],
+  ["36%", "12%", "2.1rem", "19s", "🪄"],
+  ["44%", "68%", "1.2rem", "17s", "🐾"],
+  ["53%", "38%", "1.8rem", "24s", "✨"],
+  ["62%", "10%", "1.4rem", "20s", "🧶"],
+  ["70%", "78%", "2rem", "23s", "🐈"],
+  ["78%", "20%", "1.2rem", "16s", "🐾"],
+  ["86%", "60%", "1.9rem", "25s", "✨"],
+  ["94%", "31%", "1.3rem", "18s", "🐱"]
 ];
 
-function fmtAmount(value: number) {
-  if (!Number.isFinite(value) || value <= 0) return "0";
-  return value.toLocaleString(undefined, { maximumFractionDigits: 4 });
-}
+const terminalLines = [
+  ["genesis", "CryptoCat appeared on-chain and claimed the terminal."],
+  ["scan", "Reading holder behavior, meme velocity, liquidity, and community signals."],
+  ["treasury", "Funds are watched, budgeted, and routed by public action notes."],
+  ["missions", "Bounties, quests, and loyal-holder drops can be posted when the cat decides."],
+  ["social", "Automated X personality is preparing to wake up."]
+];
 
-function shortEpoch(epochId: string) {
-  const date = Date.parse(epochId);
-  if (!Number.isFinite(date)) return epochId.slice(0, 16);
-  return new Intl.DateTimeFormat("en", {
-    hour: "numeric",
-    minute: "2-digit",
-    month: "short",
-    day: "numeric"
-  }).format(new Date(date));
-}
-
-async function getEpochDrops(): Promise<EpochDrop[]> {
-  const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRole = process.env.SUPABASE_SERVICE_ROLE;
-  if (!supabaseUrl || !serviceRole) return [];
-
-  try {
-    const supabase = createClient(supabaseUrl, serviceRole, {
-      auth: { persistSession: false }
-    });
-
-    const { data: epochs } = await supabase
-      .from("epochs")
-      .select("epoch_id,status,completed_at,started_at")
-      .order("started_at", { ascending: false })
-      .limit(5);
-
-    const epochIds = (epochs ?? []).map((epoch) => String(epoch.epoch_id));
-    const { data: payouts } = await supabase
-      .from("payouts")
-      .select("epoch_id,reward_amount,status,reward_asset")
-      .eq("status", "settled")
-      .eq("reward_asset", "ANSEM")
-      .in("epoch_id", epochIds.length ? epochIds : ["__none__"]);
-
-    const totals = new Map<string, { amount: number; recipients: number }>();
-    for (const payout of payouts ?? []) {
-      const epochId = String(payout.epoch_id);
-      const current = totals.get(epochId) ?? { amount: 0, recipients: 0 };
-      current.amount += Number(payout.reward_amount ?? 0);
-      current.recipients += 1;
-      totals.set(epochId, current);
-    }
-
-    return (epochs ?? []).map((epoch) => {
-      const epochId = String(epoch.epoch_id);
-      const total = totals.get(epochId);
-      return {
-        epochId,
-        amount: total?.amount ?? 0,
-        recipients: total?.recipients ?? 0,
-        status: String(epoch.status ?? "waiting")
-      };
-    });
-  } catch {
-    return [];
+const actions = [
+  {
+    title: "Treasury Sense",
+    body: "CryptoCat monitors treasury state before it makes a move."
+  },
+  {
+    title: "Bounty Mode",
+    body: "The terminal can ask the timeline to complete missions for CC rewards."
+  },
+  {
+    title: "Holder Drops",
+    body: "Loyal wallets can be rewarded when the cat sees conviction."
+  },
+  {
+    title: "Cat Posts",
+    body: "The persona learns the room and posts updates in its own voice."
   }
+];
+
+const lore = [
+  "A strange cat touched the chain.",
+  "The wallet blinked.",
+  "The terminal purred.",
+  "CryptoCat began learning what holders do when no one is watching."
+];
+
+function shortAddress(address: string) {
+  if (address.length < 12) return address;
+  return `${address.slice(0, 5)}...${address.slice(-5)}`;
 }
 
-export default async function Page() {
-  const drops = await getEpochDrops();
-
+export default function Page() {
   return (
-    <main className="bull-page">
-      <BullCursor />
-      <div className="emoji-field" aria-hidden="true">
-        {floatingBulls.map(([left, top, size, duration], index) => (
+    <main className="cat-page">
+      <CatCursor />
+      <div className="cat-field" aria-hidden="true">
+        {floatingCats.map(([left, top, size, duration, icon], index) => (
           <span
-            key={`${left}-${top}`}
+            key={`${left}-${top}-${icon}`}
             style={
               {
                 "--x": left,
                 "--y": top,
                 "--size": size,
                 "--dur": duration,
-                "--delay": `${index * -1.7}s`
+                "--delay": `${index * -1.6}s`
               } as CSSProperties
             }
           >
-            🐂
+            {icon}
           </span>
         ))}
       </div>
 
-      <section className="bull-hero" aria-label="BULL token overview">
-        <p className="emoji-day">since it&apos;s emoji day</p>
-        <div className="mega-bull" aria-hidden="true">🐂</div>
-        <h1>BULL</h1>
-        <p className="bull-copy">
-          Hold <strong>1M+ BULL</strong> to be eligible. Every 5 minutes, fees
-          swap into <strong>$ANSEM</strong> and airdrop eligible holders.
-        </p>
-        <div className="bull-links" aria-label="BULL links">
-          <a className={X_URL ? "link-pill" : "link-pill disabled"} href={X_URL || "#"} aria-disabled={!X_URL}>
-            X account
-          </a>
-          <span className="ca-pill">CA: {CA || "coming soon"}</span>
+      <section className="cat-hero" aria-label="CryptoCat overview">
+        <div className="hero-copy">
+          <p className="eyebrow">AI treasury pet online</p>
+          <h1>CryptoCat</h1>
+          <p className="ticker">Ticker: $CC</p>
+          <p className="cat-copy">
+            CryptoCat showed up on the blockchain with a wallet, a terminal, and a problem:
+            it needs to learn what to do with power. It scans, posts, drops missions, and
+            can reward loyal holders when the treasury brain decides.
+          </p>
+
+          <div className="cat-actions" aria-label="CryptoCat links">
+            <a className="primary-action" href="#terminal">
+              Open Terminal
+            </a>
+            <a className={X_URL ? "secondary-action" : "secondary-action disabled"} href={X_URL || "#"} aria-disabled={!X_URL}>
+              Follow CryptoCat
+            </a>
+            {BUY_URL ? (
+              <a className="secondary-action" href={BUY_URL}>
+                Buy $CC
+              </a>
+            ) : null}
+          </div>
+
+          <div className="status-strip">
+            <span>Chain life: waking</span>
+            <span>Mode: learning</span>
+            <span>CA: {CA ? shortAddress(CA) : "soon"}</span>
+          </div>
+        </div>
+
+        <div className="cat-orb" aria-hidden="true">
+          <div className="cat-face">
+            <span className="ear left" />
+            <span className="ear right" />
+            <span className="eye left" />
+            <span className="eye right" />
+            <span className="nose" />
+            <span className="mouth" />
+            <span className="whisker left one" />
+            <span className="whisker left two" />
+            <span className="whisker right one" />
+            <span className="whisker right two" />
+            <strong>CC</strong>
+          </div>
         </div>
       </section>
 
-      <section className="epoch-board" aria-label="ANSEM airdrop epoch dashboard">
-        <div className="board-header">
-          <span>5 minute epochs</span>
-          <strong>$ANSEM airdropped</strong>
+      <section className="terminal-shell" id="terminal" aria-label="CryptoCat terminal">
+        <div className="terminal-topbar">
+          <span />
+          <strong>cryptocat.terminal</strong>
+          <em>live persona</em>
         </div>
-        <div className="epoch-list">
-          {drops.length ? (
-            drops.map((drop) => (
-              <article className="epoch-row" key={drop.epochId}>
-                <span>{shortEpoch(drop.epochId)}</span>
-                <strong>{fmtAmount(drop.amount)} ANSEM</strong>
-                <em>{drop.recipients} wallets · {drop.status}</em>
-              </article>
-            ))
-          ) : (
-            <article className="epoch-row empty">
-              <span>epoch 0</span>
-              <strong>0 ANSEM</strong>
-              <em>waiting for first settled airdrop</em>
-            </article>
-          )}
+        <div className="terminal-lines">
+          {terminalLines.map(([label, text]) => (
+            <p key={label}>
+              <span>[{label}]</span>
+              {text}
+            </p>
+          ))}
         </div>
+      </section>
+
+      <section className="protocol-grid" aria-label="CryptoCat action logic">
+        {actions.map((action) => (
+          <article key={action.title} className="protocol-card">
+            <h2>{action.title}</h2>
+            <p>{action.body}</p>
+          </article>
+        ))}
+      </section>
+
+      <section className="lore-panel" aria-label="CryptoCat lore">
+        <div>
+          <p className="eyebrow">origin file</p>
+          <h2>The cat was given life.</h2>
+        </div>
+        <ol>
+          {lore.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ol>
       </section>
     </main>
   );
