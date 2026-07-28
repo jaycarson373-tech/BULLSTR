@@ -3,7 +3,7 @@ import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://cryptocat.fun";
 const SITE_DESCRIPTION =
-  "CryptoCat is an on-chain AI treasury persona for CC holders: terminal posts, bounty prompts, treasury actions, and loyal-holder experiments.";
+  "CryptoCat is an on-chain AI treasury persona for CC holders: terminal posts, whitelisted signals, bounty prompts, treasury actions, and loyal-holder experiments.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

@@ -23,6 +23,7 @@ const floatingCats = [
 const terminalLines = [
   ["genesis", "CryptoCat appeared on-chain and claimed the terminal."],
   ["scan", "Reading holder behavior, meme velocity, liquidity, and community signals."],
+  ["signals", "Only approved mints enter the cat's whitelist."],
   ["treasury", "Funds are watched, budgeted, and routed by public action notes."],
   ["missions", "Bounties, quests, and loyal-holder drops can be posted when the cat decides."],
   ["social", "Automated X personality is preparing to wake up."]
@@ -30,8 +31,12 @@ const terminalLines = [
 
 const actions = [
   {
+    title: "Signal Whitelist",
+    body: "CryptoCat can only consider operator-approved mints and explicit trade signals."
+  },
+  {
     title: "Treasury Sense",
-    body: "CryptoCat monitors treasury state before it makes a move."
+    body: "The agent checks reserves, spend caps, and route availability before any move."
   },
   {
     title: "Bounty Mode",
@@ -39,7 +44,7 @@ const actions = [
   },
   {
     title: "Holder Drops",
-    body: "Loyal wallets can be rewarded when the cat sees conviction."
+    body: "Loyal wallets can be rewarded when the cat sees conviction and a drop is approved."
   },
   {
     title: "Cat Posts",

@@ -13,6 +13,13 @@ export type BuyResult = {
   txSig: string | null;
 };
 
+export type SwapResult = {
+  inputSpentRaw: bigint;
+  outputReceivedRaw: bigint;
+  outputReceivedUi: number;
+  txSig: string | null;
+};
+
 async function tokenProgramForMint(mint: PublicKey) {
   const info = await connection.getAccountInfo(mint);
   if (!info) throw new Error(`Reward mint not found: ${mint.toBase58()}`);
@@ -22,6 +29,7 @@ async function tokenProgramForMint(mint: PublicKey) {
 }
 
 async function tokenDecimals(mint: PublicKey) {
+  if (mint.equals(NATIVE_MINT)) return 9;
   const tokenProgram = await tokenProgramForMint(mint);
   const mintInfo = await getMint(connection, mint, "confirmed", tokenProgram);
   return mintInfo.decimals;
@@ -74,11 +82,11 @@ export async function treasurySwapAmount(explicitReserveLamports?: bigint, maxSw
   };
 }
 
-async function jupiterSwap(baseAmount: bigint, outputMint: PublicKey, treasuryPublicKey: string) {
+async function jupiterSwap(inputMint: PublicKey, outputMint: PublicKey, amount: bigint, treasuryPublicKey: string) {
   const query = new URLSearchParams({
-    inputMint: NATIVE_MINT.toBase58(),
+    inputMint: inputMint.toBase58(),
     outputMint: outputMint.toBase58(),
-    amount: baseAmount.toString(),
+    amount: amount.toString(),
     slippageBps: String(config.swapSlippageBps),
     restrictIntermediateTokens: "true"
   });
@@ -114,9 +122,7 @@ export async function buyToken(
     return { baseSpentLamports: 0n, rewardReceivedRaw: 0n, rewardReceivedUi: 0, txSig: null };
   }
 
-  const treasury = treasuryKeypair();
   const { amount, balance, reserveLamports } = await treasurySwapAmount(explicitReserveLamports, maxSwapLamports);
-  const decimals = await tokenDecimals(outputMint);
 
   if (amount <= 0n) {
     console.log(
@@ -125,15 +131,57 @@ export async function buyToken(
     return { baseSpentLamports: 0n, rewardReceivedRaw: 0n, rewardReceivedUi: 0, txSig: null };
   }
 
-  const { quote, swap } = await jupiterSwap(amount, outputMint, treasury.publicKey.toBase58());
-  const rewardReceivedRaw = BigInt(quote.outAmount);
-  const rewardReceivedUi = rawToUi(rewardReceivedRaw, decimals);
+  const result = await swapExactInput({
+    epochId,
+    inputMint: NATIVE_MINT,
+    outputMint,
+    inputAmountRaw: amount,
+    label,
+    execute: config.buyEnabled
+  });
+
+  return {
+    baseSpentLamports: result.inputSpentRaw,
+    rewardReceivedRaw: result.outputReceivedRaw,
+    rewardReceivedUi: result.outputReceivedUi,
+    txSig: result.txSig
+  };
+}
+
+export async function buyReward(epochId: string, explicitReserveLamports?: bigint, maxSwapLamports?: bigint) {
+  return buyToken(epochId, config.rewardTokenMint, config.rewardSymbol, explicitReserveLamports, maxSwapLamports);
+}
+
+export async function swapExactInput({
+  epochId,
+  inputMint,
+  outputMint,
+  inputAmountRaw,
+  label,
+  execute
+}: {
+  epochId: string;
+  inputMint: PublicKey;
+  outputMint: PublicKey;
+  inputAmountRaw: bigint;
+  label: string;
+  execute: boolean;
+}): Promise<SwapResult> {
+  if (inputAmountRaw <= 0n) {
+    return { inputSpentRaw: 0n, outputReceivedRaw: 0n, outputReceivedUi: 0, txSig: null };
+  }
+
+  const treasury = treasuryKeypair();
+  const decimals = await tokenDecimals(outputMint);
+  const { quote, swap } = await jupiterSwap(inputMint, outputMint, inputAmountRaw, treasury.publicKey.toBase58());
+  const outputReceivedRaw = BigInt(quote.outAmount);
+  const outputReceivedUi = rawToUi(outputReceivedRaw, decimals);
   console.log(
-    `[${epochId}] ${config.buyEnabled ? "quoted live buy" : "[DRY-RUN] would buy"} ${rewardReceivedRaw.toString()} raw ${label} tokens for ${amount.toString()} lamports`
+    `[${epochId}] ${execute ? "quoted live swap" : "[DRY-RUN] would swap"} ${inputAmountRaw.toString()} raw ${inputMint.toBase58()} into ${outputReceivedRaw.toString()} raw ${label}`
   );
 
-  if (!config.buyEnabled) {
-    return { baseSpentLamports: amount, rewardReceivedRaw, rewardReceivedUi, txSig: null };
+  if (!execute) {
+    return { inputSpentRaw: inputAmountRaw, outputReceivedRaw, outputReceivedUi, txSig: null };
   }
 
   const tx = VersionedTransaction.deserialize(Buffer.from(swap.swapTransaction, "base64"));
@@ -146,10 +194,6 @@ export async function buyToken(
 
   const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
   await connection.confirmTransaction(txSig, "confirmed");
-  console.log(`[${epochId}] ${label} buy settled: ${txSig}`);
-  return { baseSpentLamports: amount, rewardReceivedRaw, rewardReceivedUi, txSig };
-}
-
-export async function buyReward(epochId: string, explicitReserveLamports?: bigint, maxSwapLamports?: bigint) {
-  return buyToken(epochId, config.rewardTokenMint, config.rewardSymbol, explicitReserveLamports, maxSwapLamports);
+  console.log(`[${epochId}] ${label} swap settled: ${txSig}`);
+  return { inputSpentRaw: inputAmountRaw, outputReceivedRaw, outputReceivedUi, txSig };
 }
