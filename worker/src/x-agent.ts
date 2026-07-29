@@ -29,7 +29,10 @@ type XTweet = {
 };
 
 function isConfigured() {
-  return Boolean(config.xApiKey && config.xApiKeySecret && config.xAccessToken && config.xAccessTokenSecret);
+  return Boolean(
+    config.xBearerToken ||
+      (config.xApiKey && config.xApiKeySecret && config.xAccessToken && config.xAccessTokenSecret)
+  );
 }
 
 function encode(value: string) {
@@ -67,6 +70,11 @@ function oauthHeader(method: string, url: URL, queryParams: Record<string, strin
     .join(", ")}`;
 }
 
+function authHeader(method: string, url: URL, queryParams: Record<string, string>) {
+  if (config.xBearerToken) return `Bearer ${config.xBearerToken}`;
+  return oauthHeader(method, url, queryParams);
+}
+
 async function xFetch<T>(
   path: string,
   options: {
@@ -87,7 +95,7 @@ async function xFetch<T>(
   const response = await fetch(url, {
     method,
     headers: {
-      authorization: oauthHeader(method, url, queryParams),
+      authorization: authHeader(method, url, queryParams),
       "content-type": "application/json"
     },
     body: options.body === undefined ? undefined : JSON.stringify(options.body)

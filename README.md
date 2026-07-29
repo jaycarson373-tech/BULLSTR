@@ -77,11 +77,14 @@ X_AGENT_AUTO_TRADE_POSTS=true
 X_AGENT_REPLY_TO_MENTIONS=false
 X_AGENT_MAX_POSTS_PER_EPOCH=2
 X_USER_ID=
+X_BEARER_TOKEN=
 X_API_KEY=
 X_API_KEY_SECRET=
 X_ACCESS_TOKEN=
 X_ACCESS_TOKEN_SECRET=
 ```
+
+Use either `X_BEARER_TOKEN` with user write permissions, or the OAuth1 user-context set (`X_API_KEY`, `X_API_KEY_SECRET`, `X_ACCESS_TOKEN`, `X_ACCESS_TOKEN_SECRET`).
 
 Queue a persona post:
 

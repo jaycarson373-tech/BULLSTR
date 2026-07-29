@@ -121,6 +121,7 @@ export const config = {
   xAgentMaxPostsPerEpoch: Math.max(1, intEnv("X_AGENT_MAX_POSTS_PER_EPOCH", 2)),
   xAgentApiBase: stringEnv("X_AGENT_API_BASE", "https://api.x.com/2").replace(/\/$/, ""),
   xUserId: stringEnv("X_USER_ID", ""),
+  xBearerToken: stringEnv("X_BEARER_TOKEN", ""),
   xApiKey: stringEnv("X_API_KEY", process.env.X_CONSUMER_KEY ?? ""),
   xApiKeySecret: stringEnv("X_API_KEY_SECRET", process.env.X_CONSUMER_SECRET ?? ""),
   xAccessToken: stringEnv("X_ACCESS_TOKEN", ""),
