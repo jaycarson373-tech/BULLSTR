@@ -26,7 +26,7 @@ const terminalLines = [
   ["signals", "Only approved mints enter the cat's whitelist."],
   ["treasury", "Funds are watched, budgeted, and routed by public action notes."],
   ["missions", "Bounties, quests, and loyal-holder drops can be posted when the cat decides."],
-  ["social", "Automated X personality is preparing to wake up."]
+  ["social", "X agent can post receipts, persona updates, and guarded replies."]
 ];
 
 const actions = [
@@ -48,7 +48,7 @@ const actions = [
   },
   {
     title: "Cat Posts",
-    body: "The persona learns the room and posts updates in its own voice."
+    body: "Queued posts, trade receipts, and limited mention replies can go live from the worker."
   }
 ];
 

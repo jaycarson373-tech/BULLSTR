@@ -63,3 +63,40 @@ values ('TOKEN_MINT_HERE', 'TICKER', 'sell', 2500, 65, 'take 25% off the table',
 Live execution requires `CAT_AGENT_ENABLED=true` and `CAT_AGENT_EXECUTE=true`. Sells also require `CAT_AGENT_ALLOW_SELLS=true`.
 
 Trades are executed through Jupiter routes. Pump tokens without an available Jupiter route will fail closed and be recorded in `cat_agent_actions`.
+
+## X automation
+
+CryptoCat can post queued updates, post executed trade receipts, and optionally reply to mentions.
+
+Required X envs:
+
+```env
+X_AGENT_ENABLED=true
+X_AGENT_POST_ENABLED=true
+X_AGENT_AUTO_TRADE_POSTS=true
+X_AGENT_REPLY_TO_MENTIONS=false
+X_AGENT_MAX_POSTS_PER_EPOCH=2
+X_USER_ID=
+X_API_KEY=
+X_API_KEY_SECRET=
+X_ACCESS_TOKEN=
+X_ACCESS_TOKEN_SECRET=
+```
+
+Queue a persona post:
+
+```sql
+insert into x_post_queue (kind, text)
+values ('persona', 'CryptoCat is online. The terminal is watching the chain.');
+```
+
+Queue a reply to a specific post:
+
+```sql
+insert into x_post_queue (kind, text, reply_to_tweet_id)
+values ('reply', 'CryptoCat saw this. The terminal is learning.', 'TWEET_ID_HERE');
+```
+
+When `X_AGENT_AUTO_TRADE_POSTS=true`, executed `cat_agent_actions` are posted automatically with the Solscan transaction link. Dry-run/planned trades are not posted unless `X_AGENT_POST_PLANNED_TRADES=true`.
+
+Mention replies are disabled by default. If `X_AGENT_REPLY_TO_MENTIONS=true`, the worker replies to a small number of fresh mentions per epoch using conservative CryptoCat templates.
