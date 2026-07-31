@@ -1,78 +1,32 @@
 import type { CSSProperties } from "react";
-import { MarketCursor } from "./market-cursor";
 
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME?.trim() || "Inuvestors";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME?.trim() || "Inuvestor";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL?.trim() || "Inuvestor";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL?.trim() || "STOCK PICKS";
 const REWARD_INTERVAL = process.env.NEXT_PUBLIC_REWARD_INTERVAL?.trim() || "5 minutes";
 const MINIMUM_BALANCE = process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "1000000";
-const X_URL =
-  process.env.NEXT_PUBLIC_INUVESTORS_X_URL?.trim() ||
-  process.env.NEXT_PUBLIC_INUVESTOR_X_URL?.trim() ||
-  process.env.NEXT_PUBLIC_X_URL?.trim();
-const CA =
-  process.env.NEXT_PUBLIC_INUVESTORS_CA?.trim() ||
-  process.env.NEXT_PUBLIC_INUVESTOR_CA?.trim() ||
-  process.env.NEXT_PUBLIC_CA?.trim();
+const X_URL = process.env.NEXT_PUBLIC_INUVESTOR_X_URL?.trim() || process.env.NEXT_PUBLIC_X_URL?.trim();
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim();
 
-const marketScenes = [
-  ["/inuvestors-bg-dog-close.jpg", "dog-close", "0s"],
-  ["/inuvestors-bg-wallstreet.jpg", "wallstreet", "-8s"],
-  ["/inuvestors-bg-dog-wide.jpg", "dog-wide", "-16s"]
-];
+const marketScenes = [["/inuvestors-bg-wallstreet.jpg", "wallstreet", "0s"]];
 
-const terminalLines = [
-  ["open", "Inuvestors terminal is live. The dog has a Bloomberg tab, a vest, and a chain wallet."],
-  ["scan", "Performance boards, sector momentum, and social heat are watched before every round."],
-  ["rank", "The desk highlights the strongest stock-style picks of the current window."],
-  ["qualify", `Wallets holding ${Number(MINIMUM_BALANCE).toLocaleString()}+ $${SOURCE_SYMBOL} enter the reward pool.`],
-  ["epoch", `Reward windows cycle every ${REWARD_INTERVAL}. Receipts stay on-chain when live.`],
-  ["risk", "Meme intelligence, not financial advice. Markets can bite."]
-];
-
-const desks = [
+const steps = [
   {
-    title: "Performance Scanner",
-    body: "Inuvestors watches the tape for the strongest movers and turns market momentum into reward themes."
+    title: "SCAN",
+    body: "Inuvestor ranks the supported stock assets using the configured performance data."
   },
   {
-    title: "Holder Gate",
-    body: `Hold at least ${Number(MINIMUM_BALANCE).toLocaleString()} $${SOURCE_SYMBOL} to sit at the desk. No seat, no treats.`
+    title: "BUY",
+    body: "Every five minutes, the protocol purchases one of the current market leaders."
   },
   {
-    title: "Five-Minute Rounds",
-    body: `Every ${REWARD_INTERVAL}, eligible holders are lined up for the next ${REWARD_SYMBOL.toLowerCase()} distribution cycle.`
-  },
-  {
-    title: "Receipts Matter",
-    body: "When the worker is live, actions and airdrops are written into the reporting trail instead of hidden in vibes."
+    title: "DROP",
+    body: "One eligible 1M+ $Inuvestor holder receives the stock airdrop."
   }
 ];
 
-const picks = [
-  ["Momentum", "AI leaders", "green tape"],
-  ["Strength", "mega-cap tech", "institutional bid"],
-  ["Rotation", "consumer winners", "trend reclaim"],
-  ["Wildcard", "meme beta", "dog sees flow"]
-];
-
-const investments = [
-  ["Settled airdrops", "0", "Live receipts appear after launch"],
-  ["Reward cadence", REWARD_INTERVAL, "Every cycle scans the market board"],
-  ["Holder gate", `${Number(MINIMUM_BALANCE).toLocaleString()}+`, `$${SOURCE_SYMBOL} minimum balance`],
-  ["Latest reward", "Pending", "No confirmed airdrop yet"]
-];
-
-function shortAddress(address: string) {
-  if (address.length < 12) return address;
-  return `${address.slice(0, 5)}...${address.slice(-5)}`;
-}
-
 export default function Page() {
   return (
-    <main className="inu-page">
-      <MarketCursor />
+    <main className="site-shell">
       <div className="market-field" aria-hidden="true">
         {marketScenes.map(([src, variant, delay]) => (
           <span
@@ -88,117 +42,89 @@ export default function Page() {
         ))}
       </div>
 
-      <section className="inu-hero" aria-label={`${PROJECT_NAME} overview`}>
-        <div className="hero-copy">
-          <p className="eyebrow">meme market intelligence desk</p>
-          <h1>{PROJECT_NAME}</h1>
-          <p className="ticker">Ticker: ${SOURCE_SYMBOL}</p>
-          <p className="inu-copy">
-            The vest-wearing market dog scans the best-performing stock themes and routes reward rounds to
-            holders with 1M+ tokens every five minutes. Professional terminal energy, meme desk instincts.
-          </p>
+      <nav className="site-nav" aria-label="Primary navigation">
+        <a className="brand-lockup" href="#" aria-label={`${PROJECT_NAME} home`}>
+          <img src="/inuvestors-logo.png" alt="" />
+          <span>{PROJECT_NAME}</span>
+        </a>
+        <div className="nav-links">
+          <a href="#how-it-works">HOW IT WORKS</a>
+          <a href="#live-drops">LIVE DROPS</a>
+          {X_URL ? <a href={X_URL}>X</a> : null}
+          {BUY_URL ? (
+            <a className="nav-buy" href={BUY_URL}>
+              BUY
+            </a>
+          ) : null}
+        </div>
+      </nav>
 
-          <div className="inu-actions" aria-label={`${PROJECT_NAME} links`}>
-            <a className="primary-action" href="#terminal">
-              Open Market Desk
-            </a>
-            <a className={X_URL ? "secondary-action" : "secondary-action disabled"} href={X_URL || "#"} aria-disabled={!X_URL}>
-              Follow Inuvestors
-            </a>
+      <section className="hero-section" aria-label={`${PROJECT_NAME} overview`}>
+        <div className="hero-copy">
+          <p className="eyebrow">THE DOG THAT ACTUALLY INVESTS</p>
+          <h1>HE INVESTS. YOU HOLD.</h1>
+          <p className="hero-body">
+            Every five minutes, Inuvestor buys one of the market&apos;s top-performing supported stocks and
+            airdrops it to an eligible holder.
+          </p>
+          <div className="hero-actions" aria-label={`${PROJECT_NAME} actions`}>
             {BUY_URL ? (
-              <a className="secondary-action" href={BUY_URL}>
-                Buy ${SOURCE_SYMBOL}
+              <a className="primary-action" href={BUY_URL}>
+                BUY ${SOURCE_SYMBOL.toUpperCase()}
               </a>
             ) : null}
+            <a className="secondary-action" href="#live-drops">
+              VIEW LIVE DROPS
+            </a>
           </div>
-
-          <div className="status-strip">
-            <span>Reward cadence: {REWARD_INTERVAL}</span>
-            <span>Minimum: {Number(MINIMUM_BALANCE).toLocaleString()} ${SOURCE_SYMBOL}</span>
-            <span>CA: {CA ? shortAddress(CA) : "soon"}</span>
-          </div>
+          <p className="mechanic-line">{Number(MINIMUM_BALANCE).toLocaleString()}+ ${SOURCE_SYMBOL} required to qualify.</p>
         </div>
 
-        <div className="logo-stage" aria-hidden="true">
-          <div className="wall-logo-card">
-            <img src="/inuvestors-logo.png" alt="" />
-          </div>
+        <div className="hero-art" aria-hidden="true">
+          <img src="/inuvestors-logo.png" alt="" />
         </div>
       </section>
 
-      <section className="terminal-shell" id="terminal" aria-label={`${PROJECT_NAME} terminal`}>
-        <div className="terminal-topbar">
-          <span />
-          <strong>inuvestors.market-desk</strong>
-          <em>five-minute rewards</em>
+      <section className="how-section" id="how-it-works" aria-label="How Inuvestor works">
+        <div className="section-heading">
+          <p className="eyebrow">MECHANICS</p>
+          <h2>HOW INUVESTOR WORKS</h2>
         </div>
-        <div className="terminal-lines">
-          {terminalLines.map(([label, text]) => (
-            <p key={label}>
-              <span>[{label}]</span>
-              {text}
-            </p>
-          ))}
-        </div>
-      </section>
-
-      <section className="pick-board" aria-label={`${PROJECT_NAME} stock pick board`}>
-        <div>
-          <p className="eyebrow">stock dog watchlist</p>
-          <h2>Best-performing themes. Meme-speed rounds.</h2>
-        </div>
-        <div className="pick-grid">
-          {picks.map(([label, theme, signal]) => (
-            <article key={label} className="pick-card">
-              <small>{label}</small>
-              <strong>{theme}</strong>
-              <span>{signal}</span>
+        <div className="step-grid">
+          {steps.map((step, index) => (
+            <article key={step.title} className="step-card">
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
             </article>
           ))}
         </div>
       </section>
 
-      <section className="protocol-grid" aria-label={`${PROJECT_NAME} action logic`}>
-        {desks.map((desk) => (
-          <article key={desk.title} className="protocol-card">
-            <h2>{desk.title}</h2>
-            <p>{desk.body}</p>
-          </article>
-        ))}
-      </section>
-
-      <section className="inuvestments-panel" aria-label="Inuvestments reward reporting">
-        <div className="inuvestments-copy">
-          <p className="eyebrow">inuvestments</p>
-          <h2>Reward rounds, receipts, and market-dog allocations.</h2>
-          <p>
-            This desk tracks the five-minute airdrop flow: who qualified, what was distributed,
-            and when the next reward cycle is expected to settle.
-          </p>
+      <section className="drops-section" id="live-drops" aria-label="Live drops">
+        <div className="section-heading">
+          <p className="eyebrow">REWARD REPORTING</p>
+          <h2>LIVE DROPS</h2>
         </div>
-        <div className="inuvestments-grid">
-          {investments.map(([label, value, note]) => (
-            <article key={label} className="inuvestment-tile">
-              <span>{label}</span>
-              <strong>{value}</strong>
-              <small>{note}</small>
-            </article>
-          ))}
+        <div className="launch-banner" role="status">
+          <strong>LIVE DROPS BEGIN AT LAUNCH.</strong>
+          <span>EVERY PURCHASE AND AIRDROP WILL BE PUBLISHED HERE.</span>
         </div>
       </section>
 
-      <section className="lore-panel" aria-label={`${PROJECT_NAME} thesis`}>
-        <div>
-          <p className="eyebrow">desk memo</p>
-          <h2>Wall Street, but in a vest.</h2>
+      <footer className="site-footer">
+        <p>
+          Every five minutes, Inuvestor buys one of the market&apos;s top-performing supported stocks and
+          airdrops it to an eligible holder. Digital assets and reward availability involve risk. Nothing on
+          this site is financial advice.
+        </p>
+        <div className="footer-links">
+          <a href="#how-it-works">HOW IT WORKS</a>
+          <a href="#live-drops">LIVE DROPS</a>
+          {X_URL ? <a href={X_URL}>X</a> : null}
+          {BUY_URL ? <a href={BUY_URL}>BUY ${SOURCE_SYMBOL.toUpperCase()}</a> : null}
         </div>
-        <ol>
-          <li>The dog checks the tape.</li>
-          <li>The strongest stock themes rise to the board.</li>
-          <li>1M+ holders stay eligible.</li>
-          <li>Every five minutes, the desk prepares the next reward round.</li>
-        </ol>
-      </section>
+      </footer>
     </main>
   );
 }

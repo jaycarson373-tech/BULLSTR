@@ -84,7 +84,7 @@ if (sideWalletBps > 0 && !sideWalletPublicKey) {
 }
 
 export const config = {
-  projectName: stringEnv("PROJECT_NAME", process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Inuvestors"),
+  projectName: stringEnv("PROJECT_NAME", process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Inuvestor"),
   sourceSymbol: stringEnv("SOURCE_SYMBOL", process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "Inuvestor"),
   rewardSymbol: stringEnv("REWARD_TOKEN_SYMBOL", process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "TOKEN"),
 

@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://inuvestors.fun";
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Inuvestors";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Inuvestor";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "Inuvestor";
 const SITE_DESCRIPTION =
-  "Inuvestors is a professional meme market desk routing five-minute reward rounds to 1M+ holders while tracking the strongest stock-style themes.";
+  "Every five minutes, Inuvestor buys one of the market's top-performing supported stocks and airdrops it to an eligible holder.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
