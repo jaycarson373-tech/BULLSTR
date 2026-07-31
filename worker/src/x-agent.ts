@@ -233,10 +233,10 @@ function newestTweetId(tweets: XTweet[]) {
 
 function replyText(tweet: XTweet) {
   const lower = tweet.text.toLowerCase();
-  if (lower.includes("treasury")) return "Inuvestor sees the treasury question. Reward purchases depend on available protocol funds.";
-  if (lower.includes("buy")) return "Inuvestor buys only from supported assets and approved signals.";
+  if (lower.includes("treasury")) return "Inuvestors sees the treasury question. Reward purchases depend on available protocol funds.";
+  if (lower.includes("buy")) return "Inuvestors buys only from supported assets and approved signals.";
   if (lower.includes("mission") || lower.includes("bounty")) return "Market desk missions are waking up. Bring useful work, not noise.";
-  return "Inuvestor saw this. The desk is checking the board.";
+  return "Inuvestors saw this. The desk is checking the board.";
 }
 
 async function processMentions(limit: number) {

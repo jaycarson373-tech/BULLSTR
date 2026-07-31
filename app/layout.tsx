@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://inuvestors.fun";
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Inuvestor";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://www.inuvestor.fun";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Inuvestors";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "Inuvestor";
 const SITE_DESCRIPTION =
-  "Every five minutes, Inuvestor buys one of the market's top-performing supported stocks and airdrops it to an eligible holder.";
+  "Every five minutes, Inuvestors buys MUx and SNDKx and airdrops both across eligible holders.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

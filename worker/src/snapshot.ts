@@ -1,4 +1,3 @@
-import { createHash } from "crypto";
 import { PublicKey } from "@solana/web3.js";
 import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, getMint } from "@solana/spl-token";
 import { config, treasuryKeypair } from "./config.js";
@@ -56,7 +55,7 @@ function excludedWallets(mint: PublicKey, mintAuthority: PublicKey | null) {
   const excluded = new Set<string>();
   addExcluded(excluded, mint);
   addExcluded(excluded, config.sourceTokenMint);
-  addExcluded(excluded, config.rewardTokenMint);
+  for (const rewardAsset of config.rewardAssets) addExcluded(excluded, rewardAsset.mint);
   addExcluded(excluded, treasuryKeypair().publicKey);
   addExcluded(excluded, mintAuthority);
   addExcluded(excluded, bondingCurvePda(mint));
@@ -71,24 +70,13 @@ function holderPct(rawBalance: bigint, rawSupply: bigint) {
   return Number((rawBalance * 1_000_000n) / rawSupply) / 10_000;
 }
 
-function recipientScore(epochId: string, holder: Holder) {
-  return createHash("sha256")
-    .update(`${epochId}:${holder.wallet}:${holder.rawBalance.toString()}`)
-    .digest("hex");
-}
-
 export function selectRewardRecipients(epochId: string, holders: Holder[], limit = config.maxWalletsPerEpoch) {
-  const recipients = holders
-    .map((holder) => ({ holder, score: recipientScore(epochId, holder) }))
-    .sort((a, b) => {
-      const score = a.score.localeCompare(b.score);
-      return score || a.holder.wallet.localeCompare(b.holder.wallet);
-    })
-    .slice(0, limit)
-    .map(({ holder }) => holder);
+  const recipients = holders.slice(0, limit);
 
   if (holders.length > recipients.length) {
-    console.log(`[SNAPSHOT] selected ${recipients.length} random recipients from ${holders.length} eligible holders`);
+    console.log(
+      `[SNAPSHOT] ${epochId} limited eligible recipients to ${recipients.length}/${holders.length} by MAX_WALLETS_PER_EPOCH`
+    );
   }
 
   return recipients;

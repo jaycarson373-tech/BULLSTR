@@ -90,18 +90,23 @@ export async function recordClaim(epochId: string, amountClaimed: string, txSig:
 
 export async function recordBuy(
   epochId: string,
+  rewardAsset: string,
   baseSpentLamports: string,
   rewardReceivedRaw: string,
   rewardReceived: string,
   txSig: string | null
 ) {
-  const result = await supabase.from("buys").upsert({
-    epoch_id: epochId,
-    base_spent_lamports: baseSpentLamports,
-    reward_received_raw: rewardReceivedRaw,
-    reward_received: rewardReceived,
-    tx_sig: txSig
-  });
+  const result = await supabase.from("buys").upsert(
+    {
+      epoch_id: epochId,
+      reward_asset: rewardAsset,
+      base_spent_lamports: baseSpentLamports,
+      reward_received_raw: rewardReceivedRaw,
+      reward_received: rewardReceived,
+      tx_sig: txSig
+    },
+    { onConflict: "epoch_id,reward_asset" }
+  );
   assertNoError(result, "record buy");
 }
 

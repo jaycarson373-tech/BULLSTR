@@ -40,6 +40,25 @@ function optionalPublicKeyEnv(name: string) {
   return value ? new PublicKey(value) : null;
 }
 
+function optionalPublicKeys(name: string) {
+  const value = process.env[name];
+  if (!value) return [];
+  return value
+    .split(",")
+    .map((mint) => mint.trim())
+    .filter(Boolean)
+    .map((mint) => new PublicKey(mint));
+}
+
+function optionalStrings(name: string) {
+  const value = process.env[name];
+  if (!value) return [];
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 function rewardModeEnv() {
   const value = (process.env.REWARD_MODE ?? "token").toLowerCase();
   if (value === "sol" || value === "token") return value;
@@ -67,9 +86,26 @@ function parseSecret(raw: string) {
 let cachedTreasury: Keypair | null = null;
 const rewardMode = rewardModeEnv();
 const configuredRewardTokenMint = optionalPublicKeyEnv("REWARD_TOKEN_MINT");
-if (rewardMode === "token" && !configuredRewardTokenMint) {
-  throw new Error("Missing required env REWARD_TOKEN_MINT when REWARD_MODE=token");
+const configuredRewardTokenMints = optionalPublicKeys("REWARD_TOKEN_MINTS");
+const rewardTokenMints = configuredRewardTokenMints.length
+  ? configuredRewardTokenMints
+  : configuredRewardTokenMint
+    ? [configuredRewardTokenMint]
+    : [];
+const configuredRewardTokenSymbols = optionalStrings("REWARD_TOKEN_SYMBOLS");
+if (rewardMode === "token" && !rewardTokenMints.length) {
+  throw new Error("Missing required env REWARD_TOKEN_MINTS or REWARD_TOKEN_MINT when REWARD_MODE=token");
 }
+if (configuredRewardTokenSymbols.length && configuredRewardTokenSymbols.length !== rewardTokenMints.length) {
+  throw new Error(
+    `REWARD_TOKEN_SYMBOLS count (${configuredRewardTokenSymbols.length}) must match REWARD_TOKEN_MINTS count (${rewardTokenMints.length})`
+  );
+}
+const fallbackRewardSymbol = stringEnv("REWARD_TOKEN_SYMBOL", process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "TOKEN");
+const rewardAssets = rewardTokenMints.map((mint, index) => ({
+  mint,
+  symbol: configuredRewardTokenSymbols[index] ?? (rewardTokenMints.length === 1 ? fallbackRewardSymbol : `TOKEN_${index + 1}`)
+}));
 const swapBalanceBps = Math.min(10_000, Math.max(1, intEnv("SWAP_BALANCE_BPS", 10000)));
 if (swapBalanceBps > 10_000) {
   throw new Error(`SWAP_BALANCE_BPS cannot exceed 10000; got ${swapBalanceBps}`);
@@ -84,14 +120,15 @@ if (sideWalletBps > 0 && !sideWalletPublicKey) {
 }
 
 export const config = {
-  projectName: stringEnv("PROJECT_NAME", process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Inuvestor"),
+  projectName: stringEnv("PROJECT_NAME", process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Inuvestors"),
   sourceSymbol: stringEnv("SOURCE_SYMBOL", process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "Inuvestor"),
-  rewardSymbol: stringEnv("REWARD_TOKEN_SYMBOL", process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "TOKEN"),
+  rewardSymbol: fallbackRewardSymbol,
 
   heliusRpcUrl: required("HELIUS_RPC_URL"),
   sourceTokenMint: publicKeyEnv("SOURCE_TOKEN_MINT"),
   rewardMode,
-  rewardTokenMint: configuredRewardTokenMint ?? new PublicKey("So11111111111111111111111111111111111111112"),
+  rewardAssets,
+  rewardTokenMint: rewardAssets[0]?.mint ?? new PublicKey("So11111111111111111111111111111111111111112"),
   treasuryWalletSecret: required("TREASURY_WALLET_SECRET"),
   supabaseUrl: required("SUPABASE_URL"),
   supabaseServiceRole: required("SUPABASE_SERVICE_ROLE"),

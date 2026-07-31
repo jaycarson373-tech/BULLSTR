@@ -1,12 +1,12 @@
-# Inuvestor
+# Inuvestors
 
-Inuvestor buys supported stock assets and airdrops them to eligible `Inuvestor` token holders.
+Inuvestors buys supported stock assets and airdrops them to eligible `Inuvestor` token holders.
 
-The public site presents Inuvestor as a simple stock-reward product: every five minutes, the protocol ranks supported stock assets, buys one of the strongest performers, and airdrops it to one eligible holder with at least 1,000,000 tokens.
+The public site presents Inuvestors as a simple stock-reward product: every five minutes, the protocol buys the configured stock basket and airdrops each asset across eligible holders with at least 1,000,000 tokens.
 
 ## Public configuration
 
-- `NEXT_PUBLIC_PROJECT_NAME`: `Inuvestor`
+- `NEXT_PUBLIC_PROJECT_NAME`: `Inuvestors`
 - `NEXT_PUBLIC_SOURCE_SYMBOL`: `Inuvestor`
 - `NEXT_PUBLIC_REWARD_SYMBOL`: reward label shown on the site
 - `NEXT_PUBLIC_REWARD_INTERVAL`: public cadence label, default `5 minutes`
@@ -18,19 +18,19 @@ The public site presents Inuvestor as a simple stock-reward product: every five 
 
 ## Worker configuration
 
-The worker logic is unchanged. It remains controlled by Railway env gates:
+The worker remains controlled by Railway env gates:
 
 - `CLAIM_ENABLED`
 - `BUY_ENABLED`
 - `AIRDROP_ENABLED`
 - `SOURCE_TOKEN_MINT`
-- `REWARD_TOKEN_MINT`
-- `REWARD_TOKEN_SYMBOL`
+- `REWARD_TOKEN_MINTS` (comma-separated basket)
+- `REWARD_TOKEN_SYMBOLS` (comma-separated labels in the same order)
 - `TREASURY_WALLET_SECRET`
 
-Keep live gates false until the reward flow is intentionally enabled and funded. To airdrop tokenized stock rewards or any other SPL reward token, set `REWARD_MODE=token` and point `REWARD_TOKEN_MINT` at the intended reward mint.
+Keep live gates false until the reward flow is intentionally enabled and funded. For the two-stock basket, set `REWARD_MODE=token`, configure both `REWARD_TOKEN_MINTS` and `REWARD_TOKEN_SYMBOLS`, and run migration `010_multi_asset_buys.sql` before starting the worker.
 
-## Inuvestor signal desk
+## Inuvestors signal desk
 
 The worker includes a gated signal agent. It does not trade randomly. It only processes rows from `cat_signals` where the mint is already enabled in `cat_token_whitelist`. Table names are preserved for migration compatibility.
 
@@ -53,7 +53,7 @@ on conflict (mint) do update set
   updated_at = now();
 
 insert into cat_signals (mint, symbol, side, max_sol, conviction, reason, expires_at)
-values ('TOKEN_MINT_HERE', 'TICKER', 'buy', 0.05, 80, 'approved Inuvestor signal', now() + interval '30 minutes');
+values ('TOKEN_MINT_HERE', 'TICKER', 'buy', 0.05, 80, 'approved Inuvestors signal', now() + interval '30 minutes');
 ```
 
 To stage a sell signal:
@@ -69,7 +69,7 @@ Trades are executed through Jupiter routes. Pump tokens without an available Jup
 
 ## X automation
 
-Inuvestor can post queued updates, post executed trade receipts, and optionally reply to mentions.
+Inuvestors can post queued updates, post executed trade receipts, and optionally reply to mentions.
 
 Required X envs:
 
@@ -93,16 +93,16 @@ Queue a persona post:
 
 ```sql
 insert into x_post_queue (kind, text)
-values ('persona', 'Inuvestor is online. The supported stock board is being ranked.');
+values ('persona', 'Inuvestors is online. The supported stock board is being ranked.');
 ```
 
 Queue a reply to a specific post:
 
 ```sql
 insert into x_post_queue (kind, text, reply_to_tweet_id)
-values ('reply', 'Inuvestor saw this. The desk is checking the board.', 'TWEET_ID_HERE');
+values ('reply', 'Inuvestors saw this. The desk is checking the board.', 'TWEET_ID_HERE');
 ```
 
 When `X_AGENT_AUTO_TRADE_POSTS=true`, executed `cat_agent_actions` are posted automatically with the Solscan transaction link. Dry-run/planned trades are not posted unless `X_AGENT_POST_PLANNED_TRADES=true`.
 
-Mention replies are disabled by default. If `X_AGENT_REPLY_TO_MENTIONS=true`, the worker replies to a small number of fresh mentions per epoch using conservative Inuvestor templates.
+Mention replies are disabled by default. If `X_AGENT_REPLY_TO_MENTIONS=true`, the worker replies to a small number of fresh mentions per epoch using conservative Inuvestors templates.

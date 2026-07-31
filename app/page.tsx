@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME?.trim() || "Inuvestor";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME?.trim() || "Inuvestors";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL?.trim() || "Inuvestor";
 const REWARD_INTERVAL = process.env.NEXT_PUBLIC_REWARD_INTERVAL?.trim() || "5 minutes";
 const MINIMUM_BALANCE = process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "1000000";
@@ -12,7 +12,7 @@ const marketScenes = [["/inuvestors-bg-wallstreet.jpg", "wallstreet", "0s"]];
 const steps = [
   {
     title: "SCAN",
-    body: "Inuvestor ranks the supported stock assets using the configured performance data."
+    body: "Inuvestors ranks the supported stock assets using the configured performance data."
   },
   {
     title: "BUY",
@@ -20,7 +20,7 @@ const steps = [
   },
   {
     title: "DROP",
-    body: "One eligible 1M+ $Inuvestor holder receives the stock airdrop."
+    body: "Eligible 1M+ $Inuvestor holders receive both stock airdrops."
   }
 ];
 
@@ -64,8 +64,7 @@ export default function Page() {
           <p className="eyebrow">THE DOG THAT ACTUALLY INVESTS</p>
           <h1>HE INVESTS. YOU HOLD.</h1>
           <p className="hero-body">
-            Every five minutes, Inuvestor buys one of the market&apos;s top-performing supported stocks and
-            airdrops it to an eligible holder.
+            Every five minutes, Inuvestors buys MUx and SNDKx and airdrops both across eligible holders.
           </p>
           <div className="hero-actions" aria-label={`${PROJECT_NAME} actions`}>
             {BUY_URL ? (
@@ -85,10 +84,10 @@ export default function Page() {
         </div>
       </section>
 
-      <section className="how-section" id="how-it-works" aria-label="How Inuvestor works">
+      <section className="how-section" id="how-it-works" aria-label="How Inuvestors works">
         <div className="section-heading">
           <p className="eyebrow">MECHANICS</p>
-          <h2>HOW INUVESTOR WORKS</h2>
+          <h2>HOW IT WORKS</h2>
         </div>
         <div className="step-grid">
           {steps.map((step, index) => (
@@ -114,8 +113,8 @@ export default function Page() {
 
       <footer className="site-footer">
         <p>
-          Every five minutes, Inuvestor buys one of the market&apos;s top-performing supported stocks and
-          airdrops it to an eligible holder. Digital assets and reward availability involve risk. Nothing on
+          Every five minutes, Inuvestors buys MUx and SNDKx and airdrops both across eligible holders.
+          Digital assets and reward availability involve risk. Nothing on
           this site is financial advice.
         </p>
         <div className="footer-links">
