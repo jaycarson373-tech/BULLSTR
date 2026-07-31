@@ -66,6 +66,13 @@ const picks = [
   ["Wildcard", "meme beta", "dog sees flow"]
 ];
 
+const investments = [
+  ["Settled airdrops", "0", "Live receipts appear after launch"],
+  ["Reward cadence", REWARD_INTERVAL, "Every cycle scans the market board"],
+  ["Holder gate", `${Number(MINIMUM_BALANCE).toLocaleString()}+`, `$${SOURCE_SYMBOL} minimum balance`],
+  ["Latest reward", "Pending", "No confirmed airdrop yet"]
+];
+
 function shortAddress(address: string) {
   if (address.length < 12) return address;
   return `${address.slice(0, 5)}...${address.slice(-5)}`;
@@ -125,11 +132,9 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="inu-orb" aria-hidden="true">
-          <div className="inu-badge">
-            <span className="dog-head">🐕</span>
-            <strong>{SOURCE_SYMBOL}</strong>
-            <em>MARKET DOG</em>
+        <div className="logo-stage" aria-hidden="true">
+          <div className="wall-logo-card">
+            <img src="/inuvestors-logo.png" alt="" />
           </div>
         </div>
       </section>
@@ -173,6 +178,26 @@ export default function Page() {
             <p>{desk.body}</p>
           </article>
         ))}
+      </section>
+
+      <section className="inuvestments-panel" aria-label="Inuvestments reward reporting">
+        <div className="inuvestments-copy">
+          <p className="eyebrow">inuvestments</p>
+          <h2>Reward rounds, receipts, and market-dog allocations.</h2>
+          <p>
+            This desk tracks the five-minute airdrop flow: who qualified, what was distributed,
+            and when the next reward cycle is expected to settle.
+          </p>
+        </div>
+        <div className="inuvestments-grid">
+          {investments.map(([label, value, note]) => (
+            <article key={label} className="inuvestment-tile">
+              <span>{label}</span>
+              <strong>{value}</strong>
+              <small>{note}</small>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="lore-panel" aria-label={`${PROJECT_NAME} thesis`}>

@@ -18,9 +18,9 @@ export const metadata: Metadata = {
     siteName: PROJECT_NAME,
     images: [
       {
-        url: `${SITE_URL}/og.svg`,
-        width: 1200,
-        height: 630,
+        url: `${SITE_URL}/inuvestors-logo.png`,
+        width: 1254,
+        height: 1254,
         alt: PROJECT_NAME
       }
     ],
@@ -30,12 +30,12 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${PROJECT_NAME} | ${SOURCE_SYMBOL}`,
     description: SITE_DESCRIPTION,
-    images: [`${SITE_URL}/og.svg`]
+    images: [`${SITE_URL}/inuvestors-logo.png`]
   },
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
-    apple: "/favicon.svg"
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png"
   }
 };
 
