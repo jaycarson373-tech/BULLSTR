@@ -5,7 +5,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://www.inuves
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Inuvestors";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "Inuvestor";
 const SITE_DESCRIPTION =
-  "Every five minutes, Inuvestors buys MUx and SNDKx and airdrops both across eligible holders.";
+  "Every five minutes, Inuvestor buys a basket of top-performing tokenized stocks and distributes it across eligible holders.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
