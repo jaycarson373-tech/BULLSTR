@@ -16,19 +16,10 @@ const CA =
   process.env.NEXT_PUBLIC_CA?.trim();
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim();
 
-const marketIcons = [
-  ["6%", "16%", "1.4rem", "19s", "$"],
-  ["12%", "76%", "1.8rem", "23s", "📈"],
-  ["19%", "38%", "1.35rem", "17s", "🐕"],
-  ["28%", "85%", "1.7rem", "22s", "💼"],
-  ["37%", "12%", "2.05rem", "20s", "🏦"],
-  ["45%", "68%", "1.3rem", "18s", "$"],
-  ["54%", "35%", "1.8rem", "24s", "📈"],
-  ["63%", "11%", "1.35rem", "21s", "🐕"],
-  ["72%", "78%", "2rem", "26s", "💼"],
-  ["80%", "22%", "1.25rem", "18s", "$"],
-  ["87%", "61%", "1.85rem", "25s", "📈"],
-  ["95%", "32%", "1.4rem", "20s", "🏦"]
+const marketScenes = [
+  ["/inuvestors-bg-dog-close.jpg", "dog-close", "0s"],
+  ["/inuvestors-bg-wallstreet.jpg", "wallstreet", "-8s"],
+  ["/inuvestors-bg-dog-wide.jpg", "dog-wide", "-16s"]
 ];
 
 const terminalLines = [
@@ -83,21 +74,17 @@ export default function Page() {
     <main className="inu-page">
       <MarketCursor />
       <div className="market-field" aria-hidden="true">
-        {marketIcons.map(([left, top, size, duration, icon], index) => (
+        {marketScenes.map(([src, variant, delay]) => (
           <span
-            key={`${left}-${top}-${icon}`}
+            key={src}
+            className={`market-scene ${variant}`}
             style={
               {
-                "--x": left,
-                "--y": top,
-                "--size": size,
-                "--dur": duration,
-                "--delay": `${index * -1.7}s`
+                "--bg": `url(${src})`,
+                "--delay": delay
               } as CSSProperties
             }
-          >
-            {icon}
-          </span>
+          />
         ))}
       </div>
 
