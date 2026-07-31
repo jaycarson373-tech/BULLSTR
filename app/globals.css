@@ -205,6 +205,40 @@ img {
   z-index: 2;
 }
 
+.contract-control {
+  align-items: center;
+  background: rgba(2, 8, 5, 0.9);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 7px;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 13px;
+  transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  white-space: nowrap;
+}
+
+.contract-control strong {
+  color: var(--green);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+.contract-control span {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.72rem;
+}
+
+.contract-control:hover {
+  border-color: rgba(255, 250, 240, 0.5);
+  box-shadow: 0 20px 58px rgba(50, 255, 122, 0.12);
+  transform: translateY(-2px);
+}
+
 .hero-copy {
   max-width: 710px;
 }

@@ -1,11 +1,14 @@
 import type { CSSProperties } from "react";
+import { CopyContract } from "./copy-contract";
 
+const DEFAULT_CA = "92DwRWtorPC1UxugproBwmdvGJss99LWB4QeRX7Qpump";
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME?.trim() || "Inuvestors";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL?.trim() || "Inuvestor";
 const REWARD_INTERVAL = process.env.NEXT_PUBLIC_REWARD_INTERVAL?.trim() || "5 minutes";
 const MINIMUM_BALANCE = process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "1000000";
 const X_URL = process.env.NEXT_PUBLIC_INUVESTOR_X_URL?.trim() || process.env.NEXT_PUBLIC_X_URL?.trim();
-const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim();
+const CA = process.env.NEXT_PUBLIC_INUVESTOR_CA?.trim() || process.env.NEXT_PUBLIC_CA?.trim() || DEFAULT_CA;
+const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim() || `https://pump.fun/coin/${CA}`;
 
 const marketScenes = [["/inuvestors-bg-wallstreet.jpg", "wallstreet", "0s"]];
 
@@ -75,6 +78,7 @@ export default function Page() {
             <a className="secondary-action" href="#live-drops">
               VIEW LIVE DROPS
             </a>
+            <CopyContract address={CA} />
           </div>
           <p className="mechanic-line">{Number(MINIMUM_BALANCE).toLocaleString()}+ ${SOURCE_SYMBOL} required to qualify.</p>
         </div>
