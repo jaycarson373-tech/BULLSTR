@@ -137,7 +137,7 @@ async function executeBuy(signal: CatSignal, whitelist: CatWhitelistRow, mint: P
   const actionCapLamports = solToLamports(Math.min(signalMaxSol, whitelistMaxSol, config.catAgentMaxSolPerAction));
   const usableLamports = await treasuryUsableLamports();
   const inputLamports = minBigInt(actionCapLamports, usableLamports, remainingEpochBudget);
-  const symbol = signal.symbol ?? whitelist.symbol ?? "INU_SIGNAL";
+  const symbol = signal.symbol ?? whitelist.symbol ?? "INUVESTOR_SIGNAL";
 
   if (inputLamports <= 0n) {
     await updateSignal(signal.id, "failed", { error: "No treasury budget available after reserve/caps." });
@@ -194,7 +194,7 @@ async function executeSell(signal: CatSignal, whitelist: CatWhitelistRow, mint: 
   const balanceRaw = await treasuryTokenBalanceRaw(mint);
   const sellBps = clampBps(signal.sell_bps, 2500);
   const inputRaw = (balanceRaw * BigInt(sellBps)) / 10_000n;
-  const symbol = signal.symbol ?? whitelist.symbol ?? "INU_SIGNAL";
+  const symbol = signal.symbol ?? whitelist.symbol ?? "INUVESTOR_SIGNAL";
 
   if (inputRaw <= 0n) {
     await updateSignal(signal.id, "failed", { error: "No treasury token balance available to sell." });

@@ -14,5 +14,5 @@
   <path d="M59 82h10l-5 6-5-6Z" fill="#f4c658"/>
   <path d="M49 94c9 7 21 7 30 0" fill="none" stroke="#f4c658" stroke-width="5" stroke-linecap="round"/>
   <path d="M37 40h54l-7 12H44l-7-12Z" fill="#fff4c7"/>
-  <text x="64" y="37" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="16" fill="#061009">INU</text>
+  <text x="64" y="37" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="15" fill="#061009">INV</text>
 </svg>

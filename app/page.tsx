@@ -1,13 +1,19 @@
 import type { CSSProperties } from "react";
 import { MarketCursor } from "./market-cursor";
 
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME?.trim() || "Inuvestor";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL?.trim() || "INU";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME?.trim() || "Inuvestors";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL?.trim() || "Inuvestor";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL?.trim() || "STOCK PICKS";
 const REWARD_INTERVAL = process.env.NEXT_PUBLIC_REWARD_INTERVAL?.trim() || "5 minutes";
 const MINIMUM_BALANCE = process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "1000000";
-const X_URL = process.env.NEXT_PUBLIC_INUVESTOR_X_URL?.trim() || process.env.NEXT_PUBLIC_X_URL?.trim();
-const CA = process.env.NEXT_PUBLIC_INUVESTOR_CA?.trim() || process.env.NEXT_PUBLIC_CA?.trim();
+const X_URL =
+  process.env.NEXT_PUBLIC_INUVESTORS_X_URL?.trim() ||
+  process.env.NEXT_PUBLIC_INUVESTOR_X_URL?.trim() ||
+  process.env.NEXT_PUBLIC_X_URL?.trim();
+const CA =
+  process.env.NEXT_PUBLIC_INUVESTORS_CA?.trim() ||
+  process.env.NEXT_PUBLIC_INUVESTOR_CA?.trim() ||
+  process.env.NEXT_PUBLIC_CA?.trim();
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL?.trim();
 
 const marketIcons = [
@@ -26,7 +32,7 @@ const marketIcons = [
 ];
 
 const terminalLines = [
-  ["open", "Inuvestor terminal is live. The dog has a Bloomberg tab and a chain wallet."],
+  ["open", "Inuvestors terminal is live. The dog has a Bloomberg tab, a vest, and a chain wallet."],
   ["scan", "Performance boards, sector momentum, and social heat are watched before every round."],
   ["rank", "The desk highlights the strongest stock-style picks of the current window."],
   ["qualify", `Wallets holding ${Number(MINIMUM_BALANCE).toLocaleString()}+ $${SOURCE_SYMBOL} enter the reward pool.`],
@@ -37,7 +43,7 @@ const terminalLines = [
 const desks = [
   {
     title: "Performance Scanner",
-    body: "Inuvestor watches the tape for the strongest movers and turns market momentum into reward themes."
+    body: "Inuvestors watches the tape for the strongest movers and turns market momentum into reward themes."
   },
   {
     title: "Holder Gate",
@@ -94,7 +100,7 @@ export default function Page() {
           <h1>{PROJECT_NAME}</h1>
           <p className="ticker">Ticker: ${SOURCE_SYMBOL}</p>
           <p className="inu-copy">
-            The investor dog scans the best-performing stock themes and routes reward rounds to
+            The vest-wearing market dog scans the best-performing stock themes and routes reward rounds to
             holders with 1M+ tokens every five minutes. Professional terminal energy, meme desk instincts.
           </p>
 
@@ -103,7 +109,7 @@ export default function Page() {
               Open Market Desk
             </a>
             <a className={X_URL ? "secondary-action" : "secondary-action disabled"} href={X_URL || "#"} aria-disabled={!X_URL}>
-              Follow Inuvestor
+              Follow Inuvestors
             </a>
             {BUY_URL ? (
               <a className="secondary-action" href={BUY_URL}>
@@ -131,7 +137,7 @@ export default function Page() {
       <section className="terminal-shell" id="terminal" aria-label={`${PROJECT_NAME} terminal`}>
         <div className="terminal-topbar">
           <span />
-          <strong>inuvestor.market-desk</strong>
+          <strong>inuvestors.market-desk</strong>
           <em>five-minute rewards</em>
         </div>
         <div className="terminal-lines">
@@ -144,7 +150,7 @@ export default function Page() {
         </div>
       </section>
 
-      <section className="pick-board" aria-label="Inuvestor stock pick board">
+      <section className="pick-board" aria-label={`${PROJECT_NAME} stock pick board`}>
         <div>
           <p className="eyebrow">stock dog watchlist</p>
           <h2>Best-performing themes. Meme-speed rounds.</h2>
@@ -172,7 +178,7 @@ export default function Page() {
       <section className="lore-panel" aria-label={`${PROJECT_NAME} thesis`}>
         <div>
           <p className="eyebrow">desk memo</p>
-          <h2>Wall Street, but on four paws.</h2>
+          <h2>Wall Street, but in a vest.</h2>
         </div>
         <ol>
           <li>The dog checks the tape.</li>
