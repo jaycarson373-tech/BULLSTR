@@ -1,15 +1,18 @@
-# CryptoCat
+# Inuvestor
 
-CryptoCat is an on-chain AI treasury persona for the `CC` token.
+Inuvestor is a meme market intelligence desk for the `INU` token.
 
-The public site presents CryptoCat as a terminal-native character that scans the chain, posts in its own voice, opens bounties, and can reward loyal holders when treasury actions are approved.
+The public site presents Inuvestor as a professional-but-meme stock scanner: the dog watches market themes, surfaces the strongest-performing stock-style picks, and frames five-minute reward rounds for holders with at least 1,000,000 tokens.
 
 ## Public configuration
 
-- `NEXT_PUBLIC_PROJECT_NAME`: `CryptoCat`
-- `NEXT_PUBLIC_SOURCE_SYMBOL`: `CC`
-- `NEXT_PUBLIC_CC_X_URL`: X profile, optional until ready
-- `NEXT_PUBLIC_CC_CA`: token mint, optional until ready
+- `NEXT_PUBLIC_PROJECT_NAME`: `Inuvestor`
+- `NEXT_PUBLIC_SOURCE_SYMBOL`: `INU`
+- `NEXT_PUBLIC_REWARD_SYMBOL`: reward label shown on the site
+- `NEXT_PUBLIC_REWARD_INTERVAL`: public cadence label, default `5 minutes`
+- `NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE`: public holder gate, default `1000000`
+- `NEXT_PUBLIC_INUVESTOR_X_URL` or `NEXT_PUBLIC_X_URL`: X profile, optional until ready
+- `NEXT_PUBLIC_INUVESTOR_CA` or `NEXT_PUBLIC_CA`: token mint, optional until ready
 - `NEXT_PUBLIC_BUY_URL`: buy link, optional until ready
 - `NEXT_PUBLIC_SITE_URL`: production site URL
 
@@ -25,11 +28,11 @@ The worker logic is unchanged. It remains controlled by Railway env gates:
 - `REWARD_TOKEN_SYMBOL`
 - `TREASURY_WALLET_SECRET`
 
-Keep live gates false until the reward flow is intentionally enabled and funded.
+Keep live gates false until the reward flow is intentionally enabled and funded. To airdrop tokenized stock rewards or any other SPL reward token, set `REWARD_MODE=token` and point `REWARD_TOKEN_MINT` at the intended reward mint.
 
-## CryptoCat treasury agent
+## Inuvestor signal desk
 
-The worker includes a gated treasury agent. It does not trade randomly. It only processes rows from `cat_signals` where the mint is already enabled in `cat_token_whitelist`.
+The worker includes a gated signal agent. It does not trade randomly. It only processes rows from `cat_signals` where the mint is already enabled in `cat_token_whitelist`. Table names are preserved for migration compatibility.
 
 Default mode is dry-run:
 
@@ -50,7 +53,7 @@ on conflict (mint) do update set
   updated_at = now();
 
 insert into cat_signals (mint, symbol, side, max_sol, conviction, reason, expires_at)
-values ('TOKEN_MINT_HERE', 'TICKER', 'buy', 0.05, 80, 'approved CryptoCat signal', now() + interval '30 minutes');
+values ('TOKEN_MINT_HERE', 'TICKER', 'buy', 0.05, 80, 'approved Inuvestor signal', now() + interval '30 minutes');
 ```
 
 To stage a sell signal:
@@ -66,7 +69,7 @@ Trades are executed through Jupiter routes. Pump tokens without an available Jup
 
 ## X automation
 
-CryptoCat can post queued updates, post executed trade receipts, and optionally reply to mentions.
+Inuvestor can post queued updates, post executed trade receipts, and optionally reply to mentions.
 
 Required X envs:
 
@@ -90,16 +93,16 @@ Queue a persona post:
 
 ```sql
 insert into x_post_queue (kind, text)
-values ('persona', 'CryptoCat is online. The terminal is watching the chain.');
+values ('persona', 'Inuvestor is online. The dog is watching the tape.');
 ```
 
 Queue a reply to a specific post:
 
 ```sql
 insert into x_post_queue (kind, text, reply_to_tweet_id)
-values ('reply', 'CryptoCat saw this. The terminal is learning.', 'TWEET_ID_HERE');
+values ('reply', 'Inuvestor saw this. The desk is learning.', 'TWEET_ID_HERE');
 ```
 
 When `X_AGENT_AUTO_TRADE_POSTS=true`, executed `cat_agent_actions` are posted automatically with the Solscan transaction link. Dry-run/planned trades are not posted unless `X_AGENT_POST_PLANNED_TRADES=true`.
 
-Mention replies are disabled by default. If `X_AGENT_REPLY_TO_MENTIONS=true`, the worker replies to a small number of fresh mentions per epoch using conservative CryptoCat templates.
+Mention replies are disabled by default. If `X_AGENT_REPLY_TO_MENTIONS=true`, the worker replies to a small number of fresh mentions per epoch using conservative Inuvestor templates.

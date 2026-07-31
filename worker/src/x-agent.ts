@@ -176,7 +176,7 @@ function tradeText(action: CatAction) {
   const reason = typeof action.metadata?.reason === "string" ? action.metadata.reason : "approved signal";
   const tx = action.tx_sig ? `\nTX: https://solscan.io/tx/${action.tx_sig}` : "";
   const mode = action.status === "planned" ? "plan queued" : "trade settled";
-  return `CryptoCat ${mode}.\n${side} $${symbol}\nReason: ${reason}${tx}\nThe terminal is learning.`;
+  return `${config.projectName} ${mode}.\n${side} $${symbol}\nReason: ${reason}${tx}\nThe market dog is watching the tape.`;
 }
 
 async function processQueuedPosts(limit: number) {
@@ -233,10 +233,10 @@ function newestTweetId(tweets: XTweet[]) {
 
 function replyText(tweet: XTweet) {
   const lower = tweet.text.toLowerCase();
-  if (lower.includes("treasury")) return "CryptoCat sees the treasury question. The terminal watches every move before it pounces.";
-  if (lower.includes("buy")) return "The cat buys only from approved signals. No random claws on the wallet.";
-  if (lower.includes("mission") || lower.includes("bounty")) return "Mission mode is waking up. Bring useful work, not noise.";
-  return "CryptoCat saw this. The terminal is learning the room.";
+  if (lower.includes("treasury")) return "Inuvestor sees the treasury question. Every serious desk watches cash before chasing candles.";
+  if (lower.includes("buy")) return "Inuvestor only moves from approved signals. No random paws on the wallet.";
+  if (lower.includes("mission") || lower.includes("bounty")) return "Market desk missions are waking up. Bring useful work, not noise.";
+  return "Inuvestor saw this. The desk is learning the room.";
 }
 
 async function processMentions(limit: number) {
