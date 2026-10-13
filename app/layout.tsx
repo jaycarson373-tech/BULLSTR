@@ -5,7 +5,7 @@ const SITE_URL = "https://bullstr.vercel.app";
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Inuvestors";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "Inuvestor";
 const SITE_DESCRIPTION =
-  "Every five minutes, Inuvestor buys a basket of top-performing tokenized stocks and distributes it across eligible holders.";
+  "Inuvestors is designed to buy a configured basket of tokenized stocks and publish verified distributions for eligible holders. Live operations begin only when the worker is enabled and funded.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

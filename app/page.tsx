@@ -4,7 +4,6 @@ import { CopyContract } from "./copy-contract";
 const DEFAULT_CA = "92DwRWtorPC1UxugproBwmdvGJss99LWB4QeRX7Qpump";
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME?.trim() || "Inuvestors";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL?.trim() || "Inuvestor";
-const REWARD_INTERVAL = process.env.NEXT_PUBLIC_REWARD_INTERVAL?.trim() || "5 minutes";
 const MINIMUM_BALANCE = process.env.NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE?.trim() || "1000000";
 const X_URL = process.env.NEXT_PUBLIC_INUVESTOR_X_URL?.trim() || process.env.NEXT_PUBLIC_X_URL?.trim();
 const CA = process.env.NEXT_PUBLIC_INUVESTOR_CA?.trim() || process.env.NEXT_PUBLIC_CA?.trim() || DEFAULT_CA;
@@ -21,11 +20,11 @@ const steps = [
   },
   {
     title: "BUY",
-    body: "Every five minutes, the protocol purchases a basket of current market leaders."
+    body: "When live execution is enabled and funded, the worker buys the configured basket on its execution schedule."
   },
   {
     title: "DROP",
-    body: "The purchased stock basket is distributed across eligible 1M+ $Inuvestor holders."
+    body: "Confirmed distributions are published for eligible 1M+ $Inuvestor holders."
   }
 ];
 
@@ -69,8 +68,7 @@ export default function Page() {
           <p className="eyebrow">THE DOG THAT ACTUALLY INVESTS</p>
           <h1>HE INVESTS. YOU HOLD.</h1>
           <p className="hero-body">
-            Every five minutes, Inuvestor buys a basket of top-performing tokenized stocks and distributes it
-            across eligible holders.
+            Inuvestors is built around a clear loop: rank supported stock assets, buy a configured basket when live operations are enabled and funded, then publish verified holder distributions.
           </p>
           <div className="hero-actions" aria-label={`${PROJECT_NAME} actions`}>
             {BUY_URL ? (
@@ -120,9 +118,7 @@ export default function Page() {
 
       <footer className="site-footer">
         <p>
-          Every five minutes, Inuvestor buys a basket of top-performing tokenized stocks and distributes it
-          across eligible holders. Digital assets and reward availability involve risk. Nothing on this site is
-          financial advice.
+          Inuvestors is designed to buy configured tokenized-stock assets and publish verified distributions for eligible holders. Live operations begin only when the worker is enabled and funded. Digital assets and reward availability involve risk. Nothing on this site is financial advice.
         </p>
         <div className="footer-links">
           <a href="#how-it-works">HOW IT WORKS</a>

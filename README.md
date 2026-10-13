@@ -1,15 +1,15 @@
 # Inuvestors
 
-Inuvestors buys supported stock assets and airdrops them to eligible `Inuvestor` token holders.
+Inuvestors is designed to buy configured stock assets and distribute them to eligible `Inuvestor` token holders.
 
-The public site presents Inuvestors as a simple stock-reward product: every five minutes, the protocol buys the configured stock basket and airdrops each asset across eligible holders with at least 1,000,000 tokens.
+Live purchases and airdrops are disabled by default. They begin only after the operator configures reward assets, applies required migrations, enables the relevant gates, funds the treasury, and verifies a live test cycle. Do not publish an active cadence until the deployed worker and its `EPOCH_MINUTES` configuration confirm it.
 
 ## Public configuration
 
 - `NEXT_PUBLIC_PROJECT_NAME`: `Inuvestors`
 - `NEXT_PUBLIC_SOURCE_SYMBOL`: `Inuvestor`
 - `NEXT_PUBLIC_REWARD_SYMBOL`: reward label shown on the site
-- `NEXT_PUBLIC_REWARD_INTERVAL`: public cadence label, default `5 minutes`
+- `NEXT_PUBLIC_REWARD_INTERVAL`: optional public cadence label; set only to match the deployed worker's `EPOCH_MINUTES`
 - `NEXT_PUBLIC_MINIMUM_ELIGIBLE_BALANCE`: public holder gate, default `1000000`
 - `NEXT_PUBLIC_INUVESTOR_X_URL` or `NEXT_PUBLIC_X_URL`: X profile, optional until ready
 - `NEXT_PUBLIC_INUVESTOR_CA` or `NEXT_PUBLIC_CA`: token mint, optional until ready
