@@ -111,8 +111,8 @@ export default function Page() {
           <h2>INUVESTMENTS</h2>
         </div>
         <div className="launch-banner" role="status">
-          <strong>INUVESTMENTS BEGIN AT LAUNCH.</strong>
-          <span>EVERY PURCHASE AND AIRDROP WILL BE PUBLISHED HERE.</span>
+          <strong>REWARD ACTIVITY</strong>
+          <span>Live purchase and distribution receipts are not displayed on this page yet. Verify activity on-chain.</span>
         </div>
       </section>
 
