@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://www.inuvestor.fun";
+const SITE_URL = "https://bullstr.vercel.app";
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Inuvestors";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "Inuvestor";
 const SITE_DESCRIPTION =
