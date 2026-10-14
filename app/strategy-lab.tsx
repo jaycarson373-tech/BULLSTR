@@ -1,0 +1,20 @@
+'use client';
+import { useEffect, useState } from 'react';
+import { holdMultiplierForStreak } from '../worker/src/hold-multiplier';
+const stages = [
+  { title: 'Collect creator fees', text: 'The configured operator claims available creator fees. Only successfully received funds can enter the reward pool.' },
+  { title: 'Snapshot holders', text: 'Each five-minute epoch snapshots eligible balances and adds the published bonus for consecutive eligible snapshots.' },
+  { title: 'Distribute the pool', text: 'The worker allocates the collected pool by weighted balance, then records completed transfers for verification.' }
+];
+export function StrategyLab() {
+  const [epoch, setEpoch] = useState(26);
+  const [stage, setStage] = useState(1);
+  const multiplier = holdMultiplierForStreak(epoch, 100, 20_000) / 10_000;
+  return <div className="strategy-lab"><div className="lab-top"><span>HOLDER WEIGHT LAB</span><span className="pill">RULE PREVIEW</span></div><div className="weight-scene"><div className="weight-orbit orbit-a"/><div className="weight-orbit orbit-b"/><div className="weight-core"><span>REWARD WEIGHT</span><strong>{multiplier.toFixed(2)}<small>x</small></strong><span>{epoch} CONSECUTIVE SNAPSHOTS</span></div><div className="weight-label label-top">NEAR PAIRED</div><div className="weight-label label-bottom">5 MIN EPOCHS</div></div><div className="lab-controls"><div><label htmlFor="epochs">Consecutive eligible snapshots</label><output htmlFor="epochs">{epoch}</output></div><input id="epochs" type="range" min="1" max="101" value={epoch} onChange={e=>setEpoch(Number(e.target.value))}/><div className="range-labels"><span>1 snapshot / 1.00x</span><span>101 snapshots / 2.00x</span></div></div><div className="flow-tabs" role="tablist" aria-label="Reward cycle">{stages.map((s,i)=><button key={s.title} id={'stage-'+i} role="tab" aria-selected={stage===i} aria-controls="stage-panel" onClick={()=>setStage(i)}><span>0{i+1}</span>{['Collect','Snapshot','Distribute'][i]}</button>)}</div><div id="stage-panel" role="tabpanel" aria-labelledby={'stage-'+stage} className="stage-panel"><strong>{stages[stage].title}</strong><p>{stages[stage].text}</p></div><p className="lab-note">Rule illustration only. A higher weight changes your share of a funded pool; it does not guarantee a payout.</p></div>
+}
+export function NearMarket() {
+ const [data,setData]=useState<{price:number;updatedAt:string|null;nearAssets:number;chains:number}|null>(null);
+ const [error,setError]=useState(false);
+ useEffect(()=>{const controller=new AbortController(); const load=()=>fetch('/api/near-market',{signal:controller.signal}).then(async r=>{if(!r.ok)throw new Error();return r.json()}).then(v=>{setData(v);setError(false)}).catch(()=>{if(!controller.signal.aborted){setError(true);setData(null)}}); load();const interval=setInterval(load,60000);return()=>{controller.abort();clearInterval(interval)}},[]);
+ return <div className="market-bar"><div><span>NEAR / USD</span><strong>{data?'$'+data.price.toFixed(2):error?'Unavailable':'Connecting'}</strong><small>1Click provider price</small></div><div><span>NEAR NETWORK ASSETS</span><strong>{data?.nearAssets??(error?'Unavailable':'Loading')}</strong><small>Supported directory assets</small></div><div><span>INTENTS NETWORKS</span><strong>{data?.chains??(error?'Unavailable':'Loading')}</strong><small>Networks in the asset directory</small></div><div><span>NSTR REWARD EPOCH</span><strong>5 minutes</strong><small>Planned cadence / not active</small></div></div>
+}
