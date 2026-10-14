@@ -21,7 +21,7 @@ export function CopyContract({ address }: { address: string }) {
       className="contract-control"
       type="button"
       onClick={copyAddress}
-      aria-label="Copy Inuvestor contract address"
+      aria-label="Copy Near Strategy contract address"
       title={address}
     >
       <strong>CA</strong>

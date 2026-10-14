@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 const SITE_URL = "https://bullstr.vercel.app";
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Inuvestors";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "Inuvestor";
+const PROJECT_NAME = "Near Strategy";
+const SOURCE_SYMBOL = "NSTR";
 const SITE_DESCRIPTION =
-  "Inuvestors is designed to buy a configured basket of tokenized stocks and publish verified distributions for eligible holders. Live operations begin only when the worker is enabled and funded.";
+  "Near Strategy (NSTR) is a NEAR-paired community token concept focused on NEAR Intents, transparent fee flows, and five-minute holder epochs. Preview only; no live distributions are enabled.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -18,9 +18,9 @@ export const metadata: Metadata = {
     siteName: PROJECT_NAME,
     images: [
       {
-        url: `${SITE_URL}/inuvestors-logo.png`,
-        width: 1254,
-        height: 1254,
+        url: `${SITE_URL}/og-nstr.svg`,
+        width: 1200,
+        height: 630,
         alt: PROJECT_NAME
       }
     ],
@@ -30,12 +30,12 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${PROJECT_NAME} | ${SOURCE_SYMBOL}`,
     description: SITE_DESCRIPTION,
-    images: [`${SITE_URL}/inuvestors-logo.png`]
+    images: [`${SITE_URL}/og-nstr.svg`]
   },
   icons: {
-    icon: "/favicon.png",
-    shortcut: "/favicon.png",
-    apple: "/favicon.png"
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg"
   }
 };
 

@@ -1,6 +1,7 @@
 import { config } from "./config.js";
 import { supabase } from "./db.js";
 import type { Holder } from "./snapshot.js";
+import { holdMultiplierForStreak } from "./hold-multiplier.js";
 
 type HolderStateRow = {
   wallet: string;
@@ -8,13 +9,12 @@ type HolderStateRow = {
   source_balance_raw: string | null;
   highest_source_balance_raw: string | null;
   eligible_since: string | null;
+  last_epoch_id?: string | null;
   current_streak_epochs: number | null;
   current_multiplier_bps: number | null;
   permanently_ineligible: boolean | null;
   ineligible_reason: string | null;
 };
-
-const DAY_MS = 24 * 60 * 60 * 1000;
 
 function parseRaw(value: unknown) {
   try {
@@ -22,12 +22,6 @@ function parseRaw(value: unknown) {
   } catch {
     return 0n;
   }
-}
-
-function holdMultiplierBps(eligibleSince: string | null | undefined, nowMs: number) {
-  const startedAt = eligibleSince ? Date.parse(eligibleSince) : nowMs;
-  const heldDays = Number.isFinite(startedAt) ? Math.max(0, Math.floor((nowMs - startedAt) / DAY_MS)) : 0;
-  return 10_000 + heldDays * 1_000;
 }
 
 function isMissingHolderStateTable(error: unknown) {
@@ -39,7 +33,7 @@ async function getHolderStates() {
   const result = await supabase
     .from("holder_states")
     .select(
-      "wallet,source_balance,source_balance_raw,highest_source_balance_raw,eligible_since,current_streak_epochs,current_multiplier_bps,permanently_ineligible,ineligible_reason"
+      "wallet,source_balance,source_balance_raw,highest_source_balance_raw,eligible_since,last_epoch_id,current_streak_epochs,current_multiplier_bps,permanently_ineligible,ineligible_reason"
     )
     .limit(10000);
 
@@ -56,7 +50,6 @@ async function upsertHolderStates(rows: Record<string, unknown>[]) {
 export async function applyHolderState(epochId: string, eligibleHolders: Holder[], currentHolders = eligibleHolders): Promise<Holder[]> {
   try {
     const now = new Date().toISOString();
-    const nowMs = Date.parse(now);
     const states = await getHolderStates();
     const stateByWallet = new Map(states.map((state) => [state.wallet, state]));
     const eligibleByWallet = new Map(eligibleHolders.map((holder) => [holder.wallet, holder]));
@@ -151,10 +144,21 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
       const previousRaw = parseRaw(existing?.source_balance_raw);
       const highestRaw = parseRaw(existing?.highest_source_balance_raw);
       const soldSinceLastSnapshot = Boolean(existing && previousRaw > 0n && holder.rawBalance < previousRaw);
+      const alreadyCountedEpoch = existing?.last_epoch_id === epochId;
 
-      const nextStreak = soldSinceLastSnapshot ? 1 : existing ? (existing.current_streak_epochs ?? 0) + 1 : 1;
+      const nextStreak = soldSinceLastSnapshot
+        ? 1
+        : existing
+          ? alreadyCountedEpoch
+            ? Math.max(1, existing.current_streak_epochs ?? 1)
+            : (existing.current_streak_epochs ?? 0) + 1
+          : 1;
       const eligibleSince = soldSinceLastSnapshot ? now : existing?.eligible_since ?? now;
-      const multiplierBps = holdMultiplierBps(eligibleSince, nowMs);
+      const multiplierBps = holdMultiplierForStreak(
+        nextStreak,
+        config.holdMultiplierStepBps,
+        config.holdMultiplierMaxBps
+      );
       const nextHighest = highestRaw > holder.rawBalance ? highestRaw : holder.rawBalance;
 
       updates.push({

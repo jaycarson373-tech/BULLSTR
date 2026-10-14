@@ -43,16 +43,25 @@ export async function runEpoch(date = new Date()) {
 
     await startEpoch(epochId);
     const treasury = treasuryKeypair();
-    const treasuryBalanceBeforeClaim = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
+    const feeAssetMint = config.creatorFeeAssetMint;
+    const feeAssetBalanceBeforeClaim = feeAssetMint
+      ? await treasuryRewardBalanceRaw(0n, feeAssetMint)
+      : BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
     const claim = await claimFees(epochId);
-    const treasuryBalanceAfterClaim = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
-    const claimedLamports =
-      claim.txSig && treasuryBalanceAfterClaim > treasuryBalanceBeforeClaim
-        ? treasuryBalanceAfterClaim - treasuryBalanceBeforeClaim
+    const feeAssetBalanceAfterClaim = feeAssetMint
+      ? await treasuryRewardBalanceRaw(0n, feeAssetMint)
+      : BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
+    const claimedFeeRaw =
+      claim.txSig && feeAssetBalanceAfterClaim > feeAssetBalanceBeforeClaim
+        ? feeAssetBalanceAfterClaim - feeAssetBalanceBeforeClaim
         : 0n;
-    console.log(`[${epochId}] claimed fee delta available for holder airdrops: ${lamportsToSol(claimedLamports)} SOL`);
-    if (claim.txSig && claimedLamports > 0n) {
-      await recordClaim(epochId, lamportsToSol(claimedLamports).toString(), claim.txSig);
+    const claimedLamports = feeAssetMint ? 0n : claimedFeeRaw;
+    const claimedFeeLabel = feeAssetMint ? config.rewardAssets[0].symbol : "SOL";
+    console.log(
+      `[${epochId}] claimed fee delta available for holder airdrops: ${feeAssetMint ? claimedFeeRaw.toString() : lamportsToSol(claimedFeeRaw)} ${claimedFeeLabel}`
+    );
+    if (claim.txSig && claimedFeeRaw > 0n) {
+      await recordClaim(epochId, claimedFeeRaw.toString(), claim.txSig);
     }
 
     const sourceHolders = await snapshotSourceHolders();
@@ -84,18 +93,28 @@ export async function runEpoch(date = new Date()) {
             }))
           );
     const splitPlan = await treasurySolBudget(payoutReserveLamports);
-    const splitBaseLamports = claimedLamports < splitPlan.usableLamports ? claimedLamports : splitPlan.usableLamports;
+    const splitBaseLamports = feeAssetMint
+      ? 0n
+      : claimedLamports < splitPlan.usableLamports
+        ? claimedLamports
+        : splitPlan.usableLamports;
     const rewardBuyLamports = (splitBaseLamports * BigInt(config.swapBalanceBps)) / 10_000n;
     const sideWalletLamports = (splitBaseLamports * BigInt(config.sideWalletBps)) / 10_000n;
     console.log(
-      `[${epochId}] reward plan: claimed=${lamportsToSol(claimedLamports)} SOL, usable=${lamportsToSol(splitPlan.usableLamports)} SOL, splitBase=${lamportsToSol(splitBaseLamports)} SOL, ${config.rewardSymbol}Buy=${lamportsToSol(rewardBuyLamports)} SOL, sideWallet=${lamportsToSol(sideWalletLamports)} SOL`
+      feeAssetMint
+        ? `[${epochId}] reward plan: claimed=${claimedFeeRaw.toString()} ${claimedFeeLabel}, direct fee-asset distribution, SOL reserve=${lamportsToSol(splitPlan.reserveLamports)} SOL`
+        : `[${epochId}] reward plan: claimed=${lamportsToSol(claimedLamports)} SOL, usable=${lamportsToSol(splitPlan.usableLamports)} SOL, splitBase=${lamportsToSol(splitBaseLamports)} SOL, ${config.rewardSymbol}Buy=${lamportsToSol(rewardBuyLamports)} SOL, sideWallet=${lamportsToSol(sideWalletLamports)} SOL`
     );
-    const sideTransfer = await routeSideWalletShare(epochId, sideWalletLamports, splitPlan.reserveLamports);
+    const sideTransfer = feeAssetMint
+      ? { txSig: null, sentLamports: 0n }
+      : await routeSideWalletShare(epochId, sideWalletLamports, splitPlan.reserveLamports);
 
     if (!holders.length) {
       const emptyAssets = config.rewardMode === "sol" ? ["SOL"] : config.rewardAssets.map((asset) => asset.symbol);
-      for (const asset of emptyAssets) {
-        await recordBuy(epochId, asset, "0", "0", "0", null);
+      if (!feeAssetMint) {
+        for (const asset of emptyAssets) {
+          await recordBuy(epochId, asset, "0", "0", "0", null);
+        }
       }
       await completeEpoch(epochId, {
         eligible_count: eligibleHolders.length,
@@ -123,15 +142,19 @@ export async function runEpoch(date = new Date()) {
       for (const asset of config.rewardAssets) {
         const assetBudget = basePerAsset + (remainder > 0n ? 1n : 0n);
         if (remainder > 0n) remainder -= 1n;
-        const buy = await buyToken(epochId, asset.mint, asset.symbol, payoutReserveLamports, assetBudget);
-        await recordBuy(
-          epochId,
-          asset.symbol,
-          buy.baseSpentLamports.toString(),
-          buy.rewardReceivedRaw.toString(),
-          buy.rewardReceivedUi.toString(),
-          buy.txSig
-        );
+        const buy = feeAssetMint
+          ? { baseSpentLamports: 0n, rewardReceivedRaw: 0n, rewardReceivedUi: 0, txSig: null }
+          : await buyToken(epochId, asset.mint, asset.symbol, payoutReserveLamports, assetBudget);
+        if (!feeAssetMint) {
+          await recordBuy(
+            epochId,
+            asset.symbol,
+            buy.baseSpentLamports.toString(),
+            buy.rewardReceivedRaw.toString(),
+            buy.rewardReceivedUi.toString(),
+            buy.txSig
+          );
+        }
         totalBoughtUi += buy.rewardReceivedUi;
 
         const availableRewardRaw = await treasuryRewardBalanceRaw(payoutReserveLamports, asset.mint);

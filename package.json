@@ -1,5 +1,5 @@
 {
-  "name": "inuvestors",
+  "name": "near-strategy",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -13,8 +13,9 @@
     "typecheck": "tsc --noEmit",
     "worker:dev": "tsx worker/src/scheduler.ts",
     "worker:build": "tsc -p worker/tsconfig.json",
+    "worker:test": "tsx --test worker/src/hold-multiplier.test.ts",
     "worker:start": "node worker/dist/scheduler.js",
-    "check": "npm run typecheck && npm run worker:build && npm run build"
+    "check": "npm run typecheck && npm run worker:build && npm run worker:test && npm run build"
   },
   "dependencies": {
     "@solana/spl-token": "^0.4.14",

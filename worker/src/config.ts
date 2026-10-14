@@ -87,6 +87,7 @@ let cachedTreasury: Keypair | null = null;
 const rewardMode = rewardModeEnv();
 const configuredRewardTokenMint = optionalPublicKeyEnv("REWARD_TOKEN_MINT");
 const configuredRewardTokenMints = optionalPublicKeys("REWARD_TOKEN_MINTS");
+const creatorFeeAssetMint = optionalPublicKeyEnv("CREATOR_FEE_ASSET_MINT");
 const rewardTokenMints = configuredRewardTokenMints.length
   ? configuredRewardTokenMints
   : configuredRewardTokenMint
@@ -101,6 +102,12 @@ if (configuredRewardTokenSymbols.length && configuredRewardTokenSymbols.length !
     `REWARD_TOKEN_SYMBOLS count (${configuredRewardTokenSymbols.length}) must match REWARD_TOKEN_MINTS count (${rewardTokenMints.length})`
   );
 }
+if (creatorFeeAssetMint) {
+  if (rewardMode !== "token") throw new Error("CREATOR_FEE_ASSET_MINT requires REWARD_MODE=token");
+  if (rewardTokenMints.length !== 1 || !rewardTokenMints[0].equals(creatorFeeAssetMint)) {
+    throw new Error("CREATOR_FEE_ASSET_MINT must be the only mint in REWARD_TOKEN_MINTS");
+  }
+}
 const fallbackRewardSymbol = stringEnv("REWARD_TOKEN_SYMBOL", process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "TOKEN");
 const rewardAssets = rewardTokenMints.map((mint, index) => ({
   mint,
@@ -112,36 +119,55 @@ if (swapBalanceBps > 10_000) {
 }
 const sideWalletBps = Math.min(10_000, Math.max(0, intEnv("SIDE_WALLET_BPS", 0)));
 const sideWalletPublicKey = optionalPublicKeyEnv("SIDE_WALLET_PUBLIC_KEY");
+const sourceTokenMint = publicKeyEnv("SOURCE_TOKEN_MINT");
+const claimEnabled = boolEnv("CLAIM_ENABLED", false);
+const buyEnabled = boolEnv("BUY_ENABLED", false);
+const airdropEnabled = boolEnv("AIRDROP_ENABLED", false);
 if (swapBalanceBps + sideWalletBps > 10_000) {
   throw new Error(`SWAP_BALANCE_BPS + SIDE_WALLET_BPS cannot exceed 10000; got ${swapBalanceBps + sideWalletBps}`);
 }
 if (sideWalletBps > 0 && !sideWalletPublicKey) {
   throw new Error("Missing required env SIDE_WALLET_PUBLIC_KEY when SIDE_WALLET_BPS is greater than 0");
 }
+if (sourceTokenMint.toBase58() === "92DwRWtorPC1UxugproBwmdvGJss99LWB4QeRX7Qpump") {
+  throw new Error("SOURCE_TOKEN_MINT still points to the previous Inuvestors token; set it to the launched NSTR mint");
+}
+if ((claimEnabled || airdropEnabled) && !creatorFeeAssetMint) {
+  throw new Error("Near Strategy live claim/airdrop requires a verified CREATOR_FEE_ASSET_MINT");
+}
+if (creatorFeeAssetMint && sideWalletBps > 0) {
+  throw new Error("SIDE_WALLET_BPS is not supported in direct fee-asset mode; set it to 0");
+}
+if (buyEnabled) {
+  throw new Error("BUY_ENABLED must remain false for Near Strategy's direct fee-asset reward flow");
+}
 
 export const config = {
-  projectName: stringEnv("PROJECT_NAME", process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Inuvestors"),
-  sourceSymbol: stringEnv("SOURCE_SYMBOL", process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "Inuvestor"),
-  rewardSymbol: fallbackRewardSymbol,
+  projectName: "Near Strategy",
+  sourceSymbol: "NSTR",
+  rewardSymbol: creatorFeeAssetMint ? rewardAssets[0].symbol : fallbackRewardSymbol,
 
   heliusRpcUrl: required("HELIUS_RPC_URL"),
-  sourceTokenMint: publicKeyEnv("SOURCE_TOKEN_MINT"),
+  sourceTokenMint,
   rewardMode,
   rewardAssets,
+  creatorFeeAssetMint,
   rewardTokenMint: rewardAssets[0]?.mint ?? new PublicKey("So11111111111111111111111111111111111111112"),
   treasuryWalletSecret: required("TREASURY_WALLET_SECRET"),
   supabaseUrl: required("SUPABASE_URL"),
   supabaseServiceRole: required("SUPABASE_SERVICE_ROLE"),
 
-  claimEnabled: boolEnv("CLAIM_ENABLED", false),
-  buyEnabled: boolEnv("BUY_ENABLED", false),
-  airdropEnabled: boolEnv("AIRDROP_ENABLED", false),
+  claimEnabled,
+  buyEnabled,
+  airdropEnabled,
   catAgentEnabled: boolEnv("CAT_AGENT_ENABLED", false),
   catAgentExecute: boolEnv("CAT_AGENT_EXECUTE", false),
   catAgentAllowSells: boolEnv("CAT_AGENT_ALLOW_SELLS", false),
 
   epochMinutes: Math.max(1, intEnv("EPOCH_MINUTES", 15)),
-  eligibilityMin: numberEnv("ELIGIBILITY_MIN", 1_000_000),
+  eligibilityMin: numberEnv("ELIGIBILITY_MIN", 1),
+  holdMultiplierStepBps: Math.max(0, intEnv("HOLD_MULTIPLIER_STEP_BPS", 100)),
+  holdMultiplierMaxBps: Math.max(10_000, intEnv("HOLD_MULTIPLIER_MAX_BPS", 20_000)),
   maxWalletsPerEpoch: Math.max(1, intEnv("MAX_WALLETS_PER_EPOCH", 75)),
   maxHolderPct: numberEnv("MAX_HOLDER_PCT", 5),
   excludeWallets: optionalWallets("EXCLUDE_WALLETS"),
