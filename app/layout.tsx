@@ -5,7 +5,7 @@ const SITE_URL = "https://bullstr.vercel.app";
 const PROJECT_NAME = "Near Strategy";
 const SOURCE_SYMBOL = "NSTR";
 const SITE_DESCRIPTION =
-  "Near Strategy (NSTR) is a NEAR-paired community token concept focused on NEAR Intents, transparent fee flows, and five-minute holder epochs. Preview only; no live distributions are enabled.";
+  "Near Strategy (NSTR): a NEAR ecosystem thesis with five-minute creator-fee reward design and consecutive-hold weights.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

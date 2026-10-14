@@ -24,7 +24,7 @@ export function CopyContract({ address }: { address: string }) {
       aria-label="Copy Near Strategy contract address"
       title={address}
     >
-      <strong>CA</strong>
+      <strong>CA:</strong>
       <span>{`${address.slice(0, 5)}...${address.slice(-5)}`}</span>
       {copied ? <Check aria-hidden="true" size={16} /> : <Copy aria-hidden="true" size={16} />}
     </button>

@@ -1,13 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <defs><radialGradient id="g"><stop stop-color="#0d4827"/><stop offset="1" stop-color="#030705"/></radialGradient></defs>
-  <rect width="1200" height="630" fill="url(#g)"/>
-  <path d="M0 100h1200M0 200h1200M0 300h1200M0 400h1200M0 500h1200M100 0v630M200 0v630M300 0v630M400 0v630M500 0v630M600 0v630M700 0v630M800 0v630M900 0v630M1000 0v630M1100 0v630" stroke="#32ff7a" stroke-opacity=".055"/>
-  <rect x="72" y="80" width="132" height="132" rx="30" fill="#06170d" stroke="#32ff7a" stroke-opacity=".8"/>
-  <path d="M108 176v-60h13l30 38v-38h13v60h-13l-30-38v38z" fill="#32ff7a"/>
-  <text x="240" y="140" fill="#fffaf0" font-family="Arial,sans-serif" font-size="46" font-weight="800" letter-spacing="4">NEAR STRATEGY</text>
-  <text x="244" y="185" fill="#32ff7a" font-family="monospace" font-size="23" font-weight="700" letter-spacing="7">NSTR · NEAR ECOSYSTEM</text>
-  <text x="72" y="365" fill="#fffaf0" font-family="Arial,sans-serif" font-size="64" font-weight="900">THE NEXT MOVE</text>
-  <text x="72" y="445" fill="#32ff7a" font-family="Arial,sans-serif" font-size="64" font-weight="900">STARTS WITH NEAR.</text>
-  <text x="76" y="510" fill="#b6c7ba" font-family="monospace" font-size="18" letter-spacing="3">INTENT ROUTING · OPEN FEE FLOWS · HOLDER EPOCHS</text>
-  <text x="76" y="575" fill="#8da394" font-family="monospace" font-size="13" letter-spacing="2">PRE-LAUNCH PREVIEW</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><rect width="1200" height="630" fill="#090e0b"/><rect x="40" y="40" width="1120" height="550" rx="20" fill="#111b14" stroke="#344f3a"/><rect x="83" y="84" width="51" height="51" rx="12" fill="#203d29"/><path d="M95 120V99h5l15 14V99h6v21h-5l-15-14v14z" fill="#9df9b4"/><text x="154" y="116" fill="#adbeae" font-family="Arial,sans-serif" font-size="20" letter-spacing="3">NSTR / NEAR ECOSYSTEM</text><text x="80" y="286" fill="#edf4eb" font-family="Arial,sans-serif" font-size="110" font-weight="500">NEAR</text><text x="80" y="405" fill="#9df9b4" font-family="Arial,sans-serif" font-size="110" font-weight="500">STRATEGY.</text><text x="86" y="487" fill="#91a497" font-family="Arial,sans-serif" font-size="27">NEAR-paired. Fee-funded reward design.</text><text x="86" y="548" fill="#6d8a74" font-family="monospace" font-size="17">5 MINUTE EPOCHS / CONSECUTIVE HOLD WEIGHTS</text><circle cx="957" cy="273" r="114" fill="none" stroke="#9df9b433"/><circle cx="957" cy="273" r="81" fill="none" stroke="#9df9b422"/><text x="893" y="291" fill="#9df9b4" font-family="Arial,sans-serif" font-size="49">2.00x</text><text x="887" y="335" fill="#759b7e" font-family="monospace" font-size="11">MAX REWARD WEIGHT</text></svg>
