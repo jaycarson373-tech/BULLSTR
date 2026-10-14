@@ -10,7 +10,7 @@ The token is intentionally not live. Do not invent its mint or enable claims ear
 - Source program, creator and actual quote mint are verified on chain before the scheduler starts.
 - The signed payout signature is persisted before broadcast; uncertain outcomes stop further allocation.
 - NSTR's epoch and holder state are separated from the old project's data.
-- Worker typecheck, build and 18 tests passed. No funded mainnet transaction has been performed.
+- Worker typecheck, build and 19 tests passed, including the fresh Postgres-compatible ledger installer, duplicate reservation protection and token-state isolation. No funded mainnet transaction has been performed.
 
 ## Database preparation
 
