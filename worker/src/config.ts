@@ -1,6 +1,7 @@
 import "dotenv/config";
 import bs58 from "bs58";
 import { Keypair, PublicKey } from "@solana/web3.js";
+import { epochMinutesFromEnv } from "./epoch-config.js";
 
 function required(name: string) {
   const value = process.env[name];
@@ -164,7 +165,7 @@ export const config = {
   catAgentExecute: boolEnv("CAT_AGENT_EXECUTE", false),
   catAgentAllowSells: boolEnv("CAT_AGENT_ALLOW_SELLS", false),
 
-  epochMinutes: Math.max(1, intEnv("EPOCH_MINUTES", 15)),
+  epochMinutes: epochMinutesFromEnv(process.env.EPOCH_MINUTES),
   eligibilityMin: numberEnv("ELIGIBILITY_MIN", 1),
   holdMultiplierStepBps: Math.max(0, intEnv("HOLD_MULTIPLIER_STEP_BPS", 100)),
   holdMultiplierMaxBps: Math.max(10_000, intEnv("HOLD_MULTIPLIER_MAX_BPS", 20_000)),
