@@ -1,3 +1,5 @@
+import bs58 from "bs58";
+import { sendRecordedTransfer, UncertainTransferError } from "./recorded-transfer.js";
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import {
   ACCOUNT_SIZE,
@@ -11,7 +13,7 @@ import {
 } from "@solana/spl-token";
 import { config, treasuryKeypair } from "./config.js";
 import { connection } from "./solana.js";
-import { dryRunPayout, failPayout, planPayout, settlePayout } from "./db.js";
+import { dryRunPayout, failPayout, planPayout, settlePayout, reservePayoutBatch } from "./db.js";
 import type { Holder } from "./snapshot.js";
 
 const AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS = 25_000n;
@@ -342,7 +344,8 @@ export async function airdropTokenRewards(
       }
 
       tx.feePayer = treasury.publicKey;
-      tx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
+      const block = await connection.getLatestBlockhash("confirmed");
+      tx.recentBlockhash = block.blockhash;
       tx.sign(treasury);
 
       const simulation = await connection.simulateTransaction(tx);
@@ -350,10 +353,16 @@ export async function airdropTokenRewards(
         throw new Error(`Transfer simulation failed: ${JSON.stringify(simulation.value.err)}`);
       }
 
-      const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
-      await connection.confirmTransaction(txSig, "confirmed");
+      if (!tx.signature) throw new Error("Payout signature missing.");
+      const signedSignature = bs58.encode(tx.signature);
+      const txSig = await sendRecordedTransfer(signedSignature, {
+        reserve: signature => reservePayoutBatch(epochId, batch.map(a=>a.wallet), rewardAsset, signature),
+        broadcast: () => connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false }),
+        confirm: async signature => (await connection.confirmTransaction({...block,signature}, "confirmed")).value,
+        settle: async signature => { for (const a of batch) await settlePayout(epochId, a.wallet, signature, rewardAsset); },
+        fail: async error => { for (const a of batch) await failPayout(epochId, a.wallet, error, rewardAsset); }
+      });
       for (const allocation of batch) {
-        await settlePayout(epochId, allocation.wallet, txSig, rewardAsset);
         settledRaw += allocation.amount;
         settledUi += allocation.uiAmount;
         settledCount += 1;
@@ -361,6 +370,7 @@ export async function airdropTokenRewards(
       }
       signatures.push(txSig);
     } catch (error) {
+      if (error instanceof UncertainTransferError) throw error;
       for (const allocation of batch) {
         await failPayout(epochId, allocation.wallet, error, rewardAsset);
         console.error(`[${epochId}] payout failed for ${allocation.wallet}:`, error);
@@ -460,7 +470,8 @@ export async function airdropSolRewards(
       }
 
       tx.feePayer = treasury.publicKey;
-      tx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
+      const block = await connection.getLatestBlockhash("confirmed");
+      tx.recentBlockhash = block.blockhash;
       tx.sign(treasury);
 
       const simulation = await connection.simulateTransaction(tx);
@@ -468,10 +479,16 @@ export async function airdropSolRewards(
         throw new Error(`SOL transfer simulation failed: ${JSON.stringify(simulation.value.err)}`);
       }
 
-      const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
-      await connection.confirmTransaction(txSig, "confirmed");
+      if (!tx.signature) throw new Error("Payout signature missing.");
+      const signedSignature = bs58.encode(tx.signature);
+      const txSig = await sendRecordedTransfer(signedSignature, {
+        reserve: signature => reservePayoutBatch(epochId, batch.map(a=>a.wallet), rewardAsset, signature),
+        broadcast: () => connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false }),
+        confirm: async signature => (await connection.confirmTransaction({...block,signature}, "confirmed")).value,
+        settle: async signature => { for (const a of batch) await settlePayout(epochId, a.wallet, signature, rewardAsset); },
+        fail: async error => { for (const a of batch) await failPayout(epochId, a.wallet, error, rewardAsset); }
+      });
       for (const allocation of batch) {
-        await settlePayout(epochId, allocation.wallet, txSig, rewardAsset);
         settledRaw += allocation.amount;
         settledUi += allocation.uiAmount;
         settledCount += 1;
@@ -479,6 +496,7 @@ export async function airdropSolRewards(
       }
       signatures.push(txSig);
     } catch (error) {
+      if (error instanceof UncertainTransferError) throw error;
       for (const allocation of batch) {
         await failPayout(epochId, allocation.wallet, error, rewardAsset);
         console.error(`[${epochId}] SOL payout failed for ${allocation.wallet}:`, error);

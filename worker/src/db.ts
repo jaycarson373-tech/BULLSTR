@@ -24,12 +24,13 @@ export async function getEpoch(epochId: string) {
 }
 
 export async function startEpoch(epochId: string) {
-  const result = await supabase
-    .from("epochs")
-    .upsert({ epoch_id: epochId, status: "running", started_at: new Date().toISOString() })
-    .select()
-    .single();
+  const result = await supabase.rpc("nstr_start_epoch", { p_epoch: epochId });
   return assertNoError(result, "start epoch");
+}
+
+export async function reservePayoutBatch(epochId:string, wallets:string[], rewardAsset:string, signature:string) {
+  const result=await supabase.rpc("nstr_reserve_payout_batch", {p_keys:wallets.map(wallet=>`${epochId}:${wallet}:${rewardAsset}`),p_signature:signature});
+  return assertNoError(result,"reserve payout batch") === true;
 }
 
 export async function completeEpoch(

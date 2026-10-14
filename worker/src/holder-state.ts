@@ -1,7 +1,7 @@
 import { config } from "./config.js";
 import { supabase } from "./db.js";
 import type { Holder } from "./snapshot.js";
-import { holdMultiplierForStreak } from "./hold-multiplier.js";
+import { holdMultiplierForStreak, streakForEpoch } from "./hold-multiplier.js";
 
 type HolderStateRow = {
   wallet: string;
@@ -24,26 +24,28 @@ function parseRaw(value: unknown) {
   }
 }
 
-function isMissingHolderStateTable(error: unknown) {
-  const message = JSON.stringify(error);
-  return message.includes("holder_states") || message.includes("42P01") || message.includes("PGRST205");
-}
-
 async function getHolderStates() {
+  const rows:HolderStateRow[]=[];
+  for (let offset=0;;offset+=1000) {
   const result = await supabase
-    .from("holder_states")
+    .from("nstr_holder_states")
     .select(
       "wallet,source_balance,source_balance_raw,highest_source_balance_raw,eligible_since,last_epoch_id,current_streak_epochs,current_multiplier_bps,permanently_ineligible,ineligible_reason"
     )
-    .limit(10000);
+    .eq("source_mint",config.sourceTokenMint.toBase58())
+    .order("wallet")
+    .range(offset,offset+999);
 
   if (result.error) throw result.error;
-  return (result.data ?? []) as HolderStateRow[];
+  const page=(result.data ?? []) as HolderStateRow[];
+  rows.push(...page);
+  if(page.length<1000) return rows;
+  }
 }
 
 async function upsertHolderStates(rows: Record<string, unknown>[]) {
   if (!rows.length) return;
-  const result = await supabase.from("holder_states").upsert(rows, { onConflict: "wallet" });
+  const result = await supabase.from("nstr_holder_states").upsert(rows.map(row=>({...row,source_mint:config.sourceTokenMint.toBase58()})), { onConflict: "source_mint,wallet" });
   if (result.error) throw result.error;
 }
 
@@ -144,15 +146,7 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
       const previousRaw = parseRaw(existing?.source_balance_raw);
       const highestRaw = parseRaw(existing?.highest_source_balance_raw);
       const soldSinceLastSnapshot = Boolean(existing && previousRaw > 0n && holder.rawBalance < previousRaw);
-      const alreadyCountedEpoch = existing?.last_epoch_id === epochId;
-
-      const nextStreak = soldSinceLastSnapshot
-        ? 1
-        : existing
-          ? alreadyCountedEpoch
-            ? Math.max(1, existing.current_streak_epochs ?? 1)
-            : (existing.current_streak_epochs ?? 0) + 1
-          : 1;
+      const nextStreak = streakForEpoch(existing?.last_epoch_id,epochId,existing?.current_streak_epochs ?? 0,soldSinceLastSnapshot,config.epochMinutes);
       const eligibleSince = soldSinceLastSnapshot ? now : existing?.eligible_since ?? now;
       const multiplierBps = holdMultiplierForStreak(
         nextStreak,
@@ -192,11 +186,5 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
       console.log(`[${epochId}] holder-state removed ${removed} permanently ineligible holders`);
     }
     return eligible;
-  } catch (error) {
-    if (isMissingHolderStateTable(error)) {
-      console.warn(`[${epochId}] holder_states table missing; multiplier/permanent-ineligibility tracking is disabled`);
-      return eligibleHolders.map((holder) => ({ ...holder, multiplierBps: 10_000, streakEpochs: 1, eligibleSince: null }));
-    }
-    throw error;
-  }
+  } catch (error) { throw error; }
 }

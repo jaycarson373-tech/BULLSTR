@@ -11,10 +11,10 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "worker:dev": "tsx worker/src/scheduler.ts",
+    "worker:dev": "tsx worker/src/bootstrap.ts",
     "worker:build": "tsc -p worker/tsconfig.json",
-    "worker:test": "tsx --test worker/src/hold-multiplier.test.ts",
-    "worker:start": "node worker/dist/scheduler.js",
+    "worker:test": "tsx --test worker/src/*.test.ts",
+    "worker:start": "node worker/dist/bootstrap.js",
     "check": "npm run typecheck && npm run worker:build && npm run worker:test && npm run build"
   },
   "dependencies": {

@@ -32,7 +32,7 @@ export async function runEpoch(date = new Date()) {
   }
 
   running = true;
-  const epochId = currentEpochId(date);
+  const epochId = `nstr:${config.sourceTokenMint.toBase58()}:${currentEpochId(date)}`;
 
   try {
     const existing = await getEpoch(epochId);
@@ -41,7 +41,10 @@ export async function runEpoch(date = new Date()) {
       return;
     }
 
-    await startEpoch(epochId);
+    if (!await startEpoch(epochId)) {
+      console.log(`[${epochId}] epoch already reserved or an earlier payout requires reconciliation; no transfers started`);
+      return;
+    }
     const treasury = treasuryKeypair();
     const feeAssetMint = config.creatorFeeAssetMint;
     const feeAssetBalanceBeforeClaim = feeAssetMint
@@ -194,7 +197,7 @@ export async function runEpoch(date = new Date()) {
       settledRecipientTransfers = tokenAirdrop.settledCount;
     }
 
-    const status = plannedRecipientTransfers > 0 ? undefined : "skipped";
+    const status = plannedRecipientTransfers === 0 ? "skipped" : settledRecipientTransfers === plannedRecipientTransfers ? "completed" : "failed";
     await completeEpoch(epochId, {
       eligible_count: eligibleHolders.length,
       reward_bought: totalBoughtUi.toString(),

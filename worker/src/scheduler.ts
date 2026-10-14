@@ -14,13 +14,12 @@ console.log(
 console.log(
   `X agent: X_AGENT_ENABLED=${config.xAgentEnabled}, X_AGENT_POST_ENABLED=${config.xAgentPostEnabled}, X_AGENT_REPLY_TO_MENTIONS=${config.xAgentReplyToMentions}`
 );
-console.log(
-  `Reward split: ${config.swapBalanceBps / 100}% claimed SOL buys ${config.rewardSymbol} for eligible ${config.sourceSymbol} holder actions; ${config.sideWalletBps / 100}% routes to side wallet.`
-);
+console.log(`Rewards: claimed ${config.rewardSymbol} fee assets are distributed directly to eligible NSTR holders.`);
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
 console.log(`Eligibility gate: holder must hold ${config.eligibilityMin.toLocaleString()} ${config.sourceSymbol} tokens`);
 
 async function loop() {
+  try {
   await runEpoch();
   await runCatAgent().catch((error) => {
     console.error(`${config.projectName} signal agent failed`, error);
@@ -28,16 +27,11 @@ async function loop() {
   await runXAgent().catch((error) => {
     console.error("X agent failed", error);
   });
-  const waitMs = msUntilNextEpoch(new Date()) + 500;
-  setTimeout(loop, waitMs);
+  } catch { console.error("NSTR epoch failed; the next scheduled epoch will retry safely."); }
+  finally { const waitMs = msUntilNextEpoch(new Date()) + 500; setTimeout(() => { void loop(); }, waitMs); }
 }
 
-function scheduleFirstRun() {
+export async function startScheduler() {
   console.log("First epoch run starting immediately.");
-  loop().catch((error) => {
-    console.error("worker crashed", error);
-    process.exit(1);
-  });
+  void loop();
 }
-
-scheduleFirstRun();

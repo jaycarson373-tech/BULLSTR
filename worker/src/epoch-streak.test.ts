@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {streakForEpoch} from './hold-multiplier.js';
+const previous='nstr:mint:2026-10-14T12:00:00.000Z';
+test('only consecutive snapshots of the same token increase the holding streak',()=>{assert.equal(streakForEpoch(previous,'nstr:mint:2026-10-14T12:05:00.000Z',4,false,5),5);assert.equal(streakForEpoch(previous,'nstr:mint:2026-10-14T12:15:00.000Z',4,false,5),1);assert.equal(streakForEpoch(previous,'nstr:other:2026-10-14T12:05:00.000Z',4,false,5),1);assert.equal(streakForEpoch(previous,previous,4,false,5),4);assert.equal(streakForEpoch(previous,'nstr:mint:2026-10-14T12:05:00.000Z',4,true,5),1);});
