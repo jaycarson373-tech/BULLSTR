@@ -20,6 +20,7 @@ import { treasuryKeypair } from "./config.js";
 import { routeSideWalletShare } from "./side-wallet.js";
 
 let running = false;
+export let epochRuntime = {state:"idle",reason:null as string|null};
 
 function lamportsToSol(lamports: bigint) {
   return Number(lamports) / LAMPORTS_PER_SOL;
@@ -32,19 +33,24 @@ export async function runEpoch(date = new Date()) {
   }
 
   running = true;
+  epochRuntime={state:"running",reason:null};
+  let reserved=false;
   const epochId = `nstr:${config.sourceTokenMint.toBase58()}:${currentEpochId(date)}`;
 
   try {
     const existing = await getEpoch(epochId);
     if (existing?.status === "completed") {
+      epochRuntime={state:"idle",reason:null};
       console.log(`[${epochId}] already completed, skipping`);
       return;
     }
 
     if (!await startEpoch(epochId)) {
+      epochRuntime={state:"paused",reason:"epoch-or-payout-reconciliation-required"};
       console.log(`[${epochId}] epoch already reserved or an earlier payout requires reconciliation; no transfers started`);
       return;
     }
+    reserved=true;
     const treasury = treasuryKeypair();
     const feeAssetMint = config.creatorFeeAssetMint;
     const feeAssetBalanceBeforeClaim = feeAssetMint
@@ -125,6 +131,7 @@ export async function runEpoch(date = new Date()) {
         reward_distributed: "0",
         status: "skipped"
       });
+      epochRuntime={state:"idle",reason:null};
       console.log(`[${epochId}] no eligible holder recipients, skipped reward distribution`);
       return;
     }
@@ -204,11 +211,13 @@ export async function runEpoch(date = new Date()) {
       reward_distributed: totalDistributedUi.toString(),
       status
     });
+    epochRuntime={state:status==="failed"?"failed":"idle",reason:status==="failed"?"incomplete-epoch":null};
     console.log(
       `[${epochId}] summary: eligibleHolders=${eligibleHolders.length}, rewardTransfers=${settledRecipientTransfers}/${plannedRecipientTransfers}, assets=${config.rewardMode === "sol" ? "SOL" : config.rewardAssets.map((asset) => asset.symbol).join(",")}, bought=${totalBoughtUi}, distributed=${totalDistributedUi}`
     );
   } catch (error) {
-    await failEpoch(epochId, error).catch((dbError) => {
+    epochRuntime={state:"failed",reason:"epoch-requires-review"};
+    if(reserved)await failEpoch(epochId, error).catch((dbError) => {
       console.error(`[${epochId}] failed to mark epoch failed`, dbError);
     });
     console.error(`[${epochId}] epoch failed`, error);

@@ -1,5 +1,6 @@
 import { CopyContract } from './copy-contract';
 import { StrategyLab, NearMarket } from './strategy-lab';
+import { RewardHistory, RewardSignal } from './reward-history';
 const CA = process.env.NEXT_PUBLIC_NSTR_CA?.trim() || '';
 const X = process.env.NEXT_PUBLIC_NSTR_X_URL?.trim() || '';
 const BUY = process.env.NEXT_PUBLIC_NSTR_BUY_URL?.trim() || (CA ? 'https://pump.fun/coin/'+encodeURIComponent(CA) : '');
@@ -25,7 +26,7 @@ export default function Page() {
           <div className="ca-line">{CA?<CopyContract address={CA}/>:<><b>CA</b><span>Published at launch</span></>}</div>
         </div>
         <aside className="strategy-summary" aria-label="NSTR reward framework">
-          <div className="summary-header"><span>THE REWARD FRAMEWORK</span><span className="summary-status">Activation pending</span></div>
+          <div className="summary-header"><span>THE REWARD FRAMEWORK</span><RewardSignal variant="badge"/></div>
           <div className="summary-feature"><span>Eligible holding. Greater weight.</span><strong>1.00<span>–</span>2.00<small>x</small></strong><p>Consecutive snapshots increase your weight in a collected reward pool.</p></div>
           <dl className="summary-rules"><div><dt>Epoch schedule</dt><dd>Every 5 minutes</dd></div><div><dt>Pool funding</dt><dd>Collected creator fees</dd></div><div><dt>Allocation</dt><dd>Balance × hold weight</dd></div></dl>
           <a className="summary-link" href="#weight-model">Explore the weight model <span aria-hidden="true">↗</span></a>
@@ -45,7 +46,8 @@ export default function Page() {
           <article><div className="flow-number">03</div><h3>Distribute the pool</h3><p>The collected pool is allocated proportionally. Completed transfers provide the reward receipts.</p></article>
         </div>
         <div className="model-section" id="weight-model"><div className="model-copy"><span className="eyebrow">THE HOLD MULTIPLIER</span><h2>See how your<br/>weight changes.</h2><p>Start at 1.00x. Each additional consecutive eligible snapshot adds 0.01x, up to 2.00x at 101 snapshots.</p><p>A balance decrease or missed eligibility resets the streak. Greater weight changes your share of a funded pool; it does not create a fixed return.</p></div><StrategyLab/></div>
-        <div className="activation-note"><span className="pill">NOT ACTIVE YET</span><p>Distributions begin after the mint, eligibility, fee collector and payout worker are configured and tested. No live reward history is shown.</p></div>
+        <RewardSignal variant="note"/>
+        <RewardHistory/>
       </section>
       <section className="docs-section" id="docs"><div><span className="eyebrow">PROJECT DETAILS</span><h2>Simple rules.<br/>Clear boundaries.</h2></div><div className="faq">
         <details><summary>What does NEAR-paired mean?</summary><p>NSTR is a Solana token targeting a supported NEAR quote asset. Pairing does not make it a native NEAR-chain token. The exact pair and market will be verified at launch.</p></details>
@@ -54,6 +56,6 @@ export default function Page() {
         <details><summary>Where will I verify rewards?</summary><p>Completed distributions will need public transfer receipts from the configured worker. Reward amounts and payment history will appear only after actual settlement.</p></details>
       </div></section>
     </main>
-    <footer><a className="brand-lockup" href="#top"><img src="/favicon.svg" width="25" height="25" alt=""/>Near Strategy</a><p>Independent community token. Rewards are not active. No fixed return or NEAR protocol affiliation.</p><a href="https://docs.near-intents.org/" target="_blank" rel="noreferrer">NEAR Intents ↗</a></footer>
+    <footer><a className="brand-lockup" href="#top"><img src="/favicon.svg" width="25" height="25" alt=""/>Near Strategy</a><RewardSignal variant="footer"/><a href="https://docs.near-intents.org/" target="_blank" rel="noreferrer">NEAR Intents ↗</a></footer>
   </div>;
 }

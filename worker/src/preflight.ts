@@ -5,6 +5,7 @@ import { supabase } from "./db.js";
 import { assertSourceCurve, sourceCurve } from "./creator-fee-instructions.js";
 
 export async function preflight() {
+  if(await connection.getGenesisHash()!=="5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d") throw new Error("NSTR activation requires the Solana mainnet cluster.");
   const treasury=treasuryKeypair(),mint=config.creatorFeeAssetMint;
   if (!mint || mint.equals(NATIVE_MINT)) throw new Error("Verified non-native fee asset required.");
   assertSourceCurve(await connection.getAccountInfo(sourceCurve(config.sourceTokenMint),"confirmed"),treasury.publicKey,mint);

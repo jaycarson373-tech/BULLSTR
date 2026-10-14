@@ -1,5 +1,5 @@
 import { runCatAgent } from "./agent.js";
-import { runEpoch } from "./epoch.js";
+import { runEpoch, epochRuntime } from "./epoch.js";
 import { runXAgent } from "./x-agent.js";
 import { config } from "./config.js";
 import { msUntilNextEpoch } from "./time.js";
@@ -34,4 +34,5 @@ async function loop() {
 export async function startScheduler() {
   console.log("First epoch run starting immediately.");
   void loop();
+  return ()=>epochRuntime;
 }

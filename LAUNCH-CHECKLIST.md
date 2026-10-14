@@ -14,7 +14,7 @@ The token is intentionally not live. Do not invent its mint or enable claims ear
 
 ## Database preparation
 
-Apply migration 011_nstr_payout_guard.sql to the active database after the existing migrations. Run `select public.nstr_worker_ready();` and require true. The configured Railway database hostname did not resolve during this review; the dashboard redirected that project to the organization list. This must be repaired before activation.
+For a new dedicated Supabase project, run supabase/NSTR_FRESH_SETUP.sql once. It rejects an existing project’s ledger instead of overwriting it. For an existing NSTR database, apply migration 011_nstr_payout_guard.sql after the existing migrations. Run `select public.nstr_worker_ready();` and require true. The configured Railway database hostname did not resolve during this review; the dashboard redirected that project to the organization list. This must be repaired before activation.
 
 If a payout confirmation is unknown, query its persisted tx_sig on chain. A confirmed successful transaction should have its corresponding sending rows settled, a confirmed failed transaction should be marked failed. A missing transaction is not proof of failure. Do not reset or recreate an uncertain payment. A crashed running epoch needs reconciliation before its status is resolved. The guard deliberately blocks the next allocation meanwhile.
 
@@ -28,3 +28,5 @@ If a payout confirmation is unknown, query its persisted tx_sig on chain. A conf
 6. /health reports liveness; /ready only becomes 200 once configuration and on-chain/database preflight have passed. /status never exposes keys.
 
 Supported claim scope: single-recipient creator vaults. Shared-fee configurations, native SOL fees and other creation programs require their matching collector; they are blocked rather than silently misprocessed.
+
+The website now includes a /api/rewards proxy and wallet-searchable receipt list. It displays only NSTR mint-scoped settled payouts, with exact raw token units and public transaction links. Before activation it returns an empty awaiting-activation state rather than simulated rewards.
