@@ -196,5 +196,7 @@ $$;
 revoke all on function public.nstr_worker_ready() from public,anon,authenticated;
 grant execute on function public.nstr_worker_ready() to service_role;
 
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.epochs, public.claims, public.buys, public.snapshots, public.payouts, public.holder_states TO service_role;
+
 NOTIFY pgrst, 'reload schema';
 COMMIT;

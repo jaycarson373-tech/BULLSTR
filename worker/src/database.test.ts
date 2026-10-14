@@ -9,6 +9,7 @@ test('fresh NSTR ledger installs, preserves reservations and isolates the new to
   await db.exec('create role anon; create role authenticated; create role service_role bypassrls;');
   const setup=await readFile(new URL('../../supabase/NSTR_FRESH_SETUP.sql',import.meta.url),'utf8');
   await db.exec(setup);
+  await db.exec('set role service_role');
   assert.equal((await db.query<{ready:boolean}>('select public.nstr_worker_ready() as ready')).rows[0].ready,true);
   const first='nstr:mint-a:2026-10-14T20:00:00.000Z',next='nstr:mint-a:2026-10-14T20:05:00.000Z';
   const start=async(id:string)=>(await db.query<{ok:boolean}>('select public.nstr_start_epoch($1) as ok',[id])).rows[0].ok;
